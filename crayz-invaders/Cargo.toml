@@ -1,0 +1,12 @@
+[package]
+name = "crayz-invaders"
+version = "0.1.0"
+edition = "2021"
+description = "Space Invaders türevli bir oyunun Bevy ile geliştirilmesine ait örnek"
+
+[dependencies]
+bevy = "0.7"
+rand = "0.8"
+
+[workspace]
+resolver = "2"
