@@ -10,3 +10,15 @@ Cargo.lock
 **/*.rs.bk
 
 .idea/
+.vscode/*
+node_modules
+*.o
+*.d
+*.bin
+*.dat
+*.cargo-lock
+workspace.xml
+
+target/
+bin/*
+obj/*
