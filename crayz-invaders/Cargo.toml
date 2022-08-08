@@ -5,8 +5,5 @@ edition = "2021"
 description = "Space Invaders türevli bir oyunun Bevy ile geliştirilmesine ait örnek"
 
 [dependencies]
-bevy = "0.7"
+bevy = "0.8"
 rand = "0.8"
-
-[workspace]
-resolver = "2"
