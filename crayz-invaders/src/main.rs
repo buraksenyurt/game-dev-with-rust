@@ -1,3 +1,4 @@
+mod components;
 mod constant;
 mod player;
 mod resources;

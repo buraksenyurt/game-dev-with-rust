@@ -1,3 +1,5 @@
 pub const PLAYER_SPRITE: &str = "player_01.png";
 pub const PLAYER_SIZE: (f32, f32) = (320., 320.);
 pub const SPRITE_SCALE: f32 = 0.15;
+pub const FPS: f32 = 1. / 60.;
+pub const BASE_SPEED: f32 = 300.;
