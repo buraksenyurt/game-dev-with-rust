@@ -1,6 +1,8 @@
 mod constant;
+mod resources;
 
 use crate::constant::*;
+use crate::resources::WinSize;
 use bevy::prelude::*;
 
 fn main() {
@@ -14,21 +16,30 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_startup_system(init_system)
+        .add_startup_system_to_stage(StartupStage::PostStartup, create_player_system)
         .run();
 }
 
-fn init_system(
-    mut commands: Commands,
-    mut windows: ResMut<Windows>,
-    asset_server: Res<AssetServer>,
-) {
+fn init_system(mut commands: Commands, mut windows: ResMut<Windows>) {
     commands.spawn_bundle(Camera2dBundle::default());
 
     let main_window = windows.get_primary_mut().unwrap();
     main_window.set_position(IVec2::new(0, 0));
 
-    let (_width, height) = (main_window.width(), main_window.height());
-    let bottom = -height / 2.;
+    let (w_width, w_height) = (main_window.width(), main_window.height());
+    let window_size = WinSize {
+        width: w_width,
+        height: w_height,
+    };
+    commands.insert_resource(window_size);
+}
+
+fn create_player_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    window_size: Res<WinSize>,
+) {
+    let bottom = -window_size.height / 2.;
 
     commands.spawn_bundle(SpriteBundle {
         texture: asset_server.load(PLAYER_SPRITE),
