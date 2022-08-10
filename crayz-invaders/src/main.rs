@@ -3,6 +3,7 @@ mod constant;
 mod player;
 mod resources;
 
+use crate::components::{Movable, Velocity};
 use crate::constant::*;
 use crate::player::PlayerPlugin;
 use crate::resources::{GameTextures, WinSize};
@@ -20,6 +21,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
         .add_startup_system(init_system)
+        .add_system(movement_system)
         .run();
 }
 
@@ -45,4 +47,27 @@ fn init_system(
         player_laser: asset_server.load(PLAYER_LASER_SPRITE),
     };
     commands.insert_resource(game_textures);
+}
+
+fn movement_system(
+    mut commands: Commands,
+    window_size: Res<WinSize>,
+    mut query: Query<(Entity, &Velocity, &mut Transform, &Movable)>,
+) {
+    for (e, v, mut t, mov) in query.iter_mut() {
+        let translation = &mut t.translation;
+        translation.x += v.x * FPS * BASE_SPEED;
+        translation.y += v.y * FPS * BASE_SPEED;
+
+        if mov.despawnable {
+            const MARGIN: f32 = 200.;
+            if translation.y > window_size.height / 2. + MARGIN
+                || translation.y < -window_size.height / 2. - MARGIN
+                || translation.x > window_size.width / 2. + MARGIN
+                || translation.x < -window_size.width / 2. - MARGIN
+            {
+                commands.entity(e).despawn();
+            }
+        }
+    }
 }
