@@ -9,7 +9,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PostStartup, create_system)
             .add_system(movement_system)
-            .add_system(keyboard_event_system);
+            .add_system(keyboard_event_system)
+            .add_system(fire_system);
     }
 }
 
@@ -59,5 +60,28 @@ fn movement_system(mut query: Query<(&Velocity, &mut Transform), With<Player>>) 
         let translation = &mut t.translation;
         translation.x += v.x * FPS * BASE_SPEED;
         translation.y += v.y * FPS * BASE_SPEED;
+    }
+}
+
+fn fire_system(
+    mut commands: Commands,
+    k: Res<Input<KeyCode>>,
+    textures: Res<GameTextures>,
+    query: Query<&Transform, With<Player>>,
+) {
+    if let Ok(player) = query.get_single() {
+        if k.just_pressed(KeyCode::Space) {
+            let (x, y) = (player.translation.x, player.translation.y);
+
+            commands.spawn_bundle(SpriteBundle {
+                texture: textures.player_laser.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y + PLAYER_SIZE.1 * SPRITE_SCALE, 0.),
+                    scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            });
+        }
     }
 }
