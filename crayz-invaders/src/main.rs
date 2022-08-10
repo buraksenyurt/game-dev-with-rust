@@ -1,10 +1,12 @@
 mod components;
 mod constant;
+mod enemy;
 mod player;
 mod resources;
 
 use crate::components::{Movable, Velocity};
 use crate::constant::*;
+use crate::enemy::EnemyPlugin;
 use crate::player::PlayerPlugin;
 use crate::resources::{GameTextures, WinSize};
 use bevy::prelude::*;
@@ -20,6 +22,7 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
+        .add_plugin(EnemyPlugin)
         .add_startup_system(init_system)
         .add_system(movement_system)
         .run();
@@ -45,6 +48,8 @@ fn init_system(
     let game_textures = GameTextures {
         player: asset_server.load(PLAYER_SPRITE),
         player_laser: asset_server.load(PLAYER_LASER_SPRITE),
+        enemy: asset_server.load(ENEMY_SPRITE),
+        enemy_laser: asset_server.load(ENEMY_LASER_SPRITE),
     };
     commands.insert_resource(game_textures);
 }
