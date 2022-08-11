@@ -1,4 +1,5 @@
-use crate::{GameTextures, WinSize, SPRITE_SCALE};
+use crate::components::{Enemy, SpriteSize};
+use crate::{GameTextures, WinSize, ENEMY_SIZE, SPRITE_SCALE};
 use bevy::prelude::*;
 use rand::{thread_rng, Rng};
 
@@ -21,13 +22,16 @@ fn create_system(
     let x = rnd.gen_range(-w..w);
     let y = rnd.gen_range(-h..h);
 
-    commands.spawn_bundle(SpriteBundle {
-        texture: game_textures.enemy.clone(),
-        transform: Transform {
-            translation: Vec3::new(x, y, 10.),
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: game_textures.enemy.clone(),
+            transform: Transform {
+                translation: Vec3::new(x, y, 10.),
+                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                ..Default::default()
+            },
             ..Default::default()
-        },
-        ..Default::default()
-    });
+        })
+        .insert(Enemy)
+        .insert(SpriteSize::from(ENEMY_SIZE));
 }
