@@ -9,3 +9,5 @@ pub const ENEMY_SPRITE: &str = "enemy_01.png";
 pub const ENEMY_SIZE: (f32, f32) = (320., 320.);
 pub const ENEMY_LASER_SPRITE: &str = "enemy_laser.png";
 pub const ENEMY_LASER_SIZE: (f32, f32) = (320., 320.);
+pub const EXPLOSION_SHEET: &str = "explosion_sheet.png";
+pub const EXPLOSION_LENGTH: usize = 12;

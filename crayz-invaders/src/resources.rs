@@ -1,4 +1,4 @@
-use bevy::prelude::{Handle, Image};
+use bevy::prelude::{Handle, Image, TextureAtlas};
 
 pub struct WinSize {
     pub width: f32,
@@ -10,4 +10,5 @@ pub struct GameTextures {
     pub player_laser: Handle<Image>,
     pub enemy: Handle<Image>,
     pub enemy_laser: Handle<Image>,
+    pub explosion: Handle<TextureAtlas>,
 }
