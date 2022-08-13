@@ -1,0 +1,10 @@
+[package]
+name = "ping_pong"
+version = "0.1.0"
+edition = "2021"
+description = "A simple ping pong game"
+authors = ["Burak Selim Senyurt"]
+
+[dependencies]
+ggez="0.7.0"
+rand="0.8.5"
