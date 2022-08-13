@@ -11,10 +11,11 @@ use crate::components::{
 use crate::constant::*;
 use crate::enemy::EnemyPlugin;
 use crate::player::PlayerPlugin;
-use crate::resources::{GameTextures, WinSize};
+use crate::resources::{EnemyCount, GameTextures, WinSize};
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
+use bevy::utils::HashSet;
 
 fn main() {
     App::new()
@@ -66,6 +67,7 @@ fn init_system(
         explosion,
     };
     commands.insert_resource(game_textures);
+    commands.insert_resource(EnemyCount(0));
 }
 
 fn movement_system(
@@ -93,13 +95,24 @@ fn movement_system(
 
 fn laser_hit_system(
     mut commands: Commands,
+    mut enemy_count: ResMut<EnemyCount>,
     laser_query: Query<(Entity, &Transform, &SpriteSize), (With<Laser>, With<FromPlayer>)>,
     enemy_query: Query<(Entity, &Transform, &SpriteSize), With<Enemy>>,
 ) {
+    let mut despawned_entities: HashSet<Entity> = HashSet::new();
+
     for (laser_entity, laser_transform, laser_size) in laser_query.iter() {
+        if despawned_entities.contains(&laser_entity) {
+            continue;
+        }
         let laser_scale = Vec2::from(laser_transform.scale.xy());
 
         for (enemy_entity, enemy_transform, enemy_size) in enemy_query.iter() {
+            if despawned_entities.contains(&enemy_entity)
+                || despawned_entities.contains(&laser_entity)
+            {
+                continue;
+            }
             let enemy_scale = Vec2::from(enemy_transform.scale.xy());
 
             let collision = collide(
@@ -111,11 +124,17 @@ fn laser_hit_system(
 
             if let Some(_) = collision {
                 commands.entity(enemy_entity).despawn();
+                despawned_entities.insert(enemy_entity);
+                enemy_count.0 -= 1;
+
                 commands.entity(laser_entity).despawn();
+                despawned_entities.insert(laser_entity);
 
                 commands
                     .spawn()
                     .insert(ExplosionToSpawn(enemy_transform.translation.clone()));
+
+                break;
             }
         }
     }
