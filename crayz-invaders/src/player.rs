@@ -5,13 +5,45 @@ use crate::{Enemy, EnemyCount, ExplosionToSpawn, Laser};
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::sprite::collide_aabb::collide;
+use bevy::time::FixedTimestep;
 use bevy::utils::HashSet;
 
 pub struct PlayerPlugin;
 
+pub struct PlayerState {
+    alive: bool,
+    last_shot: f64,
+}
+
+impl Default for PlayerState {
+    fn default() -> Self {
+        Self {
+            alive: false,
+            last_shot: -1.,
+        }
+    }
+}
+
+impl PlayerState {
+    pub fn shot(&mut self, time: f64) {
+        self.alive = false;
+        self.last_shot = time;
+    }
+
+    pub fn spawned(&mut self) {
+        self.alive = true;
+        self.last_shot = -1.;
+    }
+}
+
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PostStartup, create_system)
+        app.insert_resource(PlayerState::default())
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(0.5))
+                    .with_system(create_system),
+            )
             .add_system(keyboard_event_system)
             .add_system(fire_system);
     }
@@ -21,23 +53,38 @@ fn create_system(
     mut commands: Commands,
     game_textures: Res<GameTextures>,
     window_size: Res<WinSize>,
+    mut player_state: ResMut<PlayerState>,
+    time: Res<Time>,
 ) {
-    let bottom = -window_size.height / 2.;
+    let now = time.seconds_since_startup();
+    let last_shot = player_state.last_shot;
 
-    commands
-        .spawn_bundle(SpriteBundle {
-            texture: game_textures.player.clone(),
-            transform: Transform {
-                translation: Vec3::new(0., bottom + PLAYER_SIZE.1 / 2. * SPRITE_SCALE + 5., 10.),
-                scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+    if !player_state.alive
+        && (player_state.last_shot == -1. || now > last_shot + PLAYER_RESPAWN_DELAY)
+    {
+        let bottom = -window_size.height / 2.;
+
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: game_textures.player.clone(),
+                transform: Transform {
+                    translation: Vec3::new(
+                        0.,
+                        bottom + PLAYER_SIZE.1 / 2. * SPRITE_SCALE + 5.,
+                        10.,
+                    ),
+                    scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+                    ..Default::default()
+                },
                 ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Player)
-        .insert(SpriteSize::from(PLAYER_SIZE))
-        .insert(Movable { despawnable: false })
-        .insert(Velocity { x: 1., y: 0. });
+            })
+            .insert(Player)
+            .insert(SpriteSize::from(PLAYER_SIZE))
+            .insert(Movable { despawnable: false })
+            .insert(Velocity { x: 1., y: 0. });
+
+        player_state.spawned();
+    }
 }
 
 fn keyboard_event_system(k: Res<Input<KeyCode>>, mut query: Query<&mut Velocity, With<Player>>) {

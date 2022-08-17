@@ -1,4 +1,5 @@
 use crate::components::{Enemy, FromEnemy, Player, SpriteSize};
+use crate::player::PlayerState;
 use crate::{
     EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize,
     ENEMY_LASER_SIZE, ENEMY_SIZE, MAX_ENEMY, SPRITE_SCALE,
@@ -97,6 +98,8 @@ pub fn enemy_hit_system(
     mut commands: Commands,
     laser_query: Query<(Entity, &Transform, &SpriteSize), (With<Laser>, With<FromEnemy>)>,
     player_query: Query<(Entity, &Transform, &SpriteSize), With<Player>>,
+    mut player_state: ResMut<PlayerState>,
+    time: Res<Time>,
 ) {
     if let Ok((ply_entity, ply_tf, ply_size)) = player_query.get_single() {
         let player_scale = Vec2::from(ply_tf.scale.xy());
@@ -113,6 +116,7 @@ pub fn enemy_hit_system(
 
             if let Some(_) = collision {
                 commands.entity(ply_entity).despawn();
+                player_state.shot(time.seconds_since_startup());
                 commands.entity(las_entity).despawn();
                 commands
                     .spawn()

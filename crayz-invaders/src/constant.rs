@@ -6,6 +6,7 @@ pub const BASE_SPEED: f32 = 300.;
 pub const MAX_ENEMY: u32 = 4;
 pub const PLAYER_LASER_SPRITE: &str = "player_laser.png";
 pub const PLAYER_LASER_SIZE: (f32, f32) = (320., 320.);
+pub const PLAYER_RESPAWN_DELAY: f64 = 2.;
 pub const ENEMY_LASER_SIZE: (f32, f32) = (320., 320.);
 pub const ENEMY_SPRITE: &str = "enemy_01.png";
 pub const ENEMY_SIZE: (f32, f32) = (320., 320.);
