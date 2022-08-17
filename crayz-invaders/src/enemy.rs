@@ -1,10 +1,12 @@
-use crate::components::{Enemy, FromEnemy, SpriteSize};
+use crate::components::{Enemy, FromEnemy, Player, SpriteSize};
 use crate::{
-    EnemyCount, GameTextures, Laser, Movable, Velocity, WinSize, ENEMY_LASER_SIZE, ENEMY_SIZE,
-    MAX_ENEMY, SPRITE_SCALE,
+    EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize,
+    ENEMY_LASER_SIZE, ENEMY_SIZE, MAX_ENEMY, SPRITE_SCALE,
 };
 use bevy::ecs::schedule::ShouldRun;
+use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
+use bevy::sprite::collide_aabb::collide;
 use bevy::time::FixedTimestep;
 use rand::{thread_rng, Rng};
 use std::f32::consts::PI;
@@ -88,5 +90,36 @@ fn enemy_create_system(
             .insert(SpriteSize::from(ENEMY_SIZE));
 
         enemy_count.0 += 1;
+    }
+}
+
+pub fn enemy_hit_system(
+    mut commands: Commands,
+    laser_query: Query<(Entity, &Transform, &SpriteSize), (With<Laser>, With<FromEnemy>)>,
+    player_query: Query<(Entity, &Transform, &SpriteSize), With<Player>>,
+) {
+    if let Ok((ply_entity, ply_tf, ply_size)) = player_query.get_single() {
+        let player_scale = Vec2::from(ply_tf.scale.xy());
+
+        for (las_entity, las_tf, las_size) in laser_query.iter() {
+            let laser_scale = Vec2::from(las_tf.scale.xy());
+
+            let collision = collide(
+                las_tf.translation,
+                las_size.0 * laser_scale,
+                ply_tf.translation,
+                ply_size.0 * player_scale,
+            );
+
+            if let Some(_) = collision {
+                commands.entity(ply_entity).despawn();
+                commands.entity(las_entity).despawn();
+                commands
+                    .spawn()
+                    .insert(ExplosionToSpawn(ply_tf.translation.clone()));
+
+                break;
+            }
+        }
     }
 }

@@ -1,8 +1,11 @@
 use crate::components::{FromPlayer, Movable, Player, SpriteSize, Velocity};
 use crate::constant::*;
 use crate::resources::{GameTextures, WinSize};
-use crate::Laser;
+use crate::{Enemy, EnemyCount, ExplosionToSpawn, Laser};
+use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
+use bevy::sprite::collide_aabb::collide;
+use bevy::utils::HashSet;
 
 pub struct PlayerPlugin;
 
@@ -82,6 +85,53 @@ fn fire_system(
                 .insert(SpriteSize::from(PLAYER_LASER_SIZE))
                 .insert(Movable { despawnable: true })
                 .insert(Velocity { x: 0., y: 1. });
+        }
+    }
+}
+
+pub fn laser_hit_system(
+    mut commands: Commands,
+    mut enemy_count: ResMut<EnemyCount>,
+    laser_query: Query<(Entity, &Transform, &SpriteSize), (With<Laser>, With<FromPlayer>)>,
+    enemy_query: Query<(Entity, &Transform, &SpriteSize), With<Enemy>>,
+) {
+    let mut despawned_entities: HashSet<Entity> = HashSet::new();
+
+    for (laser_entity, laser_transform, laser_size) in laser_query.iter() {
+        if despawned_entities.contains(&laser_entity) {
+            continue;
+        }
+        let laser_scale = Vec2::from(laser_transform.scale.xy());
+
+        for (enemy_entity, enemy_transform, enemy_size) in enemy_query.iter() {
+            if despawned_entities.contains(&enemy_entity)
+                || despawned_entities.contains(&laser_entity)
+            {
+                continue;
+            }
+            let enemy_scale = Vec2::from(enemy_transform.scale.xy());
+
+            let collision = collide(
+                laser_transform.translation,
+                laser_size.0 * laser_scale,
+                enemy_transform.translation,
+                enemy_size.0 * enemy_scale,
+            );
+
+            if let Some(_) = collision {
+                commands.entity(enemy_entity).despawn();
+                despawned_entities.insert(enemy_entity);
+                enemy_count.0 -= 1;
+
+                commands.entity(laser_entity).despawn();
+                despawned_entities.insert(laser_entity);
+
+                commands
+                    .spawn()
+                    .insert(ExplosionToSpawn(enemy_transform.translation.clone()));
+
+                break;
+            }
         }
     }
 }
