@@ -4,3 +4,4 @@ pub const RACKET_W_HALF: f32 = RACKET_W * 0.5;
 pub const RACKET_H_HALF: f32 = RACKET_H * 0.5;
 pub const BALL_SIZE: f32 = 32.;
 pub const BALL_SIZE_HALF: f32 = BALL_SIZE * 0.5;
+pub const PLAYER_SPEED: f32 = 500.;

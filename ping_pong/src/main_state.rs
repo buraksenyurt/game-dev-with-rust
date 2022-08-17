@@ -1,8 +1,9 @@
 use crate::constants::{
-    BALL_SIZE, BALL_SIZE_HALF, RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
+    BALL_SIZE, BALL_SIZE_HALF, PLAYER_SPEED, RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
 };
-use ggez::event::EventHandler;
+use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::DrawParam;
+use ggez::input::keyboard;
 use ggez::mint::Point2;
 use ggez::{graphics, Context, GameResult};
 
@@ -35,7 +36,21 @@ impl MainState {
 }
 
 impl EventHandler for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let screen_height = graphics::drawable_size(ctx).1;
+        let delta_time = ggez::timer::delta(ctx).as_secs_f32();
+
+        if keyboard::is_key_pressed(ctx, KeyCode::Up) {
+            self.p2_position.y -= PLAYER_SPEED * delta_time;
+        }
+        if keyboard::is_key_pressed(ctx, KeyCode::Down) {
+            self.p2_position.y += PLAYER_SPEED * delta_time;
+        }
+        border_check(
+            &mut self.p2_position.y,
+            RACKET_H_HALF,
+            screen_height - RACKET_H_HALF,
+        );
         Ok(())
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -64,5 +79,13 @@ impl EventHandler for MainState {
 
         graphics::present(ctx)?;
         Ok(())
+    }
+}
+
+fn border_check(value: &mut f32, low: f32, high: f32) {
+    if *value < low {
+        *value = low;
+    } else if *value > high {
+        *value = high;
     }
 }
