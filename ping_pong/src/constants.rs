@@ -5,3 +5,17 @@ pub const RACKET_H_HALF: f32 = RACKET_H * 0.5;
 pub const BALL_SIZE: f32 = 32.;
 pub const BALL_SIZE_HALF: f32 = BALL_SIZE * 0.5;
 pub const PLAYER_SPEED: f32 = 500.;
+
+pub enum Direction {
+    Up,
+    Down,
+}
+
+impl From<Direction> for f32 {
+    fn from(d: Direction) -> Self {
+        match d {
+            Direction::Up => -1.,
+            Direction::Down => 1.,
+        }
+    }
+}

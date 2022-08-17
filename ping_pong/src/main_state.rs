@@ -1,5 +1,6 @@
 use crate::constants::{
-    BALL_SIZE, BALL_SIZE_HALF, PLAYER_SPEED, RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
+    Direction, BALL_SIZE, BALL_SIZE_HALF, PLAYER_SPEED, RACKET_H, RACKET_H_HALF, RACKET_W,
+    RACKET_W_HALF,
 };
 use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::DrawParam;
@@ -37,20 +38,11 @@ impl MainState {
 
 impl EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let screen_height = graphics::drawable_size(ctx).1;
-        let delta_time = ggez::timer::delta(ctx).as_secs_f32();
+        move_to(&mut self.p2_position, Direction::Up, KeyCode::Up, ctx);
+        move_to(&mut self.p2_position, Direction::Down, KeyCode::Down, ctx);
+        move_to(&mut self.p1_position, Direction::Up, KeyCode::W, ctx);
+        move_to(&mut self.p1_position, Direction::Down, KeyCode::S, ctx);
 
-        if keyboard::is_key_pressed(ctx, KeyCode::Up) {
-            self.p2_position.y -= PLAYER_SPEED * delta_time;
-        }
-        if keyboard::is_key_pressed(ctx, KeyCode::Down) {
-            self.p2_position.y += PLAYER_SPEED * delta_time;
-        }
-        border_check(
-            &mut self.p2_position.y,
-            RACKET_H_HALF,
-            screen_height - RACKET_H_HALF,
-        );
         Ok(())
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -80,6 +72,25 @@ impl EventHandler for MainState {
         graphics::present(ctx)?;
         Ok(())
     }
+}
+
+fn move_to(
+    player_position: &mut Point2<f32>,
+    direction: Direction,
+    key_code: KeyCode,
+    ctx: &mut Context,
+) {
+    let screen_height = graphics::drawable_size(ctx).1;
+    let delta_time = ggez::timer::delta(ctx).as_secs_f32();
+
+    if keyboard::is_key_pressed(ctx, key_code) {
+        player_position.y += f32::from(direction) * PLAYER_SPEED * delta_time;
+    }
+    border_check(
+        &mut player_position.y,
+        RACKET_H_HALF,
+        screen_height - RACKET_H_HALF,
+    );
 }
 
 fn border_check(value: &mut f32, low: f32, high: f32) {
