@@ -1,8 +1,8 @@
 use crate::components::{Enemy, FromEnemy, Player, SpriteSize};
 use crate::player::PlayerState;
 use crate::{
-    EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize,
-    ENEMY_LASER_SIZE, ENEMY_SIZE, MAX_ENEMY, SPRITE_SCALE,
+    EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize, BASE_SPEED,
+    ENEMY_LASER_SIZE, ENEMY_SIZE, FPS, MAX_ENEMY, SPRITE_SCALE,
 };
 use bevy::ecs::schedule::ShouldRun;
 use bevy::math::Vec3Swizzles;
@@ -25,7 +25,8 @@ impl Plugin for EnemyPlugin {
             SystemSet::new()
                 .with_run_criteria(enemy_fire_criteria)
                 .with_system(enemy_fire_system),
-        );
+        )
+        .add_system(enemy_movement_system);
     }
 }
 
@@ -125,5 +126,13 @@ pub fn enemy_hit_system(
                 break;
             }
         }
+    }
+}
+
+fn enemy_movement_system(mut query: Query<&mut Transform, With<Enemy>>) {
+    for mut trf in query.iter_mut() {
+        let translation = &mut trf.translation;
+        //translation.x += BASE_SPEED * FPS / 2.;
+        translation.y -= BASE_SPEED * FPS / 6.;
     }
 }
