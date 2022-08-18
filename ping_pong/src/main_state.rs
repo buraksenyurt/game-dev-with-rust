@@ -75,6 +75,14 @@ impl EventHandler for MainState {
             //println!("P1 -> {}, P2 -> {}", self.p1_score, self.p2_score);
         }
 
+        if self.ball_position.y < BALL_SIZE_HALF {
+            self.ball_position.y = BALL_SIZE_HALF;
+            self.ball_velocity.y = self.ball_velocity.y.abs();
+        } else if self.ball_position.y > screen_height - BALL_SIZE_HALF {
+            self.ball_position.y = screen_height - BALL_SIZE_HALF;
+            self.ball_velocity.y = -self.ball_velocity.y.abs();
+        }
+
         Ok(())
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -102,7 +110,7 @@ impl EventHandler for MainState {
         draw(ctx, &ball_mesh, DrawParam::new().dest(self.ball_position))?;
 
         let score_box =
-            graphics::Text::new(format!("P1:{} vs P2:{}", self.p1_score, self.p2_score));
+            graphics::Text::new(format!("Oyuncu 1 :{} vs Oyuncu 2 :{}", self.p1_score, self.p2_score));
         let screen_width = graphics::drawable_size(ctx).0;
         let screen_width_half = screen_width * 0.5;
         let mut score_position = Point2 {
