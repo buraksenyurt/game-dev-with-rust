@@ -6,6 +6,7 @@ pub const BALL_SIZE: f32 = 32.;
 pub const BALL_SIZE_HALF: f32 = BALL_SIZE * 0.5;
 pub const PLAYER_SPEED: f32 = 500.;
 pub const BALL_SPEED: f32 = 150.;
+pub const CENTER_LINE_WIDTH: f32 = 2.;
 
 pub enum Direction {
     Up,

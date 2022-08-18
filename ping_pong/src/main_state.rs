@@ -1,6 +1,6 @@
 use crate::constants::{
-    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, PLAYER_SPEED, RACKET_H, RACKET_H_HALF,
-    RACKET_W, RACKET_W_HALF,
+    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, PLAYER_SPEED, RACKET_H,
+    RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
 };
 use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::{draw, DrawParam};
@@ -15,6 +15,7 @@ pub struct MainState {
     p2_position: Point2<f32>,
     ball_position: Point2<f32>,
     ball_velocity: Point2<f32>,
+    center_line_position: Point2<f32>,
     p1_score: u32,
     p2_score: u32,
 }
@@ -40,6 +41,10 @@ impl MainState {
                 y: scr_height_half,
             },
             ball_velocity: ball_point,
+            center_line_position: Point2 {
+                x: scr_width_half,
+                y: 0.,
+            },
             p1_score: 0,
             p2_score: 0,
         }
@@ -87,6 +92,10 @@ impl EventHandler for MainState {
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::Color::from_rgb(55, 109, 93));
+        let screen_width = graphics::drawable_size(ctx).0;
+        let screen_width_half = screen_width * 0.5;
+
+        draw_center_line(ctx, self)?;
 
         let racket = graphics::Rect::new(-RACKET_W_HALF, -RACKET_H_HALF, RACKET_W, RACKET_H);
         let racket_mesh = graphics::Mesh::new_rectangle(
@@ -109,10 +118,11 @@ impl EventHandler for MainState {
 
         draw(ctx, &ball_mesh, DrawParam::new().dest(self.ball_position))?;
 
-        let score_box =
-            graphics::Text::new(format!("Oyuncu 1 :{} vs Oyuncu 2 :{}", self.p1_score, self.p2_score));
-        let screen_width = graphics::drawable_size(ctx).0;
-        let screen_width_half = screen_width * 0.5;
+        let score_box = graphics::Text::new(format!(
+            "Oyuncu 1 :{} vs Oyuncu 2 :{}",
+            self.p1_score, self.p2_score
+        ));
+
         let mut score_position = Point2 {
             x: screen_width_half,
             y: 25.,
@@ -126,6 +136,30 @@ impl EventHandler for MainState {
         graphics::present(ctx)?;
         Ok(())
     }
+}
+
+fn draw_center_line(ctx: &mut Context, main_state: &MainState) -> GameResult<()> {
+    let screen_height = graphics::drawable_size(ctx).1;
+    let center_line = graphics::Rect::new(
+        -CENTER_LINE_WIDTH * 0.5,
+        0.,
+        CENTER_LINE_WIDTH,
+        screen_height,
+    );
+    let center_line_mesh = graphics::Mesh::new_rectangle(
+        ctx,
+        graphics::DrawMode::fill(),
+        center_line,
+        graphics::Color::WHITE,
+    )?;
+
+    draw(
+        ctx,
+        &center_line_mesh,
+        DrawParam::new().dest(main_state.center_line_position),
+    )?;
+
+    Ok(())
 }
 
 fn move_to(
