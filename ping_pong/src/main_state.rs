@@ -3,7 +3,7 @@ use crate::constants::{
     RACKET_W, RACKET_W_HALF,
 };
 use ggez::event::{EventHandler, KeyCode};
-use ggez::graphics::DrawParam;
+use ggez::graphics::{draw, DrawParam};
 use ggez::input::keyboard;
 use ggez::mint::Point2;
 use ggez::timer::delta;
@@ -15,6 +15,8 @@ pub struct MainState {
     p2_position: Point2<f32>,
     ball_position: Point2<f32>,
     ball_velocity: Point2<f32>,
+    p1_score: u32,
+    p2_score: u32,
 }
 
 impl MainState {
@@ -38,6 +40,8 @@ impl MainState {
                 y: scr_height_half,
             },
             ball_velocity: ball_point,
+            p1_score: 0,
+            p2_score: 0,
         }
     }
 }
@@ -45,6 +49,7 @@ impl MainState {
 impl EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let delta_time = delta(ctx).as_secs_f32();
+        let (screen_width, screen_height) = graphics::drawable_size(ctx);
 
         move_to(&mut self.p2_position, Direction::Up, KeyCode::Up, ctx);
         move_to(&mut self.p2_position, Direction::Down, KeyCode::Down, ctx);
@@ -53,6 +58,22 @@ impl EventHandler for MainState {
 
         self.ball_position.x += self.ball_velocity.x * delta_time;
         self.ball_position.y += self.ball_velocity.y * delta_time;
+
+        if self.ball_position.x < 0. {
+            self.ball_position.x = screen_width * 0.5;
+            self.ball_position.y = screen_height * 0.5;
+            get_rand_position(&mut self.ball_velocity, BALL_SPEED, BALL_SPEED);
+            self.p2_score += 1;
+            //println!("P1 -> {}, P2 -> {}", self.p1_score, self.p2_score);
+        }
+
+        if self.ball_position.x > screen_width {
+            self.ball_position.x = screen_width * 0.5;
+            self.ball_position.y = screen_height * 0.5;
+            get_rand_position(&mut self.ball_velocity, BALL_SPEED, BALL_SPEED);
+            self.p1_score += 1;
+            //println!("P1 -> {}, P2 -> {}", self.p1_score, self.p2_score);
+        }
 
         Ok(())
     }
@@ -67,8 +88,8 @@ impl EventHandler for MainState {
             graphics::Color::WHITE,
         )?;
 
-        graphics::draw(ctx, &racket_mesh, DrawParam::new().dest(self.p1_position))?;
-        graphics::draw(ctx, &racket_mesh, DrawParam::new().dest(self.p2_position))?;
+        draw(ctx, &racket_mesh, DrawParam::new().dest(self.p1_position))?;
+        draw(ctx, &racket_mesh, DrawParam::new().dest(self.p2_position))?;
 
         let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
         let ball_mesh = graphics::Mesh::new_rectangle(
@@ -78,7 +99,21 @@ impl EventHandler for MainState {
             graphics::Color::WHITE,
         )?;
 
-        graphics::draw(ctx, &ball_mesh, DrawParam::new().dest(self.ball_position))?;
+        draw(ctx, &ball_mesh, DrawParam::new().dest(self.ball_position))?;
+
+        let score_box =
+            graphics::Text::new(format!("P1:{} vs P2:{}", self.p1_score, self.p2_score));
+        let screen_width = graphics::drawable_size(ctx).0;
+        let screen_width_half = screen_width * 0.5;
+        let mut score_position = Point2 {
+            x: screen_width_half,
+            y: 25.,
+        };
+        let score_box_dimension = score_box.dimensions(ctx);
+        score_position.x -= score_box_dimension.w as f32 * 0.5;
+        score_position.y -= score_box_dimension.h as f32 * 0.5;
+
+        draw(ctx, &score_box, DrawParam::new().dest(score_position))?;
 
         graphics::present(ctx)?;
         Ok(())
