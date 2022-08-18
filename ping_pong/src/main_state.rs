@@ -92,50 +92,66 @@ impl EventHandler for MainState {
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::Color::from_rgb(55, 109, 93));
-        let screen_width = graphics::drawable_size(ctx).0;
-        let screen_width_half = screen_width * 0.5;
 
         draw_center_line(ctx, self)?;
-
-        let racket = graphics::Rect::new(-RACKET_W_HALF, -RACKET_H_HALF, RACKET_W, RACKET_H);
-        let racket_mesh = graphics::Mesh::new_rectangle(
-            ctx,
-            graphics::DrawMode::fill(),
-            racket,
-            graphics::Color::WHITE,
-        )?;
-
-        draw(ctx, &racket_mesh, DrawParam::new().dest(self.p1_position))?;
-        draw(ctx, &racket_mesh, DrawParam::new().dest(self.p2_position))?;
-
-        let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
-        let ball_mesh = graphics::Mesh::new_rectangle(
-            ctx,
-            graphics::DrawMode::fill(),
-            ball,
-            graphics::Color::WHITE,
-        )?;
-
-        draw(ctx, &ball_mesh, DrawParam::new().dest(self.ball_position))?;
-
-        let score_box = graphics::Text::new(format!(
-            "Oyuncu 1 :{} vs Oyuncu 2 :{}",
-            self.p1_score, self.p2_score
-        ));
-
-        let mut score_position = Point2 {
-            x: screen_width_half,
-            y: 25.,
-        };
-        let score_box_dimension = score_box.dimensions(ctx);
-        score_position.x -= score_box_dimension.w as f32 * 0.5;
-        score_position.y -= score_box_dimension.h as f32 * 0.5;
-
-        draw(ctx, &score_box, DrawParam::new().dest(score_position))?;
+        draw_racket(ctx, self.p1_position)?;
+        draw_racket(ctx, self.p2_position)?;
+        draw_ball(ctx, self.ball_position)?;
+        draw_score_box(ctx, self)?;
 
         graphics::present(ctx)?;
         Ok(())
     }
+}
+
+fn draw_score_box(ctx: &mut Context, main_state: &MainState) -> GameResult {
+    let screen_width = graphics::drawable_size(ctx).0;
+    let screen_width_half = screen_width * 0.5;
+
+    let score_box = graphics::Text::new(format!(
+        "Oyuncu 1 :{} vs Oyuncu 2 :{}",
+        main_state.p1_score, main_state.p2_score
+    ));
+
+    let mut score_position = Point2 {
+        x: screen_width_half,
+        y: 25.,
+    };
+    let score_box_dimension = score_box.dimensions(ctx);
+    score_position.x -= score_box_dimension.w as f32 * 0.5;
+    score_position.y -= score_box_dimension.h as f32 * 0.5;
+
+    draw(ctx, &score_box, DrawParam::new().dest(score_position))?;
+
+    Ok(())
+}
+
+fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
+    let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
+    let ball_mesh = graphics::Mesh::new_rectangle(
+        ctx,
+        graphics::DrawMode::fill(),
+        ball,
+        graphics::Color::WHITE,
+    )?;
+
+    draw(ctx, &ball_mesh, DrawParam::new().dest(position))?;
+
+    Ok(())
+}
+
+fn draw_racket(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
+    let racket = graphics::Rect::new(-RACKET_W_HALF, -RACKET_H_HALF, RACKET_W, RACKET_H);
+    let racket_mesh = graphics::Mesh::new_rectangle(
+        ctx,
+        graphics::DrawMode::fill(),
+        racket,
+        graphics::Color::WHITE,
+    )?;
+
+    draw(ctx, &racket_mesh, DrawParam::new().dest(position))?;
+
+    Ok(())
 }
 
 fn draw_center_line(ctx: &mut Context, main_state: &MainState) -> GameResult<()> {
