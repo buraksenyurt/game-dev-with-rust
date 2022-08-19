@@ -1,7 +1,9 @@
 mod components;
 mod constant;
 mod enemy;
+mod enemy_formation;
 mod player;
+mod point;
 mod resources;
 
 use crate::components::{
