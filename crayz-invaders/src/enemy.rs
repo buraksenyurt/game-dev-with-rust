@@ -1,7 +1,8 @@
 use crate::components::{Enemy, FromEnemy, Player, SpriteSize};
+use crate::enemy_formation::{Formation, FormationMaker};
 use crate::player::PlayerState;
 use crate::{
-    EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize, BASE_SPEED,
+    EnemyCount, ExplosionToSpawn, GameTextures, Laser, Movable, Velocity, WinSize,
     ENEMY_LASER_SIZE, ENEMY_SIZE, FPS, MAX_ENEMY, SPRITE_SCALE,
 };
 use bevy::ecs::schedule::ShouldRun;
@@ -16,17 +17,18 @@ pub struct EnemyPlugin;
 
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::new()
-                .with_run_criteria(FixedTimestep::step(0.75))
-                .with_system(enemy_create_system),
-        )
-        .add_system_set(
-            SystemSet::new()
-                .with_run_criteria(enemy_fire_criteria)
-                .with_system(enemy_fire_system),
-        )
-        .add_system(enemy_movement_system);
+        app.insert_resource(FormationMaker::default())
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(FixedTimestep::step(0.75))
+                    .with_system(enemy_create_system),
+            )
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(enemy_fire_criteria)
+                    .with_system(enemy_fire_system),
+            )
+            .add_system(enemy_movement_system);
     }
 }
 
@@ -70,25 +72,24 @@ fn enemy_create_system(
     game_textures: Res<GameTextures>,
     window_size: Res<WinSize>,
     mut enemy_count: ResMut<EnemyCount>,
+    mut formation_maker: ResMut<FormationMaker>,
 ) {
     if enemy_count.0 < MAX_ENEMY {
-        let mut rnd = thread_rng();
-        let w = window_size.width / 2. - 100.;
-        let h = window_size.height / 2. - 150.;
-        let x = rnd.gen_range(-w..w);
-        let y = rnd.gen_range(-h..h);
+        let formation = formation_maker.build(&window_size);
+        let start_point = formation.start;
 
         commands
             .spawn_bundle(SpriteBundle {
                 texture: game_textures.enemy.clone(),
                 transform: Transform {
-                    translation: Vec3::new(x, y, 10.),
+                    translation: Vec3::new(start_point.x, start_point.y, 10.),
                     scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
                     ..Default::default()
                 },
                 ..Default::default()
             })
             .insert(Enemy)
+            .insert(formation)
             .insert(SpriteSize::from(ENEMY_SIZE));
 
         enemy_count.0 += 1;
@@ -129,10 +130,40 @@ pub fn enemy_hit_system(
     }
 }
 
-fn enemy_movement_system(mut query: Query<&mut Transform, With<Enemy>>) {
-    for mut trf in query.iter_mut() {
-        let translation = &mut trf.translation;
-        //translation.x += BASE_SPEED * FPS / 2.;
-        translation.y -= BASE_SPEED * FPS / 6.;
+fn enemy_movement_system(mut query: Query<(&mut Transform, &mut Formation), With<Enemy>>) {
+    for (mut transform, mut formation) in query.iter_mut() {
+        let (x_org, y_org) = (transform.translation.x, transform.translation.y);
+        let max_distance = FPS * formation.speed;
+
+        let dir: f32 = if formation.start.x < 0. { 1. } else { -1. };
+        let pivot = formation.pivot;
+        let radius = formation.radius;
+
+        let angle =
+            formation.angle + dir * formation.speed * FPS / (radius.x.min(radius.y) * PI / 2.);
+
+        let x_dst = radius.x * angle.cos() + pivot.x;
+        let y_dst = radius.y * angle.sin() + pivot.y;
+
+        let dx = x_org - x_dst;
+        let dy = y_org - y_dst;
+        let distance = (dx * dx + dy * dy).sqrt();
+        let distance_ratio = if distance != 0. {
+            max_distance / distance
+        } else {
+            0.
+        };
+
+        let x = x_org - dx * distance_ratio;
+        let x = if dx > 0. { x.max(x_dst) } else { x.min(x_dst) };
+        let y = y_org - dy * distance_ratio;
+        let y = if dy > 0. { y.max(y_dst) } else { y.min(y_dst) };
+
+        if distance < max_distance * formation.speed / 20. {
+            formation.angle = angle;
+        }
+
+        let translation = &mut transform.translation;
+        (translation.x, translation.y) = (x, y);
     }
 }
