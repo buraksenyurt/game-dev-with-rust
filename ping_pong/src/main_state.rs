@@ -1,6 +1,6 @@
 use crate::constants::{
-    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, PLAYER_SPEED, RACKET_H,
-    RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
+    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, PADDING, PLAYER_SPEED,
+    RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
 };
 use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::{draw, DrawParam};
@@ -29,11 +29,11 @@ impl MainState {
         get_rand_position(&mut ball_point, BALL_SPEED, BALL_SPEED);
         MainState {
             p1_position: Point2 {
-                x: RACKET_W_HALF,
+                x: RACKET_W_HALF + PADDING,
                 y: scr_height_half,
             },
             p2_position: Point2 {
-                x: scr_width - RACKET_W_HALF,
+                x: scr_width - RACKET_W_HALF - PADDING,
                 y: scr_height_half,
             },
             ball_position: Point2 {
@@ -88,8 +88,17 @@ impl EventHandler for MainState {
             self.ball_velocity.y = -self.ball_velocity.y.abs();
         }
 
+        if is_player_catch_the_ball(self.p1_position, self.ball_position) {
+            self.ball_velocity.x = self.ball_velocity.x.abs();
+        }
+
+        if is_player_catch_the_ball(self.p2_position, self.ball_position) {
+            self.ball_velocity.x = -self.ball_velocity.x.abs();
+        }
+
         Ok(())
     }
+
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::Color::from_rgb(55, 109, 93));
 
@@ -102,6 +111,15 @@ impl EventHandler for MainState {
         graphics::present(ctx)?;
         Ok(())
     }
+}
+
+fn is_player_catch_the_ball(player_position: Point2<f32>, ball_position: Point2<f32>) -> bool {
+    let result = ball_position.x - BALL_SIZE_HALF < player_position.x + RACKET_W_HALF
+        && ball_position.x + BALL_SIZE_HALF > player_position.x - RACKET_W_HALF
+        && ball_position.y - BALL_SIZE_HALF < player_position.y + RACKET_H_HALF
+        && ball_position.y + BALL_SIZE_HALF > player_position.y - RACKET_H_HALF;
+
+    result
 }
 
 fn draw_score_box(ctx: &mut Context, main_state: &MainState) -> GameResult {
