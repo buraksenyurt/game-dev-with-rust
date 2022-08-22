@@ -1,3 +1,5 @@
+mod color_factory;
+mod constant;
 mod game;
 
 use crate::game::Game;
