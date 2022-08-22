@@ -4,16 +4,21 @@ use ggez::event::{EventHandler, KeyCode, KeyMods};
 use ggez::graphics::{draw, DrawParam};
 use ggez::mint::Point2;
 use ggez::{graphics, Context, GameResult};
+use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 use std::time::Duration;
 
 pub struct Game {
     pub stopped: bool,
+    pub rnd: ThreadRng,
 }
 
 impl Game {
     pub fn new(_context: &mut Context) -> Self {
-        Game { stopped: false }
+        Game {
+            stopped: false,
+            rnd: thread_rng(),
+        }
     }
 }
 
@@ -41,11 +46,10 @@ impl EventHandler for Game {
             let screen = graphics::drawable_size(&ctx);
             graphics::clear(ctx, graphics::Color::WHITE);
             let colors = get_colors();
-            let mut rnd = thread_rng();
             for c in colors {
                 let origin = Point2 {
-                    x: rnd.gen_range(0.0..screen.0 - TINY_RECT_WIDTH),
-                    y: rnd.gen_range(0.0..screen.1 / 4.),
+                    x: self.rnd.gen_range(0.0..screen.0 - TINY_RECT_WIDTH),
+                    y: self.rnd.gen_range(0.0..screen.1 / 4.),
                 };
 
                 draw_rectangle(ctx, &c, origin)?;
