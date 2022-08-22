@@ -44,7 +44,7 @@ impl EventHandler for Game {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         if !self.stopped {
             let screen = graphics::drawable_size(&ctx);
-            graphics::clear(ctx, graphics::Color::WHITE);
+            graphics::clear(ctx, graphics::Color::BLACK);
             let colors = get_colors();
             for c in colors {
                 let origin = Point2 {
@@ -54,6 +54,7 @@ impl EventHandler for Game {
 
                 draw_rectangle(ctx, &c, origin)?;
             }
+            draw_textbox(ctx)?;
             graphics::present(ctx)?;
             ggez::timer::sleep(Duration::from_secs_f32(0.3));
         }
@@ -80,5 +81,15 @@ fn draw_rectangle(ctx: &mut Context, color: &Color, origin: Point2<f32>) -> Game
         }),
     )?;
 
+    Ok(())
+}
+
+fn draw_textbox(ctx: &mut Context) -> GameResult {
+    let text_box = graphics::Text::new("For stop press Down. For restart press Up.");
+    draw(
+        ctx,
+        &text_box,
+        DrawParam::new().dest(Point2 { x: 0., y: 0. }),
+    )?;
     Ok(())
 }
