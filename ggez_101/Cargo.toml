@@ -1,0 +1,10 @@
+[package]
+name = "ggez_101"
+version = "0.1.0"
+edition = "2021"
+description = "ggez ile ilgili temellerin ele alındığı program"
+authors = ["Burak Selim Senyurt"]
+
+[dependencies]
+ggez = "0.7.0"
+rand = "0.8.5"
