@@ -6,18 +6,22 @@ use ggez::mint::Point2;
 use ggez::{graphics, Context, GameResult};
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
+use std::path::Path;
 use std::time::Duration;
 
 pub struct Game {
     pub stopped: bool,
     pub rnd: ThreadRng,
+    pub player: graphics::Image,
 }
 
 impl Game {
-    pub fn new(_context: &mut Context) -> Self {
+    pub fn new(context: &mut Context) -> Self {
         Game {
             stopped: false,
             rnd: thread_rng(),
+            player: graphics::Image::new(context, Path::new("/senzoface2.png"))
+                .expect("oyuncu karakteri yüklenemedi"),
         }
     }
 }
@@ -55,6 +59,7 @@ impl EventHandler for Game {
                 draw_rectangle(ctx, &c, origin)?;
             }
             draw_textbox(ctx)?;
+            draw_image(ctx, &self.player)?;
             graphics::present(ctx)?;
             ggez::timer::sleep(Duration::from_secs_f32(0.3));
         }
@@ -92,4 +97,20 @@ fn draw_textbox(ctx: &mut Context) -> GameResult {
         DrawParam::new().dest(Point2 { x: 0., y: 0. }),
     )?;
     Ok(())
+}
+
+fn draw_image(ctx: &mut Context, image: &graphics::Image) -> GameResult {
+    let screen = graphics::drawable_size(&ctx);
+
+    let screen_center_x = screen.0 * 0.5 - image.dimensions().w * 0.5;
+    let screen_center_y = screen.1 * 0.5 - image.dimensions().h * 0.5;
+
+    draw(
+        ctx,
+        image,
+        DrawParam::new().dest(Point2 {
+            x: screen_center_x,
+            y: screen_center_y,
+        }),
+    )
 }
