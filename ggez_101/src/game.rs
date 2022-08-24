@@ -1,9 +1,12 @@
 use crate::color_factory::{get_colors, Color};
 use crate::constant::{TINY_RECT_HEIGHT, TINY_RECT_WIDTH};
-use ggez::event::{EventHandler, KeyCode, KeyMods};
+use crate::mouse::Mouse;
+use ggez::event::{
+    Axis, Button, ErrorOrigin, EventHandler, GamepadId, KeyCode, KeyMods, MouseButton,
+};
 use ggez::graphics::{draw, DrawParam};
 use ggez::mint::Point2;
-use ggez::{graphics, Context, GameResult};
+use ggez::{graphics, Context, GameError, GameResult};
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 use std::path::Path;
@@ -13,6 +16,7 @@ pub struct Game {
     pub stopped: bool,
     pub rnd: ThreadRng,
     pub player: graphics::Image,
+    pub mouse: Mouse,
 }
 
 impl Game {
@@ -22,11 +26,17 @@ impl Game {
             rnd: thread_rng(),
             player: graphics::Image::new(context, Path::new("/senzoface2.png"))
                 .expect("oyuncu karakteri yüklenemedi"),
+            mouse: Mouse::new(0., 0.),
         }
     }
 }
 
 impl EventHandler for Game {
+    fn mouse_motion_event(&mut self, _ctx: &mut Context, x: f32, y: f32, _dx: f32, _dy: f32) {
+        self.mouse.x = x;
+        self.mouse.y = y;
+        println!("({}x{})", x, y);
+    }
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
@@ -58,7 +68,7 @@ impl EventHandler for Game {
 
                 draw_rectangle(ctx, &c, origin)?;
             }
-            draw_textbox(ctx)?;
+            draw_textbox(ctx, &self.mouse)?;
             draw_image(ctx, &self.player)?;
             graphics::present(ctx)?;
             ggez::timer::sleep(Duration::from_secs_f32(0.3));
@@ -89,8 +99,11 @@ fn draw_rectangle(ctx: &mut Context, color: &Color, origin: Point2<f32>) -> Game
     Ok(())
 }
 
-fn draw_textbox(ctx: &mut Context) -> GameResult {
-    let text_box = graphics::Text::new("For stop press Down. For restart press Up.");
+fn draw_textbox(ctx: &mut Context, mouse: &Mouse) -> GameResult {
+    let text_box = graphics::Text::new(format!(
+        "For stop press Down. For restart press Up. {}",
+        mouse
+    ));
     draw(
         ctx,
         &text_box,

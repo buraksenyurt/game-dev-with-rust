@@ -1,6 +1,7 @@
 mod color_factory;
 mod constant;
 mod game;
+mod mouse;
 
 use crate::game::Game;
 use ggez::graphics::set_window_title;
