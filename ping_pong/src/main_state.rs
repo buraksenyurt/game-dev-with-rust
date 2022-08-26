@@ -115,11 +115,17 @@ impl EventHandler for MainState {
 }
 
 fn is_player_catch_the_ball(player_position: Point2<f32>, ball_position: Point2<f32>) -> bool {
-    let result = ball_position.x - BALL_SIZE_HALF < player_position.x + RACKET_W_HALF
-        && ball_position.x + BALL_SIZE_HALF > player_position.x - RACKET_W_HALF
-        && ball_position.y - BALL_SIZE_HALF < player_position.y + RACKET_H_HALF
-        && ball_position.y + BALL_SIZE_HALF > player_position.y - RACKET_H_HALF;
+    let result = ball_position.x < player_position.x + RACKET_W_HALF
+        && ball_position.x + BALL_SIZE > player_position.x - RACKET_W_HALF
+        && ball_position.y - BALL_SIZE < player_position.y + RACKET_H_HALF
+        && ball_position.y + BALL_SIZE > player_position.y - RACKET_H_HALF;
 
+    if result {
+        println!(
+            "Ball Position {}x{},Player Position {}x{}",
+            ball_position.x, ball_position.y, player_position.x, player_position.y
+        );
+    }
     result
 }
 
@@ -128,7 +134,7 @@ fn draw_score_box(ctx: &mut Context, main_state: &MainState) -> GameResult {
     let screen_width_half = screen_width * 0.5;
 
     let score_box = graphics::Text::new(format!(
-        "Oyuncu 1 :{} vs Oyuncu 2 :{}",
+        "Oyuncu L :{} vs Oyuncu R :{}",
         main_state.p1_score, main_state.p2_score
     ));
 
