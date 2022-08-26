@@ -1,12 +1,10 @@
 use crate::color_factory::{get_colors, Color};
 use crate::constant::{TINY_RECT_HEIGHT, TINY_RECT_WIDTH};
 use crate::mouse::Mouse;
-use ggez::event::{
-    Axis, Button, ErrorOrigin, EventHandler, GamepadId, KeyCode, KeyMods, MouseButton,
-};
+use ggez::event::{EventHandler, KeyCode, KeyMods};
 use ggez::graphics::{draw, DrawParam};
 use ggez::mint::Point2;
-use ggez::{graphics, Context, GameError, GameResult};
+use ggez::{graphics, Context, GameResult};
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 use std::path::Path;
@@ -17,6 +15,7 @@ pub struct Game {
     pub rnd: ThreadRng,
     pub player: graphics::Image,
     pub mouse: Mouse,
+    pub symbol_position: Point2<f32>,
 }
 
 impl Game {
@@ -27,6 +26,7 @@ impl Game {
             player: graphics::Image::new(context, Path::new("/senzoface2.png"))
                 .expect("oyuncu karakteri yüklenemedi"),
             mouse: Mouse::new(0., 0.),
+            symbol_position: Point2 { x: 150., y: 250. },
         }
     }
 }
@@ -35,6 +35,8 @@ impl EventHandler for Game {
     fn mouse_motion_event(&mut self, _ctx: &mut Context, x: f32, y: f32, _dx: f32, _dy: f32) {
         self.mouse.x = x;
         self.mouse.y = y;
+        self.symbol_position.x = self.mouse.x;
+        self.symbol_position.y = self.mouse.y;
         println!("({}x{})", x, y);
     }
     fn key_down_event(
@@ -70,8 +72,9 @@ impl EventHandler for Game {
             }
             draw_textbox(ctx, &self.mouse)?;
             draw_image(ctx, &self.player)?;
+            draw_mesh(ctx, self.symbol_position)?;
             graphics::present(ctx)?;
-            ggez::timer::sleep(Duration::from_secs_f32(0.3));
+            ggez::timer::sleep(Duration::from_secs_f32(0.150));
         }
         Ok(())
     }
@@ -126,4 +129,41 @@ fn draw_image(ctx: &mut Context, image: &graphics::Image) -> GameResult {
             y: screen_center_y,
         }),
     )
+}
+
+fn draw_mesh(ctx: &mut Context, start: Point2<f32>) -> GameResult {
+    let mesh_builder = &mut graphics::MeshBuilder::new();
+
+    mesh_builder.line(
+        &[
+            Point2 {
+                x: start.x,
+                y: start.y,
+            },
+            Point2 {
+                x: start.x - 50.,
+                y: start.y - 50.,
+            },
+            Point2 {
+                x: start.x,
+                y: start.y + 50.,
+            },
+            Point2 {
+                x: start.x + 50.,
+                y: start.y,
+            },
+            Point2 {
+                x: start.x - 50.,
+                y: start.y - 50.,
+            },
+        ],
+        5.0,
+        graphics::Color::from_rgb(234, 230, 202),
+    )?;
+
+    let mesh = mesh_builder.build(ctx)?;
+
+    draw(ctx, &mesh, DrawParam::default())?;
+
+    Ok(())
 }
