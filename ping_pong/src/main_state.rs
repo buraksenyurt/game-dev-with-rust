@@ -9,6 +9,7 @@ use ggez::mint::Point2;
 use ggez::timer::delta;
 use ggez::{graphics, Context, GameResult};
 use rand::{thread_rng, Rng};
+use std::path::Path;
 
 pub struct MainState {
     p1_position: Point2<f32>,
@@ -145,15 +146,16 @@ fn draw_score_box(ctx: &mut Context, main_state: &MainState) -> GameResult {
 }
 
 fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
-    let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
-    let ball_mesh = graphics::Mesh::new_rectangle(
-        ctx,
-        graphics::DrawMode::fill(),
-        ball,
-        graphics::Color::WHITE,
-    )?;
-
-    draw(ctx, &ball_mesh, DrawParam::new().dest(position))?;
+    // let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
+    // let ball_mesh = graphics::Mesh::new_rectangle(
+    //     ctx,
+    //     graphics::DrawMode::fill(),
+    //     ball,
+    //     graphics::Color::WHITE,
+    // )?;
+    let ball_image = graphics::Image::new(ctx, Path::new("/SoccerBall.png"))?;
+    draw(ctx, &ball_image, DrawParam::new().dest(position))?;
+    //draw(ctx, &ball_mesh, DrawParam::new().dest(position))?;
 
     Ok(())
 }
