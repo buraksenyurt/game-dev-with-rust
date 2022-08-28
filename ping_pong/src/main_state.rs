@@ -16,6 +16,9 @@ pub struct MainState {
     p2_position: Point2<f32>,
     ball_position: Point2<f32>,
     ball_velocity: Point2<f32>,
+    p1_bonus_position: Point2<f32>,
+    p2_bonus_position: Point2<f32>,
+    bonus_velocity: Point2<f32>,
     center_line_position: Point2<f32>,
     p1_score: u32,
     p2_score: u32,
@@ -28,6 +31,8 @@ impl MainState {
         let (scr_width_half, scr_height_half) = (scr_width * 0.5, scr_height * 0.5);
         let mut ball_point = Point2 { x: 0., y: 0. };
         get_rand_position(&mut ball_point, BALL_SPEED, BALL_SPEED);
+
+        let rand_bonus_point = get_rand_position_on_center_line(&ctx);
         MainState {
             p1_position: Point2 {
                 x: RACKET_W_HALF + PADDING,
@@ -48,23 +53,13 @@ impl MainState {
             },
             p1_score: 0,
             p2_score: 0,
+            p1_bonus_position: rand_bonus_point,
+            p2_bonus_position: rand_bonus_point,
+            bonus_velocity: ball_point,
         }
     }
-}
 
-impl EventHandler for MainState {
-    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let delta_time = delta(ctx).as_secs_f32();
-        let (screen_width, screen_height) = graphics::drawable_size(ctx);
-
-        move_to(&mut self.p2_position, Direction::Up, KeyCode::Up, ctx);
-        move_to(&mut self.p2_position, Direction::Down, KeyCode::Down, ctx);
-        move_to(&mut self.p1_position, Direction::Up, KeyCode::W, ctx);
-        move_to(&mut self.p1_position, Direction::Down, KeyCode::S, ctx);
-
-        self.ball_position.x += self.ball_velocity.x * delta_time;
-        self.ball_position.y += self.ball_velocity.y * delta_time;
-
+    fn check_borderline(&mut self, screen_width: f32, screen_height: f32) {
         if self.ball_position.x < 0. {
             self.ball_position.x = screen_width * 0.5;
             self.ball_position.y = screen_height * 0.5;
@@ -96,6 +91,39 @@ impl EventHandler for MainState {
         if is_player_catch_the_ball(self.p2_position, self.ball_position) {
             self.ball_velocity.x = -self.ball_velocity.x.abs();
         }
+    }
+}
+
+impl EventHandler for MainState {
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let delta_time = delta(ctx).as_secs_f32();
+        let (screen_width, screen_height) = graphics::drawable_size(ctx);
+
+        move_to(&mut self.p2_position, Direction::Up, KeyCode::Up, ctx);
+        move_to(&mut self.p2_position, Direction::Down, KeyCode::Down, ctx);
+        move_to(&mut self.p1_position, Direction::Up, KeyCode::W, ctx);
+        move_to(&mut self.p1_position, Direction::Down, KeyCode::S, ctx);
+
+        self.ball_position.x += self.ball_velocity.x * delta_time;
+        self.ball_position.y += self.ball_velocity.y * delta_time;
+
+        self.p1_bonus_position.x -= self.bonus_velocity.x * delta_time * 0.5;
+        self.p2_bonus_position.x += self.bonus_velocity.x * delta_time * 0.5;
+
+        if self.p1_bonus_position.x < 0. {
+            self.p1_bonus_position.x = screen_width * 0.5;
+            self.p1_bonus_position.y = 0.;
+            self.p1_bonus_position = get_rand_position_on_center_line(&ctx);
+        }
+
+        if self.p2_bonus_position.x >= screen_width {
+            self.p2_bonus_position.x = screen_width * 0.5;
+            self.p2_bonus_position.y = 0.;
+            self.p2_bonus_position = get_rand_position_on_center_line(&ctx);
+        }
+
+        //println!("Bonus position {:?}",self.bonus_position);
+        self.check_borderline(screen_width, screen_height);
 
         Ok(())
     }
@@ -108,6 +136,8 @@ impl EventHandler for MainState {
         draw_racket(ctx, self.p2_position)?;
         draw_ball(ctx, self.ball_position)?;
         draw_score_box(ctx, self)?;
+        draw_bonus(ctx, self.p1_bonus_position)?;
+        draw_bonus(ctx, self.p2_bonus_position)?;
 
         graphics::present(ctx)?;
         Ok(())
@@ -162,6 +192,13 @@ fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
     let ball_image = graphics::Image::new(ctx, Path::new("/SoccerBall.png"))?;
     draw(ctx, &ball_image, DrawParam::new().dest(position))?;
     //draw(ctx, &ball_mesh, DrawParam::new().dest(position))?;
+
+    Ok(())
+}
+
+fn draw_bonus(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
+    let apple_image = graphics::Image::new(ctx, Path::new("/apple.png"))?;
+    draw(ctx, &apple_image, DrawParam::new().dest(position))?;
 
     Ok(())
 }
@@ -241,4 +278,25 @@ fn get_rand_position(point: &mut Point2<f32>, x: f32, y: f32) {
         true => y,
         false => -y,
     };
+}
+
+fn get_random_direction() -> f32 {
+    let mut rnd = thread_rng();
+    let direction = match rnd.gen_bool(0.5) {
+        true => -1.,
+        false => 1.,
+    };
+    direction
+}
+
+fn get_rand_position_on_center_line(ctx: &Context) -> Point2<f32> {
+    let (screen_width, screen_height) = graphics::drawable_size(ctx);
+    let center_of_screen = screen_width * 0.5;
+
+    let mut rnd = thread_rng();
+    let random_y: f32 = rnd.gen_range(50.0..screen_height - 50.);
+    Point2 {
+        x: center_of_screen,
+        y: random_y,
+    }
 }
