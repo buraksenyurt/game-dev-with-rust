@@ -8,6 +8,8 @@ pub const PLAYER_SPEED: f32 = 500.;
 pub const BALL_SPEED: f32 = 400.;
 pub const CENTER_LINE_WIDTH: f32 = 2.;
 pub const PADDING: f32 = 10.;
+pub const P1_BONUS_IMAGE: &str = "/cube_potions_red.png";
+pub const P2_BONUS_IMAGE: &str = "/cube_potions_blue.png";
 
 pub enum Direction {
     Up,

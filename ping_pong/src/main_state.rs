@@ -1,6 +1,6 @@
 use crate::constants::{
-    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, PADDING, PLAYER_SPEED,
-    RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
+    Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, P1_BONUS_IMAGE,
+    P2_BONUS_IMAGE, PADDING, PLAYER_SPEED, RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
 };
 use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::{draw, DrawParam};
@@ -136,8 +136,8 @@ impl EventHandler for MainState {
         draw_racket(ctx, self.p2_position)?;
         draw_ball(ctx, self.ball_position)?;
         draw_score_box(ctx, self)?;
-        draw_bonus(ctx, self.p1_bonus_position)?;
-        draw_bonus(ctx, self.p2_bonus_position)?;
+        draw_bonus(ctx, self.p1_bonus_position, P1_BONUS_IMAGE)?;
+        draw_bonus(ctx, self.p2_bonus_position, P2_BONUS_IMAGE)?;
 
         graphics::present(ctx)?;
         Ok(())
@@ -196,8 +196,8 @@ fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
     Ok(())
 }
 
-fn draw_bonus(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
-    let apple_image = graphics::Image::new(ctx, Path::new("/apple.png"))?;
+fn draw_bonus(ctx: &mut Context, position: Point2<f32>, resource: &str) -> GameResult<()> {
+    let apple_image = graphics::Image::new(ctx, Path::new(resource))?;
     draw(ctx, &apple_image, DrawParam::new().dest(position))?;
 
     Ok(())
