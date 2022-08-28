@@ -1,5 +1,6 @@
 mod constants;
 mod main_state;
+mod player;
 
 use crate::main_state::MainState;
 use ggez;
