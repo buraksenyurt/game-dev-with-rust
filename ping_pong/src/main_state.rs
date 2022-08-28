@@ -1,8 +1,10 @@
+use crate::ball::Ball;
 use crate::constants::{
     Direction, BALL_SIZE, BALL_SIZE_HALF, BALL_SPEED, CENTER_LINE_WIDTH, P1_BONUS_IMAGE,
     P2_BONUS_IMAGE, PADDING, PLAYER_SPEED, RACKET_H, RACKET_H_HALF, RACKET_W, RACKET_W_HALF,
 };
 use crate::player::Player;
+use crate::racket::Racket;
 use ggez::event::{EventHandler, KeyCode};
 use ggez::graphics::{draw, DrawParam, Font, PxScale};
 use ggez::input::keyboard;
@@ -15,8 +17,7 @@ use std::path::Path;
 pub struct MainState {
     player_1: Player,
     player_2: Player,
-    ball_position: Point2<f32>,
-    ball_velocity: Point2<f32>,
+    ball: Ball,
     p1_bonus_position: Point2<f32>,
     p2_bonus_position: Point2<f32>,
     bonus_velocity: Point2<f32>,
@@ -40,6 +41,7 @@ impl MainState {
                     y: scr_height_half,
                 },
                 0,
+                Racket::new(RACKET_W, RACKET_H),
             ),
             player_2: Player::new(
                 2,
@@ -48,12 +50,15 @@ impl MainState {
                     y: scr_height_half,
                 },
                 0,
+                Racket::new(RACKET_W, RACKET_H),
             ),
-            ball_position: Point2 {
-                x: scr_width_half,
-                y: scr_height_half,
-            },
-            ball_velocity: ball_point,
+            ball: Ball::new(
+                Point2 {
+                    x: scr_width_half,
+                    y: scr_height_half,
+                },
+                ball_point,
+            ),
             center_line_position: Point2 {
                 x: scr_width_half,
                 y: 0.,
@@ -65,36 +70,36 @@ impl MainState {
     }
 
     fn check_borderline(&mut self, screen_width: f32, screen_height: f32) {
-        if self.ball_position.x < 0. {
-            self.ball_position.x = screen_width * 0.5;
-            self.ball_position.y = screen_height * 0.5;
-            get_rand_position(&mut self.ball_velocity, BALL_SPEED, BALL_SPEED);
+        if self.ball.position.x < 0. {
+            self.ball.position.x = screen_width * 0.5;
+            self.ball.position.y = screen_height * 0.5;
+            get_rand_position(&mut self.ball.velocity, BALL_SPEED, BALL_SPEED);
             self.player_2.score += 1;
             //println!("P1 -> {}, P2 -> {}", self.p1_score, self.p2_score);
         }
 
-        if self.ball_position.x > screen_width {
-            self.ball_position.x = screen_width * 0.5;
-            self.ball_position.y = screen_height * 0.5;
-            get_rand_position(&mut self.ball_velocity, BALL_SPEED, BALL_SPEED);
+        if self.ball.position.x > screen_width {
+            self.ball.position.x = screen_width * 0.5;
+            self.ball.position.y = screen_height * 0.5;
+            get_rand_position(&mut self.ball.velocity, BALL_SPEED, BALL_SPEED);
             self.player_1.score += 1;
             //println!("P1 -> {}, P2 -> {}", self.p1_score, self.p2_score);
         }
 
-        if self.ball_position.y < BALL_SIZE_HALF {
-            self.ball_position.y = BALL_SIZE_HALF;
-            self.ball_velocity.y = self.ball_velocity.y.abs();
-        } else if self.ball_position.y > screen_height - BALL_SIZE_HALF {
-            self.ball_position.y = screen_height - BALL_SIZE_HALF;
-            self.ball_velocity.y = -self.ball_velocity.y.abs();
+        if self.ball.position.y < BALL_SIZE_HALF {
+            self.ball.position.y = BALL_SIZE_HALF;
+            self.ball.velocity.y = self.ball.velocity.y.abs();
+        } else if self.ball.position.y > screen_height - BALL_SIZE_HALF {
+            self.ball.position.y = screen_height - BALL_SIZE_HALF;
+            self.ball.velocity.y = -self.ball.velocity.y.abs();
         }
 
-        if is_player_catch_the_ball(self.player_1.position, self.ball_position) {
-            self.ball_velocity.x = self.ball_velocity.x.abs();
+        if is_player_catch_the_ball(self.player_1.position, self.ball.position) {
+            self.ball.velocity.x = self.ball.velocity.x.abs();
         }
 
-        if is_player_catch_the_ball(self.player_2.position, self.ball_position) {
-            self.ball_velocity.x = -self.ball_velocity.x.abs();
+        if is_player_catch_the_ball(self.player_2.position, self.ball.position) {
+            self.ball.velocity.x = -self.ball.velocity.x.abs();
         }
     }
 
@@ -146,8 +151,8 @@ impl EventHandler for MainState {
             ctx,
         );
 
-        self.ball_position.x += self.ball_velocity.x * delta_time;
-        self.ball_position.y += self.ball_velocity.y * delta_time;
+        self.ball.position.x += self.ball.velocity.x * delta_time;
+        self.ball.position.y += self.ball.velocity.y * delta_time;
         self.check_borderline(screen_width, screen_height);
 
         self.bonus_control(&ctx, delta_time, screen_width);
@@ -159,9 +164,9 @@ impl EventHandler for MainState {
         graphics::clear(ctx, graphics::Color::from_rgb(55, 109, 93));
 
         draw_center_line(ctx, self)?;
-        draw_racket(ctx, self.player_1.position)?;
-        draw_racket(ctx, self.player_2.position)?;
-        draw_ball(ctx, self.ball_position)?;
+        draw_racket(ctx, &self.player_1)?;
+        draw_racket(ctx, &self.player_2)?;
+        draw_ball(ctx, self.ball.position)?;
         draw_score_box(ctx, self)?;
         draw_bonus(ctx, self.p1_bonus_position, P1_BONUS_IMAGE)?;
         draw_bonus(ctx, self.p2_bonus_position, P2_BONUS_IMAGE)?;
@@ -246,8 +251,13 @@ fn draw_bonus(ctx: &mut Context, position: Point2<f32>, resource: &str) -> GameR
     Ok(())
 }
 
-fn draw_racket(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
-    let racket = graphics::Rect::new(-RACKET_W_HALF, -RACKET_H_HALF, RACKET_W, RACKET_H);
+fn draw_racket(ctx: &mut Context, player: &Player) -> GameResult<()> {
+    let racket = graphics::Rect::new(
+        -RACKET_W_HALF,
+        -RACKET_H_HALF,
+        player.racket.width,
+        player.racket.height,
+    );
     let racket_mesh = graphics::Mesh::new_rectangle(
         ctx,
         graphics::DrawMode::fill(),
@@ -255,7 +265,7 @@ fn draw_racket(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
         graphics::Color::WHITE,
     )?;
 
-    draw(ctx, &racket_mesh, DrawParam::new().dest(position))?;
+    draw(ctx, &racket_mesh, DrawParam::new().dest(player.position))?;
 
     Ok(())
 }

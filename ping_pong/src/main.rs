@@ -1,6 +1,8 @@
+mod ball;
 mod constants;
 mod main_state;
 mod player;
+mod racket;
 
 use crate::main_state::MainState;
 use ggez;
