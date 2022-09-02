@@ -1,9 +1,11 @@
-use ggez::{conf, ContextBuilder, GameResult};
+use crate::main_state::MainState;
+use ggez::{conf, event, ContextBuilder, GameResult};
 use std::{env, path};
 
 mod constant;
 mod fermat;
 mod game_assets;
+mod main_state;
 mod sprite;
 mod sprite_builder;
 mod sprite_type;
@@ -25,7 +27,8 @@ fn main() -> GameResult {
         .window_mode(conf::WindowMode::default().dimensions(640., 480.))
         .add_resource_path(resource_folder);
 
-    let (mut _ctx, _events_loop) = ctx_builder.build()?;
+    let (mut ctx, events_loop) = ctx_builder.build()?;
 
-    Ok(())
+    let game = MainState::new(&mut ctx)?;
+    event::run(ctx, events_loop, game);
 }
