@@ -4,7 +4,6 @@ use crate::sprite::Sprite;
 use crate::sprite_type::SpriteType;
 use ggez::mint::{Point2, Vector2};
 use oorandom::Rand32;
-use std::cmp::min;
 use std::f32::consts::PI;
 
 // Oyundaki nesneleri oluşturmak için bir yardımcı fonksiyon.
