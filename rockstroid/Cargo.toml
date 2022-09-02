@@ -1,0 +1,9 @@
+[package]
+name = "rockstroid"
+version = "0.1.0"
+edition = "2021"
+authors = ["Burak Selim Senyurt"]
+description = "Gggez örneklerinde astroblasto'nun uygulanışı. Öğrenim amaçlı."
+
+[dependencies]
+ggez="0.7.0"
