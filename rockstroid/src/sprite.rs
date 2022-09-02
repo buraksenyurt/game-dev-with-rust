@@ -1,4 +1,5 @@
 use crate::sprite_type::SpriteType;
+use ggez::graphics;
 use ggez::mint::{Point2, Vector2};
 
 // Oyundaki hareket eden nesneleri ifade eden veri yapısı. Bu veri yapısı ile oyuncuyu,

@@ -1,5 +1,6 @@
 use crate::main_state::MainState;
-use ggez::{conf, event, ContextBuilder, GameResult};
+use ggez::graphics::{set_drawable_size, set_window_title};
+use ggez::{event, ContextBuilder, GameResult};
 use std::{env, path};
 
 mod constant;
@@ -22,12 +23,11 @@ fn main() -> GameResult {
     };
 
     // Game Context nesnesini inşa ediyoruz. Başlık, boyutlar, asset kaynağını belirtiyoruz.
-    let ctx_builder = ContextBuilder::new("Rockstroid", "ggez")
-        .window_setup(conf::WindowSetup::default().title("Rockstroid Beta"))
-        .window_mode(conf::WindowMode::default().dimensions(640., 480.))
-        .add_resource_path(resource_folder);
+    let ctx_builder = ContextBuilder::new("Rockstroid", "ggez").add_resource_path(resource_folder);
 
     let (mut ctx, events_loop) = ctx_builder.build()?;
+    set_drawable_size(&mut ctx, 640., 480.)?;
+    set_window_title(&mut ctx, "Rockstroid Beta");
 
     let game = MainState::new(&mut ctx)?;
     event::run(ctx, events_loop, game);

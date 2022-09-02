@@ -3,7 +3,8 @@ use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
 use ggez::event::EventHandler;
-use ggez::graphics::Color;
+use ggez::graphics::{draw, Color, Drawable};
+use ggez::mint::Point2;
 use ggez::{graphics, Context, GameError, GameResult};
 use oorandom::Rand32;
 
@@ -56,7 +57,48 @@ impl EventHandler for MainState {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::Color::from(Color::BLACK));
 
+        let game_assets = &self.assets;
+        let coordinates = (self.screen_width, self.screen_height);
+        let hero = &self.player;
+
+        draw_sprite(ctx, &game_assets, &hero, coordinates)?;
+
         graphics::present(ctx)?;
+
         Ok(())
     }
+}
+
+// Hareket edebilen bir nesneyi çizmek için kullanılan fonksiyon
+fn draw_sprite(
+    ctx: &mut Context,
+    assets: &GameAssets,
+    sprite: &Sprite,
+    world_coords: (f32, f32),
+) -> GameResult {
+    // Ekran genişlik ve yükseliğini al
+    let (screen_w, screen_h) = world_coords;
+    // nesnenin konumuna göre koordinatları hesaplar
+    let pos = find_screen_coordinates(screen_w, screen_h, sprite.position);
+    // asset'e ait çizilebilir imgeyi al(yani resmini :D)
+    let image = assets.get_sprite_image(sprite);
+    // pozisyon, rotasyon bilgilerini kullanarak parametreleri ayarla
+    let drawparams = graphics::DrawParam::new()
+        .dest(pos)
+        .rotation(sprite.facing as f32)
+        .offset(Point2 { x: 0.5, y: 0.5 });
+    // nesneyi güncel context üstüne çiz
+    draw(ctx, image, drawparams)?;
+
+    Ok(())
+}
+
+fn find_screen_coordinates(
+    screen_width: f32,
+    screen_height: f32,
+    point: Point2<f32>,
+) -> Point2<f32> {
+    let x = point.x + screen_width / 2.;
+    let y = screen_height - (point.y + screen_height / 2.);
+    Point2 { x, y }
 }
