@@ -1,4 +1,5 @@
 mod constant;
+mod fermat;
 mod sprite;
 mod sprite_builder;
 mod sprite_type;

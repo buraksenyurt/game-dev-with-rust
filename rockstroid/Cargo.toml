@@ -7,3 +7,4 @@ description = "Gggez örneklerinde astroblasto'nun uygulanışı. Öğrenim ama�
 
 [dependencies]
 ggez="0.7.0"
+oorandom="11.1.3"
