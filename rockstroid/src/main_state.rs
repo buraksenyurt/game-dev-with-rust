@@ -1,3 +1,4 @@
+use crate::constant::{MAX_RADIUS, MAX_ROCK_COUNT, MIN_RADIUS};
 use crate::game_assets::GameAssets;
 use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
@@ -30,7 +31,13 @@ impl MainState {
 
         let assets = GameAssets::new(ctx)?;
         let player = create_sprite(SpriteType::Player);
-        let rocks = create_random_rocks(&mut randomizer, 10, player.position, 100., 360.);
+        let rocks = create_random_rocks(
+            &mut randomizer,
+            MAX_ROCK_COUNT,
+            player.position,
+            MIN_RADIUS,
+            MAX_RADIUS,
+        );
 
         let (w, h) = graphics::drawable_size(ctx);
 
@@ -59,9 +66,15 @@ impl EventHandler for MainState {
 
         let game_assets = &self.assets;
         let coordinates = (self.screen_width, self.screen_height);
-        let hero = &self.player;
 
+        // Oyuncu çizilir
+        let hero = &self.player;
         draw_sprite(ctx, &game_assets, &hero, coordinates)?;
+
+        // rastgele konumlanan kayalar çizdirilir
+        for r in &self.rocks {
+            draw_sprite(ctx, game_assets, &r, coordinates)?;
+        }
 
         graphics::present(ctx)?;
 

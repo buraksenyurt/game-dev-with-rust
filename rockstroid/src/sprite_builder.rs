@@ -46,12 +46,12 @@ pub fn create_sprite(kind: SpriteType) -> Sprite {
 
 pub fn create_random_rocks(
     randomizer: &mut Rand32,
-    count: i32,
+    count: u8,
     exclusion: Point2<f32>,
     min_radius: f32,
     max_radius: f32,
 ) -> Vec<Sprite> {
-    (0..=count)
+    (0..count)
         .map(|_| {
             // Bir kaya üret
             let mut rock = create_sprite(SpriteType::Rock);
