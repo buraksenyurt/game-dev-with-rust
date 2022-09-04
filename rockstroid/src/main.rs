@@ -26,7 +26,6 @@ fn main() -> GameResult {
     let ctx_builder = ContextBuilder::new("Rockstroid", "ggez").add_resource_path(resource_folder);
 
     let (mut ctx, events_loop) = ctx_builder.build()?;
-    set_drawable_size(&mut ctx, 640., 480.)?;
     set_window_title(&mut ctx, "Rockstroid Beta");
 
     let game = MainState::new(&mut ctx)?;

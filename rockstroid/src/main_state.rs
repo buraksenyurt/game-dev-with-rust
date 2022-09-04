@@ -4,9 +4,9 @@ use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
 use ggez::event::EventHandler;
-use ggez::graphics::{draw, Color, Drawable};
+use ggez::graphics::{draw, Color, DrawParam, Drawable, Font, PxScale};
 use ggez::mint::Point2;
-use ggez::{graphics, Context, GameError, GameResult};
+use ggez::{graphics, timer, Context, GameError, GameResult};
 use oorandom::Rand32;
 
 // Oyunun herhangi bir andaki varlık durumunu tutacak veri yapısı.
@@ -71,12 +71,40 @@ impl EventHandler for MainState {
         let hero = &self.player;
         draw_sprite(ctx, &game_assets, &hero, coordinates)?;
 
-        // rastgele konumlanan kayalar çizdirilir
+        // Atışlar çizdirilir.
+        for s in &self.shots {
+            draw_sprite(ctx, game_assets, &s, coordinates)?;
+        }
+
+        // rastgele konumlanan kayalar çizdirilir.
+        // Main State oluşturulurken belirlenen her bir kaya nesnesi için draw operasyonu çağrılır.
         for r in &self.rocks {
             draw_sprite(ctx, game_assets, &r, coordinates)?;
         }
 
+        // Skor tabelası çizimi.
+        // Metin kutusunu hazırla
+        let mut score_box = graphics::Text::new(format!("Skor : {}", &self.score));
+        // Fontu ayarla
+        score_box.set_font(Font::default(), PxScale::from(24.));
+        // İlk pozisyonunu ekrana göre ortalayarak ayarla
+        let mut score_box_position = Point2 {
+            x: &self.screen_width * 0.5,
+            y: 25.,
+        };
+        // Kutunun boyutlarını hesaba katarak,
+        let score_box_dimension = score_box.dimensions(ctx);
+        // x,y koordinatlarını yeniden düzenle
+        score_box_position.x -= score_box_dimension.w as f32 * 0.5;
+        score_box_position.y -= score_box_dimension.h as f32 * 0.5;
+        // Metin kutusunu ekrana çiz
+        draw(ctx, &score_box, DrawParam::new().dest(score_box_position))?;
+
         graphics::present(ctx)?;
+
+        // İşletim sistemine şimdilik CPU ile olan işimizin bittiğini
+        // ama tekrar geri geleceğimizi söylüyoruz
+        timer::yield_now();
 
         Ok(())
     }
@@ -96,7 +124,7 @@ fn draw_sprite(
     // asset'e ait çizilebilir imgeyi al(yani resmini :D)
     let image = assets.get_sprite_image(sprite);
     // pozisyon, rotasyon bilgilerini kullanarak parametreleri ayarla
-    let drawparams = graphics::DrawParam::new()
+    let drawparams = DrawParam::new()
         .dest(pos)
         .rotation(sprite.facing as f32)
         .offset(Point2 { x: 0.5, y: 0.5 });
