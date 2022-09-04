@@ -6,6 +6,7 @@ use std::{env, path};
 mod constant;
 mod fermat;
 mod game_assets;
+mod input_state;
 mod main_state;
 mod sprite;
 mod sprite_builder;

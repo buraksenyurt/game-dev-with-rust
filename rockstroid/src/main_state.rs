@@ -1,12 +1,14 @@
 use crate::constant::{MAX_RADIUS, MAX_ROCK_COUNT, MIN_RADIUS};
 use crate::game_assets::GameAssets;
+use crate::input_state::InputState;
 use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
-use ggez::event::EventHandler;
+use ggez::event::{EventHandler, KeyCode, KeyMods};
 use ggez::graphics::{draw, Color, DrawParam, Drawable, Font, PxScale};
 use ggez::mint::Point2;
-use ggez::{graphics, timer, Context, GameError, GameResult};
+use ggez::winit::event::VirtualKeyCode;
+use ggez::{event, graphics, timer, Context, GameError, GameResult};
 use oorandom::Rand32;
 
 // Oyunun herhangi bir andaki varlık durumunu tutacak veri yapısı.
@@ -21,6 +23,7 @@ pub struct MainState {
     screen_height: f32,
     randomizer: Rand32,
     score: i32,
+    input_state: InputState,
 }
 
 impl MainState {
@@ -50,6 +53,7 @@ impl MainState {
             screen_height: h,
             randomizer,
             score: 0,
+            input_state: InputState::default(),
         };
         Ok(ms)
     }
@@ -107,6 +111,52 @@ impl EventHandler for MainState {
         timer::yield_now();
 
         Ok(())
+    }
+
+    // Klavye tuşlarına basıldığında input state bilgilerini değiştireceğimiz fonksiyon
+    fn key_down_event(
+        &mut self,
+        ctx: &mut Context,
+        keycode: KeyCode,
+        _keymods: KeyMods,
+        _repeat: bool,
+    ) {
+        match keycode {
+            KeyCode::W => {
+                self.input_state.y_axis = 1.;
+            }
+            KeyCode::A => {
+                self.input_state.x_axis = -1.;
+            }
+            KeyCode::D => {
+                self.input_state.x_axis = 1.;
+            }
+            KeyCode::Space => {
+                self.input_state.fire = true;
+            }
+            KeyCode::Escape => {
+                event::quit(ctx);
+            }
+            _ => (),
+        }
+    }
+
+    // Oyuncu ilgili klavye tuşlarını bıraktığında input state başlangıç konumuna getirilir.
+    // Böylece sola, sağa veya yukarı döner durumdan durağan hale,
+    // ateş eder konumdan ateş etmeyen hale geçildiğini anlarız.
+    fn key_up_event(&mut self, _ctx: &mut Context, keycode: VirtualKeyCode, _keymods: KeyMods) {
+        match keycode {
+            KeyCode::W => {
+                self.input_state.y_axis = 0.;
+            }
+            KeyCode::A | KeyCode::D => {
+                self.input_state.x_axis = 0.;
+            }
+            KeyCode::Space => {
+                self.input_state.fire = false;
+            }
+            _ => (),
+        }
     }
 }
 
