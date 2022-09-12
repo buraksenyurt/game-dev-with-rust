@@ -1,12 +1,14 @@
-use crate::constant::{MAX_RADIUS, MAX_ROCK_COUNT, MIN_RADIUS};
+use crate::constant::{COMMON_FPS, MAX_RADIUS, MAX_ROCK_COUNT, MIN_RADIUS};
 use crate::game_assets::GameAssets;
 use crate::input_state::InputState;
+use crate::player::{fire_at_will, handle_input};
 use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
 use ggez::event::{EventHandler, KeyCode, KeyMods};
 use ggez::graphics::{draw, Color, DrawParam, Drawable, Font, PxScale};
 use ggez::mint::Point2;
+use ggez::timer::check_update_time;
 use ggez::winit::event::VirtualKeyCode;
 use ggez::{event, graphics, timer, Context, GameError, GameResult};
 use oorandom::Rand32;
@@ -15,8 +17,8 @@ use oorandom::Rand32;
 // Belli bir anda oyun sahasındaki oyuncu, kayalar, atılan şutlar,
 // skor bilgisi, seviye, assetler vs gibi bilgileri taşır.
 pub struct MainState {
-    player: Sprite,
-    shots: Vec<Sprite>,
+    pub player: Sprite,
+    pub shots: Vec<Sprite>,
     rocks: Vec<Sprite>,
     assets: GameAssets,
     screen_width: f32,
@@ -24,6 +26,7 @@ pub struct MainState {
     randomizer: Rand32,
     score: i32,
     input_state: InputState,
+    pub player_shot_timeout: f32,
 }
 
 impl MainState {
@@ -54,6 +57,7 @@ impl MainState {
             randomizer,
             score: 0,
             input_state: InputState::default(),
+            player_shot_timeout: 0.,
         };
         Ok(ms)
     }
@@ -61,7 +65,34 @@ impl MainState {
 
 // Ana oyun nesnesi için gerekli temel olaylara ait trait'ler kodlanır.
 impl EventHandler for MainState {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    // State güncellemelerinin ele alındığı fonksiyondur
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        // Güncel context için Frame Per Second süresi gelmişse
+        while check_update_time(ctx, COMMON_FPS) {
+            let seconds = 1. / (COMMON_FPS as f32);
+
+            handle_input(&mut self.player, &mut self.input_state, seconds);
+            self.player_shot_timeout -= seconds;
+            if self.input_state.fire && self.player_shot_timeout < 0. {
+                fire_at_will(self)?;
+            }
+
+            self.player.update_position(seconds);
+            self.player
+                .wrap_position(self.screen_width, self.screen_height);
+
+            for s in &mut self.shots {
+                s.update_position(seconds);
+                s.wrap_position(self.screen_width, self.screen_height);
+                s.life -= seconds;
+            }
+
+            for r in &mut self.rocks {
+                r.update_position(seconds);
+                r.wrap_position(self.screen_width, self.screen_height);
+            }
+        }
+
         Ok(())
     }
 
@@ -77,13 +108,13 @@ impl EventHandler for MainState {
 
         // Atışlar çizdirilir.
         for s in &self.shots {
-            draw_sprite(ctx, game_assets, &s, coordinates)?;
+            draw_sprite(ctx, &game_assets, &s, coordinates)?;
         }
 
         // rastgele konumlanan kayalar çizdirilir.
         // Main State oluşturulurken belirlenen her bir kaya nesnesi için draw operasyonu çağrılır.
         for r in &self.rocks {
-            draw_sprite(ctx, game_assets, &r, coordinates)?;
+            draw_sprite(ctx, &game_assets, &r, coordinates)?;
         }
 
         // Skor tabelası çizimi.
@@ -123,6 +154,7 @@ impl EventHandler for MainState {
     ) {
         match keycode {
             KeyCode::W => {
+                //println!("W tuşuna basılıyor... y:{}", self.input_state.y_axis);
                 self.input_state.y_axis = 1.;
             }
             KeyCode::A => {
@@ -147,6 +179,7 @@ impl EventHandler for MainState {
     fn key_up_event(&mut self, _ctx: &mut Context, keycode: VirtualKeyCode, _keymods: KeyMods) {
         match keycode {
             KeyCode::W => {
+                //println!("W tuşu bırakıldı... y:{}", self.input_state.y_axis);
                 self.input_state.y_axis = 0.;
             }
             KeyCode::A | KeyCode::D => {
