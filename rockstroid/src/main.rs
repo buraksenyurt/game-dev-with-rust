@@ -8,6 +8,7 @@ mod fermat;
 mod game_assets;
 mod input_state;
 mod main_state;
+mod player;
 mod sprite;
 mod sprite_builder;
 mod sprite_type;

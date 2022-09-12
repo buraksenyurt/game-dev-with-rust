@@ -2,14 +2,14 @@
 // Genellikle matematiksel operasyonların kullanıldığı fonksiyonlar olarak düşünebilir.
 // Oyunda özellikle açıya göre birim vektörün bir başka deyişle vektör yönünün hesaplandığı yerler var.
 
-use ggez::mint::Vector2;
+type Vector2 = glam::Vec2;
 use oorandom::Rand32;
 use std::f32::consts::PI;
 
 // Verilen açıyı alıp birim vektöre çeviren fonksiyon (vektörün yönünü buluyoruz)
 // Asıl ilgilendiğimiz alan vektörün büyüklüğünden ziyade yönü.
 // Mesela kayaya rastgele bir yön vermek istediğimizde bu çevrimler çok işe yarayacaktır.
-pub fn angle_to_vec(angle: f32) -> Vector2<f32> {
+pub fn angle_to_vec(angle: f32) -> Vector2 {
     Vector2 {
         x: angle.sin(),
         y: angle.cos(),
@@ -17,7 +17,7 @@ pub fn angle_to_vec(angle: f32) -> Vector2<f32> {
 }
 
 // Maksimum büyüklüğe göre rastgele üretilen bir açının birim vektör karşılığını üreten fonksiyon.
-pub fn magnitude_to_vector(randomizer: &mut Rand32, max_magnitude: f32) -> Vector2<f32> {
+pub fn magnitude_to_vector(randomizer: &mut Rand32, max_magnitude: f32) -> Vector2 {
     let angle = randomizer.rand_float() * 2. * PI;
     let magnitude = randomizer.rand_float() - max_magnitude;
     let mut v2 = angle_to_vec(angle);

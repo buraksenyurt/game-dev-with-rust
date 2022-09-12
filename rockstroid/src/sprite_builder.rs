@@ -2,9 +2,10 @@ use crate::constant::*;
 use crate::fermat::angle_to_vec;
 use crate::sprite::Sprite;
 use crate::sprite_type::SpriteType;
-use ggez::mint::{Point2, Vector2};
+use ggez::mint::Point2;
 use oorandom::Rand32;
 use std::f32::consts::PI;
+type Vector2 = glam::Vec2;
 
 // Oyundaki nesneleri oluşturmak için bir yardımcı fonksiyon.
 // Parametre olarak türü alıp ona göre bir constructor çalıştırıyor.
@@ -92,12 +93,12 @@ mod tests {
     }
 
     #[test]
-    pub fn should_create_random_rocks() {
+    pub fn should_create_random_ten_rocks() {
         let mut seed: [u8; 8] = [0; 8];
         getrandom::getrandom(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
         let mut randomizer = Rand32::new(u64::from_ne_bytes(seed));
         let rocks = create_random_rocks(&mut randomizer, 10, Point2 { x: 0., y: 0. }, 100., 360.);
-        assert!(rocks.len() == 11);
+        assert!(rocks.len() == 10);
     }
 }
 
