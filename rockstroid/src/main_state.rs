@@ -1,3 +1,4 @@
+use crate::collider::handle_collisions;
 use crate::constant::{COMMON_FPS, MAX_RADIUS, MAX_ROCK_COUNT, MIN_RADIUS};
 use crate::game_assets::GameAssets;
 use crate::input_state::InputState;
@@ -19,12 +20,12 @@ use oorandom::Rand32;
 pub struct MainState {
     pub player: Sprite,
     pub shots: Vec<Sprite>,
-    rocks: Vec<Sprite>,
+    pub rocks: Vec<Sprite>,
     assets: GameAssets,
     screen_width: f32,
     screen_height: f32,
     randomizer: Rand32,
-    score: i32,
+    pub score: i32,
     input_state: InputState,
     pub player_shot_timeout: f32,
 }
@@ -90,6 +91,18 @@ impl EventHandler for MainState {
             for r in &mut self.rocks {
                 r.update_position(seconds);
                 r.wrap_position(self.screen_width, self.screen_height);
+            }
+
+            // Çarpışma hesaplamaları
+            handle_collisions(self)?;
+
+            // Çarpışma hesaplamalarına göre kaya ve atışlar state'ten kaldırılır
+            self.shots.retain(|shot| shot.life > 0.0);
+            self.rocks.retain(|rock| rock.life > 0.0);
+
+            if self.player.life <= 0. {
+                println!("Üzgünüm dostum ama kayaya tosladın :D !");
+                let _ = event::quit(ctx);
             }
         }
 

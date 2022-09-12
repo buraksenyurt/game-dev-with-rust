@@ -3,6 +3,7 @@ use ggez::graphics::{set_drawable_size, set_window_title};
 use ggez::{event, ContextBuilder, GameResult};
 use std::{env, path};
 
+mod collider;
 mod constant;
 mod fermat;
 mod game_assets;
