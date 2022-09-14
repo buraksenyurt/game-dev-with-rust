@@ -7,11 +7,11 @@ use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
 use ggez::event::{EventHandler, KeyCode, KeyMods};
-use ggez::graphics::{draw, Color, DrawParam, Drawable, Font, PxScale};
+use ggez::graphics::{draw, Color, DrawParam, Font, PxScale};
 use ggez::mint::Point2;
 use ggez::timer::check_update_time;
 use ggez::winit::event::VirtualKeyCode;
-use ggez::{event, graphics, timer, Context, GameError, GameResult};
+use ggez::{event, graphics, timer, Context, GameResult};
 use oorandom::Rand32;
 
 // Oyunun herhangi bir andaki varlık durumunu tutacak veri yapısı.

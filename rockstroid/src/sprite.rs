@@ -1,6 +1,5 @@
 use crate::constant::MAX_PHYSICS_VELOCITY;
 use crate::sprite_type::SpriteType;
-use ggez::graphics;
 use ggez::mint::Point2;
 type Vector2 = glam::Vec2;
 

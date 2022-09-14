@@ -20,7 +20,7 @@ pub fn angle_to_vec(angle: f32) -> Vector2 {
 pub fn magnitude_to_vector(randomizer: &mut Rand32, max_magnitude: f32) -> Vector2 {
     let angle = randomizer.rand_float() * 2. * PI;
     let magnitude = randomizer.rand_float() - max_magnitude;
-    let mut v2 = angle_to_vec(angle);
+    let v2 = angle_to_vec(angle);
     Vector2 {
         x: v2.x * magnitude,
         y: v2.y * magnitude,

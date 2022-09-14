@@ -1,5 +1,5 @@
 use crate::main_state::MainState;
-use ggez::graphics::{set_drawable_size, set_window_title};
+use ggez::graphics::{set_window_title};
 use ggez::{event, ContextBuilder, GameResult};
 use std::{env, path};
 
