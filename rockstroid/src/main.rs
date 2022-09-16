@@ -1,5 +1,5 @@
 use crate::main_state::MainState;
-use ggez::graphics::{set_window_title};
+use ggez::graphics::set_window_title;
 use ggez::{event, ContextBuilder, GameResult};
 use std::{env, path};
 
@@ -29,7 +29,7 @@ fn main() -> GameResult {
     let ctx_builder = ContextBuilder::new("Rockstroid", "ggez").add_resource_path(resource_folder);
 
     let (mut ctx, events_loop) = ctx_builder.build()?;
-    set_window_title(&mut ctx, "Rockstroid Beta");
+    set_window_title(&ctx, "Rockstroid Beta");
 
     let game = MainState::new(&mut ctx)?;
     event::run(ctx, events_loop, game);

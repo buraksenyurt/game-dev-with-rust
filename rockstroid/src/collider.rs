@@ -14,10 +14,10 @@ pub fn handle_collisions(main_state: &mut MainState) -> GameResult {
 
         // Çarpışma varsa oyuncunun canı sıfırlanır
         if player_distance.length() < (main_state.player.size + rock.size) {
-            println!(
-                "Oyuncu ve kaya arasındaki mesafe {:?}",
-                player_distance.length()
-            );
+            // println!(
+            //     "Oyuncu ve kaya arasındaki mesafe {:?}",
+            //     player_distance.length()
+            // );
             main_state.player.life = 0.;
         }
         // Şimdi state üstündeki her bir atışa bakılır

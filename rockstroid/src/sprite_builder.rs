@@ -46,12 +46,15 @@ pub fn create_sprite(kind: SpriteType) -> Sprite {
 // kayaları oluşturmak için kullanılan fonksiyon.
 
 pub fn create_random_rocks(
-    randomizer: &mut Rand32,
     count: u8,
     exclusion: Point2<f32>,
     min_radius: f32,
     max_radius: f32,
 ) -> Vec<Sprite> {
+    let mut seed: [u8; 8] = [0; 8];
+    getrandom::getrandom(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
+    let mut randomizer = Rand32::new(u64::from_ne_bytes(seed));
+
     (0..count)
         .map(|_| {
             // Bir kaya üret
@@ -78,7 +81,6 @@ mod tests {
     use crate::sprite_builder::{create_random_rocks, create_sprite};
     use crate::sprite_type::SpriteType;
     use ggez::mint::Point2;
-    use oorandom::Rand32;
 
     #[test]
     pub fn should_created_sprite_type_correct() {
@@ -94,10 +96,7 @@ mod tests {
 
     #[test]
     pub fn should_create_random_ten_rocks() {
-        let mut seed: [u8; 8] = [0; 8];
-        getrandom::getrandom(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
-        let mut randomizer = Rand32::new(u64::from_ne_bytes(seed));
-        let rocks = create_random_rocks(&mut randomizer, 10, Point2 { x: 0., y: 0. }, 100., 360.);
+        let rocks = create_random_rocks( 10, Point2 { x: 0., y: 0. }, 100., 360.);
         assert!(rocks.len() == 10);
     }
 }

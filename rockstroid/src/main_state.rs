@@ -12,7 +12,6 @@ use ggez::mint::Point2;
 use ggez::timer::check_update_time;
 use ggez::winit::event::VirtualKeyCode;
 use ggez::{event, graphics, timer, Context, GameResult};
-use oorandom::Rand32;
 
 // Oyunun herhangi bir andaki varlık durumunu tutacak veri yapısı.
 // Belli bir anda oyun sahasındaki oyuncu, kayalar, atılan şutlar,
@@ -24,7 +23,6 @@ pub struct MainState {
     assets: GameAssets,
     screen_width: f32,
     screen_height: f32,
-    randomizer: Rand32,
     pub score: i32,
     input_state: InputState,
     pub player_shot_timeout: f32,
@@ -32,14 +30,11 @@ pub struct MainState {
 
 impl MainState {
     pub fn new(ctx: &mut Context) -> GameResult<Self> {
-        let mut seed: [u8; 8] = [0; 8];
-        getrandom::getrandom(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
-        let mut randomizer = Rand32::new(u64::from_ne_bytes(seed));
+
 
         let assets = GameAssets::new(ctx)?;
         let player = create_sprite(SpriteType::Player);
         let rocks = create_random_rocks(
-            &mut randomizer,
             MAX_ROCK_COUNT,
             player.position,
             MIN_RADIUS,
@@ -55,7 +50,6 @@ impl MainState {
             assets,
             screen_width: w,
             screen_height: h,
-            randomizer,
             score: 0,
             input_state: InputState::default(),
             player_shot_timeout: 0.,
@@ -72,7 +66,7 @@ impl EventHandler for MainState {
         while check_update_time(ctx, COMMON_FPS) {
             let seconds = 1. / (COMMON_FPS as f32);
 
-            handle_input(&mut self.player, &mut self.input_state, seconds);
+            handle_input(&mut self.player, &self.input_state, seconds);
             self.player_shot_timeout -= seconds;
             if self.input_state.fire && self.player_shot_timeout < 0. {
                 fire_at_will(self)?;
@@ -102,7 +96,7 @@ impl EventHandler for MainState {
 
             if self.player.life <= 0. {
                 println!("Üzgünüm dostum ama kayaya tosladın :D !");
-                let _ = event::quit(ctx);
+                event::quit(ctx);
             }
         }
 
@@ -110,24 +104,24 @@ impl EventHandler for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::Color::from(Color::BLACK));
+        graphics::clear(ctx, Color::BLACK);
 
         let game_assets = &self.assets;
         let coordinates = (self.screen_width, self.screen_height);
 
         // Oyuncu çizilir
         let hero = &self.player;
-        draw_sprite(ctx, &game_assets, &hero, coordinates)?;
+        draw_sprite(ctx, game_assets, hero, coordinates)?;
 
         // Atışlar çizdirilir.
         for s in &self.shots {
-            draw_sprite(ctx, &game_assets, &s, coordinates)?;
+            draw_sprite(ctx, game_assets, s, coordinates)?;
         }
 
         // rastgele konumlanan kayalar çizdirilir.
         // Main State oluşturulurken belirlenen her bir kaya nesnesi için draw operasyonu çağrılır.
         for r in &self.rocks {
-            draw_sprite(ctx, &game_assets, &r, coordinates)?;
+            draw_sprite(ctx, game_assets, r, coordinates)?;
         }
 
         // Skor tabelası çizimi.

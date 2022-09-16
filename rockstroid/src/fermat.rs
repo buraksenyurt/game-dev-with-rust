@@ -3,8 +3,8 @@
 // Oyunda özellikle açıya göre birim vektörün bir başka deyişle vektör yönünün hesaplandığı yerler var.
 
 type Vector2 = glam::Vec2;
-use oorandom::Rand32;
-use std::f32::consts::PI;
+//use oorandom::Rand32;
+//use std::f32::consts::PI;
 
 // Verilen açıyı alıp birim vektöre çeviren fonksiyon (vektörün yönünü buluyoruz)
 // Asıl ilgilendiğimiz alan vektörün büyüklüğünden ziyade yönü.
@@ -16,16 +16,16 @@ pub fn angle_to_vec(angle: f32) -> Vector2 {
     }
 }
 
-// Maksimum büyüklüğe göre rastgele üretilen bir açının birim vektör karşılığını üreten fonksiyon.
-pub fn magnitude_to_vector(randomizer: &mut Rand32, max_magnitude: f32) -> Vector2 {
-    let angle = randomizer.rand_float() * 2. * PI;
-    let magnitude = randomizer.rand_float() - max_magnitude;
-    let v2 = angle_to_vec(angle);
-    Vector2 {
-        x: v2.x * magnitude,
-        y: v2.y * magnitude,
-    }
-}
+// // Maksimum büyüklüğe göre rastgele üretilen bir açının birim vektör karşılığını üreten fonksiyon.
+// pub fn magnitude_to_vector(randomizer: &mut Rand32, max_magnitude: f32) -> Vector2 {
+//     let angle = randomizer.rand_float() * 2. * PI;
+//     let magnitude = randomizer.rand_float() - max_magnitude;
+//     let v2 = angle_to_vec(angle);
+//     Vector2 {
+//         x: v2.x * magnitude,
+//         y: v2.y * magnitude,
+//     }
+// }
 
 #[cfg(test)]
 mod test {

@@ -39,7 +39,7 @@ pub fn fire_at_will(main_state: &mut MainState) -> GameResult {
     shot.velocity.x = SHOT_SPEED * direction.x;
     shot.velocity.y = SHOT_SPEED * direction.y;
 
-    &main_state.shots.push(shot);
+    main_state.shots.push(shot);
 
     Ok(())
 }
