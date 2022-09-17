@@ -1,26 +1,21 @@
 mod constant;
+mod player;
 
-use crate::constant::PLAYER_BOX_SIZE;
+use crate::player::Player;
 use macroquad::prelude::*;
 
 #[macroquad::main("WallsComing")]
 async fn main() {
+    // Oyuncu nesnesi oluşturulur
+    let mut player = Player::new();
+    // Oyun döngümüz
     loop {
-        let player_rect = Rect::new(
-            screen_width() * 0.5 - PLAYER_BOX_SIZE.x * 0.5,
-            screen_height() - 30.,
-            PLAYER_BOX_SIZE.x,
-            PLAYER_BOX_SIZE.y,
-        );
-
+        player.update(get_frame_time());
+        // Ekran temizleni ve zemin beyaz renk yapılır
         clear_background(WHITE);
-        draw_rectangle(
-            player_rect.x,
-            player_rect.y,
-            player_rect.w,
-            player_rect.h,
-            SKYBLUE,
-        );
+        // Oyuncu nesnesi ekrana çizili
+        player.draw();
+        // Bir sonraki frame için beklenir
         next_frame().await
     }
 }
