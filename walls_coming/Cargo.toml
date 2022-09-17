@@ -1,0 +1,8 @@
+[package]
+name = "walls_coming"
+version = "0.1.0"
+edition = "2021"
+description = "Breakout öğretisi"
+
+[dependencies]
+macroquad = "0.3.24"
