@@ -1,21 +1,42 @@
 use crate::constant::BLOCK_SIZE;
 use macroquad::prelude::*;
 
+pub enum BlockType {
+    Brick,
+    Stone,
+    Iron,
+}
+
 pub struct Block {
     pub rect: Rect,
     // Bloğun sahip olduğu güce göre ekrandan kaldırılması sağlanabilir.
     // Top bir bloğa çarptığında 1 azaltılır örneğin. 0 gücü olanlar sahneden kaldırılır.
     pub strength: i32,
+    pub block_type: BlockType,
 }
 
 impl Block {
     pub fn new(position: Vec2) -> Self {
+        let s: i32 = rand::gen_range(1, 4);
+
+        let bt: BlockType = match s {
+            1 => BlockType::Brick,
+            2 => BlockType::Stone,
+            3 => BlockType::Iron,
+            _ => BlockType::Brick,
+        };
         Self {
             rect: Rect::new(position.x, position.y, BLOCK_SIZE.x, BLOCK_SIZE.y),
-            strength: 1,
+            strength: s,
+            block_type: bt,
         }
     }
     pub fn draw(&self) {
-        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, DARKGRAY);
+        let color: Color = match self.block_type {
+            BlockType::Brick => Color::from_rgba(220, 85, 57, 250),
+            BlockType::Stone => Color::from_rgba(183, 176, 156, 250),
+            BlockType::Iron => Color::from_rgba(161, 157, 148, 250),
+        };
+        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, color);
     }
 }
