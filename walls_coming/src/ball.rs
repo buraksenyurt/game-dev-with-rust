@@ -3,9 +3,9 @@ use macroquad::prelude::*;
 
 // Oyunda oyuncunun tuğlaları vurmak için kullandığı topun veri yapısı
 pub struct Ball {
-    rect: Rect,
+    pub rect: Rect,
     // Bir harekete sahip olacağından büyüklük ve yön gibi bilgileri sahip bir vektör kullanıyoruz
-    velocity: Vec2,
+    pub velocity: Vec2,
 }
 
 impl Ball {
@@ -26,7 +26,12 @@ impl Ball {
         self.rect.y += self.velocity.y * delta_time * BALL_SPEED;
         // Ekran sınırlarına çarpma kontrolü.
         // x ekseninde sol veya sağ kenarlar dışına çıkıldıysa geri dönecek
+        if self.rect.x < 0. {
+            //Sol taraf kontrolü
+            self.velocity.x = 1.;
+        }
         if self.rect.x > screen_width() - self.rect.w {
+            // sağ taraf kontrolü
             self.velocity.x = -1.;
         }
         // Ekran üst kısmı kontrolü. Üst kısma çarparsa geriye dönecek.

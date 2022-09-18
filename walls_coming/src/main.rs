@@ -1,11 +1,13 @@
 mod ball;
 mod block;
 mod builder;
+mod collider;
 mod constant;
 mod player;
 
 use crate::ball::Ball;
 use crate::builder::create_blocks;
+use crate::collider::in_collision;
 use crate::player::Player;
 use macroquad::prelude::*;
 
@@ -29,6 +31,23 @@ async fn main() {
         for ball in balls.iter_mut() {
             ball.update(get_frame_time());
         }
+        // Çaprışma kontrolünün yapıldığı kısım
+        for ball in balls.iter_mut() {
+            // Oyuncu dikdörtgeni ile topun çarpışıp çarpışmadığına bakılıyor
+            in_collision(&mut ball.rect, &player.rect, &mut ball.velocity);
+            // Sahnedeki tüm bloklar dolaşılıyor
+            for block in blocks.iter_mut() {
+                //ve topun çarptığı bir bloksa
+                if in_collision(&mut ball.rect, &block.rect, &mut ball.velocity) {
+                    // bloğun strength değeri 1 azalıyor. 0 olanlar sahneden çıkarılacaklar
+                    block.strength -= 1;
+                }
+            }
+        }
+        // Gücü 0dan büyük olanları tutmamızı sağlar. Böylece oyunucunun topla vurduklarından
+        // gücü sıfıra inmiş olanlar sahneden çıkarılırlar.
+        blocks.retain(|b| b.strength > 0);
+
         // Ekran temizleni ve zemin beyaz renk yapılır
         clear_background(WHITE);
         // Oyuncu nesnesi ekrana çizili
