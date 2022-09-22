@@ -19,6 +19,7 @@ async fn main() {
     let mut blocks = Vec::new();
     let mut balls = Vec::new();
     let mut game_score = 0;
+    let mut player_lives = 3;
 
     // Bloklar üretilir
     create_blocks(&mut blocks);
@@ -54,6 +55,18 @@ async fn main() {
                 }
             }
         }
+        // oyunucun canlarını hesapladığımız ve gerekirse azalttığımız kısım
+        // Top oyuncuyu geçerse sahadan çıkarıyoruz
+        let balls_count = balls.len();
+        // Topun oyuncuyu geçtiğini ekran yüksekliğine göre anlayabiliriz
+        balls.retain(|ball| ball.rect.y < screen_height());
+        let removed_balls_count = balls_count - balls.len();
+        //ve ayrıca sahada hiç top kalmadıysa(birden fazla top olabileceği senaryosuna göre çalışıyor sistem)
+        // oyunucunun puanını bir azaltıyoruz
+        if removed_balls_count > 0 {
+            player_lives -= 1;
+        }
+
         // Gücü 0dan büyük olanları tutmamızı sağlar. Böylece oyunucunun topla vurduklarından
         // gücü sıfıra inmiş olanlar sahneden çıkarılırlar.
         blocks.retain(|b| b.strength > 0);
@@ -71,15 +84,15 @@ async fn main() {
             ball.draw();
         }
 
-        draw_score_box(&mut game_score);
+        draw_score_box(&mut game_score, &mut player_lives);
         // Bir sonraki frame için beklenir
         next_frame().await
     }
 }
 
-fn draw_score_box(game_score: &mut i32) {
+fn draw_score_box(game_score: &mut i32, player_lives: &mut i32) {
     // Skor kutucuğunun çizildiği kısım
-    let score_box = format!("Skor:{}", game_score);
+    let score_box = format!("Skor:{}. Kalan Can {} ", game_score, player_lives);
     let score_box_dimension = measure_text(&score_box, None, 24, 1.);
     draw_text_ex(
         &score_box,
