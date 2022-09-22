@@ -6,6 +6,7 @@ mod constant;
 mod player;
 
 use crate::ball::Ball;
+use crate::block::BlockType;
 use crate::builder::create_blocks;
 use crate::collider::in_collision;
 use crate::player::Player;
@@ -17,6 +18,7 @@ async fn main() {
     let mut player = Player::new();
     let mut blocks = Vec::new();
     let mut balls = Vec::new();
+    let mut game_score = 0;
 
     // Bloklar üretilir
     create_blocks(&mut blocks);
@@ -41,6 +43,14 @@ async fn main() {
                 if in_collision(&mut ball.rect, &block.rect, &mut ball.velocity) {
                     // bloğun strength değeri 1 azalıyor. 0 olanlar sahneden çıkarılacaklar
                     block.strength -= 1;
+                    // Blok yok ediliyorsa oyuncunun puanını bloğun tipine göre artırıyoruz
+                    if block.strength <= 0 {
+                        match block.block_type {
+                            BlockType::Brick => game_score += 1,
+                            BlockType::Stone => game_score += 3,
+                            BlockType::Iron => game_score += 5,
+                        }
+                    }
                 }
             }
         }
@@ -60,7 +70,25 @@ async fn main() {
         for ball in balls.iter() {
             ball.draw();
         }
+
+        draw_score_box(&mut game_score);
         // Bir sonraki frame için beklenir
         next_frame().await
     }
+}
+
+fn draw_score_box(game_score: &mut i32) {
+    // Skor kutucuğunun çizildiği kısım
+    let score_box = format!("Skor:{}", game_score);
+    let score_box_dimension = measure_text(&score_box, None, 24, 1.);
+    draw_text_ex(
+        &score_box,
+        screen_width() * 0.5 - score_box_dimension.width * 0.5,
+        20.,
+        TextParams {
+            color: BLACK,
+            font_size: 24,
+            ..Default::default()
+        },
+    );
 }
