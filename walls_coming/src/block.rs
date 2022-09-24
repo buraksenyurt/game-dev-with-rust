@@ -5,6 +5,11 @@ pub enum BlockType {
     Brick,
     Stone,
     Iron,
+    Bonus(Powerup),
+}
+pub enum Powerup {
+    Tall,
+    Short,
 }
 
 pub struct Block {
@@ -32,10 +37,14 @@ impl Block {
         }
     }
     pub fn draw(&self) {
-        let color: Color = match self.block_type {
+        let color: Color = match &self.block_type {
             BlockType::Brick => Color::from_rgba(220, 85, 57, 250),
             BlockType::Stone => Color::from_rgba(183, 176, 156, 250),
             BlockType::Iron => Color::from_rgba(161, 157, 148, 250),
+            BlockType::Bonus(p) => match p {
+                Powerup::Tall => Color::from_rgba(255, 215, 0, 150),
+                Powerup::Short => Color::from_rgba(0, 206, 209, 150),
+            },
         };
         draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, color);
     }

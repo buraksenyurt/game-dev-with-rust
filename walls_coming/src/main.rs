@@ -8,9 +8,10 @@ mod player;
 mod texturer;
 
 use crate::ball::Ball;
-use crate::block::BlockType;
+use crate::block::{BlockType, Powerup};
 use crate::builder::create_blocks;
 use crate::collider::in_collision;
+use crate::constant::{DEFAULT_ELONGATION, PLAYER_BOX_SIZE};
 use crate::game_state::GameState;
 use crate::player::Player;
 use crate::texturer::{draw_score_box, draw_title_text};
@@ -64,10 +65,21 @@ async fn main() {
                             block.strength -= 1;
                             // Blok yok ediliyorsa oyuncunun puanını bloğun tipine göre artırıyoruz
                             if block.strength <= 0 {
-                                match block.block_type {
+                                match &block.block_type {
                                     BlockType::Brick => game_score += 1,
                                     BlockType::Stone => game_score += 3,
                                     BlockType::Iron => game_score += 5,
+                                    // Eğer bir powerup gelirse ona göre işlem yapıyoruz
+                                    // Mesela boyu kısaltan bir tuğlaya denk gelirse oyuncu
+                                    // bloğunun boyu kısalıyor gibi
+                                    BlockType::Bonus(p) => match p {
+                                        Powerup::Short => {
+                                            player.rect.w = PLAYER_BOX_SIZE.x - DEFAULT_ELONGATION
+                                        }
+                                        Powerup::Tall => {
+                                            player.rect.w = PLAYER_BOX_SIZE.x + DEFAULT_ELONGATION
+                                        }
+                                    },
                                 }
                             }
                         }
