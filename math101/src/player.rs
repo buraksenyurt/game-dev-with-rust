@@ -9,8 +9,8 @@ impl Player {
     pub fn new() -> Self {
         Self {
             circle: Circle::new(
-                screen_width() * 0.5 - PLAYER_CIRCLE_RADIUS * 0.5,
-                screen_height() * 0.5 - PLAYER_CIRCLE_RADIUS * 0.5,
+                screen_width() * 0.5,
+                screen_height() * 0.5,
                 PLAYER_CIRCLE_RADIUS,
             ),
         }
