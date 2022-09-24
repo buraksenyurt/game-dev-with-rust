@@ -24,6 +24,6 @@ Rockstroid oyununa ait örnek ekran görüntüsü de aşağıdaki gibidir. Farkl
 
 ![assets/rockstroid.gif](assets/rockstroid.gif)
 
-WallsComing oyununa ait örnek çalışma zamanı çıktısı aşağıdaki gibidir. Oyuna bonus'lar eklenebilir. Söz gelimi belli tipteki bloklar yok edilince, oyuncu tahtasının uzaması, küçülmesi, vurduğu topu ikiye bölmesi sağlanabilir.
+WallsComing oyununa ait örnek çalışma zamanı çıktısı aşağıdaki gibidir. Oyuna güçlendiriciler de eklendi. Örneğin altın rengi blok oyuncu tahtasının boyunu uzatıyor. Koyu mavi blok topun hızını belli süreliğine azaltıyor ve diğer bir blokta oyuncu tahtasının boyunu ufaltıyor :D 
 
 ![assets/wallscoming.gif](assets/wallscoming.gif)
