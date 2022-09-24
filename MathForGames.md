@@ -7,3 +7,9 @@ Oyun motorları arasında popüler olan Unity, Unreal gibi pek çok platform fiz
 Oyuncunun roketi iki boyutlu sahada ilerlerken etrafını saran düşman gemileri rast gele yönlerde hareket ediyordu. Bazı düşman gemileri belli mesafe kadar yaklaşınca da oyuncunun gemisine ateş etmekteydi. İşte soru; düşman gemisinin ateş etmek için oyuncuya ne kadar yaklaştığını nasıl buluruz? Problemi basitleştirmek adına oyunun iki boyutlu bir sahada yazıldığını düşünelim. Oyunlarda koordinat düzleminin ekranın sol üst köşesini 0,0 başlangıç noktası olarak kabul ettiğini unutmayalım.
 
 ![assets/math_101_01.png](assets/math_101_01.png)
+
+Pisagor teoremini math101 isimli rust projesinde deniyoruz. Aşağıda gördülüğü gibi daire, kareye 50 pixel altında yaklaştığında ekrana bir uyarı mesajı geliyor.
+
+![assets/pisagor.gif](assets/pisagor.gif)
+
+_Devam Edecek_
