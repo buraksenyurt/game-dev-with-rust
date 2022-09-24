@@ -11,7 +11,7 @@ use crate::ball::Ball;
 use crate::block::{BlockType, Powerup};
 use crate::builder::create_blocks;
 use crate::collider::in_collision;
-use crate::constant::{CAPTAIN_SLOW_SPEED, DEFAULT_ELONGATION, PLAYER_BOX_SIZE};
+use crate::constant::{CAPTAIN_SLOW_LIFETIME, CAPTAIN_SLOW_SPEED, DEFAULT_ELONGATION, PLAYER_BOX_SIZE};
 use crate::game_state::GameState;
 use crate::player::Player;
 use crate::texturer::{draw_score_box, draw_title_text};
@@ -28,6 +28,8 @@ async fn main() {
     let mut game_score = 0;
     let mut player_lives = 3;
     let mut extra_speed: f32 = 0.;
+    let mut in_extra_speed = false;
+    let mut extra_speed_counter = 0;
 
     // Bloklar üretilir
     create_blocks(&mut blocks);
@@ -47,6 +49,16 @@ async fn main() {
             }
             GameState::Playing => {
                 // Oyun oynanıyor(Playing) moddayken çalışan kısımdır
+
+                // Topun hızını yavaşlatan powerup devrede iken bir sayaç kullanıyoruz
+                // Böylece powerup'ın sadece belli süre etkin kalmasını sağlamaktayız
+                if in_extra_speed {
+                    extra_speed_counter += 1;
+                    if extra_speed_counter >= CAPTAIN_SLOW_LIFETIME  {
+                        in_extra_speed = false;
+                        extra_speed=0.;
+                    }
+                }
 
                 // Oyuncu pozisyonu için güncelleme çağrılır.
                 player.update(get_frame_time());
@@ -80,7 +92,10 @@ async fn main() {
                                         Powerup::YaoMing => {
                                             player.rect.w = PLAYER_BOX_SIZE.x + DEFAULT_ELONGATION
                                         }
-                                        Powerup::CaptainSlow => extra_speed = -CAPTAIN_SLOW_SPEED,
+                                        Powerup::CaptainSlow => {
+                                            extra_speed = -CAPTAIN_SLOW_SPEED;
+                                            in_extra_speed = true
+                                        }
                                     },
                                 }
                             }
@@ -120,6 +135,8 @@ async fn main() {
                     player = Player::new();
                     game_score = 0;
                     player_lives = 3;
+                    extra_speed = 0.;
+                    in_extra_speed = false;
                     balls.clear();
                     balls.push(Ball::new(vec2(screen_width() * 0.5, screen_height() * 0.5)));
                     blocks.clear();

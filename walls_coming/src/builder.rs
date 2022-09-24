@@ -1,12 +1,12 @@
 use crate::block::Block;
-use crate::constant::{BLOCK_PADDING, BLOCK_SIZE};
+use crate::constant::{BLOCK_PADDING, BLOCK_SIZE, COLUMN_COUNT, ROW_COUNT};
 use crate::{vec2, BlockType, Powerup};
 use macroquad::prelude::*;
 use macroquad::rand::gen_range;
 
 // Ekranın üst kısmına 6X6 boyutlarında aralarında boşluklar da bulunan blokları veren fonksiyon
 pub fn create_blocks(blocks: &mut Vec<Block>) {
-    let (width, height) = (6, 5);
+    let (width, height) = (COLUMN_COUNT, ROW_COUNT);
     // Blok büyüklüğünü hesaplarken padding değerlerini de hesaba katıyoruz
     let total_block_size = BLOCK_SIZE + vec2(BLOCK_PADDING, BLOCK_PADDING);
     // ekranda blokların dizilmeye başladıyacağı x,y koordinatlarını belirliyoruz
@@ -23,7 +23,7 @@ pub fn create_blocks(blocks: &mut Vec<Block>) {
     let tall_index: usize = gen_range(0, width);
     blocks[tall_index].block_type = BlockType::Bonus(Powerup::YaoMing);
 
-    let short_index: usize = gen_range(width*2 , blocks.len());
+    let short_index: usize = gen_range(width * 2, blocks.len());
     blocks[short_index].block_type = BlockType::Bonus(Powerup::SpudWebb);
 
     let captain_slow_index: usize = gen_range(height, blocks.len());
