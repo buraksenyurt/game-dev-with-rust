@@ -20,16 +20,16 @@ impl Player {
         let mut movement_x = 0.;
         let mut movement_y = 0.;
         if is_key_down(KeyCode::A) {
-            movement_x -= 1.;
+            movement_x -= 0.1;
         }
         if is_key_down(KeyCode::W) {
-            movement_y -= 1.;
+            movement_y -= 0.1;
         }
         if is_key_down(KeyCode::D) {
-            movement_x += 1.;
+            movement_x += 0.1;
         }
         if is_key_down(KeyCode::S) {
-            movement_y += 1.;
+            movement_y += 0.1;
         }
         self.circle.x += movement_x * delta_time * PLAYER_SPEED;
         self.circle.y += movement_y * delta_time * PLAYER_SPEED;

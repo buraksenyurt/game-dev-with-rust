@@ -10,7 +10,7 @@ impl Enemy {
         Self {
             rect: Rect::new(
                 screen_width() * 0.5 - ENEMY_BOX_SIZE.x * 0.5,
-                50.,
+                100.,
                 ENEMY_BOX_SIZE.x,
                 ENEMY_BOX_SIZE.y,
             ),
