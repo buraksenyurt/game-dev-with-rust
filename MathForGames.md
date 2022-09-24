@@ -12,4 +12,22 @@ Pisagor teoremini math101 isimli rust projesinde deniyoruz. Aşağıda gördül�
 
 ![assets/pisagor.gif](assets/pisagor.gif)
 
+## Vektörler ve Açılar
+
+Oyunlarda vektörler sıklıkla kullanılır. Bir vektör ile büyüklük _(daha çok uzunluk olarak da ifade edilir)_ ve en önemlisi yön bilgileri ifade edilebilir. Bu sayede oyun sahasındaki bir nesnenin hareket yönü vektörler ile ifade edilebilir. Büyüklük _(Magnitude)_ yerine yönün _(direction)_ önemli olduğu durumlarda genellikle birim vektörler değerlendirilir. Bir vektörün uzunluğunu _(büyüklüğünü)_ bulmak için pisagor teoremi kullanılabilir. Nitekim uzaydaki bir vektörün uzunluğu iki nokta arasındaki mesafeye tekabül eder ki bu da pisagor üçgeninden yararlanılarak hesap edilir.
+
+![assets/math_101_02.png](assets/math_101_02.png)
+
+Vektörler sayesinde bir noktanın merkeze olan uzaklığını ifade etmek de kolaydır. Örneğin görseldeki araba her yön değiştirdiğin gitti mesafeyi büyüklük olarak kabul eden ve bir yönü olan vektörler ile matematiksel olarak ifade edilebilir. Buna göre aracın son geldiği Ex,Ey noktasının vektörel formdaki karşılığını bulmak kolaydır. Ayrıca Ex,Ey noktasının vektörel ifadesi arabanın merkezden _(merkez olarak başka bir nesne konumu örneğin yol kenarındaki bariyer de kabul edilebilir)_ ne kadar uzakta olduğunu söyler. Lakin az önce belirttiğimiz üzere özellikle iki boyutlu saha kullanan oyunlarda vektörün büyüklüğü _(uzunluğu)_ göz ardı edilebilir. Yön _(direction)_ daha önemlidir. Bu sebeple birim vektöre _(Unit Vector)_ sıklıkla rastlanır. Herhangi bir vektörü normalleştirme _(normalizing)_ işlemine tabi tutarak birim vektör cinsinden ifade etmek mümkündür.
+
+Vektörlerde 0,0 konumuna göre kurulan dik üçgenlerden yararlanılarak yönü belirten açılar hesaplanabilir. Genelde bu hesaplamalar dik üçgenin karşıt kenarı ile komşu kenar arasındaki oranın arktanjantı şeklinde hesaplanır _(tanjantının -1 üssüdür esasında)_ ve derece cinsinden bulunur. Oyun motorlarının çoğunda derece yerine radyan kullanılır. Bir daireyi dört eşit dilim olarak böldüğümüzde radyan ile dilimlerin pi değeri cinsinden ifade edilebilmesi sağlanır. Bulunan açının radyana çevrilmesi ya da tam tersinin yapılması da formüller ile mümkündür.
+
+Yön için önem arz eden açının bulunmasında sadece tanjant değil zaman zaman sinüs ve kosinüs fonksiyonları da kullanılabilir. 
+
+- Elimizde açının karşı kenar uzunluğu ile hipotenüs değeri varsa sinüs fonksiyonundan yararlanılarak açı bulunabilir.
+- Elimizde bulunmak istenen açının karşıt kenar uzunluğu ile komşu kenar uzunluğu varsa tanjant fonksiyonundan yararlanılır.
+- Son olarak elimizde, bulunmak istenen açının komşu kenar uzunluğu ile hipotenüs değeri varsa kosinüs fonksiyonundan yararlanılabilir.
+
+Bu noktada açı ile vektör arasındaki ilişkiyi ve dolayısıyla bir vektörün yönünü bulmayı iyi anlamak gerekir. Elimizde bir açı varsa birim vektör cinsinden yönü bulmak oldukça kolaydır. Buna göre açının sinüsü y değerini, kosinüsü de x değerini bulmamızı sağlar. 
+
 _Devam Edecek_
