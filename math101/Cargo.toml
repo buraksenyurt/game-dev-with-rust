@@ -1,0 +1,9 @@
+[package]
+name = "math101"
+version = "0.1.0"
+edition = "2021"
+description = "Math fundamentals for game programming"
+authors = ["Burak Selim Senyurt"]
+
+[dependencies]
+macroquad = "0.3.24"
