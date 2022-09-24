@@ -19,11 +19,11 @@ impl Ball {
     pub fn draw(&self) {
         draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, MAGENTA);
     }
-    pub fn update(&mut self, delta_time: f32) {
+    pub fn update(&mut self, delta_time: f32, bonus_speed: f32) {
         // konum güncellemeleri. velocity değerlerine göre x,y
         // değerleri belli oranda artırılır. Bu topa bir hareket efekti verecektir.
-        self.rect.x += self.velocity.x * delta_time * BALL_SPEED;
-        self.rect.y += self.velocity.y * delta_time * BALL_SPEED;
+        self.rect.x += self.velocity.x * delta_time * (BALL_SPEED + bonus_speed);
+        self.rect.y += self.velocity.y * delta_time * (BALL_SPEED + bonus_speed);
         // Ekran sınırlarına çarpma kontrolü.
         // x ekseninde sol veya sağ kenarlar dışına çıkıldıysa geri dönecek
         if self.rect.x < 0. {

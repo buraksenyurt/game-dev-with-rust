@@ -11,7 +11,7 @@ use crate::ball::Ball;
 use crate::block::{BlockType, Powerup};
 use crate::builder::create_blocks;
 use crate::collider::in_collision;
-use crate::constant::{DEFAULT_ELONGATION, PLAYER_BOX_SIZE};
+use crate::constant::{CAPTAIN_SLOW_SPEED, DEFAULT_ELONGATION, PLAYER_BOX_SIZE};
 use crate::game_state::GameState;
 use crate::player::Player;
 use crate::texturer::{draw_score_box, draw_title_text};
@@ -27,6 +27,7 @@ async fn main() {
     let mut balls = Vec::new();
     let mut game_score = 0;
     let mut player_lives = 3;
+    let mut extra_speed: f32 = 0.;
 
     // Bloklar üretilir
     create_blocks(&mut blocks);
@@ -51,7 +52,7 @@ async fn main() {
                 player.update(get_frame_time());
                 // topların pozisyonları için güncelleme çağrılır.
                 for ball in balls.iter_mut() {
-                    ball.update(get_frame_time());
+                    ball.update(get_frame_time(), extra_speed);
                 }
                 // Çaprışma kontrolünün yapıldığı kısım
                 for ball in balls.iter_mut() {
@@ -73,12 +74,13 @@ async fn main() {
                                     // Mesela boyu kısaltan bir tuğlaya denk gelirse oyuncu
                                     // bloğunun boyu kısalıyor gibi
                                     BlockType::Bonus(p) => match p {
-                                        Powerup::Short => {
+                                        Powerup::SpudWebb => {
                                             player.rect.w = PLAYER_BOX_SIZE.x - DEFAULT_ELONGATION
                                         }
-                                        Powerup::Tall => {
+                                        Powerup::YaoMing => {
                                             player.rect.w = PLAYER_BOX_SIZE.x + DEFAULT_ELONGATION
                                         }
+                                        Powerup::CaptainSlow => extra_speed = -CAPTAIN_SLOW_SPEED,
                                     },
                                 }
                             }

@@ -13,3 +13,5 @@ pub const BLOCK_PADDING: f32 = 5.;
 // Topun büyüklüğü ve hızı
 pub const BALL_SIZE: f32 = 32.;
 pub const BALL_SPEED: f32 = 400.;
+// Yavaşlama bonusuna denk gelirsek kullanılacak varsayılan azaltma hızı
+pub const CAPTAIN_SLOW_SPEED: f32 = 150.;

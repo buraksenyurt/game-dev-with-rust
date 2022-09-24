@@ -2,6 +2,7 @@ use crate::block::Block;
 use crate::constant::{BLOCK_PADDING, BLOCK_SIZE};
 use crate::{vec2, BlockType, Powerup};
 use macroquad::prelude::*;
+use macroquad::rand::gen_range;
 
 // Ekranın üst kısmına 6X6 boyutlarında aralarında boşluklar da bulunan blokları veren fonksiyon
 pub fn create_blocks(blocks: &mut Vec<Block>) {
@@ -19,9 +20,12 @@ pub fn create_blocks(blocks: &mut Vec<Block>) {
         blocks.push(Block::new(start_position + vec2(block_x, block_y)));
     }
 
-    let power_up_index: usize = rand::gen_range(0, blocks.len());
-    blocks[power_up_index].block_type = BlockType::Bonus(Powerup::Tall);
+    let tall_index: usize = gen_range(0, width);
+    blocks[tall_index].block_type = BlockType::Bonus(Powerup::YaoMing);
 
-    let power_up_index: usize = rand::gen_range(0, blocks.len());
-    blocks[power_up_index].block_type = BlockType::Bonus(Powerup::Short);
+    let short_index: usize = gen_range(width*2 , blocks.len());
+    blocks[short_index].block_type = BlockType::Bonus(Powerup::SpudWebb);
+
+    let captain_slow_index: usize = gen_range(height, blocks.len());
+    blocks[captain_slow_index].block_type = BlockType::Bonus(Powerup::CaptainSlow);
 }

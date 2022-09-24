@@ -8,8 +8,9 @@ pub enum BlockType {
     Bonus(Powerup),
 }
 pub enum Powerup {
-    Tall,
-    Short,
+    YaoMing,
+    SpudWebb,
+    CaptainSlow,
 }
 
 pub struct Block {
@@ -42,8 +43,9 @@ impl Block {
             BlockType::Stone => Color::from_rgba(183, 176, 156, 250),
             BlockType::Iron => Color::from_rgba(161, 157, 148, 250),
             BlockType::Bonus(p) => match p {
-                Powerup::Tall => Color::from_rgba(255, 215, 0, 150),
-                Powerup::Short => Color::from_rgba(0, 206, 209, 150),
+                Powerup::YaoMing => Color::from_rgba(251, 191, 0, 250),
+                Powerup::SpudWebb => Color::from_rgba(0, 206, 209, 150),
+                Powerup::CaptainSlow => Color::from_rgba(92, 123, 209, 250),
             },
         };
         draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, color);
