@@ -4,16 +4,19 @@ mod constant;
 mod enemy;
 mod pisagor;
 mod player;
+mod robot;
 
 use crate::enemy::Enemy;
 use crate::pisagor::calculate_distance;
 use crate::player::Player;
+use crate::robot::Robot;
 use macroquad::prelude::*;
 
 #[macroquad::main("Math 101")]
 async fn main() {
     let mut player = Player::new();
     let enemy = Enemy::new();
+    let mut robot = Robot::new(0., screen_height() * 0.5);
 
     loop {
         clear_background(BLACK);
@@ -42,6 +45,8 @@ async fn main() {
         player.update(get_frame_time());
         player.draw();
         enemy.draw();
+        robot.update();
+        robot.draw();
         next_frame().await
     }
 }
