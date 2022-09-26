@@ -34,4 +34,14 @@ Sinüs eğrisinin kullanıldığı örnek kod parçasının çalışması aşağ
 
 ![assets/sinecurve.gif](assets/sinecurve.gif)
 
+## Nokta Çarpım (Dot Product)
+
+İki boyutlu oyun sahasında nesnelerin yönleri arasındaki açının değerlendirildiği pek çok durum var. Örneğin bir uçağın bir checkpoint noktasında geçip geçmediğini anlarken ya da yokuş aşağıya indiğini veya bir yokuşu çıktığını hesaplarken açıları kullanabiliriz. Aşağıdaki gösterimde uçağın yönü ile checkpoint noktasının yönü arasındaki ilişkinin nokta çarpım ile ele alınışı değerlendirilmekte. Bu senaryolarda birim vektörlerin göz önüne alındığını baştan belirteyim. Nitekim vektörün büyüklüğünden ziyade yönü önemli. Birim vektör cinsinden bir nesnenin yönünü ifade ettiğimizde aradaki açıyı bulmak için nokta çarpımı formülasyonundan da yararlanabiliyor. Nokta çarpım hesaplaması ters tanjant ya da ters kosinüs ile bulunan açı hesaplamasına göre işlemciye daha az yük bindiriyor. Yani işlem maliyeti çok daha ucuz. 
+
+![assets/dotproduct1.png](assets/dotproduct1.png)
+
+Nokta çarpımını birim vektöre indirgediğimizde elde edilen skalar değer -1 ile 1 aralığında olur. Buna göre vektörlerin aynı veya ters yönde olduklarını ya da birbirlerine yaklaştıklarını veya uzaklaştıklarını anlayabiliriz.
+
+![assets/dotproduct2.png](assets/dotproduct2.png)
+
 _Devam Edecek_
