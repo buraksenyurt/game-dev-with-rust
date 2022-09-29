@@ -44,4 +44,16 @@ Nokta çarpımını birim vektöre indirgediğimizde elde edilen skalar değer -
 
 ![assets/dotproduct2.png](assets/dotproduct2.png)
 
+## Doğrusal İnterpolasyon (Linear Interpolation)
+
+Oyun sahasında başvurulan matematik enstrümanlarından birisi de Linear Interpolation kavramıdır. Örneğin motion efektlerinde, belli bir rotayı izlemesi istenen unsurlarda, renk geçişlerinde, giderek hızlanan veya yavaşlayan nesnelerde sıklıkla başvurulur. En basit formu da iki nokta arasında gidilmesi istenen mesafenin sürece kesin olduğu motion efektleridir.
+
+Şöyle düşünelim. Diyelim ki x,y değerlerini bildiğimiz A ve B noktaları var. Düşman gemisinin A noktasından B noktasına 10 saniyede gideceğini de biliyoruz. Amacımız herhangi bir t anında bu nesnenin iki nokta arasındaki doğruda hangi x,y koordinatlarında olduğunu öğrenmek ki buna göre onun otomatik hareketlenmesini sağlayacağız. Aşağıdaki grafikte bu hesaplama için kullanılabilecek formüle yer veriliyor.
+
+![assets/linear_inter_01.png](assets/linear_inter_01.png)
+
+Başlangıç aşamasında A konumunda olan nesnenin 10ncu saniyede B konumunda olacağını biliyoruz. Buna göre örneğin C konumundan geçerken ki x,y koordinatlarını bulmak istersek nasıl bir formül kullanabiliriz? Esasında zaman çizelgesini yüzdesel olarak ifade edersek işimiz biraz daha kolaylaşır. Başlangıç konumu olasılığın %0 hali ile ifade edilirse 10ncu saniyede varış noktasına gelmiş olmamız da %100'e karşılık gelir. Yani varış noktasında isek nesne yüzde yüz kesinliklte rotasını tamamlamıştır. Bir başka deyişle başlangıç ve bitiş noktalarını yüzdesel olarak düşündüğümüzde 0 ile 1 arasında yer alan bir olasılık değerinden bahsedebiliriz. Bu değer formülümüzdeki t parametresine karşılık gelir ve oyunda kullanılan FPS(frame per second) bilgisine göre de ayarlanabilir. Örneğin her bir frame 0.1 saniyede geçiliyorsa bir T anını T=T+0.1 gibi ifade edebiliriz. Kendi senaryomuzda bu T değerinin 10'a bölümü hesaplamadaki t değerini verecektir. Bir başka deyişle elimizde FPS değeri de varsa herhangi bir andaki t değerini hesaplamak kolaydır.
+
+İşin zorlaştığı noktalardan bir tanesi yerçekiminin devreye girdiği senaryolardır. Örneğin önündeki tepeden space tuşuna basınca sıçyarak karşı tepeye ulaşmaya çalışan bir karakteri göz önüne alalım. Böyle bir durumda yerçekimine göre bir eğri çizilmesi ve bunun zaman bağımlı olarak hesaba katılması gerekecektir.
+
 _Devam Edecek_
