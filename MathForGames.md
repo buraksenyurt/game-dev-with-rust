@@ -59,3 +59,5 @@ Başlangıç aşamasında A konumunda olan nesnenin 10ncu saniyede B konumunda o
 ![assets/linear_inter_02.png](assets/linear_inter_02.png)
 
 Aracın t+1 anındaki konumunu ifade eden vektörü bulmak için hız vektörü ile delta time bilgisinin yer aldığı bir formül kullanılır. Ancak öncesinde o anki hız değerini işaret eden vektörün yine delta time ve yer çekimi vektörünün hesaba katılacağı bir formül ile bulunması gerekir. A ile ifade edilen _(genelde Acceleration olarak bilinir)_ vektör bu senaryoda yerçekimini işaret eden sabit bir vektör değeridir.
+
+Elbette oyun geliştirmede kullanılan matematiksel enstrümanlar bunlarla sınırlı değil. Matrisler, lineer cebir gibi daha bir çok konu başlığı bulunmakta. İlerleyen zamanlarda bu konulara da değinmek düşüncesindeyim.
