@@ -3,6 +3,8 @@ mod system;
 
 use crate::constant::{CLEAR_COLOR, RESOLUTION};
 use crate::system::camera::spawn_camera;
+use crate::system::player::spawn_player;
+use crate::system::texture::load_ascii;
 use bevy::prelude::*;
 
 fn main() {
@@ -16,7 +18,9 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
-        .add_plugins(DefaultPlugins)
         .add_startup_system(spawn_camera)
+        .add_startup_system(spawn_player)
+        .add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
+        .add_plugins(DefaultPlugins)
         .run();
 }

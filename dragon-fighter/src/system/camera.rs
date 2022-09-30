@@ -3,6 +3,9 @@ use bevy::prelude::{Camera2dBundle, Commands};
 use bevy::render::camera::*;
 
 pub fn spawn_camera(mut commands: Commands) {
+    // Bu örnekte diz üzdüşüm temelli bir kamera kullanılmakta
+    // Orthographic Projection, dik izdüşüm anlamındadır.
+
     let mut cmr = Camera2dBundle::default();
     cmr.projection = OrthographicProjection::default();
     cmr.projection.top = 1.;
