@@ -6,4 +6,4 @@ description = "A simple bevy game to learning game development"
 authors = ["Burak Selim Şenyurt"]
 
 [dependencies]
-bevy = {version="0.8.1", features=["dynamic"]}
+bevy = "0.8.1"
