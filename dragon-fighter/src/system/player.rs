@@ -1,5 +1,5 @@
 use crate::constant::TILE_SIZE;
-use crate::system::texture::AsciiSheet;
+use crate::system::texture::{spawn_sprite, AsciiSheet};
 use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
 
@@ -56,19 +56,17 @@ fn player_movement(
 }
 
 fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
-    let mut player_texture = TextureAtlasSprite::new(14);
-    player_texture.color = Color::rgb(255., 215., 0.);
-    player_texture.custom_size = Some(Vec2::splat(TILE_SIZE));
+
+    let player = spawn_sprite(
+        &mut commands,
+        &ascii,
+        14,
+        Color::rgb(255., 215., 0.),
+        Vec3::new(2. * TILE_SIZE, -2. * TILE_SIZE, 900.),
+    );
+
     commands
-        .spawn_bundle(SpriteSheetBundle {
-            sprite: player_texture,
-            texture_atlas: ascii.0.clone(),
-            transform: Transform {
-                translation: Vec3::new(2. * TILE_SIZE, -2. * TILE_SIZE, 900.),
-                ..Default::default()
-            },
-            ..Default::default()
-        })
+        .entity(player)
         .insert(Name::new("AgentSmith"))
         .insert(Player { speed: 5. });
 }
