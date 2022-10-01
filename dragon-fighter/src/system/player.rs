@@ -1,12 +1,16 @@
 use crate::constant::TILE_SIZE;
 use crate::system::texture::AsciiSheet;
 use bevy::prelude::*;
+use bevy_inspector_egui::Inspectable;
 
 // Plugin
 pub struct PlayerPlugin;
 
 // Oyuncu nesnesi için component tanımı
-#[derive(Component)]
+// Component olduğunu derive macro'su aracılığıyla belirtiyoruz.
+// Ayrıca çalışma zamanında debug aracı tarafında izlenebilmesi içinde
+// Inspectable özelliği ile donatıyoruz.
+#[derive(Component, Inspectable)]
 pub struct Player {
     pub speed: f32,
 }

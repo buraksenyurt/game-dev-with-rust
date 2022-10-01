@@ -7,3 +7,4 @@ authors = ["Burak Selim Şenyurt"]
 
 [dependencies]
 bevy = "0.8.1"
+bevy-inspector-egui = "0.13.0" # Çalışma zamanında ortam nesnelerini debug modda izleyebileceğimiz güzel bir eklenti
