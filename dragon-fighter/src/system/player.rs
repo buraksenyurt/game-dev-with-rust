@@ -56,7 +56,6 @@ fn player_movement(
 }
 
 fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
-
     let player = spawn_sprite(
         &mut commands,
         &ascii,

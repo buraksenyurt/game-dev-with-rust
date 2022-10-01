@@ -6,6 +6,7 @@ use crate::system::camera::spawn_camera;
 use crate::system::debugger::DebugPlugin;
 use crate::system::player::PlayerPlugin;
 use crate::system::texture::TexturePlugin;
+use crate::system::tiler::TilerPlugin;
 use bevy::prelude::*;
 
 fn main() {
@@ -24,6 +25,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(DebugPlugin)
         .add_plugin(TexturePlugin)
+        .add_plugin(TilerPlugin)
         //.add_startup_system(spawn_player)
         //.add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
         .run();
