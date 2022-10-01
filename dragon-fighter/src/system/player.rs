@@ -1,7 +1,9 @@
 use crate::constant::TILE_SIZE;
+use crate::system::collision::in_collision;
 use crate::system::texture::{spawn_sprite, AsciiSheet};
 use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
+use crate::system::tiler::TileCollider;
 
 // Plugin
 pub struct PlayerPlugin;
@@ -31,27 +33,41 @@ impl Plugin for PlayerPlugin {
 // Transform nesnesi ile oyuncunun o anki pozisyon bilgisini alabilir ve değiştirebiliriz.
 // Böylece bu sistemin player bileşenini kullanması sağlanır.
 // Sisteme giren ikinci parametre ise klavye tuşlarını ele almak içindir.
-// Son olarak dahil edilen 3ncü parametre delta_time bilgisini kullanmak için bir kaynaktır.
+// 3ncü parametre delta_time bilgisini kullanmak için bir kaynaktır.
+// 4ncü parametre ile duvarları alıp çarpışma kontrolü yapabiliriz
 fn player_movement(
     mut player_query: Query<(&Player, &mut Transform)>,
     keyboard: Res<Input<KeyCode>>,
     time: Res<Time>,
+    wall_query: Query<&Transform, (With<TileCollider>, Without<Player>)>,
 ) {
     // sahada tek bir oyuncu olduğundan single_mut kullandık ve
     let (player, mut transform) = player_query.single_mut();
-
+    let mut next_position = Vec2::default();
     // Basılan yön tuşlarına göre transform nesnesi üstünden oyuncuya bir hareket veriyoruz
     if keyboard.pressed(KeyCode::Up) {
-        transform.translation.y += player.speed * TILE_SIZE * time.delta_seconds();
+        next_position.y += player.speed * TILE_SIZE * time.delta_seconds();
     }
     if keyboard.pressed(KeyCode::Down) {
-        transform.translation.y -= player.speed * TILE_SIZE * time.delta_seconds();
+        next_position.y -= player.speed * TILE_SIZE * time.delta_seconds();
     }
     if keyboard.pressed(KeyCode::Left) {
-        transform.translation.x -= player.speed * TILE_SIZE * time.delta_seconds();
+        next_position.x -= player.speed * TILE_SIZE * time.delta_seconds();
     }
     if keyboard.pressed(KeyCode::Right) {
-        transform.translation.x += player.speed * TILE_SIZE * time.delta_seconds();
+        next_position.x += player.speed * TILE_SIZE * time.delta_seconds();
+    }
+
+    // Gidilecek bir sonraki lokasyonun x,y değerlerine göre bir duvara denk gelip
+    // gelinmediğine bakılıyor.
+    let target = transform.translation + Vec3::new(next_position.x, 0.0, 0.0);
+    if in_collision(target, &wall_query) {
+        transform.translation = target;
+    }
+
+    let target = transform.translation + Vec3::new(0.0, next_position.y, 0.0);
+    if in_collision(target, &wall_query) {
+        transform.translation = target;
     }
 }
 

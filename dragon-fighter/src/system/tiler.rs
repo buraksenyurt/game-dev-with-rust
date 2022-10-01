@@ -13,6 +13,9 @@ impl Plugin for TilerPlugin {
     }
 }
 
+#[derive(Component)]
+pub struct TileCollider;
+
 // Oyun sahasının zemin dokusunu hazırlayan fonksiyon
 fn create_room(mut commands: Commands, ascii: Res<AsciiSheet>) {
     // Fonksiyon assets klasöründeki room_map isimli bir text dosyayı kullanıyor
@@ -35,8 +38,18 @@ fn create_room(mut commands: Commands, ascii: Res<AsciiSheet>) {
                     Color::rgb(0.5, 0.5, 0.5),
                     Vec3::new(x as f32 * TILE_SIZE, -(y as f32) * TILE_SIZE, 100.),
                 );
+                if c == '#' {
+                    commands.entity(tile).insert(TileCollider);
+                }
                 tiles.push(tile);
             }
         }
     }
+
+    // commands
+    //     .spawn()
+    //     .insert(Name::new("RoomOne"))
+    //     .insert(Transform::default())
+    //     .insert(GlobalTransform::default())
+    //     .push_children(&tiles);
 }
