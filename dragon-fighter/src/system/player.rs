@@ -25,12 +25,16 @@ impl Plugin for PlayerPlugin {
         // kullanabiliriz.
         app.add_startup_system(spawn_player)
             .add_system(player_movement)
-            .add_system(player_teleportaion);
+            .add_system(player_teleportation)
+            .add_system(trail_camera);
     }
 }
 
-fn player_teleportaion(
-    mut player_query: Query<(&Player, &mut Transform)>,
+// Sembolik bir ışınlanma sistemi diyelim
+// Sola veya sağa giderken aynı anda space tuşuna basınca turbo moda geçmiş gibi
+// daha hızlı hareket ediyor
+fn player_teleportation(
+    mut player_query: Query<(&mut Player, &mut Transform)>,
     keyboard: Res<Input<KeyCode>>,
     time: Res<Time>,
     wall_query: Query<&Transform, (With<TileCollider>, Without<Player>)>,
@@ -105,4 +109,17 @@ fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
         .entity(player)
         .insert(Name::new("AgentSmith"))
         .insert(Player { speed: 5. });
+}
+
+// Kamera takip sistemi. Yani oyuncuyu hareket ettirdiğimizde kamera onu merkezde tutacak
+// şekilde ekran değişecek
+fn trail_camera(
+    player_query: Query<&Transform, With<Player>>,
+    mut camera_query: Query<&mut Transform, (Without<Player>, With<Camera>)>,
+) {
+    let player_transform = player_query.single();
+    let mut camera_transform = camera_query.single_mut();
+    // Kameratnın x,y konumunu oyuncunun x,y konumuna eşitlediğimiz kısım
+    camera_transform.translation.x = player_transform.translation.x;
+    camera_transform.translation.y = player_transform.translation.y;
 }
