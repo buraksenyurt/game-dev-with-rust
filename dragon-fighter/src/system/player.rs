@@ -1,9 +1,9 @@
 use crate::constant::TILE_SIZE;
 use crate::system::collision::in_collision;
 use crate::system::texture::{spawn_sprite, AsciiSheet};
+use crate::system::tiler::TileCollider;
 use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
-use crate::system::tiler::TileCollider;
 
 // Plugin
 pub struct PlayerPlugin;
@@ -24,7 +24,28 @@ impl Plugin for PlayerPlugin {
         // Böylece main fonksiyonunda birçok sistem tanımlamak yerine oyuncu plugin nesnesini
         // kullanabiliriz.
         app.add_startup_system(spawn_player)
-            .add_system(player_movement);
+            .add_system(player_movement)
+            .add_system(player_teleportaion);
+    }
+}
+
+fn player_teleportaion(
+    mut player_query: Query<(&Player, &mut Transform)>,
+    keyboard: Res<Input<KeyCode>>,
+    time: Res<Time>,
+    wall_query: Query<&Transform, (With<TileCollider>, Without<Player>)>,
+) {
+    let (player, mut transform) = player_query.single_mut();
+    let mut next_position = Vec2::default();
+    if keyboard.pressed(KeyCode::Right) && keyboard.pressed(KeyCode::Space) {
+        next_position.x += 3. * (player.speed * TILE_SIZE * time.delta_seconds());
+    }
+    if keyboard.pressed(KeyCode::Left) && keyboard.pressed(KeyCode::Space) {
+        next_position.x += -3. * (player.speed * TILE_SIZE * time.delta_seconds());
+    }
+    let target = transform.translation + Vec3::new(next_position.x, 0.0, 0.0);
+    if in_collision(target, &wall_query) {
+        transform.translation = target;
     }
 }
 

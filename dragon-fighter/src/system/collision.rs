@@ -1,8 +1,8 @@
 use crate::constant::TILE_SIZE;
-use crate::system::player::{Player};
+use crate::system::player::Player;
+use crate::system::tiler::TileCollider;
 use bevy::prelude::{Query, Transform, Vec2, Vec3, With, Without};
 use bevy::sprite::collide_aabb::collide;
-use crate::system::tiler::TileCollider;
 
 pub fn in_collision(
     player_position: Vec3,
