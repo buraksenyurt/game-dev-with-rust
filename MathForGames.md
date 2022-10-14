@@ -60,4 +60,14 @@ Başlangıç aşamasında A konumunda olan nesnenin 10ncu saniyede B konumunda o
 
 Aracın t+1 anındaki konumunu ifade eden vektörü bulmak için hız vektörü ile delta time bilgisinin yer aldığı bir formül kullanılır. Ancak öncesinde o anki hız değerini işaret eden vektörün yine delta time ve yer çekimi vektörünün hesaba katılacağı bir formül ile bulunması gerekir. A ile ifade edilen _(genelde Acceleration olarak bilinir)_ vektör bu senaryoda yerçekimini işaret eden sabit bir vektör değeridir.
 
+## Dairesel Hareket
+
+__EKLENECEK__
+
 Elbette oyun geliştirmede kullanılan matematiksel enstrümanlar bunlarla sınırlı değil. Matrisler, lineer cebir gibi daha bir çok konu başlığı bulunmakta. İlerleyen zamanlarda bu konulara da değinmek düşüncesindeyim. Yine de basit oyun kinematiği üzerine gerekli denklemlerin üzerinden geçtiğimiz düşünüyorum. Sadece vektörleri ve açıları kullanarak bile sahadaki karakterleri yönlendirmek, hızlandırmak, bir yerlere çarpıp çarpmadığını bulmak kolaydır. Tabii tüm bu teroik bilgileri bir şekilde denemek de gerekiyor. Ben biraz daha zor yolu seçip Rust tarafındaki oyun motorlarından faydalanmaya çalıştım. Nitekim Unity, Unreal Engine gibi zengin IDE desteğine sahip platformlarda bu matematik bilgilerine ihtiyaç duyulmayabilir.
+
+### Özet Çevirinin Hazırlanmasında Yararlandığım Kaynaklar
+
+- * [Essential Mathematics For Aspiring Game Developers](https://www.youtube.com/watch?v=DPfxjQ6sqrc)
+- 3D Math Primer for Graphics and Game Development,  Fletcher Dunn
+- Foundations of Game Engine Development, Volume 1: Mathematics, Eric Lengyel
