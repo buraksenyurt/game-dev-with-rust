@@ -3,11 +3,13 @@ extern crate core;
 mod constant;
 mod enemy;
 mod pisagor;
+mod plane;
 mod player;
 mod robot;
 
 use crate::enemy::Enemy;
 use crate::pisagor::calculate_distance;
+use crate::plane::Plane;
 use crate::player::Player;
 use crate::robot::Robot;
 use macroquad::prelude::*;
@@ -17,6 +19,7 @@ async fn main() {
     let mut player = Player::new();
     let enemy = Enemy::new();
     let mut robot = Robot::new(0., screen_height() * 0.5);
+    let mut plane = Plane::new(screen_width() * 0.25, screen_height() * 0.5, 100.);
 
     loop {
         clear_background(BLACK);
@@ -47,6 +50,9 @@ async fn main() {
         enemy.draw();
         robot.update();
         robot.draw();
+        plane.update();
+        plane.draw();
+
         next_frame().await
     }
 }
