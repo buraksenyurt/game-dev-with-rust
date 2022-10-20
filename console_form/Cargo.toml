@@ -1,0 +1,9 @@
+[package]
+name = "console_form"
+version = "0.1.0"
+edition = "2021"
+description = "Console Engine ile geliştirilmiş basit bir form uygulaması"
+authors = ["Burak Selim Şenyurt"]
+
+[dependencies]
+console_engine = "2.5.0"
