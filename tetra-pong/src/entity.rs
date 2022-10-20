@@ -10,21 +10,20 @@ pub struct Entity {
     position: Vec2<f32>,
 }
 
+impl Entity {
+    pub fn new(sprite: Texture, position: Vec2<f32>) -> Self {
+        Self { sprite, position }
+    }
+    pub fn draw(&self, context: &mut Context) {
+        self.sprite.draw(context, self.position);
+    }
+}
+
 pub struct Player {
-    core: Entity,
+    pub core: Entity,
 }
 
 impl Player {
-    pub fn new(sprite: Texture, position: Vec2<f32>) -> Self {
-        Self {
-            core: Entity { sprite, position },
-        }
-    }
-
-    pub fn draw(&self, context: &mut Context) {
-        self.core.sprite.draw(context, self.core.position);
-    }
-
     pub fn go_left(&mut self) {
         if self.core.position.x > 0. {
             self.core.position.x -= PADDLE_SPEED;

@@ -1,8 +1,8 @@
 /*
 Oyun durum bilgilerini tutan State nesnesi ve implementasyonu
 */
-use crate::constant::{OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH};
-use crate::entity::Player;
+use crate::constant::{BALL_PATH, OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH};
+use crate::entity::{Entity, Player};
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use tetra::graphics::{Color, Texture};
 use tetra::input::Key;
@@ -12,10 +12,10 @@ use tetra::{graphics, input, Context, State, TetraError};
 pub struct GameState {
     pub player1: Player,
     pub player2: Player,
-    // pub paddle1_texture: Texture,
-    // pub paddle1_position: Vec2<f32>,
-    // pub paddle2_texture: Texture,
-    // pub paddle2_position: Vec2<f32>,
+    pub ball: Entity, // pub paddle1_texture: Texture,
+                      // pub paddle1_position: Vec2<f32>,
+                      // pub paddle2_texture: Texture,
+                      // pub paddle2_position: Vec2<f32>,
 }
 
 impl GameState {
@@ -33,9 +33,20 @@ impl GameState {
             SCREEN_HEIGHT - paddle2_texture.height() as f32,
         );
 
+        let ball_texture = Texture::new(context, BALL_PATH)?;
+        let ball_position = Vec2::new(
+            (SCREEN_WIDTH - ball_texture.width() as f32) * 0.5,
+            (SCREEN_HEIGHT - ball_texture.height() as f32) * 0.5,
+        );
+
         let game_state = GameState {
-            player1: Player::new(paddle1_texture, paddle1_position),
-            player2: Player::new(paddle2_texture, paddle2_position),
+            player1: Player {
+                core: Entity::new(paddle1_texture, paddle1_position),
+            },
+            player2: Player {
+                core: Entity::new(paddle2_texture, paddle2_position),
+            },
+            ball: Entity::new(ball_texture, ball_position),
         };
         Ok(game_state)
 
@@ -54,9 +65,11 @@ impl State for GameState {
         // Ekranı belirtilen renk ile temizliyor
         graphics::clear(context, Color::hex(OCEAN_BLUE));
         // İlk oyuncunun raketini ekrana çizdiriyoruz
-        self.player1.draw(context);
+        self.player1.core.draw(context);
         // İkinci oyuncunun raketi çizdirilir
-        self.player2.draw(context);
+        self.player2.core.draw(context);
+
+        self.ball.draw(context);
         Ok(())
     }
 
