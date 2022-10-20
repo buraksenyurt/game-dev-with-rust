@@ -2,16 +2,19 @@
 Oyun durum bilgilerini tutan State nesnesi ve implementasyonu
 */
 use crate::constant::{OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH};
+use crate::entity::Entity;
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use tetra::graphics::{Color, Texture};
 use tetra::math::Vec2;
 use tetra::{graphics, Context, State, TetraError};
 
 pub struct GameState {
-    pub paddle1_texture: Texture,
-    pub paddle1_position: Vec2<f32>,
-    pub paddle2_texture: Texture,
-    pub paddle2_position: Vec2<f32>,
+    pub player1: Entity,
+    pub player2: Entity,
+    // pub paddle1_texture: Texture,
+    // pub paddle1_position: Vec2<f32>,
+    // pub paddle2_texture: Texture,
+    // pub paddle2_position: Vec2<f32>,
 }
 
 impl GameState {
@@ -29,12 +32,18 @@ impl GameState {
             SCREEN_HEIGHT - paddle2_texture.height() as f32,
         );
 
-        Ok(GameState {
-            paddle1_texture,
-            paddle1_position,
-            paddle2_texture,
-            paddle2_position,
-        })
+        let game_state = GameState {
+            player1: Entity::new(paddle1_texture, paddle1_position),
+            player2: Entity::new(paddle2_texture, paddle2_position),
+        };
+        Ok(game_state)
+
+        // Ok(GameState {
+        //     paddle1_texture,
+        //     paddle1_position,
+        //     paddle2_texture,
+        //     paddle2_position,
+        // })
     }
 }
 
@@ -44,9 +53,9 @@ impl State for GameState {
         // Ekranı belirtilen renk ile temizliyor
         graphics::clear(context, Color::hex(OCEAN_BLUE));
         // İlk oyuncunun raketini ekrana çizdiriyoruz
-        self.paddle1_texture.draw(context, self.paddle1_position);
+        self.player1.draw(context);
         // İkinci oyuncunun raketi çizdirilir
-        self.paddle2_texture.draw(context, self.paddle2_position);
+        self.player2.draw(context);
         Ok(())
     }
 }
