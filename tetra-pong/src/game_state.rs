@@ -1,8 +1,10 @@
 /*
 Oyun durum bilgilerini tutan State nesnesi ve implementasyonu
 */
-use crate::constant::{BALL_PATH, OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH};
-use crate::entity::{Entity, Player};
+use crate::constant::{
+    BALL_ACC, BALL_PATH, BALL_SPEED, OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH, PADDLE_SPIN,
+};
+use crate::entity::{Ball, Entity, Player};
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use tetra::graphics::{Color, Texture};
 use tetra::input::Key;
@@ -12,10 +14,7 @@ use tetra::{graphics, input, Context, State, TetraError};
 pub struct GameState {
     pub player1: Player,
     pub player2: Player,
-    pub ball: Entity, // pub paddle1_texture: Texture,
-                      // pub paddle1_position: Vec2<f32>,
-                      // pub paddle2_texture: Texture,
-                      // pub paddle2_position: Vec2<f32>,
+    pub ball: Ball,
 }
 
 impl GameState {
@@ -38,6 +37,8 @@ impl GameState {
             (SCREEN_WIDTH - ball_texture.width() as f32) * 0.5,
             (SCREEN_HEIGHT - ball_texture.height() as f32) * 0.5,
         );
+        // Topun hızı ve yönünü başlangıçta bir vektör olarak tanımladık
+        let ball_velocity = Vec2::new(0., BALL_SPEED);
 
         let game_state = GameState {
             player1: Player {
@@ -46,16 +47,39 @@ impl GameState {
             player2: Player {
                 core: Entity::new(paddle2_texture, paddle2_position),
             },
-            ball: Entity::new(ball_texture, ball_position),
+            ball: Ball::new(Entity::new(ball_texture, ball_position), ball_velocity),
         };
         Ok(game_state)
+    }
 
-        // Ok(GameState {
-        //     paddle1_texture,
-        //     paddle1_position,
-        //     paddle2_texture,
-        //     paddle2_position,
-        // })
+    // Oyuncuların raketleri ile topa vurup vurmadıklarını kontrol eden fonksiyon
+    // Axis Aligned Bounding Boxes(AABB) tekniği kullanılır
+    fn check_collision(&mut self) {
+        // raketlerin ve topun dörtgensel sınırlarını bul
+        let paddle1_bounds = self.player1.core.get_bounds();
+        let paddle2_bounds = self.player2.core.get_bounds();
+        let ball_bounds = self.ball.core.get_bounds();
+
+        // Bir kesişme olup olmadığını öğren
+        let paddle_hit = if ball_bounds.intersects(&paddle1_bounds) {
+            Some(&self.player1)
+        } else if ball_bounds.intersects(&paddle2_bounds) {
+            Some(&self.player2)
+        } else {
+            None
+        };
+        // Kesişme varsa raketle top çarpışmış demektir.
+        // Özetle oyuncu topa vurabilmiştir.
+        if let Some(paddle) = paddle_hit {
+            // Eğer öyleyse topun yönünü değiştiriyoruz ve bunu yaparken hızlanmayı da ayarlıyoruz
+
+            self.ball.velocity.y =
+                -(self.ball.velocity.y + (BALL_ACC * self.ball.velocity.y.signum()));
+            let offset = (paddle.core.get_centre().x - self.ball.core.get_centre().x)
+                / paddle.core.sprite.height() as f32;
+            self.ball.velocity.x += PADDLE_SPIN * -offset;
+            // self.ball.velocity.x += -offset;
+        }
     }
 }
 
@@ -69,7 +93,8 @@ impl State for GameState {
         // İkinci oyuncunun raketi çizdirilir
         self.player2.core.draw(context);
 
-        self.ball.draw(context);
+        self.ball.core.draw(context);
+
         Ok(())
     }
 
@@ -87,6 +112,16 @@ impl State for GameState {
         }
         if input::is_key_down(context, Key::D) {
             self.player2.go_right();
+        }
+
+        self.ball.core.position += self.ball.velocity;
+
+        self.check_collision();
+
+        if self.ball.core.position.x <= 0.0
+            || self.ball.core.position.x + self.ball.core.sprite.width() as f32 >= SCREEN_WIDTH
+        {
+            self.ball.velocity.x = -self.ball.velocity.x;
         }
 
         Ok(())
