@@ -1,15 +1,20 @@
 mod constant;
 mod game_state;
 
+use crate::constant::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::game_state::GameState;
 use tetra::ContextBuilder;
 
 fn main() -> tetra::Result {
     // Oyuna ait Context nesnesi inşa edilir
     // Başlık, genişlik, yükseklik
-    ContextBuilder::new("Başka Bir Ping Pong", 640, 480)
-        .quit_on_escape(true) // ESC tuşuna basılırsa oyundan çıkılır
-        .build()
-        .expect("Context oluşturulması sırasında hata.")
-        .run(|_| Ok(GameState {})) // Oyun döngüsü State nesnesi ile birlikte başlatılır
+    ContextBuilder::new(
+        "Başka Bir Ping Pong",
+        SCREEN_WIDTH as i32,
+        SCREEN_HEIGHT as i32,
+    )
+    .quit_on_escape(true) // ESC tuşuna basılırsa oyundan çıkılır
+    .build()
+    .expect("Context oluşturulması sırasında hata.")
+    .run(GameState::new) // Oyun döngüsü State nesnesi ile birlikte başlatılır
 }
