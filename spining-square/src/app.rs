@@ -33,8 +33,9 @@ impl Application {
                 .transform
                 .trans(x, y) // konum yeni yerine ayarlanıyor
                 .rot_rad(rotation) // döndürme işlemi
-                .trans(-32., 32.);
-            // dörten çiziliyor
+                .trans(-16., 32.); // Buradaki değerlerle oynayarak farklı sonuçlar elde edebiliriz.
+            // Mesela -32.,-32. deneyelim.
+            // dörtgen çiziliyor
             rectangle(GOLD, square, transform, gl);
         });
     }
@@ -42,6 +43,7 @@ impl Application {
     // FPS diliminde güncelleme işini üstlenen fonksiyon
     pub fn update(&mut self, args: &UpdateArgs) {
         // döndürme değeri hesaplıyor. dt=delta time
+        // Buna göre saniyede 2 radyanlık bir dönüş söz konusu
         self.rotation += 2. * args.dt;
     }
 }
