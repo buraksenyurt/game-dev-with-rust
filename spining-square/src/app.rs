@@ -9,6 +9,10 @@ pub struct Application {
 }
 
 impl Application {
+    pub fn new(graphic: GlGraphics, rotation: f64) -> Self {
+        Self { graphic, rotation }
+    }
+
     // Ekrana çizdirme işlemlerinin yürütüldüğü render fonksiyonu
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
