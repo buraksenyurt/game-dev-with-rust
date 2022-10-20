@@ -9,7 +9,7 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 - [x] **walls_coming:** Sıradaki örnekte tekrardan Tantan'a uğruyorum. Bu kez Breakout oyununun yazılışını anlattığı [öğretiyi](https://youtu.be/xQ9YTY7ZgsI) çalışmaktayım. Bu örnekte [macroquad](https://github.com/not-fl3/macroquad) isimli başka bir oyun kütüphanesi kullanılmakta.
 - [x] **Math101** isimli projede oyun programlama için gerekli temel matematik enstrümanlara bakılıyor. [MathForGames](MathForGames.md) isimli dokümanda biraz daha fazla detay bulunabilir.
 - ~~[ ] Dragon Fighter isimli yeni öğretide Bevy küfesini kullanan bir oyun geliştirmeye çalışıyorum. Tekrardan Entity Component System _(ECS)_ konusunu irdeliyorum. Takip ettiğim örnek [şu github adresinde](https://github.com/mwbryant/rpg-bevy-tutorial/tree/master) yer almakta. Özellikle öğreti serisini branch olarak ayırması takibi kolaylaştırıyor. Tabii örnek bevy'nin 0.6 versiyonu baz alınarak hazırlanmış. Benim kullandığım versiyon ile arada ufak tefek farklılıklar olabiliyor. Bakalım sonuçta ortaya ne çıkacak :)~~ __Youtube video anlatımı yavaşlatmama rağmen pek istediğim öğreticilikte değildir. Bu yüzden iptal ettim.__
-- [ ] **Console_From:** Rust ile yazılmış oyun motorlarına bakarken tamamen console'dan çalışan eğlenceli bir crate buldum. [Conole_Engine](https://crates.io/crates/console_engine) isimli bu crate ile basit bir form hazırlamaya çalıştığım örnek.
+- [ ] **Spining-Square:** Popüler oyun motorlarından olan [Piston](https://crates.io/crates/piston) ile ilgili Getting Started örneği. 
 
 ## Örnek Çalışma Zamanları
 
