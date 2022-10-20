@@ -2,7 +2,7 @@
 Oyun durum bilgilerini tutan State nesnesi ve implementasyonu
 */
 use crate::constant::{OCEAN_BLUE, PADDLE1_PATH, PADDLE2_PATH};
-use crate::entity::Entity;
+use crate::entity::Player;
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use tetra::graphics::{Color, Texture};
 use tetra::input::Key;
@@ -10,8 +10,8 @@ use tetra::math::Vec2;
 use tetra::{graphics, input, Context, State, TetraError};
 
 pub struct GameState {
-    pub player1: Entity,
-    pub player2: Entity,
+    pub player1: Player,
+    pub player2: Player,
     // pub paddle1_texture: Texture,
     // pub paddle1_position: Vec2<f32>,
     // pub paddle2_texture: Texture,
@@ -34,8 +34,8 @@ impl GameState {
         );
 
         let game_state = GameState {
-            player1: Entity::new(paddle1_texture, paddle1_position),
-            player2: Entity::new(paddle2_texture, paddle2_position),
+            player1: Player::new(paddle1_texture, paddle1_position),
+            player2: Player::new(paddle2_texture, paddle2_position),
         };
         Ok(game_state)
 
@@ -66,13 +66,13 @@ impl State for GameState {
         if input::is_key_down(context, Key::Left) {
             self.player1.go_left();
         }
-        if input::is_key_down(context,Key::Right){
+        if input::is_key_down(context, Key::Right) {
             self.player1.go_right();
         }
-        if input::is_key_down(context,Key::A){
+        if input::is_key_down(context, Key::A) {
             self.player2.go_left();
         }
-        if input::is_key_down(context,Key::D){
+        if input::is_key_down(context, Key::D) {
             self.player2.go_right();
         }
 
