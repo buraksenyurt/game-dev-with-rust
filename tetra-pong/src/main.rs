@@ -1,6 +1,7 @@
 mod constant;
 mod entity;
 mod game_state;
+mod scenes;
 
 use crate::constant::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::game_state::GameState;
