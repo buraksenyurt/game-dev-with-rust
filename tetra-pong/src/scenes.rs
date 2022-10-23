@@ -5,21 +5,37 @@
    geçişleri kontrol etmek. Diğer oyun motorlarındaki State Machine kullanımları biraz daha kolay.
 */
 use crate::constant::{
-    BALL_ACC, BALL_PATH, BALL_SPEED, BRICK, PADDLE1_PATH, PADDLE2_PATH, PADDLE_SPIN,
+    BALL_ACC, BALL_PATH, BALL_SPEED, BRICK, BRIGHT_REDDISH_LILAC, PADDLE1_PATH, PADDLE2_PATH,
+    PADDLE_SPIN,
 };
 use crate::entity::{Ball, Entity, Player};
 use crate::game_state::Scoreboard;
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use std::fmt::{Display, Formatter};
 use tetra::graphics::text::{Font, Text};
 use tetra::graphics::{Color, Texture};
 use tetra::input::Key;
 use tetra::math::Vec2;
 use tetra::{graphics, input, Context};
 
+pub enum Winner {
+    Player1,
+    Player2,
+}
+
+impl Display for Winner {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Player1 => write!(f, "Player I"),
+            Self::Player2 => write!(f, "Player II"),
+        }
+    }
+}
+
 pub enum Transition {
     None,
     Push(Box<dyn Scene>),
-    Pop,
+    End(Winner),
 }
 
 pub trait Scene {
@@ -59,6 +75,38 @@ impl Scene for MainMenuScene {
     }
 }
 
+pub struct EndScene {
+    content: Text,
+}
+
+impl EndScene {
+    pub fn new(context: &mut Context, winner: Winner) -> tetra::Result<EndScene> {
+        Ok(EndScene {
+            content: Text::new(
+                format!("Winner is {}\nWould you play again?", winner),
+                Font::vector(context, "./assets/Halo3.ttf", 36.)?,
+            ),
+        })
+    }
+}
+
+impl Scene for EndScene {
+    fn update(&mut self, context: &mut Context) -> tetra::Result<Transition> {
+        if input::is_key_pressed(context, Key::Enter) {
+            Ok(Transition::Push(Box::new(GameScene::new(context))))
+        } else {
+            Ok(Transition::None)
+        }
+    }
+
+    fn draw(&mut self, context: &mut Context) -> tetra::Result<Transition> {
+        graphics::clear(context, Color::hex(BRIGHT_REDDISH_LILAC));
+        self.content
+            .draw(context, Vec2::new(10., SCREEN_HEIGHT * 0.5));
+        Ok(Transition::None)
+    }
+}
+
 pub struct GameScene {
     pub player1: Player,
     pub player2: Player,
@@ -67,7 +115,7 @@ pub struct GameScene {
 }
 
 impl GameScene {
-    fn new(context: &mut Context) -> Self {
+    pub fn new(context: &mut Context) -> Self {
         let paddle1_texture = Texture::new(context, PADDLE1_PATH).unwrap();
         let paddle1_position = Vec2::new((SCREEN_WIDTH - paddle1_texture.width() as f32) * 0.5, 0.);
         let paddle2_texture = Texture::new(context, PADDLE2_PATH).unwrap();
@@ -169,13 +217,19 @@ impl Scene for GameScene {
         }
 
         if self.ball.core.position.y < 0. {
-            self.score_board.p1_point += 10;
-            return Ok(Transition::Pop);
+            // self.score_board.p1_point += 10;
+            // return Ok(Transition::Push(Box::new(EndScene::new(
+            //     context, "Player 1",
+            // ))));
+            return Ok(Transition::End(Winner::Player1));
         }
 
         if self.ball.core.position.y > SCREEN_HEIGHT {
-            self.score_board.p2_point += 10;
-            return Ok(Transition::Pop);
+            //self.score_board.p2_point += 10;
+            // return Ok(Transition::Push(Box::new(EndScene::new(
+            //     context, "Player 2",
+            // ))));
+            return Ok(Transition::End(Winner::Player2));
         }
 
         Ok(Transition::None)
