@@ -9,7 +9,6 @@ use crate::constant::{
     PADDLE_SPIN,
 };
 use crate::entity::{Ball, Entity, Player};
-use crate::game_state::Scoreboard;
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use std::fmt::{Display, Formatter};
 use tetra::graphics::text::{Font, Text};
@@ -111,7 +110,7 @@ pub struct GameScene {
     pub player1: Player,
     pub player2: Player,
     pub ball: Ball,
-    pub score_board: Scoreboard,
+    //pub score_board: Scoreboard,
 }
 
 impl GameScene {
@@ -139,7 +138,7 @@ impl GameScene {
                 core: Entity::new(paddle2_texture, paddle2_position),
             },
             ball: Ball::new(Entity::new(ball_texture, ball_position), ball_velocity),
-            score_board: Scoreboard::default(),
+            //score_board: Scoreboard::default(),
         };
 
         game
@@ -185,11 +184,11 @@ impl Scene for GameScene {
         // Top sahaya çizdirilir
         self.ball.core.draw(context);
 
-        let mut score_board = Text::new(
-            self.score_board.to_string(),
-            Font::vector(context, "./assets/Halo3.ttf", 28.)?,
-        );
-        score_board.draw(context, Vec2::new(0., SCREEN_HEIGHT * 0.5));
+        // let mut score_board = Text::new(
+        //     self.score_board.to_string(),
+        //     Font::vector(context, "./assets/Halo3.ttf", 28.)?,
+        // );
+        // score_board.draw(context, Vec2::new(0., SCREEN_HEIGHT * 0.5));
         Ok(Transition::None)
     }
     fn update(&mut self, context: &mut Context) -> tetra::Result<Transition> {

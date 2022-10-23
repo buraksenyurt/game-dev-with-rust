@@ -3,7 +3,6 @@ Oyun durum bilgilerini tutan State nesnesi ve implementasyonu
 */
 use crate::constant::OCEAN_BLUE;
 use crate::scenes::{EndScene, MainMenuScene, Scene, Transition};
-use std::fmt::{Display, Formatter};
 use tetra::graphics::Color;
 use tetra::window::quit;
 use tetra::{graphics, Context, State, TetraError};
