@@ -1,0 +1,8 @@
+[package]
+name = "wolf-tank"
+version = "0.1.0"
+edition = "2021"
+description = "Macroquad game engine antrenmanları"
+
+[dependencies]
+macroquad = "0.3.24"
