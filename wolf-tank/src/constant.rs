@@ -1,0 +1,2 @@
+pub const TANK_ROTATION_VALUE: f32 = 1.;
+pub const MENU_SEPERATOR_HEIGHT: f32 = 25.;
