@@ -1,17 +1,28 @@
+mod resource;
+mod tank;
+
+use crate::resource::TANK_TEXTURE;
+use crate::tank::Tank;
 use macroquad::prelude::*;
 
 #[macroquad::main("Wolf Tank")]
 async fn main() {
-    let texture: Texture2D = load_texture("./assets/tank.png").await.unwrap();
+    let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
+    let mut player_tank = Tank::new(tank_texture);
 
+    println!("{}", player_tank);
     loop {
         clear_background(BLACK);
-        draw_texture(
-            texture,
-            screen_width() * 0.5 - texture.width() * 0.5,
-            screen_height() * 0.5 - texture.height() * 0.5,
-            WHITE,
-        );
+
+        if is_key_down(KeyCode::Right) {
+            player_tank.rotation += 0.1;
+            //println!("{}", player_tank);
+        } else if is_key_down(KeyCode::Left) {
+            player_tank.rotation -= 0.1;
+            //println!("{}", player_tank);
+        }
+        player_tank.draw();
+
         next_frame().await
     }
 }
