@@ -32,14 +32,19 @@ async fn main() {
                     exit(0);
                 }
 
-                let ft = get_frame_time();
+                let delta_time = get_frame_time();
+                let rotation = player_tank.rotation;
+                let direction = Vec2::new(rotation.cos(), rotation.sin());
+
+                if is_key_down(KeyCode::Up) {
+                    //println!("{}", player_tank);
+                    player_tank.position += direction;
+                }
 
                 if is_key_down(KeyCode::Right) {
-                    player_tank.rotation += TANK_ROTATION_VALUE * ft;
-                    //println!("{}", player_tank);
+                    player_tank.rotation += TANK_ROTATION_VALUE * delta_time;
                 } else if is_key_down(KeyCode::Left) {
-                    player_tank.rotation -= TANK_ROTATION_VALUE * ft;
-                    //println!("{}", player_tank);
+                    player_tank.rotation -= TANK_ROTATION_VALUE * delta_time;
                 }
             }
             GameState::PlayerDead => {}
