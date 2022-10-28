@@ -1,11 +1,13 @@
 mod constant;
 mod game_state;
+mod helper;
 mod menu;
 mod resource;
 mod tank;
 
 use crate::constant::TANK_ROTATION_VALUE;
 use crate::game_state::GameState;
+use crate::helper::border_check;
 use crate::menu::draw_menu;
 use crate::resource::TANK_TEXTURE;
 use crate::tank::Tank;
@@ -35,10 +37,13 @@ async fn main() {
                 let delta_time = get_frame_time();
                 let rotation = player_tank.rotation;
                 let direction = Vec2::new(rotation.cos(), rotation.sin());
-
+                let position = border_check(&player_tank.position, player_tank.texture.width());
+                player_tank.position = position;
                 if is_key_down(KeyCode::Up) {
                     //println!("{}", player_tank);
                     player_tank.position += direction;
+                } else if is_key_down(KeyCode::Down) {
+                    player_tank.position -= direction;
                 }
 
                 if is_key_down(KeyCode::Right) {
