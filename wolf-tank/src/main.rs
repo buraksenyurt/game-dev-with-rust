@@ -1,3 +1,4 @@
+mod bullet;
 mod constant;
 mod game_state;
 mod helper;
@@ -5,11 +6,12 @@ mod menu;
 mod resource;
 mod tank;
 
+use crate::bullet::Bullet;
 use crate::constant::TANK_ROTATION_VALUE;
 use crate::game_state::GameState;
 use crate::helper::border_check;
 use crate::menu::draw_menu;
-use crate::resource::TANK_TEXTURE;
+use crate::resource::{BULLET_TEXTURE, TANK_TEXTURE};
 use crate::tank::Tank;
 use macroquad::prelude::*;
 use std::process::exit;
@@ -17,7 +19,9 @@ use std::process::exit;
 #[macroquad::main("Wolf Tank")]
 async fn main() {
     let mut game_state = GameState::Menu;
+    let mut bullets = Vec::new();
     let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
+    let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
     let mut player_tank = Tank::new(tank_texture);
     loop {
         match game_state {
@@ -46,6 +50,18 @@ async fn main() {
                     player_tank.position -= direction;
                 }
 
+                if is_key_down(KeyCode::S) {
+                    let bullet = Bullet {
+                        position: player_tank.position + rotation,
+                        velocity: direction * 5.,
+                        shoot_at: delta_time,
+                        collided: false,
+                        texture: bullet_texture,
+                        rotation
+                    };
+                    bullets.push(bullet);
+                }
+
                 if is_key_down(KeyCode::Right) {
                     player_tank.rotation += TANK_ROTATION_VALUE * delta_time;
                 } else if is_key_down(KeyCode::Left) {
@@ -62,6 +78,12 @@ async fn main() {
             }
             GameState::Playing => {
                 player_tank.draw();
+                for b in bullets.iter_mut() {
+                    let rotation = b.rotation;
+                    let direction = Vec2::new(rotation.cos(), rotation.sin());
+                    b.position += direction;
+                    b.draw();
+                }
             }
             GameState::PlayerDead => {}
         }
