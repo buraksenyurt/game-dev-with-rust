@@ -5,7 +5,7 @@ pub struct Bullet {
     pub position: Vec2,
     pub velocity: Vec2,
     pub rotation: f32,
-    pub shoot_at: f32,
+    pub shoot_at: f64,
     pub collided: bool,
     pub texture: Texture2D,
 }

@@ -23,6 +23,8 @@ async fn main() {
     let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
     let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
     let mut player_tank = Tank::new(tank_texture);
+    let mut last_shot = get_time();
+
     loop {
         match game_state {
             GameState::Menu => {
@@ -38,7 +40,7 @@ async fn main() {
                     exit(0);
                 }
 
-                let delta_time = get_frame_time();
+                let delta_time = get_time();
                 let rotation = player_tank.rotation;
                 let direction = Vec2::new(rotation.cos(), rotation.sin());
                 let position = border_check(&player_tank.position, player_tank.texture.width());
@@ -50,23 +52,28 @@ async fn main() {
                     player_tank.position -= direction;
                 }
 
-                if is_key_down(KeyCode::S) {
+                // 0.5 değeri ile oynayarak bir atıştan ne kadar sonra ateş edebileceğimizi belirtebiliriz.
+                if is_key_down(KeyCode::S) && delta_time - last_shot > 0.5 {
                     let bullet = Bullet {
                         position: player_tank.position + rotation,
-                        velocity: direction * 5.,
-                        shoot_at: delta_time,
+                        velocity: direction * 5. * delta_time as f32,
+                        shoot_at: get_time(),
                         collided: false,
                         texture: bullet_texture,
-                        rotation
+                        rotation,
                     };
                     bullets.push(bullet);
+                    last_shot = delta_time;
                 }
 
                 if is_key_down(KeyCode::Right) {
-                    player_tank.rotation += TANK_ROTATION_VALUE * delta_time;
+                    player_tank.rotation += TANK_ROTATION_VALUE * get_frame_time();
                 } else if is_key_down(KeyCode::Left) {
-                    player_tank.rotation -= TANK_ROTATION_VALUE * delta_time;
+                    player_tank.rotation -= TANK_ROTATION_VALUE * get_frame_time();
                 }
+
+                bullets.retain(|bullet| bullet.shoot_at + 6. > delta_time);
+                println!("Total bullets in battlefield {}", bullets.len());
             }
             GameState::PlayerDead => {}
         }
