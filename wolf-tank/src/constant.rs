@@ -4,3 +4,5 @@ pub const BULLET_SPEED: f32 = 2.5;
 pub const MAX_SHOOT_AT_TIME: f64 = 6.;
 pub const BULLET_RELOAD_TIME: f64 = 0.5;
 pub const MAX_BULLET_COUNT_IN_RANGE: usize = 5;
+pub const DEFAULT_MARGIN: f32 = 5.;
+pub const MAX_GARRISON_COUNT: usize = 10;

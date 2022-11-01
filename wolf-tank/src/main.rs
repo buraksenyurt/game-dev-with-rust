@@ -1,6 +1,7 @@
 mod bullet;
 mod constant;
 mod game_state;
+mod garrison;
 mod helper;
 mod menu;
 mod resource;
@@ -8,13 +9,14 @@ mod tank;
 
 use crate::bullet::Bullet;
 use crate::constant::{
-    BULLET_RELOAD_TIME, BULLET_SPEED, MAX_BULLET_COUNT_IN_RANGE, MAX_SHOOT_AT_TIME,
-    TANK_ROTATION_VALUE,
+    BULLET_RELOAD_TIME, BULLET_SPEED, DEFAULT_MARGIN, MAX_BULLET_COUNT_IN_RANGE,
+    MAX_GARRISON_COUNT, MAX_SHOOT_AT_TIME, TANK_ROTATION_VALUE,
 };
 use crate::game_state::GameState;
+use crate::garrison::Garrison;
 use crate::helper::border_check;
 use crate::menu::draw_menu;
-use crate::resource::{BULLET_TEXTURE, TANK_TEXTURE};
+use crate::resource::{BULLET_TEXTURE, GARRISON_TEXTURE, TANK_TEXTURE};
 use crate::tank::Tank;
 use macroquad::prelude::*;
 use std::process::exit;
@@ -23,10 +25,40 @@ use std::process::exit;
 async fn main() {
     let mut game_state = GameState::Menu;
     let mut bullets = Vec::new();
+    let mut army = Vec::new();
     let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
     let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
+    let garrison_texture: Texture2D = load_texture(GARRISON_TEXTURE).await.unwrap();
     let mut player = Tank::new(tank_texture);
     let mut last_shot = get_time();
+
+    let mut counter = 0;
+    loop {
+        if counter == MAX_GARRISON_COUNT {
+            break;
+        }
+
+        let p = vec2(
+            rand::gen_range(
+                DEFAULT_MARGIN,
+                screen_width() - bullet_texture.width() + DEFAULT_MARGIN,
+            ),
+            rand::gen_range(
+                DEFAULT_MARGIN,
+                screen_height() - bullet_texture.height() + DEFAULT_MARGIN,
+            ),
+        );
+        //println!("{}", p);
+        let g = Garrison::new(counter, p, garrison_texture);
+        if army
+            .iter()
+            .any(|s: &Garrison| (s.position - g.position).length() < g.texture.width())
+        {
+            continue;
+        }
+        army.push(g);
+        counter += 1;
+    }
 
     loop {
         match game_state {
@@ -103,6 +135,10 @@ async fn main() {
                     let direction = Vec2::new(rotation.cos(), rotation.sin());
                     b.position += direction * BULLET_SPEED;
                     b.draw();
+                }
+
+                for g in army.iter() {
+                    g.draw();
                 }
             }
             GameState::PlayerDead => {}
