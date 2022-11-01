@@ -4,6 +4,7 @@ use macroquad::prelude::*;
 pub struct Garrison {
     pub id: usize,
     pub position: Vec2,
+    pub direction: Vec2,
     pub collided: bool,
     pub texture: Texture2D,
 }
@@ -13,6 +14,7 @@ impl Garrison {
         Self {
             id,
             position,
+            direction: vec2(1., 0.),
             collided: false,
             texture,
         }

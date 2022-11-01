@@ -111,16 +111,37 @@ async fn main() {
                     last_shot = delta_time;
                 }
 
+                for g in army.iter_mut() {
+                    let d = g.position;
+                    let p = border_check(&d, g.texture.width());
+                    g.position = p - direction;
+                }
+
+                for s in army.iter_mut() {
+                    for b in bullets.iter_mut() {
+                        if (b.position - s.position).length() < s.texture.width() * 0.5 {
+                            s.collided = true;
+                            b.collided = true;
+                        }
+                    }
+                }
+
                 if is_key_down(KeyCode::Right) {
                     player.rotation += TANK_ROTATION_VALUE * get_frame_time();
                 } else if is_key_down(KeyCode::Left) {
                     player.rotation -= TANK_ROTATION_VALUE * get_frame_time();
                 }
 
-                bullets.retain(|bullet| bullet.shoot_at + MAX_SHOOT_AT_TIME > delta_time);
+                bullets.retain(|bullet| {
+                    bullet.shoot_at + MAX_SHOOT_AT_TIME > delta_time && !bullet.collided
+                });
+                army.retain(|soldier| !soldier.collided);
                 //println!("Total bullets in battlefield {}", bullets.len());
+                if army.is_empty() {
+                    game_state = GameState::PlayerWin
+                }
             }
-            GameState::PlayerDead => {}
+            _ => {}
         }
         clear_background(BLACK);
 
@@ -142,6 +163,7 @@ async fn main() {
                 }
             }
             GameState::PlayerDead => {}
+            GameState::PlayerWin => {}
         }
 
         next_frame().await
