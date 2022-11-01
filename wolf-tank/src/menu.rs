@@ -3,8 +3,7 @@ use macroquad::prelude::*;
 
 pub fn draw_menu() {
     let menus = ["Press Space to Start", "Press ESC to Exit"];
-    let mut i: u32 = 0;
-    for m in menus {
+    for (i, m) in (0_u32..).zip(menus.into_iter()) {
         let dimensions = measure_text(m, None, 48, 1.);
         draw_text_ex(
             m,
@@ -18,6 +17,5 @@ pub fn draw_menu() {
                 ..Default::default()
             },
         );
-        i += 1;
     }
 }

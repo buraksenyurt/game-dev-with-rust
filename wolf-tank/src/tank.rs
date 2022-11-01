@@ -15,15 +15,17 @@ impl Tank {
                 screen_width() * 0.5 - texture.width() * 0.5,
                 screen_height() * 0.5 - texture.height() * 0.5,
             ),
-            texture: texture,
+            texture,
             rotation: 0.,
             direction: Vec2::new(1., 0.),
         }
     }
 
     pub fn draw(&self) {
-        let mut params = DrawTextureParams::default();
-        params.rotation = self.rotation;
+        let params = DrawTextureParams {
+            rotation: self.rotation,
+            ..Default::default()
+        };
         draw_texture_ex(
             self.texture,
             self.position.x,
