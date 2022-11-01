@@ -60,14 +60,24 @@ async fn main() {
                     && delta_time - last_shot > BULLET_RELOAD_TIME
                     && bullets.len() < MAX_BULLET_COUNT_IN_RANGE
                 {
+                    let (r, h) = (
+                        player_tank.texture.width() * 0.5,
+                        player_tank.texture.height() * 0.5,
+                    );
+
+                    let x1 = player_tank.position.x + r + (direction.x * r);
+                    let y1 = player_tank.position.y + (h * 0.25) + (direction.y * r);
+
                     let bullet = Bullet {
-                        position: player_tank.position + rotation,
+                        position: vec2(x1, y1),
                         velocity: direction * delta_time as f32,
                         shoot_at: get_time(),
                         collided: false,
                         texture: bullet_texture,
                         rotation,
                     };
+                    //println!("Tank\t{}\nBullet\t{}", player_tank, bullet);
+
                     bullets.push(bullet);
                     last_shot = delta_time;
                 }
@@ -79,7 +89,7 @@ async fn main() {
                 }
 
                 bullets.retain(|bullet| bullet.shoot_at + MAX_SHOOT_AT_TIME > delta_time);
-                println!("Total bullets in battlefield {}", bullets.len());
+                //println!("Total bullets in battlefield {}", bullets.len());
             }
             GameState::PlayerDead => {}
         }

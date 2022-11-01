@@ -1,5 +1,6 @@
 use crate::Vec2;
 use macroquad::prelude::*;
+use std::fmt::{Display, Formatter};
 
 pub struct Bullet {
     pub position: Vec2,
@@ -21,5 +22,15 @@ impl Bullet {
             WHITE,
             params,
         );
+    }
+}
+
+impl Display for Bullet {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Position ({}), Rotation {}",
+            self.position, self.rotation
+        )
     }
 }
