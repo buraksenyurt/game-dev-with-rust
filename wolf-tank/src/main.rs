@@ -21,11 +21,24 @@ use crate::menu::draw_menu;
 use crate::resource::{get_texture, TextureType};
 use crate::tank::Tank;
 use macroquad::prelude::*;
+use macroquad::ui::{hash, root_ui, widgets::Window};
 use std::process::exit;
 
-#[macroquad::main("Wolf Tank")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Tank Wolf is on Fire!".to_string(),
+        fullscreen: false,
+        window_resizable: false,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
+    prevent_quit();
     let mut game = Game::init().await;
+    let mut show_exit = false;
+    let mut user_decided_to_exit = false;
 
     loop {
         match game.state {
@@ -37,12 +50,33 @@ async fn main() {
                     game.state = GameState::Help;
                 }
                 if is_key_pressed(KeyCode::Escape) {
-                    exit(0);
+                    break;
                 }
             }
             GameState::Playing => {
                 if is_key_pressed(KeyCode::Escape) {
-                    exit(0);
+                    prevent_quit();
+                    show_exit = true;
+                }
+                if show_exit {
+                    let dialog_size = vec2(200., 80.);
+                    let screen_size = vec2(screen_width(), screen_height());
+                    let dialog_position = screen_size / 2. - dialog_size / 2.;
+                    Window::new(hash!(), dialog_position, dialog_size).ui(&mut *root_ui(), |ui| {
+                        ui.label(None, "Do you really want to quit?");
+                        ui.separator();
+                        ui.same_line(60.);
+                        if ui.button(None, "Yes") {
+                            user_decided_to_exit = true;
+                        }
+                        ui.same_line(120.);
+                        if ui.button(None, "No") {
+                            show_exit = false;
+                        }
+                    });
+                }
+                if user_decided_to_exit {
+                    break;
                 }
 
                 let delta_time = get_time();
@@ -160,17 +194,36 @@ async fn main() {
                 }
             }
             GameState::PlayerDead => {
-                let info = format!("Game Over!{}", game.score);
-                let end_menu = vec![info.as_str(),"", "Press SPACE to replay or ESC to Exit"];
+                let info = format!("Game Over! Score {}", game.score);
+                let end_menu = vec![
+                    info.as_str(),
+                    "",
+                    "Press SPACE to replay",
+                    "",
+                    "or ESC to Exit",
+                ];
                 draw_menu(end_menu);
             }
             GameState::PlayerWin => {
                 let info = format!("You win! Your score is {}", game.score);
-                let win_menu = vec![info.as_str(),"", "Press SPACE to replay or ESC to Exit"];
+                let win_menu = vec![
+                    info.as_str(),
+                    "",
+                    "Press SPACE to replay",
+                    "",
+                    "or ESC to Exit",
+                ];
                 draw_menu(win_menu);
             }
             GameState::Help => {
-                let help_menu = vec!["Shoot - S", "Rotate - Left/Right","Forward - Up","Backward - Down","", "Press ESC to return"];
+                let help_menu = vec![
+                    "Shoot - S",
+                    "Rotate - Left/Right",
+                    "Forward - Up",
+                    "Backward - Down",
+                    "",
+                    "Press ESC to return",
+                ];
                 draw_menu(help_menu);
             }
         }
