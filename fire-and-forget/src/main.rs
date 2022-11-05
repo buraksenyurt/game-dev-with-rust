@@ -2,7 +2,9 @@ use crate::rusty::Rusty;
 use macroquad::color::Color;
 use macroquad::input::{is_mouse_button_down, mouse_position, MouseButton};
 use macroquad::prelude::{draw_texture, load_texture, rand, vec2};
+use macroquad::time::get_time;
 use macroquad::window::{clear_background, next_frame, screen_height, screen_width};
+use std::f32::consts::PI;
 
 mod rusty;
 
@@ -21,8 +23,7 @@ async fn main() {
     let mut clickable = true;
 
     clear_background(Color::default());
-    let mut grade = 0.;
-    let mut n: f32 = 0.;
+    let mut angle = 0.;
     loop {
         if is_mouse_button_down(MouseButton::Left) {
             ferris.color = Color::from_rgba(
@@ -33,32 +34,17 @@ async fn main() {
             );
             if clickable {
                 let m_pos = vec2(mouse_position().0, mouse_position().1);
-                // Mouse'a tıklanan yer ile ateşe başlangıç noktası arasındaki doğru denkleminin bulunması
-                // Eğimi bul
-                grade = (m_pos.y - ref_point.y).abs() / (m_pos.x - ref_point.x).abs();
-                if m_pos.x > ref_point.x {
-                    grade = -grade;
-                } else if m_pos.x < ref_point.x {
-                    grade = grade;
-                } else {
-                    grade = 0.;
-                }
-                n = ref_point.y - (grade * ref_point.x);
-                println!(
-                    "Grade is {}\nFerris {}\nMouse {}",
-                    grade, ferris.current_position, m_pos
-                );
+                let opposite = m_pos.x - ref_point.x;
+                let adjacent = (ref_point.y - m_pos.y).abs();
+                angle = (opposite / adjacent).atan();
+                //angle = m_pos.angle_between(ref_point) + PI / 2.;
+                println!("{},{}", angle.to_degrees(), angle.to_radians());
                 clickable = false;
             }
-            // y -  referans noktanın y değeri = grade x (x - referans noktanın x değeri)
         }
 
-        if grade < 0. {
-            ferris.current_position.x += 1.;
-        } else {
-            ferris.current_position.x -= 1.;
-        }
-        ferris.current_position.y = (grade * ferris.current_position.x) + n;
+        ferris.current_position.x += 1. * angle.sin();
+        ferris.current_position.y += 1. * -angle.cos();
 
         if ferris.current_position.x < 0.
             || ferris.current_position.x > screen_width()
@@ -69,10 +55,9 @@ async fn main() {
                 current_position: ref_point,
                 color: Default::default(),
             };
+            angle = 0.;
             clickable = true;
         }
-        // println!("Current Position x,y {}", ferris.current_position);
-        // println!("Start Position x,y {}", ferris.current_position);
 
         draw_texture(
             ferris_texture,
@@ -80,7 +65,6 @@ async fn main() {
             ferris.current_position.y,
             ferris.color,
         );
-
         next_frame().await
     }
 }
