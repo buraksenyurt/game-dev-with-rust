@@ -2,9 +2,7 @@ use crate::rusty::Rusty;
 use macroquad::color::Color;
 use macroquad::input::{is_mouse_button_down, mouse_position, MouseButton};
 use macroquad::prelude::{draw_texture, load_texture, rand, vec2};
-use macroquad::time::get_time;
 use macroquad::window::{clear_background, next_frame, screen_height, screen_width};
-use std::f32::consts::PI;
 
 mod rusty;
 
@@ -16,8 +14,7 @@ async fn main() {
         screen_height() - (ferris_texture.height() + 10.),
     );
     let mut ferris = Rusty {
-        start_position: ref_point,
-        current_position: ref_point,
+        position: ref_point,
         color: Default::default(),
     };
     let mut clickable = true;
@@ -43,26 +40,21 @@ async fn main() {
             }
         }
 
-        ferris.current_position.x += 1. * angle.sin();
-        ferris.current_position.y += 1. * -angle.cos();
+        ferris.position.x += 1. * angle.sin();
+        ferris.position.y += 1. * -angle.cos();
 
-        if ferris.current_position.x < 0.
-            || ferris.current_position.x > screen_width()
-            || ferris.current_position.y < 0.
-        {
+        if ferris.position.x < 0. || ferris.position.x > screen_width() || ferris.position.y < 0. {
             ferris = Rusty {
-                start_position: ref_point,
-                current_position: ref_point,
+                position: ref_point,
                 color: Default::default(),
             };
-            angle = 0.;
             clickable = true;
         }
 
         draw_texture(
             ferris_texture,
-            ferris.current_position.x,
-            ferris.current_position.y,
+            ferris.position.x,
+            ferris.position.y,
             ferris.color,
         );
         next_frame().await
