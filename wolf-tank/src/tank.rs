@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 use std::fmt::{Display, Formatter};
 
+#[derive(Clone)]
 pub struct Tank {
     pub position: Vec2,
     pub rotation: f32,

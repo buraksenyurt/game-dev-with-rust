@@ -2,6 +2,7 @@ use crate::Vec2;
 use macroquad::prelude::*;
 use std::fmt::{Display, Formatter};
 
+#[derive(Clone)]
 pub struct Bullet {
     pub position: Vec2,
     pub velocity: Vec2,

@@ -24,41 +24,8 @@ use std::process::exit;
 #[macroquad::main("Wolf Tank")]
 async fn main() {
     let mut game_state = GameState::Menu;
-    let mut bullets = Vec::new();
-    let mut army = Vec::new();
-    let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
     let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
-    let garrison_texture: Texture2D = load_texture(GARRISON_TEXTURE).await.unwrap();
-    let mut player = Tank::new(tank_texture);
-    let mut last_shot = get_time();
-
-    let mut counter = 0;
-    loop {
-        if counter == MAX_GARRISON_COUNT {
-            break;
-        }
-
-        let p = vec2(
-            rand::gen_range(
-                DEFAULT_MARGIN,
-                screen_width() - bullet_texture.width() + DEFAULT_MARGIN,
-            ),
-            rand::gen_range(
-                DEFAULT_MARGIN,
-                screen_height() - bullet_texture.height() + DEFAULT_MARGIN,
-            ),
-        );
-        //println!("{}", p);
-        let g = Garrison::new(counter, p, garrison_texture);
-        if army
-            .iter()
-            .any(|s: &Garrison| (s.position - g.position).length() < g.texture.width())
-        {
-            continue;
-        }
-        army.push(g);
-        counter += 1;
-    }
+    let mut game = Game::init().await;
 
     loop {
         match game_state {
@@ -76,6 +43,7 @@ async fn main() {
                 }
 
                 let delta_time = get_time();
+                let mut player = &mut game.player;
                 let rotation = player.rotation;
                 let direction = Vec2::new(rotation.cos(), rotation.sin());
                 let position = border_check(&player.position, player.texture.width());
@@ -89,10 +57,13 @@ async fn main() {
                 // BULLET_RELOAD_TIME değeri ile oynayarak
                 // bir atıştan ne kadar sonra ateş edebileceğimizi belirtebiliriz.
                 if is_key_down(KeyCode::S)
-                    && delta_time - last_shot > BULLET_RELOAD_TIME
-                    && bullets.len() < MAX_BULLET_COUNT_IN_RANGE
+                    && delta_time - game.last_shot > BULLET_RELOAD_TIME
+                    && game.bullets.len() < MAX_BULLET_COUNT_IN_RANGE
                 {
-                    let (r, h) = (player.texture.width() * 0.5, player.texture.height() * 0.5);
+                    let (r, h) = (
+                        player.texture.width() * 0.5,
+                        player.texture.height() * 0.5,
+                    );
 
                     let x1 = player.position.x + r + (direction.x * r);
                     let y1 = player.position.y + (h * 0.25) + (direction.y * r);
@@ -107,22 +78,30 @@ async fn main() {
                     };
                     //println!("Tank\t{}\nBullet\t{}", player_tank, bullet);
 
-                    bullets.push(bullet);
-                    last_shot = delta_time;
+                    game.bullets.push(bullet);
+                    game.last_shot = delta_time;
                 }
 
-                for g in army.iter_mut() {
+                for g in game.army.iter_mut() {
                     let d = g.position;
                     let p = border_check(&d, g.texture.width());
                     g.position = p - direction;
                 }
 
-                for s in army.iter_mut() {
-                    for b in bullets.iter_mut() {
+                for s in game.army.iter_mut() {
+                    for b in game.bullets.iter_mut() {
                         if (b.position - s.position).length() < s.texture.width() * 0.5 {
                             s.collided = true;
                             b.collided = true;
+                            game.score += 10;
                         }
+                    }
+                }
+
+                for s in game.army.iter_mut() {
+                    if (player.position - s.position).length() < s.texture.width() * 0.5
+                    {
+                        game_state = GameState::PlayerDead;
                     }
                 }
 
@@ -132,40 +111,112 @@ async fn main() {
                     player.rotation -= TANK_ROTATION_VALUE * get_frame_time();
                 }
 
-                bullets.retain(|bullet| {
+                game.bullets.retain(|bullet| {
                     bullet.shoot_at + MAX_SHOOT_AT_TIME > delta_time && !bullet.collided
                 });
-                army.retain(|soldier| !soldier.collided);
+                game.army.retain(|soldier| !soldier.collided);
                 //println!("Total bullets in battlefield {}", bullets.len());
-                if army.is_empty() {
+                if game.army.is_empty() {
                     game_state = GameState::PlayerWin
                 }
             }
-            _ => {}
+            GameState::PlayerWin | GameState::PlayerDead => {
+                if is_key_pressed(KeyCode::Space) {
+                    game = Game::init().await;
+                    game_state = GameState::Playing;
+                }
+                if is_key_pressed(KeyCode::Escape) {
+                    exit(0);
+                }
+            }
         }
         clear_background(BLACK);
 
         match game_state {
             GameState::Menu => {
-                draw_menu();
+                let main_menu = vec!["Press Space to Start", "Press ESC to Exit"];
+                draw_menu(main_menu);
             }
             GameState::Playing => {
-                player.draw();
-                for b in bullets.iter_mut() {
+                game.player.draw();
+                for b in game.bullets.iter_mut() {
                     let rotation = b.rotation;
                     let direction = Vec2::new(rotation.cos(), rotation.sin());
                     b.position += direction * BULLET_SPEED;
                     b.draw();
                 }
 
-                for g in army.iter() {
+                for g in game.army.iter() {
                     g.draw();
                 }
             }
-            GameState::PlayerDead => {}
-            GameState::PlayerWin => {}
+            GameState::PlayerDead => {
+                let info = format!("Game Over!{}", game.score);
+                let end_menu = vec![info.as_str(), "Press SPACE to replay or ESC to Exit"];
+                draw_menu(end_menu);
+            }
+            GameState::PlayerWin => {
+                let info = format!("You win! Your score is {}", game.score);
+                let win_menu = vec![info.as_str(), "Press SPACE to replay or ESC to Exit"];
+                draw_menu(win_menu);
+            }
+        }
+        next_frame().await
+    }
+}
+
+#[derive(Clone)]
+pub struct Game {
+    pub bullets: Vec<Bullet>,
+    pub army: Vec<Garrison>,
+    pub player: Tank,
+    pub last_shot: f64,
+    pub score: usize,
+    pub counter: usize,
+}
+
+impl Game {
+    pub async fn init() -> Self {
+        let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
+        let garrison_texture: Texture2D = load_texture(GARRISON_TEXTURE).await.unwrap();
+        let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
+
+        let mut new_army: Vec<Garrison> = Vec::new();
+        let mut g_counter = 0;
+        loop {
+            if g_counter == MAX_GARRISON_COUNT {
+                break;
+            }
+
+            let p = vec2(
+                rand::gen_range(
+                    DEFAULT_MARGIN,
+                    screen_width() - bullet_texture.width() + DEFAULT_MARGIN,
+                ),
+                rand::gen_range(
+                    DEFAULT_MARGIN,
+                    screen_height() - bullet_texture.height() + DEFAULT_MARGIN,
+                ),
+            );
+            //println!("{}", p);
+            let g = Garrison::new(g_counter, p, garrison_texture);
+            if new_army
+                .iter()
+                .any(|s: &Garrison| (s.position - g.position).length() < g.texture.width())
+            {
+                continue;
+            }
+            new_army.push(g);
+            g_counter += 1;
         }
 
-        next_frame().await
+        Self {
+            bullets: Vec::new(),
+            army: new_army,
+            player: Tank::new(tank_texture),
+            last_shot: get_time(),
+            score: 0,
+            counter: 0,
+        }
     }
 }

@@ -1,6 +1,7 @@
 use crate::Vec2;
 use macroquad::prelude::*;
 
+#[derive(Copy, Clone)]
 pub struct Garrison {
     pub id: usize,
     pub position: Vec2,
