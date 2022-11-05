@@ -1,5 +1,6 @@
 mod bullet;
 mod constant;
+mod game;
 mod game_state;
 mod garrison;
 mod helper;
@@ -12,11 +13,12 @@ use crate::constant::{
     BULLET_RELOAD_TIME, BULLET_SPEED, DEFAULT_MARGIN, MAX_BULLET_COUNT_IN_RANGE,
     MAX_GARRISON_COUNT, MAX_SHOOT_AT_TIME, TANK_ROTATION_VALUE,
 };
+use crate::game::Game;
 use crate::game_state::GameState;
 use crate::garrison::Garrison;
 use crate::helper::border_check;
 use crate::menu::draw_menu;
-use crate::resource::{BULLET_TEXTURE, GARRISON_TEXTURE, TANK_TEXTURE};
+use crate::resource::{get_texture, TextureType};
 use crate::tank::Tank;
 use macroquad::prelude::*;
 use std::process::exit;
@@ -24,7 +26,6 @@ use std::process::exit;
 #[macroquad::main("Wolf Tank")]
 async fn main() {
     let mut game_state = GameState::Menu;
-    let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
     let mut game = Game::init().await;
 
     loop {
@@ -60,10 +61,7 @@ async fn main() {
                     && delta_time - game.last_shot > BULLET_RELOAD_TIME
                     && game.bullets.len() < MAX_BULLET_COUNT_IN_RANGE
                 {
-                    let (r, h) = (
-                        player.texture.width() * 0.5,
-                        player.texture.height() * 0.5,
-                    );
+                    let (r, h) = (player.texture.width() * 0.5, player.texture.height() * 0.5);
 
                     let x1 = player.position.x + r + (direction.x * r);
                     let y1 = player.position.y + (h * 0.25) + (direction.y * r);
@@ -73,7 +71,7 @@ async fn main() {
                         velocity: direction * delta_time as f32,
                         shoot_at: get_time(),
                         collided: false,
-                        texture: bullet_texture,
+                        texture: get_texture(TextureType::Bullet).await,
                         rotation,
                     };
                     //println!("Tank\t{}\nBullet\t{}", player_tank, bullet);
@@ -99,8 +97,7 @@ async fn main() {
                 }
 
                 for s in game.army.iter_mut() {
-                    if (player.position - s.position).length() < s.texture.width() * 0.5
-                    {
+                    if (player.position - s.position).length() < s.texture.width() * 0.5 {
                         game_state = GameState::PlayerDead;
                     }
                 }
@@ -162,61 +159,5 @@ async fn main() {
             }
         }
         next_frame().await
-    }
-}
-
-#[derive(Clone)]
-pub struct Game {
-    pub bullets: Vec<Bullet>,
-    pub army: Vec<Garrison>,
-    pub player: Tank,
-    pub last_shot: f64,
-    pub score: usize,
-    pub counter: usize,
-}
-
-impl Game {
-    pub async fn init() -> Self {
-        let tank_texture: Texture2D = load_texture(TANK_TEXTURE).await.unwrap();
-        let garrison_texture: Texture2D = load_texture(GARRISON_TEXTURE).await.unwrap();
-        let bullet_texture: Texture2D = load_texture(BULLET_TEXTURE).await.unwrap();
-
-        let mut new_army: Vec<Garrison> = Vec::new();
-        let mut g_counter = 0;
-        loop {
-            if g_counter == MAX_GARRISON_COUNT {
-                break;
-            }
-
-            let p = vec2(
-                rand::gen_range(
-                    DEFAULT_MARGIN,
-                    screen_width() - bullet_texture.width() + DEFAULT_MARGIN,
-                ),
-                rand::gen_range(
-                    DEFAULT_MARGIN,
-                    screen_height() - bullet_texture.height() + DEFAULT_MARGIN,
-                ),
-            );
-            //println!("{}", p);
-            let g = Garrison::new(g_counter, p, garrison_texture);
-            if new_army
-                .iter()
-                .any(|s: &Garrison| (s.position - g.position).length() < g.texture.width())
-            {
-                continue;
-            }
-            new_army.push(g);
-            g_counter += 1;
-        }
-
-        Self {
-            bullets: Vec::new(),
-            army: new_army,
-            player: Tank::new(tank_texture),
-            last_shot: get_time(),
-            score: 0,
-            counter: 0,
-        }
     }
 }
