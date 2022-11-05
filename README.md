@@ -39,4 +39,4 @@ Tetra framework kullanan öğretidekilerden yola çıkarak yazdığım tetra-pon
 
 Tank Wolf oyununa ait çalışma zamanı görüntüsü aşağıdaki gibidir. Bu ilk sürümde tankın kendi ekseni etrafında dönmesi, döndüğü yöne doğru ateşe edebilmesi, ileriye veya geriye doğru hareket edebilmesi, askeri birliklerin rastgele dizilerek ilkel bir AI mantığında tanka doğru hareket etmesi gibi özellikler yer almaktadır. Çarpışma hesaplamalarında birkaç bug var. Bazı koordinatlarda tank askeri birliğin altından geçmekte ve çarpışma hesabı suya düşmektedir ha haaa :D Bu tip şeyleri düzeltmek lazım ama Macroquad ile çalışmayı öğrenme noktasında bana epeyce deneyim kattığını söyleyebilirim.
 
-![assets/tetra-pong.gif](assets/walf_tank.gif)
+![assets/wolf_tank.gif](assets/wolf_tank.gif)
