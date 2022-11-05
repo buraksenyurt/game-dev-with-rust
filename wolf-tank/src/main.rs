@@ -25,14 +25,13 @@ use std::process::exit;
 
 #[macroquad::main("Wolf Tank")]
 async fn main() {
-    let mut game_state = GameState::Menu;
     let mut game = Game::init().await;
 
     loop {
-        match game_state {
+        match game.state {
             GameState::Menu => {
                 if is_key_pressed(KeyCode::Space) {
-                    game_state = GameState::Playing;
+                    game.state = GameState::Playing;
                 }
                 if is_key_pressed(KeyCode::Escape) {
                     exit(0);
@@ -97,8 +96,8 @@ async fn main() {
                 }
 
                 for s in game.army.iter_mut() {
-                    if (player.position - s.position).length() < s.texture.width() * 0.5 {
-                        game_state = GameState::PlayerDead;
+                    if (player.position - s.position).length() < player.texture.width() * 0.75 {
+                        game.state = GameState::PlayerDead;
                     }
                 }
 
@@ -114,13 +113,13 @@ async fn main() {
                 game.army.retain(|soldier| !soldier.collided);
                 //println!("Total bullets in battlefield {}", bullets.len());
                 if game.army.is_empty() {
-                    game_state = GameState::PlayerWin
+                    game.state = GameState::PlayerWin
                 }
             }
             GameState::PlayerWin | GameState::PlayerDead => {
                 if is_key_pressed(KeyCode::Space) {
                     game = Game::init().await;
-                    game_state = GameState::Playing;
+                    game.state = GameState::Playing;
                 }
                 if is_key_pressed(KeyCode::Escape) {
                     exit(0);
@@ -129,7 +128,7 @@ async fn main() {
         }
         clear_background(BLACK);
 
-        match game_state {
+        match game.state {
             GameState::Menu => {
                 let main_menu = vec!["Press Space to Start", "Press ESC to Exit"];
                 draw_menu(main_menu);

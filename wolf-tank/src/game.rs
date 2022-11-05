@@ -1,10 +1,12 @@
 use crate::{
-    get_texture, rand, Bullet, Garrison, Tank, TextureType, DEFAULT_MARGIN, MAX_GARRISON_COUNT,
+    get_texture, rand, Bullet, GameState, Garrison, Tank, TextureType, DEFAULT_MARGIN,
+    MAX_GARRISON_COUNT,
 };
 use macroquad::prelude::{get_time, screen_height, screen_width, vec2};
 
 #[derive(Clone)]
 pub struct Game {
+    pub state: GameState,
     pub bullets: Vec<Bullet>,
     pub army: Vec<Garrison>,
     pub player: Tank,
@@ -49,6 +51,7 @@ impl Game {
         }
 
         Self {
+            state: GameState::Menu,
             bullets: Vec::new(),
             army: new_army,
             player: Tank::new(tank_texture),
