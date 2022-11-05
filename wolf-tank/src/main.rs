@@ -33,6 +33,9 @@ async fn main() {
                 if is_key_pressed(KeyCode::Space) {
                     game.state = GameState::Playing;
                 }
+                if is_key_pressed(KeyCode::F1) {
+                    game.state = GameState::Help;
+                }
                 if is_key_pressed(KeyCode::Escape) {
                     exit(0);
                 }
@@ -125,12 +128,22 @@ async fn main() {
                     exit(0);
                 }
             }
+            GameState::Help => {
+                if is_key_pressed(KeyCode::Escape) {
+                    game.state = GameState::Menu
+                }
+            }
         }
         clear_background(BLACK);
 
         match game.state {
             GameState::Menu => {
-                let main_menu = vec!["Press Space to Start", "Press ESC to Exit"];
+                let main_menu = vec![
+                    "Press Space to Start",
+                    "Press ESC to Exit",
+                    "",
+                    "F1 for Help",
+                ];
                 draw_menu(main_menu);
             }
             GameState::Playing => {
@@ -148,13 +161,17 @@ async fn main() {
             }
             GameState::PlayerDead => {
                 let info = format!("Game Over!{}", game.score);
-                let end_menu = vec![info.as_str(), "Press SPACE to replay or ESC to Exit"];
+                let end_menu = vec![info.as_str(),"", "Press SPACE to replay or ESC to Exit"];
                 draw_menu(end_menu);
             }
             GameState::PlayerWin => {
                 let info = format!("You win! Your score is {}", game.score);
-                let win_menu = vec![info.as_str(), "Press SPACE to replay or ESC to Exit"];
+                let win_menu = vec![info.as_str(),"", "Press SPACE to replay or ESC to Exit"];
                 draw_menu(win_menu);
+            }
+            GameState::Help => {
+                let help_menu = vec!["Shoot - S", "Rotate - Left/Right","Forward - Up","Backward - Down","", "Press ESC to return"];
+                draw_menu(help_menu);
             }
         }
         next_frame().await

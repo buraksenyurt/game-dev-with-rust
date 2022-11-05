@@ -4,4 +4,5 @@ pub enum GameState {
     Playing,
     PlayerWin,
     PlayerDead,
+    Help,
 }
