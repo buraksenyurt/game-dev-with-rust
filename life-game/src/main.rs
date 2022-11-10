@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter};
 
 const WINDOW_WIDTH: f32 = 320.;
 const WINDOW_HEIGHT: f32 = 320.;
-const CELL_SIZE: f32 = 32.;
+const CELL_SIZE: f32 = 8.;
 
 fn window_conf() -> Conf {
     Conf {
@@ -47,53 +47,102 @@ async fn main() {
         clear_background(WHITE);
 
         for i in 0..cells.len() {
-            let mut c = cells[i];
             let mut live_neighbors_count = 0;
+            let id = cells[i].id;
 
             // Sağ komşu kontrolü
-            if Vec2::new(c.position.x + 32., c.position.y).x < WINDOW_WIDTH {
-                if let CellState::Alive = cells[c.id + 1].state {
+            if Vec2::new(cells[i].position.x + CELL_SIZE, cells[i].position.y).x < WINDOW_WIDTH {
+                if let CellState::Alive = cells[id + 1].state {
                     live_neighbors_count += 1;
                 };
+
+                // Sağ üst komşu kontrolü
+                if Vec2::new(
+                    cells[i].position.x + CELL_SIZE,
+                    cells[i].position.y - (2. * CELL_SIZE),
+                )
+                .y >= 0.
+                {
+                    if let CellState::Alive = cells[(id + 1) - col as usize].state {
+                        live_neighbors_count += 1;
+                    };
+                }
+                // Sağ alt komşu kontrolü
+                if Vec2::new(
+                    cells[i].position.x + CELL_SIZE,
+                    cells[i].position.y + (2. * CELL_SIZE),
+                )
+                .y < WINDOW_HEIGHT
+                {
+                    if let CellState::Alive = cells[(id + 1) + col as usize].state {
+                        live_neighbors_count += 1;
+                    };
+                }
             }
+
             // Sol komşu kontrolü
-            if Vec2::new(c.position.x - 32., c.position.y).x >= 0. {
-                if let CellState::Alive = cells[c.id - 1].state {
+            if Vec2::new(cells[i].position.x - CELL_SIZE, cells[i].position.y).x >= 0. {
+                if let CellState::Alive = cells[id - 1].state {
                     live_neighbors_count += 1;
                 };
+
+                // Sol üst komşu kontrolü
+                if Vec2::new(
+                    cells[i].position.x - CELL_SIZE,
+                    cells[i].position.y - (2. * CELL_SIZE),
+                )
+                .y >= 0.
+                {
+                    if let CellState::Alive = cells[(id - 1) - col as usize].state {
+                        live_neighbors_count += 1;
+                    };
+                }
+
+                // Sol alt komşu kontrolü
+                if Vec2::new(
+                    cells[i].position.x - CELL_SIZE,
+                    cells[i].position.y + (2. * CELL_SIZE),
+                )
+                .y < WINDOW_HEIGHT
+                {
+                    if let CellState::Alive = cells[(id - 1) + col as usize].state {
+                        live_neighbors_count += 1;
+                    };
+                }
             }
+
             // Alt komşu kontrolü
-            if Vec2::new(c.position.x, c.position.y + 32.).y < WINDOW_HEIGHT {
-                if let CellState::Alive = cells[c.id + col as usize].state {
+            if Vec2::new(cells[i].position.x, cells[i].position.y + CELL_SIZE).y < WINDOW_HEIGHT {
+                if let CellState::Alive = cells[id + col as usize].state {
                     live_neighbors_count += 1;
                 };
             }
             // Üst komşu kontrolü
-            if Vec2::new(c.position.x, c.position.y - 32.).y >= 0. {
-                if let CellState::Alive = cells[c.id - col as usize].state {
+            if Vec2::new(cells[i].position.x, cells[i].position.y - CELL_SIZE).y >= 0. {
+                if let CellState::Alive = cells[id - col as usize].state {
                     live_neighbors_count += 1;
                 };
             }
 
-            match c.state {
+            match cells[i].state {
                 CellState::Alive => {
                     if live_neighbors_count < 2 {
-                        // println!("{} canlı komşu sayısı 2den az", current_id);
-                        c.state = CellState::Dead;
+                        println!("{} canlı komşu sayısı 2den az", id);
+                        cells[i].state = CellState::Dead;
                     } else if live_neighbors_count == 2 || live_neighbors_count == 3 {
-                        // println!("{} canlı komşu sayısı 2 veya 3", current_id);
-                        c.state = CellState::Alive
+                        println!("{} canlı komşu sayısı 2 veya 3", id);
+                        cells[i].state = CellState::Alive
                     } else if live_neighbors_count > 3 {
-                        // println!("{} canlı komşu sayısı 3den fazla", current_id);
-                        c.state = CellState::Dead;
+                        println!("{} canlı komşu sayısı 3den fazla", id);
+                        cells[i].state = CellState::Dead;
                     } else {
-                        // println!("{} hiç komşu yok gibi", current_id);
+                        println!("{} hiç komşu yok gibi", id);
                     }
                 }
                 CellState::Dead => {
                     if live_neighbors_count == 3 {
-                        // println!("{} ölü ama 3 canlı komşusu var", current_id);
-                        c.state = CellState::Alive
+                        println!("{} ölü ama 3 canlı komşusu var", id);
+                        cells[i].state = CellState::Alive
                     }
                 }
             }
