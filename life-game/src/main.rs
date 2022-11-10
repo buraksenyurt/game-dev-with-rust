@@ -1,17 +1,16 @@
 use macroquad::prelude::*;
 use std::fmt::{Display, Formatter};
 
-const WINDOW_WIDTH: f32 = 320.;
-const WINDOW_HEIGHT: f32 = 320.;
-const CELL_SIZE: f32 = 8.;
+const WINDOW_SIZE: f32 = 320.;
+const CELL_SIZE: f32 = 4.;
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "Conway's Game of Life".to_string(),
         fullscreen: false,
         window_resizable: false,
-        window_width: WINDOW_WIDTH as i32,
-        window_height: WINDOW_HEIGHT as i32,
+        window_width: WINDOW_SIZE as i32,
+        window_height: WINDOW_SIZE as i32,
         ..Default::default()
     }
 }
@@ -20,10 +19,10 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut cells = Vec::new();
     let (row, col) = (
-        (WINDOW_HEIGHT / CELL_SIZE) as i32,
-        (WINDOW_WIDTH / CELL_SIZE) as i32,
+        (WINDOW_SIZE / CELL_SIZE) as i32,
+        (WINDOW_SIZE / CELL_SIZE) as i32,
     );
-    println!("{} X {}", row, col);
+    //println!("{} X {}", row, col);
     let mut counter: usize = 0;
     for i in 0..col {
         // println!("{}. satır", i);
@@ -32,7 +31,7 @@ async fn main() {
             let x = j as f32 * CELL_SIZE;
             let y = i as f32 * CELL_SIZE;
 
-            let state = match rand::gen_range(0, 5) {
+            let state = match rand::gen_range(0, 7) {
                 0 => CellState::Alive,
                 _ => CellState::Dead,
             };
@@ -51,7 +50,7 @@ async fn main() {
             let id = cells[i].id;
 
             // Sağ komşu kontrolü
-            if Vec2::new(cells[i].position.x + CELL_SIZE, cells[i].position.y).x < WINDOW_WIDTH {
+            if Vec2::new(cells[i].position.x + CELL_SIZE, cells[i].position.y).x < WINDOW_SIZE {
                 if let CellState::Alive = cells[id + 1].state {
                     live_neighbors_count += 1;
                 };
@@ -72,7 +71,7 @@ async fn main() {
                     cells[i].position.x + CELL_SIZE,
                     cells[i].position.y + (2. * CELL_SIZE),
                 )
-                .y < WINDOW_HEIGHT
+                .y < WINDOW_SIZE
                 {
                     if let CellState::Alive = cells[(id + 1) + col as usize].state {
                         live_neighbors_count += 1;
@@ -103,7 +102,7 @@ async fn main() {
                     cells[i].position.x - CELL_SIZE,
                     cells[i].position.y + (2. * CELL_SIZE),
                 )
-                .y < WINDOW_HEIGHT
+                .y < WINDOW_SIZE
                 {
                     if let CellState::Alive = cells[(id - 1) + col as usize].state {
                         live_neighbors_count += 1;
@@ -112,7 +111,7 @@ async fn main() {
             }
 
             // Alt komşu kontrolü
-            if Vec2::new(cells[i].position.x, cells[i].position.y + CELL_SIZE).y < WINDOW_HEIGHT {
+            if Vec2::new(cells[i].position.x, cells[i].position.y + CELL_SIZE).y < WINDOW_SIZE {
                 if let CellState::Alive = cells[id + col as usize].state {
                     live_neighbors_count += 1;
                 };
@@ -127,21 +126,21 @@ async fn main() {
             match cells[i].state {
                 CellState::Alive => {
                     if live_neighbors_count < 2 {
-                        println!("{} canlı komşu sayısı 2den az", id);
+                        //println!("{} canlı komşu sayısı 2den az", id);
                         cells[i].state = CellState::Dead;
                     } else if live_neighbors_count == 2 || live_neighbors_count == 3 {
-                        println!("{} canlı komşu sayısı 2 veya 3", id);
+                        //println!("{} canlı komşu sayısı 2 veya 3", id);
                         cells[i].state = CellState::Alive
                     } else if live_neighbors_count > 3 {
-                        println!("{} canlı komşu sayısı 3den fazla", id);
+                        //println!("{} canlı komşu sayısı 3den fazla", id);
                         cells[i].state = CellState::Dead;
                     } else {
-                        println!("{} hiç komşu yok gibi", id);
+                        //println!("{} hiç komşu yok gibi", id);
                     }
                 }
                 CellState::Dead => {
                     if live_neighbors_count == 3 {
-                        println!("{} ölü ama 3 canlı komşusu var", id);
+                        //println!("{} ölü ama 3 canlı komşusu var", id);
                         cells[i].state = CellState::Alive
                     }
                 }
