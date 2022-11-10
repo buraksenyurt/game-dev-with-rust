@@ -57,8 +57,20 @@ async fn main() {
                 };
             }
             // Sol komşu kontrolü
-            if Vec2::new(c.position.x - 32., c.position.y).x > 0. {
+            if Vec2::new(c.position.x - 32., c.position.y).x >= 0. {
                 if let CellState::Alive = cells[c.id - 1].state {
+                    live_neighbors_count += 1;
+                };
+            }
+            // Alt komşu kontrolü
+            if Vec2::new(c.position.x, c.position.y + 32.).y < WINDOW_HEIGHT {
+                if let CellState::Alive = cells[c.id + col as usize].state {
+                    live_neighbors_count += 1;
+                };
+            }
+            // Üst komşu kontrolü
+            if Vec2::new(c.position.x, c.position.y - 32.).y >= 0. {
+                if let CellState::Alive = cells[c.id - col as usize].state {
                     live_neighbors_count += 1;
                 };
             }
