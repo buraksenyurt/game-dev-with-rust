@@ -1,0 +1,8 @@
+[package]
+name = "life-game"
+version = "0.1.0"
+edition = "2021"
+description = "Conway's Game of Life tutorial"
+
+[dependencies]
+macroquad = "0.3.25"
