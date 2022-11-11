@@ -12,6 +12,7 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 - [x] **Spining-Square:** Popüler oyun motorlarından olan [Piston](https://crates.io/crates/piston) ile ilgili Getting Started örneği.
 - [x] Tetra-Pong: Basit 2D oyun geliştirme çatılarından olan [Tetra](https://tetra.seventeencups.net/) geliştirilen bir başka Ping-Pong örneği. Sitedeki tutorial'ı takip ediyorum.
 - [x] Wolf-Tank: Macroquad motorunu kullanarak yazmaya çalıştığım basit bir RPG. Minik bir tankı kontrol etmeye çalışıyoruz.
+- [x] life-game: Conway'in life game oyununu Rust ile yazmaya çalıştım.
 
 ## Örnek Çalışma Zamanları
 
@@ -40,3 +41,7 @@ Tetra framework kullanan öğretidekilerden yola çıkarak yazdığım tetra-pon
 Tank Wolf oyununa ait çalışma zamanı görüntüsü aşağıdaki gibidir. Bu ilk sürümde tankın kendi ekseni etrafında dönmesi, döndüğü yöne doğru ateşe edebilmesi, ileriye veya geriye doğru hareket edebilmesi, askeri birliklerin rastgele dizilerek ilkel bir AI mantığında tanka doğru hareket etmesi gibi özellikler yer almaktadır. Çarpışma hesaplamalarında birkaç bug var. Bazı koordinatlarda tank askeri birliğin altından geçmekte ve çarpışma hesabı suya düşmektedir ha haaa :D Bu tip şeyleri düzeltmek lazım ama Macroquad ile çalışmayı öğrenme noktasında bana epeyce deneyim kattığını söyleyebilirim.
 
 ![assets/wolf_tank.gif](assets/wolf_tank.gif)
+
+Conway'in game life oyununa ait bir çıktı.
+
+![assets/game_of_life.gif](assets/game_of_life.gif)
