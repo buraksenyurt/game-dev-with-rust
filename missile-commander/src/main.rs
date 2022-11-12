@@ -1,18 +1,22 @@
+mod building;
 mod constant;
+mod cursor;
 mod missile;
-mod painter;
 
-use crate::constant::{MAX_MISSILE_COUNT, MISSILE_LENGTH, MISSILE_SPEED_FACTOR};
-use crate::missile::Missile;
-use crate::painter::{draw_base, draw_cursor};
+use crate::building::{create_buildings, draw_buildings};
+use crate::constant::{
+    MAX_MISSILE_COUNT, MISSILE_LENGTH, MISSILE_SPEED_FACTOR, WINDOW_HEIGHT, WINDOW_WITH,
+};
+use crate::cursor::draw_cursor;
+use crate::missile::create_missiles;
 use macroquad::prelude::*;
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "Missile Command".to_owned(),
         fullscreen: false,
-        window_width: 640,
-        window_height: 480,
+        window_width: WINDOW_WITH,
+        window_height: WINDOW_HEIGHT,
         window_resizable: false,
         ..Default::default()
     }
@@ -20,18 +24,15 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    show_mouse(false);
     rand::srand(miniquad::date::now() as _);
 
-    let mut missiles = Vec::new();
-    for _ in 0..MAX_MISSILE_COUNT {
-        let missile = Missile::produce();
-        println!("{}", &missile);
-        missiles.push(missile);
-    }
+    let buildings = create_buildings();
+    let mut missiles = create_missiles();
     clear_background(Color::default());
-    show_mouse(false);
+
     loop {
-        draw_base();
+        draw_buildings(&buildings);
         draw_cursor();
         for m in missiles.iter_mut() {
             m.position += m.direction * MISSILE_SPEED_FACTOR;

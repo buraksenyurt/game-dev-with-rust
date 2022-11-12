@@ -1,5 +1,5 @@
 use crate::constant::TRACE_TICKNESS;
-use crate::MISSILE_LENGTH;
+use crate::{MAX_MISSILE_COUNT, MISSILE_LENGTH};
 use macroquad::prelude::*;
 use std::fmt::{Display, Formatter};
 
@@ -63,4 +63,14 @@ impl Display for Missile {
             self.angle.to_degrees()
         )
     }
+}
+
+pub fn create_missiles() -> Vec<Missile> {
+    let mut missiles = Vec::new();
+    for _ in 0..MAX_MISSILE_COUNT {
+        let missile = Missile::produce();
+        println!("{}", &missile);
+        missiles.push(missile);
+    }
+    missiles
 }
