@@ -6,4 +6,3 @@ description = "Missile Command tutorial"
 
 [dependencies]
 macroquad = "0.3.25"
-rand="0.8.5"

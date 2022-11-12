@@ -1,14 +1,10 @@
-use macroquad::prelude::{
-    clear_background, draw_rectangle, next_frame, screen_width, Color, Vec2, WHITE,
-};
-use macroquad::window::screen_height;
-use rand::prelude::*;
+use macroquad::prelude::*;
+use std::fmt::{Display, Formatter};
 
 #[macroquad::main("Missile Command")]
 async fn main() {
-    let rng = thread_rng();
-    let mut missile = Missile::produce(rng);
-
+    let mut missile = Missile::produce();
+    println!("{}", missile);
     loop {
         clear_background(Color::default());
         missile.position += missile.direction;
@@ -25,28 +21,29 @@ struct Missile {
 }
 
 impl Missile {
-    pub fn produce(mut rng: ThreadRng) -> Self {
-        let x =
-            rng.gen_range((0. + screen_width() * 0.25)..(screen_width() - screen_width() * 0.25));
+    pub fn produce() -> Self {
+        let x = rand::gen_range(
+            screen_width() * 0.25,
+            screen_width() - screen_width() * 0.25,
+        );
         let left_angle = (x / screen_height()).atan();
         let right_angle = ((screen_width() - x) / screen_height()).atan();
-        println!("x value {}", x);
-        println!(
-            "Left angle(max) - {} Radian \t Right angle(max) - {} Radian\nLeft angle(max) - {} Degree \t Right angle(max) - {} Degree",
-            left_angle, right_angle,left_angle.to_degrees(),
-            right_angle.to_degrees()
-        );
-        let pos_neg = rng.gen::<bool>();
+        let pos_neg = rand::gen_range(0, 5);
         let v = match pos_neg {
-            true => 1.,
-            false => -1.,
+            0 => 1.,
+            _ => -1.,
         };
-        let angle: f32 = rng.gen_range(left_angle..right_angle) * v;
-        println!("Angle {}", angle);
+        let angle: f32 = rand::gen_range(left_angle, right_angle) * v;
 
         Self {
             position: Vec2::new(x, 0.),
-            direction: Vec2::new(angle.sin(), 1.),
+            direction: Vec2::new(angle.cos(), 1.),
         }
+    }
+}
+
+impl Display for Missile {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Pos: {}, Dir: {}", self.position, self.direction)
     }
 }
