@@ -4,10 +4,21 @@ mod painter;
 
 use crate::constant::{MAX_MISSILE_COUNT, MISSILE_LENGTH, MISSILE_SPEED_FACTOR};
 use crate::missile::Missile;
-use crate::painter::draw_base;
+use crate::painter::{draw_base, draw_cursor};
 use macroquad::prelude::*;
 
-#[macroquad::main("Missile Command")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Missile Command".to_owned(),
+        fullscreen: false,
+        window_width: 640,
+        window_height: 480,
+        window_resizable: false,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
     rand::srand(miniquad::date::now() as _);
 
@@ -18,10 +29,10 @@ async fn main() {
         missiles.push(missile);
     }
     clear_background(Color::default());
-
+    show_mouse(false);
     loop {
         draw_base();
-
+        draw_cursor();
         for m in missiles.iter_mut() {
             m.position += m.direction * MISSILE_SPEED_FACTOR;
             m.draw();
