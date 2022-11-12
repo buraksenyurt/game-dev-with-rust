@@ -1,5 +1,5 @@
 use crate::constant::TRACE_TICKNESS;
-use crate::{MAX_MISSILE_COUNT, MISSILE_LENGTH};
+use crate::MISSILE_LENGTH;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
 use std::fmt::{Display, Formatter};
@@ -19,13 +19,13 @@ impl Missile {
             screen_width() * 0.25,
             screen_width() - screen_width() * 0.25,
         );
-        let left_angle = (x / screen_height()).atan();
-        let right_angle = (screen_width() - x / screen_height()).atan();
+        let left_angle = (screen_height() / x).atan();
+        let right_angle = (screen_height() / screen_width() - x).atan();
         let pos_neg = rand::gen_range(0, 5);
         let angle: f32;
         let sign = match pos_neg {
             0 => {
-                angle = rand::gen_range(right_angle, PI + right_angle);
+                angle = rand::gen_range(0., right_angle);
                 -1.
             }
             _ => {
