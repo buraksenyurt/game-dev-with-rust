@@ -13,6 +13,7 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 - [x] Tetra-Pong: Basit 2D oyun geliştirme çatılarından olan [Tetra](https://tetra.seventeencups.net/) geliştirilen bir başka Ping-Pong örneği. Sitedeki tutorial'ı takip ediyorum.
 - [x] Wolf-Tank: Macroquad motorunu kullanarak yazmaya çalıştığım basit bir RPG. Minik bir tankı kontrol etmeye çalışıyoruz.
 - [x] life-game: Conway'in life game oyununu Rust ile yazmaya çalıştım.
+- [ ] missile-commander: Bu örnekte 80lerin meşhur Atari oyunlarından Missile Command'in bir benzerini yazmaya çalışıyorum. Amacım Missile Command arkasındaki matematiği keşfetmek ve Rust örneğinde uygulayabilmek.
 
 ## Örnek Çalışma Zamanları
 

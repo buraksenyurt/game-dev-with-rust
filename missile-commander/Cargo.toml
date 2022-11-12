@@ -1,0 +1,9 @@
+[package]
+name = "missile-commander"
+version = "0.1.0"
+edition = "2021"
+description = "Missile Command tutorial"
+
+[dependencies]
+macroquad = "0.3.25"
+rand="0.8.5"
