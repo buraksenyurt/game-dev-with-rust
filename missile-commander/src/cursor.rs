@@ -9,7 +9,7 @@ pub fn draw_cursor() {
     draw_text(
         format!("{:?}", mouse_position()).as_str(),
         0.,
-        screen_height() - 20.,
+        screen_height() - 5.,
         20.,
         RED,
     );

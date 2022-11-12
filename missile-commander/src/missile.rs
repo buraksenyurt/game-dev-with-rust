@@ -7,7 +7,9 @@ pub struct Missile {
     start_position: Vec2,
     pub position: Vec2,
     pub direction: Vec2,
-    pub angle: f32,
+    angle: f32,
+    pub is_alive: bool,
+    pub lift_off_time: i32,
 }
 
 impl Missile {
@@ -30,6 +32,8 @@ impl Missile {
             position: Vec2::new(x, 0.),
             direction: Vec2::new(sign * angle.cos(), 1.),
             angle,
+            is_alive: true,
+            lift_off_time: rand::gen_range(50, 500),
         }
     }
 
@@ -56,11 +60,12 @@ impl Display for Missile {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Pos: {}, Dir: {}, Angle:{} rad,{} deg",
+            "Pos: {}, Dir: {}, Angle:{} rad,{} deg, lift off {}",
             self.position,
             self.direction,
             self.angle,
-            self.angle.to_degrees()
+            self.angle.to_degrees(),
+            self.lift_off_time
         )
     }
 }

@@ -35,9 +35,19 @@ async fn main() {
         draw_buildings(&buildings);
         draw_cursor();
         for m in missiles.iter_mut() {
-            m.position += m.direction * MISSILE_SPEED_FACTOR;
-            m.draw();
+            if m.lift_off_time == 0 {
+                m.position += m.direction * MISSILE_SPEED_FACTOR;
+                m.draw();
+
+                if m.position.y > screen_height() - 100. {
+                    m.is_alive = false;
+                }
+            } else {
+                m.lift_off_time -= 1;
+            }
         }
+
+        missiles.retain(|m| m.is_alive);
 
         next_frame().await
     }
