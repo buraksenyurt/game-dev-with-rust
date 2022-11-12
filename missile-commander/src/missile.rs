@@ -1,6 +1,7 @@
 use crate::constant::TRACE_TICKNESS;
 use crate::{MAX_MISSILE_COUNT, MISSILE_LENGTH};
 use macroquad::prelude::*;
+use std::f32::consts::PI;
 use std::fmt::{Display, Formatter};
 
 pub struct Missile {
@@ -21,11 +22,17 @@ impl Missile {
         let left_angle = (x / screen_height()).atan();
         let right_angle = (screen_width() - x / screen_height()).atan();
         let pos_neg = rand::gen_range(0, 5);
+        let angle: f32;
         let sign = match pos_neg {
-            0 => -1.,
-            _ => 1.,
+            0 => {
+                angle = rand::gen_range(right_angle, PI + right_angle);
+                -1.
+            }
+            _ => {
+                angle = rand::gen_range(PI - left_angle, left_angle);
+                1.
+            }
         };
-        let angle: f32 = rand::gen_range(left_angle, right_angle);
 
         Self {
             start_position: Vec2::new(x, 0.),
@@ -70,9 +77,9 @@ impl Display for Missile {
     }
 }
 
-pub fn create_missiles() -> Vec<Missile> {
+pub fn create_missiles(quantity: i32) -> Vec<Missile> {
     let mut missiles = Vec::new();
-    for _ in 0..MAX_MISSILE_COUNT {
+    for _ in 0..quantity {
         let missile = Missile::produce();
         println!("{}", &missile);
         missiles.push(missile);

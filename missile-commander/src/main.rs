@@ -28,7 +28,7 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
 
     let buildings = create_buildings();
-    let mut missiles = create_missiles();
+    let mut missiles = create_missiles(MAX_MISSILE_COUNT);
     clear_background(Color::default());
 
     loop {
@@ -48,7 +48,8 @@ async fn main() {
         }
 
         missiles.retain(|m| m.is_alive);
-
+        let mut new_missiles = create_missiles(MAX_MISSILE_COUNT - missiles.len() as i32);
+        missiles.append(&mut new_missiles);
         next_frame().await
     }
 }
