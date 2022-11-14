@@ -1,5 +1,6 @@
 use crate::lib::constant::TRACE_TICKNESS;
-use crate::MISSILE_LENGTH;
+use crate::{MAX_LIFT_OFF_TIME, MISSILE_LENGTH};
+use macroquad::prelude::collections::storage::get;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
 use std::fmt::{Display, Formatter};
@@ -15,32 +16,28 @@ pub struct Missile {
 
 impl Missile {
     pub fn produce() -> Self {
+        // Füze için rastgele bir x noktası al.
+        // Ekranın sağ ve sol taraflarından 4te 1 kırpılmış bir alan kullanılmakta.
         let x = rand::gen_range(
             screen_width() * 0.25,
             screen_width() - screen_width() * 0.25,
         );
+
+        // Olası max sol açı değerini hesaplıyoruz.
+        // Karşı Kenar / Komşu Kenar ın arc tanjant değeri
         let left_angle = (screen_height() / x).atan();
+        // Burada da olası maksimum sağ açı değerini buluyoruz.
         let right_angle = (screen_height() / screen_width() - x).atan();
-        let pos_neg = rand::gen_range(0, 5);
-        let angle: f32;
-        let sign = match pos_neg {
-            0 => {
-                angle = rand::gen_range(0., right_angle);
-                -1.
-            }
-            _ => {
-                angle = rand::gen_range(PI - left_angle, left_angle);
-                1.
-            }
-        };
+        // Belli bir değer aralığında rastgele füze açısı çekiyoruz (Radyan cinsinden)
+        let angle: f32 = rand::gen_range(left_angle, PI - (left_angle + right_angle));
 
         Self {
             start_position: Vec2::new(x, 0.),
             position: Vec2::new(x, 0.),
-            direction: Vec2::new(sign * angle.cos(), 1.),
+            direction: Vec2::new(angle.cos(), 1.),
             angle,
             is_alive: true,
-            lift_off_time: rand::gen_range(50, 500),
+            lift_off_time: rand::gen_range(get_fps() as i32, get_fps() as i32 + MAX_LIFT_OFF_TIME),
         }
     }
 
