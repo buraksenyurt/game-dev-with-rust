@@ -1,6 +1,5 @@
 use crate::lib::constant::TRACE_TICKNESS;
 use crate::{MAX_LIFT_OFF_TIME, MISSILE_LENGTH};
-use macroquad::prelude::collections::storage::get;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
 use std::fmt::{Display, Formatter};

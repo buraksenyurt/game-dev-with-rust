@@ -1,5 +1,6 @@
 pub mod building;
 pub mod constant;
+pub mod game;
 pub mod missile;
 
 use crate::lib::missile::Missile;

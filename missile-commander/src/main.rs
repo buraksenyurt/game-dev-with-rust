@@ -1,5 +1,6 @@
 mod lib;
 
+use crate::lib::game::Game;
 use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
 use lib::building::*;
 use lib::constant::*;
@@ -10,6 +11,7 @@ async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
 
+    let mut game = Game::new();
     let buildings = create_buildings();
     let mut missiles = create_missiles(MAX_MISSILE_COUNT);
     clear_background(Color::default());
@@ -17,6 +19,12 @@ async fn main() {
     loop {
         draw_buildings(&buildings);
         draw_cursor();
+        game.draw();
+
+        if game.city_health == 0 {
+            println!("Commander! City has fatal damage.");
+            break;
+        }
         for m in missiles.iter_mut() {
             if m.lift_off_time == 0 {
                 m.position += m.direction * MISSILE_SPEED_FACTOR;
@@ -27,6 +35,7 @@ async fn main() {
                 }
                 if m.position.y > screen_height() - 100. {
                     m.is_alive = false;
+                    game.city_health -= 100;
                 }
             } else {
                 m.lift_off_time -= 1;

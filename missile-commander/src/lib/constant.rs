@@ -6,4 +6,5 @@ pub const MISSILE_SPEED_FACTOR: f32 = 0.5;
 pub const BASE_LENGTH: f32 = 32.;
 pub const WINDOW_WITH: i32 = 640;
 pub const WINDOW_HEIGHT: i32 = 480;
-pub const MAX_LIFT_OFF_TIME:i32=500;
+pub const MAX_LIFT_OFF_TIME: i32 = 500;
+pub const MAX_CITY_HEALTH: i32 = 1000;
