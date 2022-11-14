@@ -1,26 +1,9 @@
-mod building;
-mod constant;
-mod cursor;
-mod missile;
+mod lib;
 
-use crate::building::{create_buildings, draw_buildings};
-use crate::constant::{
-    MAX_MISSILE_COUNT, MISSILE_LENGTH, MISSILE_SPEED_FACTOR, WINDOW_HEIGHT, WINDOW_WITH,
-};
-use crate::cursor::draw_cursor;
-use crate::missile::create_missiles;
+use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
+use lib::building::*;
+use lib::constant::*;
 use macroquad::prelude::*;
-
-fn window_conf() -> Conf {
-    Conf {
-        window_title: "Missile Command".to_owned(),
-        fullscreen: false,
-        window_width: WINDOW_WITH,
-        window_height: WINDOW_HEIGHT,
-        window_resizable: false,
-        ..Default::default()
-    }
-}
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -39,6 +22,9 @@ async fn main() {
                 m.position += m.direction * MISSILE_SPEED_FACTOR;
                 m.draw();
 
+                if m.position.x < 0. || m.position.x > screen_width() {
+                    m.is_alive = false;
+                }
                 if m.position.y > screen_height() - 100. {
                     m.is_alive = false;
                 }
