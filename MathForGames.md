@@ -1,5 +1,7 @@
 # Oyun Geliştirmede Kullanılan Temel Matematik Enstrümanlar
 
+**Konu ile ilgili daha derli toplu bir makaleye [medium hesabımdan](https://medium.com/@burakselyum/oyun-geli%C5%9Ftirmede-kullan%C4%B1lan-temel-matematik-enstr%C3%BCmanlar-66e5cc062eca) erişebilirsiniz.**
+
 Oyun motorları arasında popüler olan Unity, Unreal gibi pek çok platform fizik motorlarından ışıklandırmaya, gölgeleme efektlerinden çarpışma hesaplamalarına kadar pek çok şeyi hazır olarak sunar. Ancak oyun programlamanın temellerinde her zaman olduğu gibi matematik vardır _(Az cebir fazlasıyla da trigonometri)_ Bu anlatımda temel seviyede oyun geliştirme için bilinmesi gereken matematik enstrümanlara yer verilmekte. İlk olarak en basit teori ile başlayalım.
 
 ## Pisagor Teoremi
