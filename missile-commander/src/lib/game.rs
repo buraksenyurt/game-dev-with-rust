@@ -22,7 +22,7 @@ impl Game {
         draw_text(
             text.as_str(),
             screen_width() * 0.5 - size.width * 0.5,
-            screen_height() - size.height +10.,
+            screen_height() - size.height + 10.,
             20.,
             RED,
         );

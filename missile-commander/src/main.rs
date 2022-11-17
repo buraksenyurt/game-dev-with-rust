@@ -4,6 +4,7 @@ use crate::lib::game::Game;
 use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
 use lib::building::*;
 use lib::constant::*;
+use macroquad::audio;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]
@@ -11,6 +12,9 @@ async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
 
+    let hit_sound = audio::load_sound("resource/cannon_hit.ogg")
+        .await
+        .unwrap();
     let mut game = Game::new();
     let buildings = create_buildings();
     let mut missiles = create_missiles(MAX_MISSILE_COUNT);
@@ -36,6 +40,7 @@ async fn main() {
                 if m.position.y > screen_height() - 100. {
                     m.is_alive = false;
                     game.city_health -= 100;
+                    audio::play_sound_once(hit_sound);
                 }
             } else {
                 m.lift_off_time -= 1;
