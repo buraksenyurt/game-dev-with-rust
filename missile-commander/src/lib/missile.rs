@@ -22,18 +22,32 @@ impl Missile {
             screen_width() - screen_width() * 0.25,
         );
 
-        // Olası max sol açı değerini hesaplıyoruz.
-        // Karşı Kenar / Komşu Kenar ın arc tanjant değeri
-        let left_angle = (screen_height() / x).atan();
-        // Burada da olası maksimum sağ açı değerini buluyoruz.
-        let right_angle = (screen_height() / screen_width() - x).atan();
-        // Belli bir değer aralığında rastgele füze açısı çekiyoruz (Radyan cinsinden)
-        let angle: f32 = rand::gen_range(left_angle, PI - (left_angle + right_angle));
+        // Dikey vektör
+        let c = Vec2::new(0., screen_height());
+        // sol açı vektörü
+        let a = Vec2::new(0. - x, screen_height());
+        // sağ açı vektörü
+        let b = Vec2::new(screen_width() - x, screen_height());
+        // Nokta Çarpım ve vektör büyüklüklerine göre a ile c ve b ile c arasındaki açıları bul
+        let mut left_angle = (a.dot(c) / (a.length() * c.length())).acos();
+        let mut right_angle = (b.dot(c) / (b.length() * c.length())).acos();
+        // Sol açıyı 90 derecenin üstü olacak şekilde ayarla
+        left_angle += PI / 2.;
+        // Sağ açıyı doksan dereceden düşük olacak şekilde ayarla
+        right_angle = PI / 2. - right_angle;
+        println!(
+            "Max LA {} Max RA {}",
+            left_angle.to_degrees(),
+            right_angle.to_degrees()
+        );
+
+        // Bulunan sol ve sağ açı aralığına göre rastgele bir füze açısı al (Radyan cinsinden)
+        let angle: f32 = rand::gen_range(right_angle, left_angle);
 
         Self {
             start_position: Vec2::new(x, 0.),
             position: Vec2::new(x, 0.),
-            direction: Vec2::new(angle.cos(), 1.),
+            direction: Vec2::new(angle.cos(), angle.sin()),
             angle,
             is_alive: true,
             lift_off_time: rand::gen_range(get_fps() as i32, get_fps() as i32 + MAX_LIFT_OFF_TIME),
