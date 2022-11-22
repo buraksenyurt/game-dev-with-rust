@@ -10,3 +10,4 @@ pub const MAX_LIFT_OFF_TIME: i32 = 500;
 pub const MAX_CITY_HEALTH: i32 = 1000;
 pub const CITY_HEIGHT: f32 = 100.;
 pub const PENALTY_VALUE: i32 = 100;
+pub const TURRET_MULTIPLIER: f32 = 30.;
