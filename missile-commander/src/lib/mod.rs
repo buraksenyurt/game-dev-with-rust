@@ -1,4 +1,5 @@
 pub mod building;
+pub mod bullet;
 pub mod constant;
 pub mod game;
 pub mod missile;

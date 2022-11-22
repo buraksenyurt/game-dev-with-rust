@@ -11,3 +11,7 @@ pub const MAX_CITY_HEALTH: i32 = 1000;
 pub const CITY_HEIGHT: f32 = 100.;
 pub const PENALTY_VALUE: i32 = 100;
 pub const TURRET_MULTIPLIER: f32 = 30.;
+pub const TURRET_THICKNESS: f32 = 3.;
+pub const BULLET_WIDTH: f32 = 4.;
+pub const BULLET_SPEED_FACTOR: f32 = 2.;
+pub const MAX_BULLET_ON_GAME: usize = 3;
