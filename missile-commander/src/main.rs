@@ -23,6 +23,11 @@ async fn main() {
     clear_background(Color::default());
 
     loop {
+        if game.city_health == 0 {
+            println!("Commander! City has fatal damage.");
+            break;
+        }
+
         draw_buildings(&buildings);
         draw_cursor();
         mini_gunner.draw();
@@ -30,14 +35,10 @@ async fn main() {
 
         if is_mouse_button_pressed(MouseButton::Left)
             && bullets.len() < MAX_BULLET_ON_GAME
-            && mini_gunner.muzzle_point.y < screen_height()-CITY_HEIGHT
+            && mini_gunner.is_fire_suitable()
         {
             let bullet = Bullet::spawn(mini_gunner.muzzle_point);
             bullets.push(bullet);
-        }
-        if game.city_health == 0 {
-            println!("Commander! City has fatal damage.");
-            break;
         }
 
         for b in bullets.iter_mut() {
