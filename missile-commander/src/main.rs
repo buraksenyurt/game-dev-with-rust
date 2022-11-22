@@ -1,6 +1,7 @@
 mod lib;
 
 use crate::lib::game::Game;
+use crate::lib::turret::Turret;
 use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
 use lib::building::*;
 use lib::constant::*;
@@ -12,17 +13,17 @@ async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
 
-    let hit_sound = audio::load_sound("resource/cannon_hit.ogg")
-        .await
-        .unwrap();
+    let hit_sound = audio::load_sound("resource/cannon_hit.ogg").await.unwrap();
     let mut game = Game::new();
     let buildings = create_buildings();
     let mut missiles = create_missiles(MAX_MISSILE_COUNT);
+    let mini_gunner = Turret::new();
     clear_background(Color::default());
 
     loop {
         draw_buildings(&buildings);
         draw_cursor();
+        mini_gunner.draw();
         game.draw();
 
         if game.city_health == 0 {
@@ -34,12 +35,12 @@ async fn main() {
                 m.position += m.direction * MISSILE_SPEED_FACTOR;
                 m.draw();
 
-                if m.position.x < 0. || m.position.x > screen_width() {
+                // if m.position.x < 0. || m.position.x > screen_width() {
+                //     m.is_alive = false;
+                // }
+                if m.position.y > screen_height() - CITY_HEIGHT {
                     m.is_alive = false;
-                }
-                if m.position.y > screen_height() - 100. {
-                    m.is_alive = false;
-                    game.city_health -= 100;
+                    game.city_health -= PENALTY_VALUE;
                     audio::play_sound_once(hit_sound);
                 }
             } else {

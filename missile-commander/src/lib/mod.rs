@@ -2,6 +2,7 @@ pub mod building;
 pub mod constant;
 pub mod game;
 pub mod missile;
+pub mod turret;
 
 use crate::lib::missile::Missile;
 use crate::{Building, BASE_LENGTH, CURSOR_LENGTH, WINDOW_HEIGHT, WINDOW_WITH};
