@@ -7,14 +7,14 @@ use std::fmt::{Display, Formatter};
 pub struct Missile {
     start_position: Vec2,
     pub position: Vec2,
-    pub direction: Vec2,
+    pub velocity: Vec2,
     angle: f32,
     pub is_alive: bool,
     pub lift_off_time: i32,
 }
 
 impl Missile {
-    pub fn produce() -> Self {
+    pub fn spawn() -> Self {
         // Füze için rastgele bir x noktası al.
         // Ekranın sağ ve sol taraflarından 4te 1 kırpılmış bir alan kullanılmakta.
         let x = rand::gen_range(
@@ -47,7 +47,7 @@ impl Missile {
         Self {
             start_position: Vec2::new(x, 0.),
             position: Vec2::new(x, 0.),
-            direction: Vec2::new(angle.cos(), angle.sin()),
+            velocity: Vec2::new(angle.cos(), angle.sin()),
             angle,
             is_alive: true,
             lift_off_time: rand::gen_range(get_fps() as i32, get_fps() as i32 + MAX_LIFT_OFF_TIME),
@@ -68,7 +68,7 @@ impl Missile {
             self.position.y,
             MISSILE_LENGTH,
             MISSILE_LENGTH,
-            WHITE,
+            RED,
         );
     }
 }
@@ -79,7 +79,7 @@ impl Display for Missile {
             f,
             "Pos: {}, Dir: {}, Angle:{} rad,{} deg, lift off {}",
             self.position,
-            self.direction,
+            self.velocity,
             self.angle,
             self.angle.to_degrees(),
             self.lift_off_time

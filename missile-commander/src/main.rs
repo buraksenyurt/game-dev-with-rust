@@ -42,10 +42,18 @@ async fn main() {
         }
 
         for b in bullets.iter_mut() {
-            if b.location.x < 0. || b.location.x > screen_width() || b.location.y < 0. {
+            if b.target.distance(b.position) < 1. {
                 b.is_alive = false;
+                println!("On target point {}", b.target);
             }
-            b.location += b.velocity * BULLET_SPEED_FACTOR;
+            // println!(
+            //     "T:{}\t L:{}\t ED:{} EDS:{}",
+            //     b.target,
+            //     b.location,
+            //     b.target.distance(b.location),
+            //     b.target.distance_squared(b.location)
+            // );
+            b.position += b.velocity * BULLET_SPEED_FACTOR;
             b.draw();
         }
 
@@ -53,12 +61,9 @@ async fn main() {
 
         for m in missiles.iter_mut() {
             if m.lift_off_time == 0 {
-                m.position += m.direction * MISSILE_SPEED_FACTOR;
+                m.position += m.velocity * MISSILE_SPEED_FACTOR;
                 m.draw();
 
-                // if m.position.x < 0. || m.position.x > screen_width() {
-                //     m.is_alive = false;
-                // }
                 if m.position.y > screen_height() - CITY_HEIGHT {
                     m.is_alive = false;
                     game.city_health -= PENALTY_VALUE;
