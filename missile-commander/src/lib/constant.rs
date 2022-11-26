@@ -15,3 +15,6 @@ pub const TURRET_THICKNESS: f32 = 3.;
 pub const BULLET_WIDTH: f32 = 4.;
 pub const BULLET_SPEED_FACTOR: f32 = 2.;
 pub const MAX_BULLET_ON_GAME: usize = 3;
+pub const EXPLOSION_LIFE_TIME: usize = 100;
+pub const EXPLOSION_THICKNESS: f32 = 1.;
+pub const EXPLOSION_RADIUS_RATE: f32 = 0.25;

@@ -1,6 +1,7 @@
 pub mod building;
 pub mod bullet;
 pub mod constant;
+pub mod explosion;
 pub mod game;
 pub mod missile;
 pub mod turret;

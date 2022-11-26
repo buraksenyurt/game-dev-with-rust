@@ -1,6 +1,7 @@
 mod lib;
 
 use crate::lib::bullet::Bullet;
+use crate::lib::explosion::Explosion;
 use crate::lib::game::Game;
 use crate::lib::turret::Turret;
 use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
@@ -19,6 +20,7 @@ async fn main() {
     let buildings = create_buildings();
     let mut missiles = create_missiles(MAX_MISSILE_COUNT);
     let mut bullets: Vec<Bullet> = Vec::new();
+    let mut explosions: Vec<Explosion> = Vec::new();
     let mut mini_gunner = Turret::new();
     clear_background(Color::default());
 
@@ -44,20 +46,23 @@ async fn main() {
         for b in bullets.iter_mut() {
             if b.target.distance(b.position) < 1. {
                 b.is_alive = false;
-                println!("On target point {}", b.target);
+                let expl = Explosion::spawn(b.target);
+                explosions.push(expl);
+                //println!("On target point {}", b.target);
             }
-            // println!(
-            //     "T:{}\t L:{}\t ED:{} EDS:{}",
-            //     b.target,
-            //     b.location,
-            //     b.target.distance(b.location),
-            //     b.target.distance_squared(b.location)
-            // );
             b.position += b.velocity * BULLET_SPEED_FACTOR;
             b.draw();
         }
 
-        bullets.retain(|b| b.is_alive);
+        for e in explosions.iter_mut() {
+            e.draw();
+            if e.life_time == 0 {
+                e.is_alive = false;
+            } else {
+                e.radius += EXPLOSION_RADIUS_RATE;
+                e.life_time -= 1;
+            }
+        }
 
         for m in missiles.iter_mut() {
             if m.lift_off_time == 0 {
@@ -74,7 +79,10 @@ async fn main() {
             }
         }
 
+        explosions.retain(|e| e.is_alive);
+        bullets.retain(|b| b.is_alive);
         missiles.retain(|m| m.is_alive);
+
         let mut new_missiles = create_missiles(MAX_MISSILE_COUNT - missiles.len() as i32);
         missiles.append(&mut new_missiles);
         next_frame().await
