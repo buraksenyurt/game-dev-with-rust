@@ -3,6 +3,7 @@ pub mod bullet;
 pub mod constant;
 pub mod explosion;
 pub mod game;
+pub mod game_state;
 pub mod missile;
 pub mod turret;
 
