@@ -29,38 +29,6 @@ impl Game {
             RED,
         );
     }
-
-    pub fn draw_main(&self) {
-        let text = "Missile Commander";
-        let size = measure_text(text, None, 20, 1.);
-        draw_text(
-            text,
-            screen_width() * 0.5 - size.width * 0.5,
-            screen_height() * 0.5 - size.height + 10.,
-            20.,
-            RED,
-        );
-
-        let text = "Press SPACE to start";
-        let size = measure_text(text, None, 20, 1.);
-        draw_text(
-            text,
-            screen_width() * 0.5 - size.width * 0.5,
-            screen_height() * 0.5 - size.height + (10. * 2.),
-            20.,
-            RED,
-        );
-
-        let text = "Press ESC to exit";
-        let size = measure_text(text, None, 20, 1.);
-        draw_text(
-            text,
-            screen_width() * 0.5 - size.width * 0.5,
-            screen_height() * 0.5 - size.height + (10. * 3.),
-            20.,
-            RED,
-        );
-    }
 }
 
 impl Display for Game {

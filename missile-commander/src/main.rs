@@ -7,7 +7,8 @@ use crate::lib::game_state::{GameState, Level};
 use crate::lib::missile::Missile;
 use crate::lib::turret::Turret;
 use crate::lib::{
-    create_buildings, create_missiles, draw_buildings, draw_cursor, get_max, get_min, window_conf,
+    create_buildings, create_missiles, draw_buildings, draw_cursor, draw_main_menu, get_max,
+    get_min, window_conf,
 };
 use lib::building::*;
 use lib::constant::*;
@@ -35,7 +36,7 @@ async fn main() {
     loop {
         match game.game_state {
             GameState::Main => {
-                game.draw_main();
+                draw_main_menu();
                 if is_key_pressed(KeyCode::Space) {
                     game.game_state = GameState::Playing(rookie_level);
                     create_missiles(rookie_level.max_missile_count);

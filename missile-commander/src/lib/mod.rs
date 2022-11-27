@@ -80,3 +80,21 @@ pub fn get_min(v1: f32, v2: f32) -> f32 {
     }
     v2
 }
+
+pub fn draw_main_menu() {
+    let mut lines = Vec::new();
+    lines.push("Missile Commander");
+    lines.push("Press SPACE to start");
+    lines.push("Press ESC to exit");
+
+    for (i, line) in lines.iter().enumerate() {
+        let size = measure_text(line, None, 32, 1.);
+        draw_text(
+            line,
+            screen_width() * 0.5 - size.width * 0.5,
+            screen_height() * 0.5 - size.height + (32. * i as f32),
+            32.,
+            RED,
+        );
+    }
+}
