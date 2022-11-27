@@ -17,6 +17,10 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 
 ## Örnek Çalışma Zamanları
 
+Henüz geliştirilmesine devam ettiğim Atari Missile Command oyununa ait bir çalışma zamanı görüntüsü aşağıdaki gibidir.
+
+![assets/miscmdgp.gif](assets/miscmdgp.gif)
+
 Ping Pong örneğine ait çalışma sonuçlarım aşağıdaki gibi. Ekran kaydını mp4'ten gif formatına çevirdiğim için epey dandik ama az da olsa fikir veriyor :)
 Güncellenen sürümde oyuncular için kendi taraflarına hareket eden birer iksir var. İksirleri yakaladıklarında ekstradan puanlar kazanıyorlar.
 
