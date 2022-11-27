@@ -4,7 +4,9 @@ use crate::lib::bullet::Bullet;
 use crate::lib::explosion::Explosion;
 use crate::lib::game::Game;
 use crate::lib::turret::Turret;
-use crate::lib::{create_buildings, create_missiles, draw_buildings, draw_cursor, window_conf};
+use crate::lib::{
+    create_buildings, create_missiles, draw_buildings, draw_cursor, get_max, get_min, window_conf,
+};
 use lib::building::*;
 use lib::constant::*;
 use macroquad::audio;
@@ -41,6 +43,29 @@ async fn main() {
         {
             let bullet = Bullet::spawn(mini_gunner.muzzle_point);
             bullets.push(bullet);
+        }
+
+        for e in explosions.iter_mut() {
+            for m in missiles.iter_mut() {
+                let mut nearest_point = Vec2::default();
+                nearest_point.x = get_max(
+                    m.position.x,
+                    get_min(m.position.x + MISSILE_LENGTH, e.location.x),
+                );
+                nearest_point.y = get_max(
+                    m.position.y,
+                    get_min(m.position.y + MISSILE_LENGTH, e.location.y),
+                );
+                let distance = Vec2::new(
+                    nearest_point.x - e.location.x,
+                    nearest_point.y - e.location.y,
+                );
+                if distance.length() <= e.radius {
+                    //e.is_alive = false;
+                    m.is_alive = false;
+                }
+                //println!("{} {} {}", n, n.length(), e.radius);
+            }
         }
 
         for b in bullets.iter_mut() {

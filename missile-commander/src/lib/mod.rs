@@ -65,3 +65,17 @@ pub fn window_conf() -> Conf {
         ..Default::default()
     }
 }
+
+pub fn get_max(v1: f32, v2: f32) -> f32 {
+    if v1 > v2 {
+        return v1;
+    }
+    v2
+}
+
+pub fn get_min(v1: f32, v2: f32) -> f32 {
+    if v1 < v2 {
+        return v1;
+    }
+    v2
+}

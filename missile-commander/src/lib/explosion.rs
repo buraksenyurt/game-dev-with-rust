@@ -3,7 +3,7 @@ use macroquad::prelude::{Vec2, SKYBLUE};
 use macroquad::shapes::draw_circle_lines;
 
 pub struct Explosion {
-    location: Vec2,
+    pub location: Vec2,
     pub life_time: usize,
     pub radius: f32,
     pub is_alive: bool,
