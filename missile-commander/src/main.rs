@@ -30,7 +30,7 @@ async fn main() {
     let mut bullets: Vec<Bullet> = Vec::new();
     let mut explosions: Vec<Explosion> = Vec::new();
     let mut mini_gunner = Turret::new();
-    let rookie_level = Level::new(100, MAX_MISSILE_COUNT, MISSILE_SPEED_FACTOR);
+    let rookie_level = Level::new(100, MAX_MISSILE_COUNT_SAME_TIME, 10, MISSILE_SPEED_FACTOR);
     clear_background(Color::default());
 
     loop {
@@ -39,7 +39,7 @@ async fn main() {
                 draw_main_menu();
                 if is_key_pressed(KeyCode::Space) {
                     game.game_state = GameState::Playing(rookie_level);
-                    create_missiles(rookie_level.max_missile_count);
+                    missiles = create_missiles(rookie_level.max_missile_count);
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
@@ -48,8 +48,11 @@ async fn main() {
                 if game.city_health == 0 {
                     game.game_state = GameState::Dead;
                 }
-                if game.player_hit == level.max_missile_count {
-                    println!("Level {} complete", level.difficulty);
+                if game.player_hit == level.total_missile_count {
+                    println!(
+                        "Level {} complete. Total hit {}",
+                        level.difficulty, game.player_hit
+                    );
                     game.game_state = GameState::Win;
                 }
 
@@ -132,9 +135,11 @@ async fn main() {
                 bullets.retain(|b| b.is_alive);
                 missiles.retain(|m| m.is_alive);
 
-                let mut new_missiles =
-                    create_missiles(level.max_missile_count - missiles.len() as i32);
-                missiles.append(&mut new_missiles);
+                if missiles.len() <= level.max_missile_count as usize {
+                    let mut new_missiles =
+                        create_missiles(level.max_missile_count - missiles.len() as i32);
+                    missiles.append(&mut new_missiles);
+                }
             }
             GameState::Dead => {
                 println!("Commander! City has fatal damage.");

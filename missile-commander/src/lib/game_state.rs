@@ -9,14 +9,21 @@ pub enum GameState {
 pub struct Level {
     pub difficulty: usize,
     pub max_missile_count: i32,
+    pub total_missile_count: i32,
     pub missile_speed_factor: f32,
 }
 
 impl Level {
-    pub fn new(difficulty: usize, max_missile_count: i32, missile_speed_factor: f32) -> Self {
+    pub fn new(
+        difficulty: usize,
+        max_missile_count: i32,
+        total_missile_count: i32,
+        missile_speed_factor: f32,
+    ) -> Self {
         Self {
             difficulty,
             max_missile_count,
+            total_missile_count,
             missile_speed_factor,
         }
     }
