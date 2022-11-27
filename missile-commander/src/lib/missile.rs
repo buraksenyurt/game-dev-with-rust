@@ -35,11 +35,11 @@ impl Missile {
         left_angle += PI / 2.;
         // Sağ açıyı doksan dereceden düşük olacak şekilde ayarla
         right_angle = PI / 2. - right_angle;
-        println!(
-            "Max LA {} Max RA {}",
-            left_angle.to_degrees(),
-            right_angle.to_degrees()
-        );
+        // println!(
+        //     "Max LA {} Max RA {}",
+        //     left_angle.to_degrees(),
+        //     right_angle.to_degrees()
+        // );
 
         // Bulunan sol ve sağ açı aralığına göre rastgele bir füze açısı al (Radyan cinsinden)
         let angle: f32 = rand::gen_range(right_angle, left_angle);

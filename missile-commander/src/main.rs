@@ -18,6 +18,9 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
 
     let hit_sound = audio::load_sound("resource/cannon_hit.ogg").await.unwrap();
+    let turret_fire_sound = audio::load_sound("resource/rlauncher.ogg").await.unwrap();
+    let explosion_sound = audio::load_sound("resource/explosion.ogg").await.unwrap();
+
     let mut game = Game::new();
     let buildings = create_buildings();
     let mut missiles = create_missiles(MAX_MISSILE_COUNT);
@@ -41,6 +44,7 @@ async fn main() {
             && bullets.len() < MAX_BULLET_ON_GAME
             && mini_gunner.is_fire_suitable()
         {
+            audio::play_sound_once(turret_fire_sound);
             let bullet = Bullet::spawn(mini_gunner.muzzle_point);
             bullets.push(bullet);
         }
@@ -62,6 +66,7 @@ async fn main() {
                 );
                 if distance.length() <= e.radius {
                     //e.is_alive = false;
+                    audio::play_sound_once(explosion_sound);
                     m.is_alive = false;
                 }
                 //println!("{} {} {}", n, n.length(), e.radius);

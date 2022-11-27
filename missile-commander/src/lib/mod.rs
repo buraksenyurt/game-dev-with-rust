@@ -28,7 +28,7 @@ pub fn create_missiles(quantity: i32) -> Vec<Missile> {
     let mut missiles = Vec::new();
     for _ in 0..quantity {
         let missile = Missile::spawn();
-        println!("{}", &missile);
+        //println!("{}", &missile);
         missiles.push(missile);
     }
     missiles
