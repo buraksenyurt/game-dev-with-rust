@@ -13,7 +13,6 @@ use crate::lib::{
 use lib::building::*;
 use lib::constant::*;
 use macroquad::audio;
-use macroquad::audio::Sound;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]
@@ -27,9 +26,6 @@ async fn main() {
 
     let mut game = Game::new();
     let buildings = create_buildings();
-    let mut missiles: Vec<Missile> = Vec::new();
-    let mut bullets: Vec<Bullet> = Vec::new();
-    let mut explosions: Vec<Explosion> = Vec::new();
     let mut mini_gunner = Turret::new();
     let rookie_level = Level::new(100, MAX_MISSILE_COUNT_SAME_TIME, 10, MISSILE_SPEED_FACTOR);
     clear_background(Color::default());
@@ -39,9 +35,7 @@ async fn main() {
             GameState::Main => {
                 draw_main_menu(&rookie_level);
                 if is_key_pressed(KeyCode::Space) {
-                    game = Game::new();
-                    game.game_state = GameState::Playing(rookie_level);
-                    missiles = create_missiles(rookie_level.max_missile_count);
+                    game = init_game(rookie_level);
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
@@ -67,31 +61,50 @@ async fn main() {
                 game.draw();
 
                 if is_mouse_button_pressed(MouseButton::Left)
-                    && bullets.len() < MAX_BULLET_ON_GAME
+                    && game.bullets.len() < MAX_BULLET_ON_GAME
                     && mini_gunner.is_fire_suitable()
                 {
                     audio::play_sound_once(turret_fire_sound);
                     let bullet = Bullet::spawn(mini_gunner.muzzle_point);
-                    bullets.push(bullet);
+                    game.bullets.push(bullet);
                 }
 
-                for e in explosions.iter_mut() {
-                    for m in missiles.iter_mut() {
-                        check_clamping(explosion_sound, &mut game, e, m);
+                for e in game.explosions.iter_mut() {
+                    for m in game.missiles.iter_mut() {
+                        let mut nearest_point = Vec2::default();
+                        nearest_point.x = get_max(
+                            m.position.x,
+                            get_min(m.position.x + MISSILE_LENGTH, e.location.x),
+                        );
+                        nearest_point.y = get_max(
+                            m.position.y,
+                            get_min(m.position.y + MISSILE_LENGTH, e.location.y),
+                        );
+                        let distance = Vec2::new(
+                            e.location.x - nearest_point.x,
+                            e.location.y - nearest_point.y,
+                        );
+                        if distance.length() <= e.radius {
+                            //e.is_alive = false;
+                            audio::play_sound_once(explosion_sound);
+                            game.player_hit += 1;
+                            game.player_point += 10;
+                            m.is_alive = false;
+                        }
                     }
                 }
 
-                for b in bullets.iter_mut() {
+                for b in game.bullets.iter_mut() {
                     if b.target.distance(b.position) < 1. {
                         b.is_alive = false;
                         let expl = Explosion::spawn(b.target);
-                        explosions.push(expl);
+                        game.explosions.push(expl);
                     }
                     b.position += b.velocity * BULLET_SPEED_FACTOR;
                     b.draw();
                 }
 
-                for e in explosions.iter_mut() {
+                for e in game.explosions.iter_mut() {
                     e.draw();
                     if e.life_time == 0 {
                         e.is_alive = false;
@@ -101,7 +114,7 @@ async fn main() {
                     }
                 }
 
-                for m in missiles.iter_mut() {
+                for m in game.missiles.iter_mut() {
                     if m.lift_off_time == 0 {
                         m.position += m.velocity * level.missile_speed_factor;
                         m.draw();
@@ -116,25 +129,21 @@ async fn main() {
                     }
                 }
 
-                explosions.retain(|e| e.is_alive);
-                bullets.retain(|b| b.is_alive);
-                missiles.retain(|m| m.is_alive);
+                game.explosions.retain(|e| e.is_alive);
+                game.bullets.retain(|b| b.is_alive);
+                game.missiles.retain(|m| m.is_alive);
 
-                if missiles.len() <= level.max_missile_count as usize {
+                if game.missiles.len() <= level.max_missile_count as usize {
                     let mut new_missiles =
-                        create_missiles(level.max_missile_count - missiles.len() as i32);
-                    missiles.append(&mut new_missiles);
+                        create_missiles(level.max_missile_count - game.missiles.len() as i32);
+                    game.missiles.append(&mut new_missiles);
                 }
             }
             GameState::Dead => {
                 // println!("Commander! City has fatal damage.");
                 draw_dead_menu();
                 if is_key_pressed(KeyCode::Space) {
-                    game = Game::new();
-                    explosions=Vec::new();
-                    bullets=Vec::new();
-                    game.game_state = GameState::Playing(rookie_level);
-                    missiles = create_missiles(rookie_level.max_missile_count);
+                    game = init_game(rookie_level);
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
@@ -142,11 +151,7 @@ async fn main() {
             GameState::Win => {
                 draw_win_menu();
                 if is_key_pressed(KeyCode::Space) {
-                    game = Game::new();
-                    explosions=Vec::new();
-                    bullets=Vec::new();
-                    game.game_state = GameState::Playing(rookie_level);
-                    missiles = create_missiles(rookie_level.max_missile_count);
+                    game = init_game(rookie_level);
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
@@ -157,25 +162,9 @@ async fn main() {
     }
 }
 
-fn check_clamping(explosion_sound: Sound, game: &mut Game, e: &mut Explosion, m: &mut Missile) {
-    let mut nearest_point = Vec2::default();
-    nearest_point.x = get_max(
-        m.position.x,
-        get_min(m.position.x + MISSILE_LENGTH, e.location.x),
-    );
-    nearest_point.y = get_max(
-        m.position.y,
-        get_min(m.position.y + MISSILE_LENGTH, e.location.y),
-    );
-    let distance = Vec2::new(
-        e.location.x - nearest_point.x,
-        e.location.y - nearest_point.y,
-    );
-    if distance.length() <= e.radius {
-        //e.is_alive = false;
-        audio::play_sound_once(explosion_sound);
-        game.player_hit += 1;
-        game.player_point += 10;
-        m.is_alive = false;
-    }
+fn init_game(rookie_level: Level) -> Game {
+    let mut game = Game::new();
+    game.game_state = GameState::Playing(rookie_level);
+    game.missiles = create_missiles(rookie_level.max_missile_count);
+    game
 }

@@ -1,4 +1,4 @@
-use crate::{GameState, MAX_CITY_HEALTH};
+use crate::{Bullet, Explosion, GameState, Missile, MAX_CITY_HEALTH};
 use macroquad::prelude::*;
 use std::fmt::{Display, Formatter};
 
@@ -7,6 +7,9 @@ pub struct Game {
     pub player_hit: i32,
     pub player_point: i32,
     pub game_state: GameState,
+    pub missiles: Vec<Missile>,
+    pub bullets: Vec<Bullet>,
+    pub explosions: Vec<Explosion>,
 }
 
 impl Game {
@@ -17,6 +20,9 @@ impl Game {
             player_hit: 0,
             player_point: 0,
             game_state: GameState::Main,
+            missiles: Vec::new(),
+            bullets: Vec::new(),
+            explosions: Vec::new(),
         }
     }
     pub fn draw(&self) {
