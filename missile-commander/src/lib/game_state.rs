@@ -7,7 +7,7 @@ pub enum GameState {
 
 #[derive(Clone, Copy)]
 pub struct Level {
-    pub difficulty: usize,
+    pub difficulty: u32,
     pub max_missile_count: i32,
     pub total_missile_count: i32,
     pub missile_speed_factor: f32,
@@ -15,7 +15,7 @@ pub struct Level {
 
 impl Level {
     pub fn new(
-        difficulty: usize,
+        difficulty: u32,
         max_missile_count: i32,
         total_missile_count: i32,
         missile_speed_factor: f32,

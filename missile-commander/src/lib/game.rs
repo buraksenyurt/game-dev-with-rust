@@ -11,6 +11,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
+        clear_background(BLACK);
         Game {
             city_health: MAX_CITY_HEALTH,
             player_hit: 0,
