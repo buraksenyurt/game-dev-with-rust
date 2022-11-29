@@ -47,11 +47,7 @@ async fn main() {
                 if game.city_health == 0 {
                     game.state = GameState::Dead;
                 }
-                if game.player_hit == stage.total_missile_count {
-                    println!(
-                        "Level {} complete. Total hit {}",
-                        stage.level, game.player_hit
-                    );
+                if game.score.total_hit == stage.total_missile_count {
                     game.state = GameState::Win;
                 }
 
@@ -88,9 +84,10 @@ async fn main() {
                         if distance.length() <= e.radius {
                             //e.is_alive = false;
                             audio::play_sound_once(explosion_sound);
-                            game.player_hit += 1;
-                            game.player_point += 10;
+                            game.score.total_hit += 1;
+                            game.score.total_point += 10;
                             m.is_alive = false;
+                            continue;
                         }
                     }
                 }

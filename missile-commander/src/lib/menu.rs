@@ -16,7 +16,7 @@ pub fn draw_dead_menu(game: &Game) {
     let lines = vec![
         "City down. Sorry Commander.".to_string(),
         "".to_string(),
-        game.to_string(),
+        game.score.to_string(),
         "Try again? Press SPACE".to_string(),
         "Press ESC to exit".to_string(),
     ];
@@ -28,7 +28,7 @@ pub fn draw_win_menu(game: &Game) {
     let lines = vec![
         "Yow win Commander.".to_string(),
         "".to_string(),
-        game.to_string(),
+        game.score.to_string(),
         "Are you ready to next stage? Press SPACE".to_string(),
         "Press ESC to exit".to_string(),
     ];
