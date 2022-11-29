@@ -3,7 +3,7 @@ mod lib;
 use crate::lib::bullet::Bullet;
 use crate::lib::explosion::Explosion;
 use crate::lib::game::Game;
-use crate::lib::game_state::{GameState, Level};
+use crate::lib::game_state::{GameState, Stage};
 use crate::lib::menu::{draw_dead_menu, draw_main_menu, draw_win_menu};
 use crate::lib::missile::Missile;
 use crate::lib::turret::Turret;
@@ -27,11 +27,11 @@ async fn main() {
     let mut game = Game::new();
     let buildings = create_buildings();
     let mut mini_gunner = Turret::new();
-    let rookie_level = Level::new(100, MAX_MISSILE_COUNT_SAME_TIME, 10, MISSILE_SPEED_FACTOR);
+    let rookie_level = Stage::new(100, MAX_MISSILE_COUNT_SAME_TIME, 10, MISSILE_SPEED_FACTOR);
     clear_background(Color::default());
 
     loop {
-        match game.game_state {
+        match game.state {
             GameState::Main => {
                 draw_main_menu(&rookie_level);
                 if is_key_pressed(KeyCode::Space) {
@@ -40,19 +40,19 @@ async fn main() {
                     break;
                 }
             }
-            GameState::Playing(level) => {
+            GameState::Playing(stage) => {
                 if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
                 if game.city_health == 0 {
-                    game.game_state = GameState::Dead;
+                    game.state = GameState::Dead;
                 }
-                if game.player_hit == level.total_missile_count {
+                if game.player_hit == stage.total_missile_count {
                     println!(
                         "Level {} complete. Total hit {}",
-                        level.difficulty, game.player_hit
+                        stage.level, game.player_hit
                     );
-                    game.game_state = GameState::Win;
+                    game.state = GameState::Win;
                 }
 
                 draw_buildings(&buildings);
@@ -71,14 +71,15 @@ async fn main() {
 
                 for e in game.explosions.iter_mut() {
                     for m in game.missiles.iter_mut() {
-                        let mut nearest_point = Vec2::default();
-                        nearest_point.x = get_max(
-                            m.position.x,
-                            get_min(m.position.x + MISSILE_LENGTH, e.location.x),
-                        );
-                        nearest_point.y = get_max(
-                            m.position.y,
-                            get_min(m.position.y + MISSILE_LENGTH, e.location.y),
+                        let nearest_point = Vec2::new(
+                            get_max(
+                                m.position.x,
+                                get_min(m.position.x + MISSILE_LENGTH, e.location.x),
+                            ),
+                            get_max(
+                                m.position.y,
+                                get_min(m.position.y + MISSILE_LENGTH, e.location.y),
+                            ),
                         );
                         let distance = Vec2::new(
                             e.location.x - nearest_point.x,
@@ -116,7 +117,7 @@ async fn main() {
 
                 for m in game.missiles.iter_mut() {
                     if m.lift_off_time == 0 {
-                        m.position += m.velocity * level.missile_speed_factor;
+                        m.position += m.velocity * stage.missile_speed_factor;
                         m.draw();
 
                         if m.position.y > screen_height() - CITY_HEIGHT {
@@ -133,27 +134,27 @@ async fn main() {
                 game.bullets.retain(|b| b.is_alive);
                 game.missiles.retain(|m| m.is_alive);
 
-                if game.missiles.len() <= level.max_missile_count as usize {
+                if game.missiles.len() <= stage.max_missile_count as usize {
                     let mut new_missiles =
-                        create_missiles(level.max_missile_count - game.missiles.len() as i32);
+                        create_missiles(stage.max_missile_count - game.missiles.len() as i32);
                     game.missiles.append(&mut new_missiles);
                 }
             }
             GameState::Dead => {
                 // println!("Commander! City has fatal damage.");
-                draw_dead_menu();
+                draw_dead_menu(&game);
                 if is_key_pressed(KeyCode::Space) {
                     game = init_game(rookie_level);
                 } else if is_key_pressed(KeyCode::Escape) {
-                    break;
+                    game.state = GameState::Main;
                 }
             }
             GameState::Win => {
-                draw_win_menu();
+                draw_win_menu(&game);
                 if is_key_pressed(KeyCode::Space) {
                     game = init_game(rookie_level);
                 } else if is_key_pressed(KeyCode::Escape) {
-                    break;
+                    game.state = GameState::Main;
                 }
             }
         }
@@ -162,9 +163,9 @@ async fn main() {
     }
 }
 
-fn init_game(rookie_level: Level) -> Game {
+fn init_game(rookie_level: Stage) -> Game {
     let mut game = Game::new();
-    game.game_state = GameState::Playing(rookie_level);
+    game.state = GameState::Playing(rookie_level);
     game.missiles = create_missiles(rookie_level.max_missile_count);
     game
 }

@@ -6,7 +6,7 @@ pub struct Game {
     pub city_health: i32,
     pub player_hit: i32,
     pub player_point: i32,
-    pub game_state: GameState,
+    pub state: GameState,
     pub missiles: Vec<Missile>,
     pub bullets: Vec<Bullet>,
     pub explosions: Vec<Explosion>,
@@ -19,7 +19,7 @@ impl Game {
             city_health: MAX_CITY_HEALTH,
             player_hit: 0,
             player_point: 0,
-            game_state: GameState::Main,
+            state: GameState::Main,
             missiles: Vec::new(),
             bullets: Vec::new(),
             explosions: Vec::new(),
@@ -42,7 +42,7 @@ impl Display for Game {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "City Health {}, Hit {}, Point {}",
+            "City Health {}, Player Hit/Point({}/{})",
             self.city_health, self.player_hit, self.player_point
         )
     }
