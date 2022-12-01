@@ -1,4 +1,5 @@
 use crate::game::score::Score;
+use crate::stage::stage::get_stage_name;
 use crate::{Bullet, Explosion, Missile, State};
 use macroquad::prelude::*;
 
@@ -24,13 +25,7 @@ impl Game {
         }
     }
     pub fn draw(&self) {
-        let stage_name = match self.current_stage {
-            0 => "Rookie",
-            1 => "Specialist",
-            2 => "Veteran",
-            _ => "",
-        };
-        let text = format!("{} STG {}", self.score, stage_name);
+        let text = format!("{} STG {}", self.score, get_stage_name(self.current_stage));
         let size = measure_text(text.as_str(), None, 20, 1.);
         draw_text(
             text.as_str(),

@@ -11,15 +11,15 @@ pub fn load_stages() -> Vec<Stage> {
     let specialist = Stage::new(
         1,
         MAX_MISSILE_COUNT_SAME_TIME + 5,
-        20,
+        15,
         MISSILE_SPEED_FACTOR * 1.5,
         MAX_BULLET_ON_GAME + 1,
     );
     let veteran = Stage::new(
         2,
-        MAX_MISSILE_COUNT_SAME_TIME + 10,
-        50,
-        MISSILE_SPEED_FACTOR * 2.,
+        MAX_MISSILE_COUNT_SAME_TIME,
+        15,
+        MISSILE_SPEED_FACTOR * 3.,
         MAX_BULLET_ON_GAME + 2,
     );
     vec![rookie, specialist, veteran]

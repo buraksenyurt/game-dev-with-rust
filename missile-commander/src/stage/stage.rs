@@ -24,3 +24,12 @@ impl Stage {
         }
     }
 }
+
+pub fn get_stage_name(level: usize) -> String {
+    match level {
+        0 => "Rookie".to_string(),
+        1 => "Specialist".to_string(),
+        2 => "Veteran".to_string(),
+        _ => "".to_string(),
+    }
+}

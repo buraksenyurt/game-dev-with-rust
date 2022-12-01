@@ -17,7 +17,7 @@ use game::game::Game;
 use game::state::State;
 use macroquad::audio;
 use macroquad::prelude::*;
-use menu::menu::{draw_dead_menu, draw_end_menu, draw_main_menu, draw_win_menu};
+use menu::draw::{draw_dead_menu, draw_end_menu, draw_main_menu, draw_win_menu};
 use stage::builder::load_stages;
 
 #[macroquad::main(window_conf)]

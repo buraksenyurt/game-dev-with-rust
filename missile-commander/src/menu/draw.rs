@@ -1,3 +1,4 @@
+use crate::stage::stage::get_stage_name;
 use crate::{Game, Stage};
 use macroquad::prelude::{draw_text, measure_text, screen_height, screen_width, RED};
 
@@ -5,7 +6,7 @@ pub fn draw_main_menu(stage: &Stage) {
     let lines = vec![
         "Wellcome Commander".to_string(),
         "".to_string(),
-        format!("Stage {}", stage.level),
+        format!("Stage {}", get_stage_name(stage.level)),
         "Are you ready! Press SPACE to start".to_string(),
         "Press ESC to exit".to_string(),
     ];
