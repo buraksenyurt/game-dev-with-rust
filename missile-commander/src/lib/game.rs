@@ -9,6 +9,7 @@ pub struct Game {
     pub missiles: Vec<Missile>,
     pub bullets: Vec<Bullet>,
     pub explosions: Vec<Explosion>,
+    pub current_stage: usize,
 }
 
 impl Game {
@@ -21,6 +22,7 @@ impl Game {
             missiles: Vec::new(),
             bullets: Vec::new(),
             explosions: Vec::new(),
+            current_stage: 0,
         }
     }
     pub fn draw(&self) {

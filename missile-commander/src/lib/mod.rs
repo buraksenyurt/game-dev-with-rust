@@ -7,6 +7,7 @@ pub mod game_state;
 pub mod menu;
 pub mod missile;
 pub mod score;
+pub mod stage_builder;
 pub mod turret;
 
 use crate::lib::missile::Missile;

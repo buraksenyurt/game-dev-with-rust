@@ -6,6 +6,7 @@ use crate::lib::game::Game;
 use crate::lib::game_state::{GameState, Stage};
 use crate::lib::menu::{draw_dead_menu, draw_main_menu, draw_win_menu};
 use crate::lib::missile::Missile;
+use crate::lib::stage_builder::load_stages;
 use crate::lib::turret::Turret;
 use crate::lib::{
     create_buildings, create_missiles, draw_buildings, draw_cursor, get_max, get_min, window_conf,
@@ -27,15 +28,15 @@ async fn main() {
     let mut game = Game::new();
     let buildings = create_buildings();
     let mut mini_gunner = Turret::new();
-    let rookie_level = Stage::new(100, MAX_MISSILE_COUNT_SAME_TIME, 10, MISSILE_SPEED_FACTOR);
+    let stages = load_stages();
     clear_background(Color::default());
 
     loop {
         match game.state {
             GameState::Main => {
-                draw_main_menu(&rookie_level);
+                draw_main_menu(&stages[0]);
                 if is_key_pressed(KeyCode::Space) {
-                    game = init_game(rookie_level);
+                    game = init_game(stages[0]);
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
@@ -119,7 +120,7 @@ async fn main() {
 
                         if m.position.y > screen_height() - CITY_HEIGHT {
                             m.is_alive = false;
-                            game.city_health -= PENALTY_VALUE;
+                            game.score.city_health -= PENALTY_VALUE;
                             audio::play_sound_once(hit_sound);
                         }
                     } else {
@@ -141,15 +142,20 @@ async fn main() {
                 // println!("Commander! City has fatal damage.");
                 draw_dead_menu(&game);
                 if is_key_pressed(KeyCode::Space) {
-                    game = init_game(rookie_level);
+                    game = init_game(stages[0]);
                 } else if is_key_pressed(KeyCode::Escape) {
                     game.state = GameState::Main;
                 }
             }
             GameState::Win => {
                 draw_win_menu(&game);
+                if game.current_stage == stages.len() {
+                    println!("Victory !");
+                    break;
+                }
                 if is_key_pressed(KeyCode::Space) {
-                    game = init_game(rookie_level);
+                    game.current_stage += 1;
+                    game = init_game(stages[game.current_stage]);
                 } else if is_key_pressed(KeyCode::Escape) {
                     game.state = GameState::Main;
                 }
@@ -160,9 +166,9 @@ async fn main() {
     }
 }
 
-fn init_game(rookie_level: Stage) -> Game {
+fn init_game(stage: Stage) -> Game {
     let mut game = Game::new();
-    game.state = GameState::Playing(rookie_level);
-    game.missiles = create_missiles(rookie_level.max_missile_count);
+    game.state = GameState::Playing(stage);
+    game.missiles = create_missiles(stage.max_missile_count);
     game
 }
