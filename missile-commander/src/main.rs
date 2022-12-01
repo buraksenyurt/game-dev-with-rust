@@ -4,7 +4,7 @@ use crate::lib::bullet::Bullet;
 use crate::lib::explosion::Explosion;
 use crate::lib::game::Game;
 use crate::lib::game_state::{GameState, Stage};
-use crate::lib::menu::{draw_dead_menu, draw_main_menu, draw_win_menu};
+use crate::lib::menu::{draw_dead_menu, draw_end_menu, draw_main_menu, draw_win_menu};
 use crate::lib::missile::Missile;
 use crate::lib::stage_builder::load_stages;
 use crate::lib::turret::Turret;
@@ -45,7 +45,7 @@ async fn main() {
                 if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
-                if game.city_health == 0 {
+                if game.score.city_health == 0 {
                     game.state = GameState::Dead;
                 }
                 if game.score.total_hit == stage.total_missile_count {
@@ -150,12 +150,19 @@ async fn main() {
             GameState::Win => {
                 draw_win_menu(&game);
                 if game.current_stage == stages.len() {
-                    println!("Victory !");
-                    break;
+                    game.state = GameState::End;
                 }
                 if is_key_pressed(KeyCode::Space) {
                     game.current_stage += 1;
                     game = init_game(stages[game.current_stage]);
+                } else if is_key_pressed(KeyCode::Escape) {
+                    game.state = GameState::Main;
+                }
+            }
+            GameState::End => {
+                draw_end_menu(&game);
+                if is_key_pressed(KeyCode::Enter) {
+                    println!("Developer Burak Selim Şenyurt");
                 } else if is_key_pressed(KeyCode::Escape) {
                     game.state = GameState::Main;
                 }

@@ -1,9 +1,8 @@
 use crate::lib::score::Score;
-use crate::{Bullet, Explosion, GameState, Missile, MAX_CITY_HEALTH};
+use crate::{Bullet, Explosion, GameState, Missile};
 use macroquad::prelude::*;
 
 pub struct Game {
-    pub city_health: i32,
     pub score: Score,
     pub state: GameState,
     pub missiles: Vec<Missile>,
@@ -16,7 +15,6 @@ impl Game {
     pub fn new() -> Self {
         clear_background(BLACK);
         Game {
-            city_health: MAX_CITY_HEALTH,
             score: Score::default(),
             state: GameState::Main,
             missiles: Vec::new(),

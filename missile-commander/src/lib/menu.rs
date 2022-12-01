@@ -36,6 +36,19 @@ pub fn draw_win_menu(game: &Game) {
     draw_menu(&lines);
 }
 
+pub fn draw_end_menu(game: &Game) {
+    let lines = vec![
+        "Congratulaions Commander".to_string(),
+        "".to_string(),
+        "You finished the game. City is safe.".to_string(),
+        game.score.to_string(),
+        "Press ENTER for Credits".to_string(),
+        "Press ESC to exit".to_string(),
+    ];
+
+    draw_menu(&lines);
+}
+
 fn draw_menu(lines: &[String]) {
     for (i, line) in lines.iter().enumerate() {
         let size = measure_text(line, None, 32, 1.);

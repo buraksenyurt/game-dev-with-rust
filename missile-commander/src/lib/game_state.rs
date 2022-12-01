@@ -3,6 +3,7 @@ pub enum GameState {
     Playing(Stage),
     Dead,
     Win,
+    End,
 }
 
 #[derive(Clone, Copy)]
