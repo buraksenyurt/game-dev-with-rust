@@ -1,4 +1,4 @@
-use crate::lib::constant::TRACE_TICKNESS;
+use crate::game::constant::TRACE_TICKNESS;
 use crate::{MAX_LIFT_OFF_TIME, MISSILE_LENGTH};
 use macroquad::prelude::*;
 use std::f32::consts::PI;
@@ -85,4 +85,14 @@ impl Display for Missile {
             self.lift_off_time
         )
     }
+}
+
+pub fn create_missiles(quantity: i32) -> Vec<Missile> {
+    let mut missiles = Vec::new();
+    for _ in 0..quantity {
+        let missile = Missile::spawn();
+        //println!("{}", &missile);
+        missiles.push(missile);
+    }
+    missiles
 }

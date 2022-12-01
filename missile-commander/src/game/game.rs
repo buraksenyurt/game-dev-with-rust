@@ -1,10 +1,10 @@
-use crate::lib::score::Score;
-use crate::{Bullet, Explosion, GameState, Missile};
+use crate::game::score::Score;
+use crate::{Bullet, Explosion, Missile, State};
 use macroquad::prelude::*;
 
 pub struct Game {
     pub score: Score,
-    pub state: GameState,
+    pub state: State,
     pub missiles: Vec<Missile>,
     pub bullets: Vec<Bullet>,
     pub explosions: Vec<Explosion>,
@@ -16,7 +16,7 @@ impl Game {
         clear_background(BLACK);
         Game {
             score: Score::default(),
-            state: GameState::Main,
+            state: State::Main,
             missiles: Vec::new(),
             bullets: Vec::new(),
             explosions: Vec::new(),

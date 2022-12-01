@@ -1,20 +1,24 @@
-mod lib;
+mod entity;
+mod game;
+mod menu;
+mod stage;
 
-use crate::lib::bullet::Bullet;
-use crate::lib::explosion::Explosion;
-use crate::lib::game::Game;
-use crate::lib::game_state::{GameState, Stage};
-use crate::lib::menu::{draw_dead_menu, draw_end_menu, draw_main_menu, draw_win_menu};
-use crate::lib::missile::Missile;
-use crate::lib::stage_builder::load_stages;
-use crate::lib::turret::Turret;
-use crate::lib::{
-    create_buildings, create_missiles, draw_buildings, draw_cursor, get_max, get_min, window_conf,
-};
-use lib::building::*;
-use lib::constant::*;
+use crate::entity::missile::create_missiles;
+use crate::game::utility::window_conf;
+use crate::game::utility::{draw_cursor, get_max, get_min};
+use crate::stage::stage::Stage;
+use entity::bullet::Bullet;
+use entity::city::*;
+use entity::explosion::Explosion;
+use entity::missile::Missile;
+use entity::turret::Turret;
+use game::constant::*;
+use game::game::Game;
+use game::state::State;
 use macroquad::audio;
 use macroquad::prelude::*;
+use menu::menu::{draw_dead_menu, draw_end_menu, draw_main_menu, draw_win_menu};
+use stage::builder::load_stages;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -33,7 +37,7 @@ async fn main() {
 
     loop {
         match game.state {
-            GameState::Main => {
+            State::Main => {
                 draw_main_menu(&stages[0]);
                 if is_key_pressed(KeyCode::Space) {
                     game = init_game(stages[0]);
@@ -41,18 +45,18 @@ async fn main() {
                     break;
                 }
             }
-            GameState::Playing(stage) => {
+            State::Playing(stage) => {
                 if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
                 if game.score.city_health == 0 {
-                    game.state = GameState::Dead;
+                    game.state = State::Dead;
                 }
                 if game.score.total_hit == stage.total_missile_count {
-                    game.state = GameState::Win;
+                    game.state = State::Win;
                 }
 
-                draw_buildings(&buildings);
+                draw(&buildings);
                 draw_cursor();
                 mini_gunner.draw();
                 game.draw();
@@ -138,33 +142,33 @@ async fn main() {
                     game.missiles.append(&mut new_missiles);
                 }
             }
-            GameState::Dead => {
+            State::Dead => {
                 // println!("Commander! City has fatal damage.");
                 draw_dead_menu(&game);
                 if is_key_pressed(KeyCode::Space) {
                     game = init_game(stages[0]);
                 } else if is_key_pressed(KeyCode::Escape) {
-                    game.state = GameState::Main;
+                    game.state = State::Main;
                 }
             }
-            GameState::Win => {
+            State::Win => {
                 draw_win_menu(&game);
                 if game.current_stage == stages.len() {
-                    game.state = GameState::End;
+                    game.state = State::End;
                 }
                 if is_key_pressed(KeyCode::Space) {
                     game.current_stage += 1;
                     game = init_game(stages[game.current_stage]);
                 } else if is_key_pressed(KeyCode::Escape) {
-                    game.state = GameState::Main;
+                    game.state = State::Main;
                 }
             }
-            GameState::End => {
+            State::End => {
                 draw_end_menu(&game);
                 if is_key_pressed(KeyCode::Enter) {
                     println!("Developer Burak Selim Şenyurt");
                 } else if is_key_pressed(KeyCode::Escape) {
-                    game.state = GameState::Main;
+                    game.state = State::Main;
                 }
             }
         }
@@ -175,7 +179,7 @@ async fn main() {
 
 fn init_game(stage: Stage) -> Game {
     let mut game = Game::new();
-    game.state = GameState::Playing(stage);
+    game.state = State::Playing(stage);
     game.missiles = create_missiles(stage.max_missile_count);
     game
 }

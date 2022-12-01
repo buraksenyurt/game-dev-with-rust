@@ -1,11 +1,3 @@
-pub enum GameState {
-    Main,
-    Playing(Stage),
-    Dead,
-    Win,
-    End,
-}
-
 #[derive(Clone, Copy)]
 pub struct Stage {
     pub level: u32,
