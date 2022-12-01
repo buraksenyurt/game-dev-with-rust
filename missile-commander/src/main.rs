@@ -29,7 +29,7 @@ async fn main() {
     let turret_fire_sound = audio::load_sound("resource/rlauncher.ogg").await.unwrap();
     let explosion_sound = audio::load_sound("resource/explosion.ogg").await.unwrap();
 
-    let mut game = Game::new();
+    let mut game = Game::new(0);
     let buildings = create_buildings();
     let mut mini_gunner = Turret::new();
     let stages = load_stages();
@@ -62,7 +62,7 @@ async fn main() {
                 game.draw();
 
                 if is_mouse_button_pressed(MouseButton::Left)
-                    && game.bullets.len() < MAX_BULLET_ON_GAME
+                    && game.bullets.len() < stage.max_bullet_count
                     && mini_gunner.is_fire_suitable()
                 {
                     audio::play_sound_once(turret_fire_sound);
@@ -153,6 +153,7 @@ async fn main() {
             }
             State::Win => {
                 draw_win_menu(&game);
+
                 if game.current_stage == stages.len() {
                     game.state = State::End;
                 }
@@ -178,7 +179,7 @@ async fn main() {
 }
 
 fn init_game(stage: Stage) -> Game {
-    let mut game = Game::new();
+    let mut game = Game::new(stage.level);
     game.state = State::Playing(stage);
     game.missiles = create_missiles(stage.max_missile_count);
     game
