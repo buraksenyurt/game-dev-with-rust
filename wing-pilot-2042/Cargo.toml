@@ -1,0 +1,9 @@
+[package]
+name = "wing-man-2042"
+version = "0.1.0"
+edition = "2021"
+authors = ["Burak Selim Şenyurt"]
+description = "Another clone of C64 1942 game for training"
+
+[dependencies]
+macroquad = "0.3.25"
