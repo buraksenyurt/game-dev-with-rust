@@ -3,4 +3,5 @@ pub enum AssetType {
     GreenLand,
     Island,
     ExtraBullet,
+    Cloud,
 }

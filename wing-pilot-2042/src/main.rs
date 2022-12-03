@@ -43,7 +43,7 @@ async fn main() {
 }
 
 fn shoot(game: &mut Game, fighter: &mut Fighter) {
-    if fighter.ammo_count==0{
+    if fighter.ammo_count == 0 {
         //println!("Out of ammo");
         return;
     }
@@ -54,7 +54,7 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
         let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
         game.bullets.push(bullet_1);
         game.bullets.push(bullet_2);
-        fighter.ammo_count-=2;
+        fighter.ammo_count -= 2;
     }
 }
 
