@@ -1,7 +1,9 @@
 mod entity;
 mod game;
 
+use crate::entity::bullet::Bullet;
 use crate::entity::fighter::Fighter;
+use crate::entity::owner::Owner;
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
@@ -11,21 +13,43 @@ use macroquad::prelude::*;
 async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
-    let _game = Game::new(State::Main);
+    let mut game = Game::new(State::Playing);
     let mut fighter = Fighter::new().await;
-    println!("{}", fighter.texture.width());
     loop {
         clear_background(DARKBLUE);
-        shift_fighter(&mut fighter);
 
-        fighter.draw();
-        // match game.state {
-        //     State::Main => {}
-        //     State::Playing => {}
-        //     State::Dead => {}
-        //     State::End => {}
-        // }
+        match game.state {
+            State::Main => {}
+            State::Playing => {
+                shift_fighter(&mut fighter);
+                shoot(&mut game, &mut fighter);
+                fighter.draw();
+
+                for b in game.bullets.iter_mut() {
+                    b.location += Vec2::new(0., -1.) * 4.;
+                    b.draw();
+                    if b.location.x < 0. {
+                        b.is_alive = false;
+                    }
+                }
+
+                game.bullets.retain(|b| b.is_alive);
+            }
+            State::Dead => {}
+            State::End => {}
+        }
         next_frame().await
+    }
+}
+
+fn shoot(game: &mut Game, fighter: &mut Fighter) {
+    if is_key_pressed(KeyCode::Space) {
+        let lm = fighter.get_left_muzzle();
+        let rm = fighter.get_right_muzzle();
+        let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
+        let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
+        game.bullets.push(bullet_1);
+        game.bullets.push(bullet_2);
     }
 }
 
