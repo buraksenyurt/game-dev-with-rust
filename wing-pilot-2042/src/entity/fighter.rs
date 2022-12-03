@@ -66,7 +66,7 @@ impl Fighter {
         if self.position.x <= 0. || self.position.y < 0. {
             return;
         }
-        self.position += Vec2::new(-1., -1.) * 2.;
+        self.position -= Vec2::new(1., 1.) * 2.;
     }
     pub fn shift_left_down(&mut self) {
         if self.position.x <= 0. || self.position.y > screen_height() - self.texture.height() {
@@ -75,7 +75,7 @@ impl Fighter {
         self.position += Vec2::new(-1., 1.) * 2.;
     }
     pub fn shift_right_up(&mut self) {
-        if self.position.x > screen_width() - self.texture.width() * 0.4 || self.position.y < 0. {
+        if self.position.x > screen_width() - self.texture.width() || self.position.y < 0. {
             return;
         }
         self.position += Vec2::new(1., -1.) * 2.;

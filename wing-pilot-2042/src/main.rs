@@ -26,7 +26,7 @@ async fn main() {
                 fighter.draw();
 
                 for b in game.bullets.iter_mut() {
-                    b.location += Vec2::new(0., -1.) * 4.;
+                    b.location += Vec2::new(0., -1.) * 5.;
                     b.draw();
                     if b.location.x < 0. {
                         b.is_alive = false;
@@ -43,7 +43,7 @@ async fn main() {
 }
 
 fn shoot(game: &mut Game, fighter: &mut Fighter) {
-    if is_key_pressed(KeyCode::Space) {
+    if is_key_pressed(KeyCode::S) {
         let lm = fighter.get_left_muzzle();
         let rm = fighter.get_right_muzzle();
         let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
@@ -71,8 +71,20 @@ fn shift_fighter(fighter: &mut Fighter) {
             fighter.shift_right();
         }
     } else if is_key_down(KeyCode::Up) {
-        fighter.shift_up();
+        if is_key_down(KeyCode::Left) {
+            fighter.shift_left_up();
+        } else if is_key_down(KeyCode::Right) {
+            fighter.shift_right_up();
+        } else {
+            fighter.shift_up();
+        }
     } else if is_key_down(KeyCode::Down) {
-        fighter.shift_down();
+        if is_key_down(KeyCode::Left) {
+            fighter.shift_left_down();
+        } else if is_key_down(KeyCode::Right) {
+            fighter.shift_right_down();
+        } else {
+            fighter.shift_down();
+        }
     }
 }
