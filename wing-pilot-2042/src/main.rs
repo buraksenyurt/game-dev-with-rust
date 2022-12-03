@@ -1,9 +1,7 @@
 mod entity;
 mod game;
 
-use crate::entity::bullet::Bullet;
 use crate::entity::fighter::Fighter;
-use crate::entity::owner::Owner;
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
@@ -48,12 +46,8 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
         return;
     }
     if is_key_pressed(KeyCode::S) {
-        let lm = fighter.get_left_muzzle();
-        let rm = fighter.get_right_muzzle();
-        let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
-        let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
-        game.bullets.push(bullet_1);
-        game.bullets.push(bullet_2);
+        let mut bullets = fighter.spawn_bullets();
+        game.bullets.append(&mut bullets);
         fighter.ammo_count -= 2;
     }
 }
