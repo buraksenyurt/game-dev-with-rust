@@ -6,7 +6,6 @@ use macroquad::window::{screen_height, screen_width};
 
 pub struct Fighter {
     pub position: Vec2,
-    pub velocity: Vec2,
     pub life: usize,
     texture: Texture2D,
 }
@@ -20,10 +19,34 @@ impl Fighter {
         );
         Self {
             position,
-            velocity: Vec2::new(1., 0.),
             life: 3,
             texture,
         }
+    }
+
+    pub fn shift_left(&mut self) {
+        self.position -= Vec2::new(1., 0.) * 2.;
+    }
+    pub fn shift_right(&mut self) {
+        self.position += Vec2::new(1., 0.) * 2.;
+    }
+    pub fn shift_up(&mut self) {
+        self.position -= Vec2::new(0., 1.) * 2.;
+    }
+    pub fn shift_down(&mut self) {
+        self.position += Vec2::new(0., 1.) * 2.;
+    }
+    pub fn shift_left_up(&mut self) {
+        self.position += Vec2::new(-1., -1.) * 2.;
+    }
+    pub fn shift_left_down(&mut self) {
+        self.position += Vec2::new(-1., 1.) * 2.;
+    }
+    pub fn shift_right_up(&mut self) {
+        self.position += Vec2::new(1., -1.) * 2.;
+    }
+    pub fn shift_right_down(&mut self) {
+        self.position += Vec2::new(1., 1.) * 2.;
     }
 
     pub fn draw(&self) {
