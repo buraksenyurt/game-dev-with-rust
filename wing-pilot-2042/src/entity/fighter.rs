@@ -7,7 +7,7 @@ use macroquad::window::{screen_height, screen_width};
 pub struct Fighter {
     pub position: Vec2,
     pub life: usize,
-    texture: Texture2D,
+    pub texture: Texture2D,
 }
 
 impl Fighter {
@@ -25,27 +25,54 @@ impl Fighter {
     }
 
     pub fn shift_left(&mut self) {
+        if self.position.x <= 0. {
+            return;
+        }
         self.position -= Vec2::new(1., 0.) * 2.;
     }
     pub fn shift_right(&mut self) {
+        if self.position.x >= screen_width() - self.texture.width() * 0.4 {
+            return;
+        }
         self.position += Vec2::new(1., 0.) * 2.;
     }
     pub fn shift_up(&mut self) {
+        if self.position.y < 0. {
+            return;
+        }
         self.position -= Vec2::new(0., 1.) * 2.;
     }
     pub fn shift_down(&mut self) {
+        if self.position.y > screen_height() - self.texture.height() * 0.4 {
+            return;
+        }
         self.position += Vec2::new(0., 1.) * 2.;
     }
     pub fn shift_left_up(&mut self) {
+        if self.position.x <= 0. || self.position.y < 0. {
+            return;
+        }
         self.position += Vec2::new(-1., -1.) * 2.;
     }
     pub fn shift_left_down(&mut self) {
+        if self.position.x <= 0. || self.position.y > screen_height() - self.texture.height() * 0.4
+        {
+            return;
+        }
         self.position += Vec2::new(-1., 1.) * 2.;
     }
     pub fn shift_right_up(&mut self) {
+        if self.position.x > screen_width() - self.texture.width() * 0.4 || self.position.y < 0. {
+            return;
+        }
         self.position += Vec2::new(1., -1.) * 2.;
     }
     pub fn shift_right_down(&mut self) {
+        if self.position.x > screen_width() - self.texture.width() * 0.4
+            || self.position.y > screen_height() - self.texture.height() * 0.4
+        {
+            return;
+        }
         self.position += Vec2::new(1., 1.) * 2.;
     }
 

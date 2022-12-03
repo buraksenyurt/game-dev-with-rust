@@ -13,6 +13,7 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
     let _game = Game::new(State::Main);
     let mut fighter = Fighter::new().await;
+    println!("{}", fighter.texture.width());
     loop {
         clear_background(DARKBLUE);
         shift_fighter(&mut fighter);
