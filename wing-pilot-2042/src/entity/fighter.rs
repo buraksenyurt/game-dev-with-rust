@@ -1,14 +1,12 @@
-use macroquad::color::{WHITE};
-use macroquad::prelude::{
-    draw_texture_ex, load_texture, DrawTextureParams, Texture2D, Vec2,
-};
+use macroquad::color::WHITE;
+use macroquad::prelude::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D, Vec2};
 use macroquad::window::{screen_height, screen_width};
 
 pub struct Fighter {
     pub position: Vec2,
     pub life: usize,
     texture: Texture2D,
-    pub ammo_count:usize
+    pub ammo_count: usize,
 }
 
 impl Fighter {
@@ -22,7 +20,7 @@ impl Fighter {
             position,
             life: 3,
             texture,
-            ammo_count:100
+            ammo_count: 100,
         }
     }
 
