@@ -1,19 +1,23 @@
+use crate::common::constants::MAX_AMMO;
 use crate::entity::bullet::Bullet;
-use crate::entity::fighter::Fighter;
+use crate::entity::enemy::Enemy;
+use crate::entity::fleet::Fleet;
 use crate::game::state::State;
 
 pub struct Game {
     pub state: State,
     pub bullets: Vec<Bullet>,
-    pub fighter_ammount_count: usize,
+    pub enemy_fleet: Fleet,
+    pub fighter_amount_count: usize,
 }
 
 impl Game {
     pub fn new(state: State) -> Self {
         Self {
             state,
-            bullets: Vec::new(),
-            fighter_ammount_count: 100,
+            bullets: Vec::default(),
+            enemy_fleet: Fleet::default(),
+            fighter_amount_count: MAX_AMMO,
         }
     }
 }

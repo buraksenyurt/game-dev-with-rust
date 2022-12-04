@@ -3,8 +3,11 @@ mod entity;
 mod game;
 mod menu;
 
-use crate::common::constants::BULLET_SPEED_FACTOR;
+use crate::common::constants::{BULLET_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR};
+use crate::entity::enemy_builder::create_enemies;
+use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
+use crate::entity::fleet::Fleet;
 use crate::game::game::Game;
 use crate::game::state::State;
 use crate::menu::builder::draw_info_bar;
@@ -23,6 +26,11 @@ async fn main() {
         match game.state {
             State::Main => {}
             State::Playing => {
+                if game.enemy_fleet.enemies.len() == 0 && game.enemy_fleet.lift_off_time == 0 {
+                    game.enemy_fleet = Fleet::new(3, EnemyType::Fighter).await;
+                } else {
+                    game.enemy_fleet.lift_off_time -= 1;
+                }
                 shift_fighter(&mut fighter);
                 shoot(&mut game, &mut fighter);
                 fighter.draw();
@@ -33,6 +41,11 @@ async fn main() {
                     if b.location.x < 0. {
                         b.is_alive = false;
                     }
+                }
+
+                for e in game.enemy_fleet.enemies.iter_mut() {
+                    e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
+                    e.draw();
                 }
 
                 game.bullets.retain(|b| b.is_alive);
@@ -56,7 +69,7 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
             Some(mut b) => {
                 game.bullets.append(&mut b);
                 fighter.ammo_count -= 2;
-                game.fighter_ammount_count = fighter.ammo_count;
+                game.fighter_amount_count = fighter.ammo_count;
             }
             None => {}
         }
