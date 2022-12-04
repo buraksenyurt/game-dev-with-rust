@@ -1,5 +1,6 @@
 mod entity;
 mod game;
+mod menu;
 
 use crate::entity::fighter::Fighter;
 use crate::game::game::Game;
@@ -45,10 +46,15 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
         //println!("Out of ammo");
         return;
     }
-    if is_key_pressed(KeyCode::S) {
+    if is_key_down(KeyCode::S) {
         let mut bullets = fighter.spawn_bullets();
-        game.bullets.append(&mut bullets);
-        fighter.ammo_count -= 2;
+        match bullets {
+            Some(mut b) => {
+                game.bullets.append(&mut b);
+                fighter.ammo_count -= 2;
+            }
+            None => {}
+        }
     }
 }
 

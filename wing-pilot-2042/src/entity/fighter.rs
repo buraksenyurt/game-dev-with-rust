@@ -2,6 +2,7 @@ use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D, Vec2};
+use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
 
 pub struct Fighter {
@@ -9,6 +10,7 @@ pub struct Fighter {
     pub life: usize,
     texture: Texture2D,
     pub ammo_count: usize,
+    cooling: f32,
 }
 
 impl Fighter {
@@ -23,6 +25,7 @@ impl Fighter {
             life: 3,
             texture,
             ammo_count: 100,
+            cooling: get_frame_time(),
         }
     }
 
@@ -40,12 +43,18 @@ impl Fighter {
         )
     }
 
-    pub fn spawn_bullets(&self) -> Vec<Bullet> {
-        let lm = Self::get_left_muzzle(self);
-        let rm = Self::get_right_muzzle(self);
-        let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
-        let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
-        vec![bullet_1, bullet_2]
+    pub fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
+        if self.cooling <= 0. {
+            let lm = Self::get_left_muzzle(self);
+            let rm = Self::get_right_muzzle(self);
+            let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
+            let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
+            self.cooling = get_frame_time();
+            Some(vec![bullet_1, bullet_2])
+        } else {
+            self.cooling -= get_frame_time()*0.20;
+            None
+        }
     }
 
     pub fn shift_left(&mut self) {
