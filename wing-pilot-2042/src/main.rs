@@ -4,7 +4,6 @@ mod game;
 mod menu;
 
 use crate::common::constants::{BULLET_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR};
-use crate::entity::enemy_builder::create_enemies;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
@@ -26,7 +25,7 @@ async fn main() {
         match game.state {
             State::Main => {}
             State::Playing => {
-                if game.enemy_fleet.enemies.len() == 0 && game.enemy_fleet.lift_off_time == 0 {
+                if game.enemy_fleet.enemies.is_empty() && game.enemy_fleet.lift_off_time == 0 {
                     game.enemy_fleet = Fleet::new(3, EnemyType::Fighter).await;
                 } else {
                     game.enemy_fleet.lift_off_time -= 1;
@@ -64,7 +63,7 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
         return;
     }
     if is_key_down(KeyCode::S) {
-        let mut bullets = fighter.spawn_bullets();
+        let bullets = fighter.spawn_bullets();
         match bullets {
             Some(mut b) => {
                 game.bullets.append(&mut b);

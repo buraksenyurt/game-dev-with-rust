@@ -5,7 +5,7 @@ use macroquad::prelude::{rand, screen_width};
 
 pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
     let x = rand::gen_range(screen_width() * 0.2, screen_width() - screen_width() * 0.2);
-    let mut entry_point = Vec2::new(x, -20.);
+    let entry_point = Vec2::new(x, -20.);
     let mut enemies: Vec<Enemy> = Vec::new();
     for i in 0..count {
         let mut enemy = Enemy::new(entry_point, e_type).await;

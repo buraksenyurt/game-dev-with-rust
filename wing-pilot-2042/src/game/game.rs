@@ -1,6 +1,5 @@
 use crate::common::constants::MAX_AMMO;
 use crate::entity::bullet::Bullet;
-use crate::entity::enemy::Enemy;
 use crate::entity::fleet::Fleet;
 use crate::game::state::State;
 
