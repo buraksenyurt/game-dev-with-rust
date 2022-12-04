@@ -1,3 +1,4 @@
+use crate::common::constants::{COOLING_FACTOR, FIGHTER_SPEED_FACTOR, MAX_AMMO};
 use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
@@ -24,7 +25,7 @@ impl Fighter {
             position,
             life: 3,
             texture,
-            ammo_count: 100,
+            ammo_count: MAX_AMMO,
             cooling: get_frame_time(),
         }
     }
@@ -52,7 +53,7 @@ impl Fighter {
             self.cooling = get_frame_time();
             Some(vec![bullet_1, bullet_2])
         } else {
-            self.cooling -= get_frame_time()*0.20;
+            self.cooling -= get_frame_time() * COOLING_FACTOR;
             None
         }
     }
@@ -61,43 +62,43 @@ impl Fighter {
         if self.position.x <= 0. {
             return;
         }
-        self.position -= Vec2::new(1., 0.) * 2.;
+        self.position -= Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_right(&mut self) {
         if self.position.x >= screen_width() - self.texture.width() {
             return;
         }
-        self.position += Vec2::new(1., 0.) * 2.;
+        self.position += Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_up(&mut self) {
         if self.position.y < 0. {
             return;
         }
-        self.position -= Vec2::new(0., 1.) * 2.;
+        self.position -= Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_down(&mut self) {
         if self.position.y > screen_height() - self.texture.height() {
             return;
         }
-        self.position += Vec2::new(0., 1.) * 2.;
+        self.position += Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_left_up(&mut self) {
         if self.position.x <= 0. || self.position.y < 0. {
             return;
         }
-        self.position -= Vec2::new(1., 1.) * 2.;
+        self.position -= Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_left_down(&mut self) {
         if self.position.x <= 0. || self.position.y > screen_height() - self.texture.height() {
             return;
         }
-        self.position += Vec2::new(-1., 1.) * 2.;
+        self.position += Vec2::new(-1., 1.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_right_up(&mut self) {
         if self.position.x > screen_width() - self.texture.width() || self.position.y < 0. {
             return;
         }
-        self.position += Vec2::new(1., -1.) * 2.;
+        self.position += Vec2::new(1., -1.) * FIGHTER_SPEED_FACTOR;
     }
     pub fn shift_right_down(&mut self) {
         if self.position.x > screen_width() - self.texture.width()
@@ -105,7 +106,7 @@ impl Fighter {
         {
             return;
         }
-        self.position += Vec2::new(1., 1.) * 2.;
+        self.position += Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
 
     pub fn draw(&self) {

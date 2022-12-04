@@ -1,10 +1,13 @@
+mod common;
 mod entity;
 mod game;
 mod menu;
 
+use crate::common::constants::BULLET_SPEED_FACTOR;
 use crate::entity::fighter::Fighter;
 use crate::game::game::Game;
 use crate::game::state::State;
+use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
 use macroquad::prelude::*;
 
@@ -12,8 +15,8 @@ use macroquad::prelude::*;
 async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
-    let mut game = Game::new(State::Playing);
     let mut fighter = Fighter::new().await;
+    let mut game = Game::new(State::Playing);
     loop {
         clear_background(DARKBLUE);
 
@@ -25,7 +28,7 @@ async fn main() {
                 fighter.draw();
 
                 for b in game.bullets.iter_mut() {
-                    b.location += Vec2::new(0., -1.) * 5.;
+                    b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
                     b.draw();
                     if b.location.x < 0. {
                         b.is_alive = false;
@@ -33,6 +36,7 @@ async fn main() {
                 }
 
                 game.bullets.retain(|b| b.is_alive);
+                draw_info_bar(&game);
             }
             State::Dead => {}
             State::End => {}
@@ -52,6 +56,7 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
             Some(mut b) => {
                 game.bullets.append(&mut b);
                 fighter.ammo_count -= 2;
+                game.fighter_ammount_count = fighter.ammo_count;
             }
             None => {}
         }
