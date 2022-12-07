@@ -10,6 +10,7 @@ pub struct Enemy {
     pub enemy_type: EnemyType,
     pub texture: Texture2D,
     pub is_formation_on: bool,
+    pub on_stage: bool,
 }
 
 impl Enemy {
@@ -28,6 +29,7 @@ impl Enemy {
             direction: Vec2::default(),
             texture,
             is_formation_on: false,
+            on_stage: true,
         }
     }
     pub fn draw(&self) {

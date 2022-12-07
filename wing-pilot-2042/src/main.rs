@@ -7,6 +7,7 @@ use crate::common::constants::{
     BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::create_clouds;
+use crate::entity::enemy::Enemy;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
@@ -42,16 +43,18 @@ async fn main() {
                     e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
                     // todo: Move the formation calculation into a function
                     if !e.is_formation_on && e.location.y >= screen_height() * 0.5 {
-                        e.velocity = Vec2::new((PI / 4.).cos(), -(PI / 4.).sin());
+                        e.velocity = Vec2::new(-(PI / 4.).cos(), -(PI / 4.).sin());
                         e.is_formation_on = true;
                         //println!("Formation changed");
                     }
+
+                    check_borders(e).await;
+
                     e.draw();
                 }
                 shift_fighter(&mut fighter).await;
                 shoot(&mut game, &mut fighter).await;
                 fighter.draw().await;
-
                 for b in game.bullets.iter_mut() {
                     b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
                     b.draw().await;
@@ -60,9 +63,6 @@ async fn main() {
                     }
                 }
 
-                game.bullets.retain(|b| b.is_alive);
-                draw_info_bar(&game).await;
-
                 for c in game.clouds.iter_mut() {
                     c.location += c.velocity * CLOUD_SPEED_FACTOR;
                     if c.location.y - c.texture.height() > screen_height() {
@@ -70,12 +70,31 @@ async fn main() {
                     }
                     c.draw();
                 }
+
                 game.clouds.retain(|c| c.on_stage);
+                game.enemy_fleet.enemies.retain(|e| e.on_stage);
+                game.bullets.retain(|b| b.is_alive);
+
+                draw_info_bar(&game).await;
             }
             State::Dead => {}
             State::End => {}
         }
         next_frame().await
+    }
+}
+
+async fn check_borders(e: &mut Enemy) {
+    if e.velocity.y < 0. && e.location.y + e.texture.height() < 0. {
+        e.on_stage = false;
+    } else if e.velocity.x < 0. && e.location.x + e.texture.width() < 0. {
+        e.on_stage = false;
+    } else {
+        if e.location.x > screen_width() + e.texture.width()
+            || e.location.y > screen_height() + e.texture.height()
+        {
+            e.on_stage = false;
+        }
     }
 }
 
