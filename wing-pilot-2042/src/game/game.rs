@@ -1,4 +1,5 @@
 use crate::common::constants::MAX_AMMO;
+use crate::entity::asset::Asset;
 use crate::entity::bullet::Bullet;
 use crate::entity::fleet::Fleet;
 use crate::game::state::State;
@@ -8,6 +9,7 @@ pub struct Game {
     pub bullets: Vec<Bullet>,
     pub enemy_fleet: Fleet,
     pub fighter_amount_count: usize,
+    pub clouds: Vec<Asset>,
 }
 
 impl Game {
@@ -17,6 +19,7 @@ impl Game {
             bullets: Vec::default(),
             enemy_fleet: Fleet::default(),
             fighter_amount_count: MAX_AMMO,
+            clouds: Vec::default(),
         }
     }
 }

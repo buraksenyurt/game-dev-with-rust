@@ -3,7 +3,10 @@ mod entity;
 mod game;
 mod menu;
 
-use crate::common::constants::{BULLET_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR};
+use crate::common::constants::{
+    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
+};
+use crate::entity::asset_builder::create_cloud;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
@@ -25,10 +28,21 @@ async fn main() {
         match game.state {
             State::Main => {}
             State::Playing => {
+                if game.clouds.is_empty() {
+                    for _ in 0..2 {
+                        let c = create_cloud().await;
+                        game.clouds.push(c);
+                    }
+                }
+
                 if game.enemy_fleet.enemies.is_empty() && game.enemy_fleet.lift_off_time == 0 {
                     game.enemy_fleet = Fleet::new(3, EnemyType::Fighter).await;
                 } else {
                     game.enemy_fleet.lift_off_time -= 1;
+                }
+                for e in game.enemy_fleet.enemies.iter_mut() {
+                    e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
+                    e.draw();
                 }
                 shift_fighter(&mut fighter);
                 shoot(&mut game, &mut fighter);
@@ -42,13 +56,17 @@ async fn main() {
                     }
                 }
 
-                for e in game.enemy_fleet.enemies.iter_mut() {
-                    e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-                    e.draw();
-                }
-
                 game.bullets.retain(|b| b.is_alive);
                 draw_info_bar(&game);
+
+                for c in game.clouds.iter_mut() {
+                    c.location += c.velocity * CLOUD_SPEED_FACTOR;
+                    c.draw();
+                    if c.location.y + c.texture.height() > screen_height() {
+                        c.on_stage = false;
+                    }
+                }
+                game.clouds.retain(|c| c.on_stage);
             }
             State::Dead => {}
             State::End => {}

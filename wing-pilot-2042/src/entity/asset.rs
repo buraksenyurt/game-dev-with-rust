@@ -2,10 +2,13 @@ use crate::entity::asset_type::AssetType;
 use macroquad::prelude::{draw_texture, load_texture, Vec2, WHITE};
 use macroquad::texture::Texture2D;
 
+#[derive(Copy, Clone)]
 pub struct Asset {
     pub asset_type: AssetType,
     pub location: Vec2,
     pub texture: Texture2D,
+    pub on_stage: bool,
+    pub velocity: Vec2,
 }
 
 impl Asset {
@@ -22,6 +25,8 @@ impl Asset {
             asset_type,
             location,
             texture,
+            on_stage: true,
+            velocity: Vec2::default(),
         }
     }
 
