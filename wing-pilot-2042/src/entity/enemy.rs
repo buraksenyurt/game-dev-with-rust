@@ -9,6 +9,7 @@ pub struct Enemy {
     pub is_alive: bool,
     pub enemy_type: EnemyType,
     pub texture: Texture2D,
+    pub is_formation_on: bool,
 }
 
 impl Enemy {
@@ -26,6 +27,7 @@ impl Enemy {
             velocity: Vec2::default(),
             direction: Vec2::default(),
             texture,
+            is_formation_on: false,
         }
     }
     pub fn draw(&self) {
