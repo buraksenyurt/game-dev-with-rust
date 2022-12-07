@@ -41,20 +41,20 @@ async fn main() {
                     e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
                     e.draw();
                 }
-                shift_fighter(&mut fighter);
-                shoot(&mut game, &mut fighter);
-                fighter.draw();
+                shift_fighter(&mut fighter).await;
+                shoot(&mut game, &mut fighter).await;
+                fighter.draw().await;
 
                 for b in game.bullets.iter_mut() {
                     b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
-                    b.draw();
+                    b.draw().await;
                     if b.location.x < 0. {
                         b.is_alive = false;
                     }
                 }
 
                 game.bullets.retain(|b| b.is_alive);
-                draw_info_bar(&game);
+                draw_info_bar(&game).await;
 
                 for c in game.clouds.iter_mut() {
                     c.location += c.velocity * CLOUD_SPEED_FACTOR;
@@ -72,13 +72,13 @@ async fn main() {
     }
 }
 
-fn shoot(game: &mut Game, fighter: &mut Fighter) {
+async fn shoot(game: &mut Game, fighter: &mut Fighter) {
     if fighter.ammo_count == 0 {
         //println!("Out of ammo");
         return;
     }
     if is_key_down(KeyCode::S) {
-        let bullets = fighter.spawn_bullets();
+        let bullets = fighter.spawn_bullets().await;
         match bullets {
             Some(mut b) => {
                 game.bullets.append(&mut b);
@@ -90,38 +90,38 @@ fn shoot(game: &mut Game, fighter: &mut Fighter) {
     }
 }
 
-fn shift_fighter(fighter: &mut Fighter) {
+async fn shift_fighter(fighter: &mut Fighter) {
     if is_key_down(KeyCode::Left) {
         if is_key_down(KeyCode::Up) {
-            fighter.shift_left_up();
+            fighter.shift_left_up().await;
         } else if is_key_down(KeyCode::Down) {
-            fighter.shift_left_down();
+            fighter.shift_left_down().await;
         } else {
-            fighter.shift_left();
+            fighter.shift_left().await;
         }
     } else if is_key_down(KeyCode::Right) {
         if is_key_down(KeyCode::Up) {
-            fighter.shift_right_up();
+            fighter.shift_right_up().await;
         } else if is_key_down(KeyCode::Down) {
-            fighter.shift_right_down();
+            fighter.shift_right_down().await;
         } else {
-            fighter.shift_right();
+            fighter.shift_right().await;
         }
     } else if is_key_down(KeyCode::Up) {
         if is_key_down(KeyCode::Left) {
-            fighter.shift_left_up();
+            fighter.shift_left_up().await;
         } else if is_key_down(KeyCode::Right) {
-            fighter.shift_right_up();
+            fighter.shift_right_up().await;
         } else {
-            fighter.shift_up();
+            fighter.shift_up().await;
         }
     } else if is_key_down(KeyCode::Down) {
         if is_key_down(KeyCode::Left) {
-            fighter.shift_left_down();
+            fighter.shift_left_down().await;
         } else if is_key_down(KeyCode::Right) {
-            fighter.shift_right_down();
+            fighter.shift_right_down().await;
         } else {
-            fighter.shift_down();
+            fighter.shift_down().await;
         }
     }
 }

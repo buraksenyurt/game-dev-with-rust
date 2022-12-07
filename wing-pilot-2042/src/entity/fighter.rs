@@ -30,26 +30,26 @@ impl Fighter {
         }
     }
 
-    fn get_left_muzzle(&self) -> Vec2 {
+    async fn get_left_muzzle(&self) -> Vec2 {
         Vec2::new(
             self.position.x + self.texture.width() * 0.2,
             self.position.y,
         )
     }
 
-    fn get_right_muzzle(&self) -> Vec2 {
+    async fn get_right_muzzle(&self) -> Vec2 {
         Vec2::new(
             self.position.x + (self.texture.width() - self.texture.width() * 0.2),
             self.position.y,
         )
     }
 
-    pub fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
+    pub async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
-            let lm = Self::get_left_muzzle(self);
-            let rm = Self::get_right_muzzle(self);
-            let bullet_1 = Bullet::spawn(Owner::Fighter, lm);
-            let bullet_2 = Bullet::spawn(Owner::Fighter, rm);
+            let lm = Self::get_left_muzzle(self).await;
+            let rm = Self::get_right_muzzle(self).await;
+            let bullet_1 = Bullet::spawn(Owner::Fighter, lm).await;
+            let bullet_2 = Bullet::spawn(Owner::Fighter, rm).await;
             self.cooling = get_frame_time();
             Some(vec![bullet_1, bullet_2])
         } else {
@@ -58,49 +58,49 @@ impl Fighter {
         }
     }
 
-    pub fn shift_left(&mut self) {
+    pub async fn shift_left(&mut self) {
         if self.position.x <= 0. {
             return;
         }
         self.position -= Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_right(&mut self) {
+    pub async fn shift_right(&mut self) {
         if self.position.x >= screen_width() - self.texture.width() {
             return;
         }
         self.position += Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_up(&mut self) {
+    pub async fn shift_up(&mut self) {
         if self.position.y < 0. {
             return;
         }
         self.position -= Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_down(&mut self) {
+    pub async fn shift_down(&mut self) {
         if self.position.y > screen_height() - self.texture.height() {
             return;
         }
         self.position += Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_left_up(&mut self) {
+    pub async fn shift_left_up(&mut self) {
         if self.position.x <= 0. || self.position.y < 0. {
             return;
         }
         self.position -= Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_left_down(&mut self) {
+    pub async fn shift_left_down(&mut self) {
         if self.position.x <= 0. || self.position.y > screen_height() - self.texture.height() {
             return;
         }
         self.position += Vec2::new(-1., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_right_up(&mut self) {
+    pub async fn shift_right_up(&mut self) {
         if self.position.x > screen_width() - self.texture.width() || self.position.y < 0. {
             return;
         }
         self.position += Vec2::new(1., -1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub fn shift_right_down(&mut self) {
+    pub async fn shift_right_down(&mut self) {
         if self.position.x > screen_width() - self.texture.width()
             || self.position.y > screen_height() - self.texture.height()
         {
@@ -109,7 +109,7 @@ impl Fighter {
         self.position += Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
 
-    pub fn draw(&self) {
+    pub async fn draw(&self) {
         let params = DrawTextureParams {
             dest_size: Some(Vec2::new(self.texture.width(), self.texture.height())),
             ..Default::default()

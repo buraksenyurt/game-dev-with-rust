@@ -9,7 +9,7 @@ pub struct Bullet {
 }
 
 impl Bullet {
-    pub fn spawn(owner: Owner, location: Vec2) -> Self {
+    pub async fn spawn(owner: Owner, location: Vec2) -> Self {
         Self {
             owner,
             location,
@@ -17,7 +17,7 @@ impl Bullet {
         }
     }
 
-    pub fn draw(&self) {
+    pub async fn draw(&self) {
         draw_rectangle(self.location.x, self.location.y, 3., 3., WHITE);
     }
 }
