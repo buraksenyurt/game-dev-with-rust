@@ -6,7 +6,7 @@ mod menu;
 use crate::common::constants::{
     BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
 };
-use crate::entity::asset_builder::create_cloud;
+use crate::entity::asset_builder::create_clouds;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
@@ -29,10 +29,7 @@ async fn main() {
             State::Main => {}
             State::Playing => {
                 if game.clouds.is_empty() {
-                    for _ in 0..2 {
-                        let c = create_cloud().await;
-                        game.clouds.push(c);
-                    }
+                    game.clouds = create_clouds(3).await;
                 }
 
                 if game.enemy_fleet.enemies.is_empty() && game.enemy_fleet.lift_off_time == 0 {
@@ -61,10 +58,10 @@ async fn main() {
 
                 for c in game.clouds.iter_mut() {
                     c.location += c.velocity * CLOUD_SPEED_FACTOR;
-                    c.draw();
-                    if c.location.y + c.texture.height() > screen_height() {
+                    if c.location.y - c.texture.height() > screen_height() {
                         c.on_stage = false;
                     }
+                    c.draw();
                 }
                 game.clouds.retain(|c| c.on_stage);
             }

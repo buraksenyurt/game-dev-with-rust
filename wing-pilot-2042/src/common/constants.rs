@@ -6,4 +6,4 @@ pub const BULLET_SPEED_FACTOR: f32 = 5.;
 pub const ENEMY_FIGHTER_SPEED_FACTOR: f32 = 1.;
 pub const FLEET_LIFT_OFF_TIME: i32 = 500;
 pub const ENEMY_ENTRY_POINT_FACTOR: f32 = 20.;
-pub const CLOUD_SPEED_FACTOR: f32 = 0.1;
+pub const CLOUD_SPEED_FACTOR: f32 = 0.20;

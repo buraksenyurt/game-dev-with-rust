@@ -3,10 +3,19 @@ use crate::entity::asset_type::AssetType;
 use macroquad::prelude::{rand, screen_width, Vec2};
 use macroquad::window::screen_height;
 
-pub async fn create_cloud() -> Asset {
-    let x = rand::gen_range(0., screen_width());
-    let y = rand::gen_range(0., screen_height() * 0.5);
-    let mut asset = Asset::new(AssetType::Cloud, Vec2::new(x, -y)).await;
-    asset.velocity = Vec2::new(0., 1.);
-    asset
+pub async fn create_clouds(cloud_count: usize) -> Vec<Asset> {
+    let mut clouds: Vec<Asset> = Vec::new();
+    for _ in 0..cloud_count {
+        let mut cloud = Asset::new(AssetType::Cloud, Vec2::new(0., 0.)).await;
+        cloud.velocity = Vec2::new(0., 1.);
+        let x = rand::gen_range(
+            0. + cloud.texture.width() * 0.5,
+            screen_width() - cloud.texture.width() * 0.5,
+        );
+        let y = rand::gen_range(-100., -screen_height() * 0.5);
+        cloud.location.x = x;
+        cloud.location.y = y;
+        clouds.push(cloud);
+    }
+    clouds
 }
