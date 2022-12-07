@@ -3,6 +3,7 @@ use crate::entity::enemy::Enemy;
 use crate::entity::enemy_builder::create_enemies;
 use crate::entity::enemy_type::EnemyType;
 use macroquad::prelude::{get_fps, rand};
+use macroquad::time::get_frame_time;
 
 pub struct Fleet {
     pub enemies: Vec<Enemy>,
@@ -14,8 +15,8 @@ impl Fleet {
         Self {
             enemies: create_enemies(count, e_type).await,
             lift_off_time: rand::gen_range(
-                get_fps() as i32,
-                get_fps() as i32 + FLEET_LIFT_OFF_TIME,
+                get_frame_time() as i32,
+                get_frame_time() as i32 + FLEET_LIFT_OFF_TIME,
             ),
         }
     }
@@ -26,8 +27,8 @@ impl Default for Fleet {
         Self {
             enemies: Vec::default(),
             lift_off_time: rand::gen_range(
-                get_fps() as i32,
-                get_fps() as i32 + FLEET_LIFT_OFF_TIME,
+                get_frame_time() as i32,
+                get_frame_time() as i32 + FLEET_LIFT_OFF_TIME,
             ),
         }
     }

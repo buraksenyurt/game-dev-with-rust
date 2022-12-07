@@ -35,7 +35,8 @@ async fn main() {
                 }
 
                 if game.enemy_fleet.enemies.is_empty() && game.enemy_fleet.lift_off_time == 0 {
-                    game.enemy_fleet = Fleet::new(3, EnemyType::Fighter).await;
+                    game.enemy_fleet = Fleet::new(4, EnemyType::Fighter).await;
+                    //println!("{}",game.enemy_fleet.lift_off_time);
                 } else {
                     game.enemy_fleet.lift_off_time -= 1;
                 }
@@ -49,12 +50,10 @@ async fn main() {
                     }
 
                     check_borders(e).await;
-
                     e.draw();
                 }
                 shift_fighter(&mut fighter).await;
                 shoot(&mut game, &mut fighter).await;
-                fighter.draw().await;
                 for b in game.bullets.iter_mut() {
                     b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
                     b.draw().await;
@@ -75,7 +74,9 @@ async fn main() {
                 game.enemy_fleet.enemies.retain(|e| e.on_stage);
                 game.bullets.retain(|b| b.is_alive);
 
+                fighter.draw().await;
                 draw_info_bar(&game).await;
+
             }
             State::Dead => {}
             State::End => {}
