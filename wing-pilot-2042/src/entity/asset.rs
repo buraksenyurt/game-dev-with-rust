@@ -2,6 +2,7 @@ use crate::entity::asset_type::AssetType;
 use macroquad::prelude::{draw_texture, load_texture, Vec2, WHITE};
 use macroquad::rand;
 use macroquad::texture::Texture2D;
+use macroquad::ui::Drag::No;
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Asset {
@@ -10,6 +11,7 @@ pub struct Asset {
     pub texture: Texture2D,
     pub on_stage: bool,
     pub velocity: Vec2,
+    pub lift_of_time: Option<i32>,
 }
 
 impl Asset {
@@ -25,7 +27,7 @@ impl Asset {
             AssetType::Fuel => load_texture("resources/fuel_station.png").await.unwrap(),
             AssetType::GreenLand => load_texture("resources/greenland.png").await.unwrap(),
             AssetType::Island => load_texture("resources/island.png").await.unwrap(),
-            AssetType::ExtraBullet => load_texture("resources/extra_ammo.png").await.unwrap(),
+            AssetType::ExtraAmmo => load_texture("resources/extra_ammo.png").await.unwrap(),
             AssetType::Cloud => {
                 let index = rand::gen_range(0, 5);
                 load_texture(cloud_names[index]).await.unwrap()
@@ -39,6 +41,7 @@ impl Asset {
             texture,
             on_stage: true,
             velocity: Vec2::default(),
+            lift_of_time: None,
         }
     }
 
@@ -55,6 +58,7 @@ impl Default for Asset {
             texture: Texture2D::empty(),
             on_stage: false,
             velocity: Vec2::default(),
+            lift_of_time: None,
         }
     }
 }

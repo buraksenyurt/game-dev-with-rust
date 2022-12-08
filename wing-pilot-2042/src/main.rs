@@ -16,6 +16,7 @@ use crate::game::game::Game;
 use crate::game::state::State;
 use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
+use macroquad::experimental::collections::storage::get;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]
@@ -24,6 +25,7 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
     let mut fighter = Fighter::new().await;
     let mut game = Game::new(State::Playing);
+    let mut extra_ammo_tick = 0;
     loop {
         clear_background(DARKBLUE);
 
@@ -54,13 +56,20 @@ async fn main() {
 
                 match &game.extra_ammo {
                     Some(mut ammo) => {
-                        ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
-                        if ammo.location.y > screen_height() + ammo.texture.height() {
-                            game.extra_ammo = None;
-                            continue;
+                        if extra_ammo_tick == ammo.lift_of_time.unwrap() {
+                            ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
+
+                            if ammo.location.y > screen_height() + ammo.texture.height() {
+                                game.extra_ammo = None;
+                                extra_ammo_tick = 0;
+                                continue;
+                            }
+
+                            game.extra_ammo = Some(ammo);
+                            ammo.draw();
+                        } else {
+                            extra_ammo_tick += 1;
                         }
-                        game.extra_ammo = Some(ammo);
-                        ammo.draw();
                     }
                     None => {}
                 }

@@ -3,7 +3,7 @@ pub enum AssetType {
     Fuel,
     GreenLand,
     Island,
-    ExtraBullet,
+    ExtraAmmo,
     Cloud,
     None,
 }

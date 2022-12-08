@@ -1,6 +1,6 @@
 use crate::entity::asset::Asset;
 use crate::entity::asset_type::AssetType;
-use macroquad::prelude::{rand, screen_width, Vec2};
+use macroquad::prelude::{info, rand, screen_width, Vec2};
 use macroquad::window::screen_height;
 
 pub async fn create_clouds(cloud_count: usize) -> Vec<Asset> {
@@ -21,7 +21,7 @@ pub async fn create_clouds(cloud_count: usize) -> Vec<Asset> {
 }
 
 pub async fn create_extra_ammo() -> Asset {
-    let mut ammo = Asset::new(AssetType::ExtraBullet, Vec2::default()).await;
+    let mut ammo = Asset::new(AssetType::ExtraAmmo, Vec2::default()).await;
     ammo.velocity = Vec2::new(0., 1.);
     let x = rand::gen_range(
         0. + ammo.texture.width(),
@@ -30,5 +30,7 @@ pub async fn create_extra_ammo() -> Asset {
     let y = rand::gen_range(ammo.texture.height(), ammo.texture.height() * 3.0);
     ammo.location.x = x;
     ammo.location.y = -y;
+    ammo.lift_of_time = Some(rand::gen_range(100, 500));
+    info!("Ammo lift of time {}", ammo.lift_of_time.unwrap());
     ammo
 }
