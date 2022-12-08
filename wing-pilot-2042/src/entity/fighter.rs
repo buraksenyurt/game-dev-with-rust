@@ -109,6 +109,10 @@ impl Fighter {
         self.position += Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
 
+    pub async fn out_of_ammo(&self) -> bool {
+        self.ammo_count == 0
+    }
+
     pub async fn draw(&self) {
         let params = DrawTextureParams {
             dest_size: Some(Vec2::new(self.texture.width(), self.texture.height())),

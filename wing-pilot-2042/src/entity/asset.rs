@@ -3,7 +3,7 @@ use macroquad::prelude::{draw_texture, load_texture, Vec2, WHITE};
 use macroquad::rand;
 use macroquad::texture::Texture2D;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub struct Asset {
     pub asset_type: AssetType,
     pub location: Vec2,
@@ -25,11 +25,12 @@ impl Asset {
             AssetType::Fuel => load_texture("resources/fuel_station.png").await.unwrap(),
             AssetType::GreenLand => load_texture("resources/greenland.png").await.unwrap(),
             AssetType::Island => load_texture("resources/island.png").await.unwrap(),
-            AssetType::ExtraBullet => load_texture("resources/ammo_station.png").await.unwrap(),
+            AssetType::ExtraBullet => load_texture("resources/extra_ammo.png").await.unwrap(),
             AssetType::Cloud => {
                 let index = rand::gen_range(0, 5);
                 load_texture(cloud_names[index]).await.unwrap()
             }
+            AssetType::None => Texture2D::empty(),
         };
 
         Self {
@@ -43,5 +44,17 @@ impl Asset {
 
     pub fn draw(&self) {
         draw_texture(self.texture, self.location.x, self.location.y, WHITE);
+    }
+}
+
+impl Default for Asset {
+    fn default() -> Self {
+        Self {
+            asset_type: AssetType::None,
+            location: Vec2::default(),
+            texture: Texture2D::empty(),
+            on_stage: false,
+            velocity: Vec2::default(),
+        }
     }
 }

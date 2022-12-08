@@ -1,5 +1,5 @@
 use crate::entity::enemy_type::EnemyType;
-use crate::entity::formation::{get_formation, Formation};
+use crate::entity::formation::Formation;
 use macroquad::color::WHITE;
 use macroquad::prelude::{draw_texture, load_texture, Texture2D, Vec2};
 

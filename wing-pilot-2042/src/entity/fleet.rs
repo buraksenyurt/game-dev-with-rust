@@ -2,7 +2,7 @@ use crate::common::constants::FLEET_LIFT_OFF_TIME;
 use crate::entity::enemy::Enemy;
 use crate::entity::enemy_builder::create_enemies;
 use crate::entity::enemy_type::EnemyType;
-use macroquad::prelude::{get_fps, rand};
+use macroquad::prelude::rand;
 use macroquad::time::get_frame_time;
 
 pub struct Fleet {

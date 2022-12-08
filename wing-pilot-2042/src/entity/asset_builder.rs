@@ -19,3 +19,16 @@ pub async fn create_clouds(cloud_count: usize) -> Vec<Asset> {
     }
     clouds
 }
+
+pub async fn create_extra_ammo() -> Asset {
+    let mut ammo = Asset::new(AssetType::ExtraBullet, Vec2::default()).await;
+    ammo.velocity = Vec2::new(0., 1.);
+    let x = rand::gen_range(
+        0. + ammo.texture.width(),
+        screen_width() - ammo.texture.width(),
+    );
+    let y = rand::gen_range(ammo.texture.height(), ammo.texture.height() * 3.0);
+    ammo.location.x = x;
+    ammo.location.y = -y;
+    ammo
+}

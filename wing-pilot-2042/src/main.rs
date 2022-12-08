@@ -4,9 +4,10 @@ mod game;
 mod menu;
 
 use crate::common::constants::{
-    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
+    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR, EXTRA_AMMO_SPEED_FACTOR,
 };
-use crate::entity::asset_builder::create_clouds;
+use crate::entity::asset::Asset;
+use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy::Enemy;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
@@ -35,39 +36,33 @@ async fn main() {
                 if game.enemy_fleet.enemies.is_empty() {
                     if game.enemy_fleet.lift_off_time == 0 {
                         game.enemy_fleet = Fleet::new(4, EnemyType::Fighter).await;
-                        println!("Fleet lift of time {}", game.enemy_fleet.lift_off_time);
+                        info!("Fleet lift of time {}", game.enemy_fleet.lift_off_time);
                     } else {
                         game.enemy_fleet.lift_off_time -= 1;
                     }
                 }
-
-                for e in game.enemy_fleet.enemies.iter_mut() {
-                    e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-                    if !e.is_formation_on && e.location.y >= e.formation.start_y {
-                        e.velocity = e.formation.velocity;
-                        e.is_formation_on = true;
-                        //println!("Formation changed");
-                    }
-
-                    check_borders(e).await;
-                    e.draw();
+                if fighter.out_of_ammo().await && game.extra_ammo == None {
+                    let ammo = create_extra_ammo().await;
+                    game.extra_ammo = Some(ammo);
+                    //info!("Extra ammo created");
                 }
+                draw_fleet(&mut game).await;
                 shift_fighter(&mut fighter).await;
                 shoot(&mut game, &mut fighter).await;
-                for b in game.bullets.iter_mut() {
-                    b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
-                    b.draw().await;
-                    if b.location.x < 0. {
-                        b.is_alive = false;
-                    }
-                }
+                draw_fighter_bullets(&mut game).await;
+                draw_clouds(&mut game);
 
-                for c in game.clouds.iter_mut() {
-                    c.location += c.velocity * CLOUD_SPEED_FACTOR;
-                    if c.location.y - c.texture.height() > screen_height() {
-                        c.on_stage = false;
+                match &game.extra_ammo {
+                    Some(mut ammo) => {
+                        ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
+                        if ammo.location.y > screen_height() + ammo.texture.height() {
+                            game.extra_ammo = None;
+                            continue;
+                        }
+                        game.extra_ammo = Some(ammo);
+                        ammo.draw();
                     }
-                    c.draw();
+                    None => {}
                 }
 
                 game.clouds.retain(|c| c.on_stage);
@@ -81,6 +76,40 @@ async fn main() {
             State::End => {}
         }
         next_frame().await
+    }
+}
+
+async fn draw_fleet(game: &mut Game) {
+    for e in game.enemy_fleet.enemies.iter_mut() {
+        e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
+        if !e.is_formation_on && e.location.y >= e.formation.start_y {
+            e.velocity = e.formation.velocity;
+            e.is_formation_on = true;
+            //println!("Formation changed");
+        }
+
+        check_borders(e).await;
+        e.draw();
+    }
+}
+
+async fn draw_fighter_bullets(game: &mut Game) {
+    for b in game.bullets.iter_mut() {
+        b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
+        b.draw().await;
+        if b.location.x < 0. {
+            b.is_alive = false;
+        }
+    }
+}
+
+fn draw_clouds(game: &mut Game) {
+    for c in game.clouds.iter_mut() {
+        c.location += c.velocity * CLOUD_SPEED_FACTOR;
+        if c.location.y - c.texture.height() > screen_height() {
+            c.on_stage = false;
+        }
+        c.draw();
     }
 }
 
