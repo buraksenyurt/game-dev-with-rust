@@ -42,9 +42,8 @@ async fn main() {
                 }
                 for e in game.enemy_fleet.enemies.iter_mut() {
                     e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-                    // todo: Move the formation calculation into a function
-                    if !e.is_formation_on && e.location.y >= screen_height() * 0.5 {
-                        e.velocity = Vec2::new(-(PI / 4.).cos(), -(PI / 4.).sin());
+                    if !e.is_formation_on && e.location.y >= e.formation.start_y {
+                        e.velocity = e.formation.velocity;
                         e.is_formation_on = true;
                         //println!("Formation changed");
                     }
@@ -76,7 +75,6 @@ async fn main() {
 
                 fighter.draw().await;
                 draw_info_bar(&game).await;
-
             }
             State::Dead => {}
             State::End => {}

@@ -7,4 +7,5 @@ pub mod enemy_builder;
 pub mod enemy_type;
 pub mod fighter;
 pub mod fleet;
+pub mod formation;
 pub mod owner;
