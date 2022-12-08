@@ -19,6 +19,7 @@ impl Asset {
             "resources/cloud2.png",
             "resources/cloud3.png",
             "resources/cloud4.png",
+            "resources/cloud5.png",
         ];
         let texture = match asset_type {
             AssetType::Fuel => load_texture("resources/fuel_station.png").await.unwrap(),
@@ -26,7 +27,7 @@ impl Asset {
             AssetType::Island => load_texture("resources/island.png").await.unwrap(),
             AssetType::ExtraBullet => load_texture("resources/ammo_station.png").await.unwrap(),
             AssetType::Cloud => {
-                let index = rand::gen_range(0, 4);
+                let index = rand::gen_range(0, 5);
                 load_texture(cloud_names[index]).await.unwrap()
             }
         };
