@@ -16,7 +16,6 @@ use crate::game::state::State;
 use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
 use macroquad::prelude::*;
-use std::f32::consts::PI;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -33,13 +32,15 @@ async fn main() {
                 if game.clouds.is_empty() {
                     game.clouds = create_clouds(3).await;
                 }
-
-                if game.enemy_fleet.enemies.is_empty() && game.enemy_fleet.lift_off_time == 0 {
-                    game.enemy_fleet = Fleet::new(4, EnemyType::Fighter).await;
-                    //println!("{}",game.enemy_fleet.lift_off_time);
-                } else {
-                    game.enemy_fleet.lift_off_time -= 1;
+                if game.enemy_fleet.enemies.is_empty() {
+                    if game.enemy_fleet.lift_off_time == 0 {
+                        game.enemy_fleet = Fleet::new(4, EnemyType::Fighter).await;
+                        println!("Fleet lift of time {}", game.enemy_fleet.lift_off_time);
+                    } else {
+                        game.enemy_fleet.lift_off_time -= 1;
+                    }
                 }
+
                 for e in game.enemy_fleet.enemies.iter_mut() {
                     e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
                     if !e.is_formation_on && e.location.y >= e.formation.start_y {
