@@ -30,24 +30,16 @@ impl Fighter {
         }
     }
 
-    async fn get_left_muzzle(&self) -> Vec2 {
-        Vec2::new(
-            self.position.x + self.texture.width() * 0.2,
-            self.position.y,
-        )
-    }
-
-    async fn get_right_muzzle(&self) -> Vec2 {
-        Vec2::new(
-            self.position.x + (self.texture.width() - self.texture.width() * 0.2),
-            self.position.y,
-        )
-    }
-
     pub async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
-            let lm = Self::get_left_muzzle(self).await;
-            let rm = Self::get_right_muzzle(self).await;
+            let lm = Vec2::new(
+                self.position.x + self.texture.width() * 0.2,
+                self.position.y,
+            );
+            let rm = Vec2::new(
+                self.position.x + (self.texture.width() - self.texture.width() * 0.2),
+                self.position.y,
+            );
             let bullet_1 = Bullet::spawn(Owner::Fighter, lm).await;
             let bullet_2 = Bullet::spawn(Owner::Fighter, rm).await;
             self.cooling = get_frame_time();

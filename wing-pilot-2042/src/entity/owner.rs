@@ -1,5 +1,6 @@
 pub enum Owner {
     Fighter,
-    EnemyPlane,
+    EnemyFighter,
+    EnemyBomber,
     Warship,
 }

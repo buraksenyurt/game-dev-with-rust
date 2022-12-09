@@ -2,7 +2,6 @@ use crate::entity::asset_type::AssetType;
 use macroquad::prelude::{draw_texture, load_texture, Vec2, WHITE};
 use macroquad::rand;
 use macroquad::texture::Texture2D;
-use macroquad::ui::Drag::No;
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Asset {

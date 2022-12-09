@@ -13,7 +13,7 @@ pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
     for i in 0..count {
         let mut enemy = Enemy::new(entry_point, e_type, formation).await;
         enemy.velocity = Vec2::new(0., 1.);
-        enemy.location.y -= i as f32 * (enemy.texture.height() * 1.5);
+        enemy.position.y -= i as f32 * (enemy.texture.height() * 1.5);
         enemies.push(enemy);
     }
     enemies

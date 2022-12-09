@@ -6,7 +6,6 @@ mod menu;
 use crate::common::constants::{
     BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR, EXTRA_AMMO_SPEED_FACTOR,
 };
-use crate::entity::asset::Asset;
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy::Enemy;
 use crate::entity::enemy_type::EnemyType;
@@ -16,7 +15,6 @@ use crate::game::game::Game;
 use crate::game::state::State;
 use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
-use macroquad::experimental::collections::storage::get;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]
@@ -43,6 +41,7 @@ async fn main() {
                         game.enemy_fleet.lift_off_time -= 1;
                     }
                 }
+
                 if fighter.out_of_ammo().await && game.extra_ammo == None {
                     let ammo = create_extra_ammo().await;
                     game.extra_ammo = Some(ammo);
@@ -51,7 +50,9 @@ async fn main() {
                 draw_fleet(&mut game).await;
                 shift_fighter(&mut fighter).await;
                 shoot(&mut game, &mut fighter).await;
+                shoot_e(&mut game).await;
                 draw_fighter_bullets(&mut game).await;
+                draw_enemy_fighter_bullets(&mut game).await;
                 draw_clouds(&mut game);
 
                 match &game.extra_ammo {
@@ -77,6 +78,7 @@ async fn main() {
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fleet.enemies.retain(|e| e.on_stage);
                 game.bullets.retain(|b| b.is_alive);
+                game.enemy_bullets.retain(|b| b.is_alive);
 
                 fighter.draw().await;
                 draw_info_bar(&game).await;
@@ -90,8 +92,8 @@ async fn main() {
 
 async fn draw_fleet(game: &mut Game) {
     for e in game.enemy_fleet.enemies.iter_mut() {
-        e.location += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-        if !e.is_formation_on && e.location.y >= e.formation.start_y {
+        e.position += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
+        if !e.is_formation_on && e.position.y >= e.formation.start_y {
             e.velocity = e.formation.velocity;
             e.is_formation_on = true;
             //println!("Formation changed");
@@ -112,6 +114,16 @@ async fn draw_fighter_bullets(game: &mut Game) {
     }
 }
 
+async fn draw_enemy_fighter_bullets(game: &mut Game) {
+    for b in game.enemy_bullets.iter_mut() {
+        b.location += Vec2::new(0., 1.) * ENEMY_FIGHTER_SPEED_FACTOR;
+        b.draw().await;
+        if b.location.y > screen_height() {
+            b.is_alive = false;
+        }
+    }
+}
+
 fn draw_clouds(game: &mut Game) {
     for c in game.clouds.iter_mut() {
         c.location += c.velocity * CLOUD_SPEED_FACTOR;
@@ -123,16 +135,12 @@ fn draw_clouds(game: &mut Game) {
 }
 
 async fn check_borders(e: &mut Enemy) {
-    if e.velocity.y < 0. && e.location.y + e.texture.height() < 0. {
+    if (e.velocity.y < 0. && e.position.y + e.texture.height() < 0.)
+        || (e.velocity.x < 0. && e.position.x + e.texture.width() < 0.)
+        || (e.position.x > screen_width() + e.texture.width()
+            || e.position.y > screen_height() + e.texture.height())
+    {
         e.on_stage = false;
-    } else if e.velocity.x < 0. && e.location.x + e.texture.width() < 0. {
-        e.on_stage = false;
-    } else {
-        if e.location.x > screen_width() + e.texture.width()
-            || e.location.y > screen_height() + e.texture.height()
-        {
-            e.on_stage = false;
-        }
     }
 }
 
@@ -150,6 +158,20 @@ async fn shoot(game: &mut Game, fighter: &mut Fighter) {
                 game.fighter_amount_count = fighter.ammo_count;
             }
             None => {}
+        }
+    }
+}
+
+async fn shoot_e(game: &mut Game) {
+    for enemy in game.enemy_fleet.enemies.iter_mut() {
+        if enemy.is_formation_on {
+            let bullets = enemy.spawn_bullets().await;
+            match bullets {
+                Some(mut b) => {
+                    game.enemy_bullets.append(&mut b);
+                }
+                None => {}
+            }
         }
     }
 }
