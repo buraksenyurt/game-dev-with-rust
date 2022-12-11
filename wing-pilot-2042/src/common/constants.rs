@@ -1,0 +1,10 @@
+pub const MAX_AMMO: usize = 100;
+pub const INFO_BAR_MARGIN: f32 = 5.;
+pub const COOLING_FACTOR: f32 = 0.2;
+pub const FIGHTER_SPEED_FACTOR: f32 = 2.5;
+pub const BULLET_SPEED_FACTOR: f32 = 5.;
+pub const ENEMY_FIGHTER_SPEED_FACTOR: f32 = 2.;
+pub const FLEET_LIFT_OFF_TIME: i32 = 250;
+pub const ENEMY_ENTRY_POINT_FACTOR: f32 = 100.;
+pub const CLOUD_SPEED_FACTOR: f32 = 0.15;
+pub const EXTRA_AMMO_SPEED_FACTOR: f32 = 2.;
