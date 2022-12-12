@@ -96,6 +96,7 @@ async fn draw_fleet(game: &mut Game) {
         if !e.is_formation_on && e.position.y >= e.formation.start_y {
             e.velocity = e.formation.velocity;
             e.is_formation_on = true;
+            e.fire_at_will = true;
             //println!("Formation changed");
         }
 
@@ -164,7 +165,7 @@ async fn shoot(game: &mut Game, fighter: &mut Fighter) {
 
 async fn shoot_e(game: &mut Game) {
     for enemy in game.enemy_fleet.enemies.iter_mut() {
-        if enemy.is_formation_on {
+        if enemy.fire_at_will {
             let bullets = enemy.spawn_bullets().await;
             match bullets {
                 Some(mut b) => {

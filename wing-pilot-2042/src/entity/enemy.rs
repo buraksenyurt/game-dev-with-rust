@@ -15,6 +15,7 @@ pub struct Enemy {
     pub enemy_type: EnemyType,
     pub texture: Texture2D,
     pub is_formation_on: bool,
+    pub fire_at_will: bool,
     pub on_stage: bool,
     cooling: f32,
 }
@@ -35,6 +36,7 @@ impl Enemy {
             formation,
             texture,
             is_formation_on: false,
+            fire_at_will: false,
             on_stage: true,
             cooling: get_frame_time(),
         }
@@ -52,7 +54,7 @@ impl Enemy {
                         self.position.y + self.texture.height() * 0.5,
                     );
                     let bullet = Bullet::spawn(Owner::EnemyBomber, cm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32;
+                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
 
                     Some(vec![bullet])
                 }
@@ -67,7 +69,7 @@ impl Enemy {
                     );
                     let bullet_1 = Bullet::spawn(Owner::EnemyFighter, lm).await;
                     let bullet_2 = Bullet::spawn(Owner::EnemyFighter, rm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32 * 1.25;
+                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
 
                     Some(vec![bullet_1, bullet_2])
                 }
@@ -82,7 +84,7 @@ impl Enemy {
                     );
                     let bullet_1 = Bullet::spawn(Owner::Warship, um).await;
                     let bullet_2 = Bullet::spawn(Owner::Warship, dm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32;
+                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
 
                     Some(vec![bullet_1, bullet_2])
                 }
