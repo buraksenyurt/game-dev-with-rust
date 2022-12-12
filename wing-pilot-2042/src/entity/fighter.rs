@@ -9,6 +9,7 @@ use macroquad::window::{screen_height, screen_width};
 pub struct Fighter {
     pub position: Vec2,
     pub life: usize,
+    pub bullets: Vec<Bullet>,
     texture: Texture2D,
     pub ammo_count: usize,
     cooling: f32,
@@ -24,6 +25,7 @@ impl Fighter {
         Self {
             position,
             life: 3,
+            bullets: Vec::new(),
             texture,
             ammo_count: MAX_AMMO,
             cooling: get_frame_time(),

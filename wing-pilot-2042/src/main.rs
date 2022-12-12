@@ -4,7 +4,7 @@ mod game;
 mod menu;
 
 use crate::common::constants::{
-    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
+    FIGHTER_BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
     EXTRA_AMMO_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
@@ -93,7 +93,7 @@ async fn main() {
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
                 game.enemy_bombers.actors.retain(|b| b.on_stage);
-                game.bullets.retain(|b| b.is_alive);
+                game.fighter.bullets.retain(|b| b.is_alive);
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
 
@@ -138,8 +138,8 @@ async fn draw_bomber_fleet(game: &mut Game) {
 }
 
 async fn draw_fighter_bullets(game: &mut Game) {
-    for b in game.bullets.iter_mut() {
-        b.location += Vec2::new(0., -1.) * BULLET_SPEED_FACTOR;
+    for b in game.fighter.bullets.iter_mut() {
+        b.location += Vec2::new(0., -1.) * FIGHTER_BULLET_SPEED_FACTOR;
         b.draw().await;
         if b.location.x < 0. {
             b.is_alive = false;
@@ -195,7 +195,7 @@ async fn shoot(game: &mut Game) {
     if is_key_down(KeyCode::S) {
         let bullets = game.fighter.spawn_bullets().await;
         if let Some(mut b) = bullets {
-            game.bullets.append(&mut b);
+            game.fighter.bullets.append(&mut b);
             game.fighter.ammo_count -= 2;
         }
     }

@@ -6,7 +6,6 @@ use crate::game::state::State;
 
 pub struct Game {
     pub state: State,
-    pub bullets: Vec<Bullet>,
     pub enemy_fighters: Fleet,
     pub enemy_bombers: Fleet,
     pub fighter: Fighter,
@@ -18,7 +17,6 @@ impl Game {
     pub async fn new(state: State) -> Self {
         Self {
             state,
-            bullets: Vec::default(),
             enemy_fighters: Fleet::default(),
             enemy_bombers: Fleet::default(),
             fighter: Fighter::new().await,
