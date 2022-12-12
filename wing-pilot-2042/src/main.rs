@@ -21,8 +21,7 @@ use macroquad::prelude::*;
 async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
-    let mut fighter = Fighter::new().await;
-    let mut game = Game::new(State::Playing);
+    let mut game = Game::new(State::Playing).await;
     let mut extra_ammo_tick = 0;
     loop {
         clear_background(DARKBLUE);
@@ -42,14 +41,14 @@ async fn main() {
                     }
                 }
 
-                if fighter.out_of_ammo().await && game.extra_ammo == None {
+                if game.fighter.out_of_ammo().await && game.extra_ammo == None {
                     let ammo = create_extra_ammo().await;
                     game.extra_ammo = Some(ammo);
                     //info!("Extra ammo created");
                 }
                 draw_fleet(&mut game).await;
-                shift_fighter(&mut fighter).await;
-                shoot(&mut game, &mut fighter).await;
+                shift_fighter(&mut game.fighter).await;
+                shoot(&mut game).await;
                 shoot_e(&mut game).await;
                 draw_fighter_bullets(&mut game).await;
                 draw_enemy_fighter_bullets(&mut game).await;
@@ -80,7 +79,7 @@ async fn main() {
                 game.bullets.retain(|b| b.is_alive);
                 game.enemy_bullets.retain(|b| b.is_alive);
 
-                fighter.draw().await;
+                game.fighter.draw().await;
                 draw_info_bar(&game).await;
             }
             State::Dead => {}
@@ -145,18 +144,17 @@ async fn check_borders(e: &mut Enemy) {
     }
 }
 
-async fn shoot(game: &mut Game, fighter: &mut Fighter) {
-    if fighter.ammo_count == 0 {
+async fn shoot(game: &mut Game) {
+    if game.fighter.ammo_count == 0 {
         //println!("Out of ammo");
         return;
     }
     if is_key_down(KeyCode::S) {
-        let bullets = fighter.spawn_bullets().await;
+        let bullets = game.fighter.spawn_bullets().await;
         match bullets {
             Some(mut b) => {
                 game.bullets.append(&mut b);
-                fighter.ammo_count -= 2;
-                game.fighter_amount_count = fighter.ammo_count;
+                game.fighter.ammo_count -= 2;
             }
             None => {}
         }
