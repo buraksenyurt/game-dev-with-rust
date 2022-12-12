@@ -6,7 +6,7 @@ pub async fn draw_info_bar(game: &Game) {
     let info = format!(
         "Bullets {} Enemy Fighters {}",
         game.fighter.ammo_count,
-        game.enemy_fleet.enemies.len()
+        game.enemy_fighters.actors.len()
     );
     let size = measure_text(info.as_str(), None, 24, 1.);
     draw_text(

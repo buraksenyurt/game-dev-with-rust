@@ -54,8 +54,7 @@ impl Enemy {
                         self.position.y + self.texture.height() * 0.5,
                     );
                     let bullet = Bullet::spawn(Owner::EnemyBomber, cm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
-
+                    self.cooling = get_frame_time() * get_fps() as f32 * 1.75;
                     Some(vec![bullet])
                 }
                 EnemyType::Fighter => {
@@ -69,7 +68,7 @@ impl Enemy {
                     );
                     let bullet_1 = Bullet::spawn(Owner::EnemyFighter, lm).await;
                     let bullet_2 = Bullet::spawn(Owner::EnemyFighter, rm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
+                    self.cooling = get_frame_time() * get_fps() as f32 * 0.35;
 
                     Some(vec![bullet_1, bullet_2])
                 }
@@ -84,7 +83,7 @@ impl Enemy {
                     );
                     let bullet_1 = Bullet::spawn(Owner::Warship, um).await;
                     let bullet_2 = Bullet::spawn(Owner::Warship, dm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32 * COOLING_FACTOR;
+                    self.cooling = get_frame_time() * get_fps() as f32 * 4.;
 
                     Some(vec![bullet_1, bullet_2])
                 }

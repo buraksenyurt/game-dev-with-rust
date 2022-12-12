@@ -4,7 +4,8 @@ mod game;
 mod menu;
 
 use crate::common::constants::{
-    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR, EXTRA_AMMO_SPEED_FACTOR,
+    BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
+    EXTRA_AMMO_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy::Enemy;
@@ -32,12 +33,24 @@ async fn main() {
                 if game.clouds.is_empty() {
                     game.clouds = create_clouds(3).await;
                 }
-                if game.enemy_fleet.enemies.is_empty() {
-                    if game.enemy_fleet.lift_off_time == 0 {
-                        game.enemy_fleet = Fleet::new(4, EnemyType::Fighter).await;
-                        info!("Fleet lift of time {}", game.enemy_fleet.lift_off_time);
+                if game.enemy_fighters.actors.is_empty() && game.enemy_fighters.bullets.is_empty() {
+                    if game.enemy_fighters.lift_off_time == 0 {
+                        game.enemy_fighters = Fleet::new(4, EnemyType::Fighter).await;
+                        info!(
+                            "Fleet(F) lift of time {}",
+                            game.enemy_fighters.lift_off_time
+                        );
                     } else {
-                        game.enemy_fleet.lift_off_time -= 1;
+                        game.enemy_fighters.lift_off_time -= 1;
+                    }
+                }
+
+                if game.enemy_bombers.actors.is_empty() && game.enemy_bombers.bullets.is_empty() {
+                    if game.enemy_bombers.lift_off_time == 0 {
+                        game.enemy_bombers = Fleet::new(3, EnemyType::Bomber).await;
+                        info!("Fleet(B) lift of time {}", game.enemy_bombers.lift_off_time);
+                    } else {
+                        game.enemy_bombers.lift_off_time -= 1;
                     }
                 }
 
@@ -46,13 +59,16 @@ async fn main() {
                     game.extra_ammo = Some(ammo);
                     //info!("Extra ammo created");
                 }
-                draw_fleet(&mut game).await;
+                draw_fighter_fleet(&mut game).await;
+                draw_bomber_fleet(&mut game).await;
                 shift_fighter(&mut game.fighter).await;
                 shoot(&mut game).await;
                 shoot_e(&mut game).await;
+                shoot_b(&mut game).await;
                 draw_fighter_bullets(&mut game).await;
                 draw_enemy_fighter_bullets(&mut game).await;
-                draw_clouds(&mut game);
+                draw_enemy_bomber_bullets(&mut game).await;
+                draw_clouds(&mut game).await;
 
                 match &game.extra_ammo {
                     Some(mut ammo) => {
@@ -75,9 +91,11 @@ async fn main() {
                 }
 
                 game.clouds.retain(|c| c.on_stage);
-                game.enemy_fleet.enemies.retain(|e| e.on_stage);
+                game.enemy_fighters.actors.retain(|f| f.on_stage);
+                game.enemy_bombers.actors.retain(|b| b.on_stage);
                 game.bullets.retain(|b| b.is_alive);
-                game.enemy_bullets.retain(|b| b.is_alive);
+                game.enemy_fighters.bullets.retain(|f| f.is_alive);
+                game.enemy_bombers.bullets.retain(|b| b.is_alive);
 
                 game.fighter.draw().await;
                 draw_info_bar(&game).await;
@@ -89,9 +107,24 @@ async fn main() {
     }
 }
 
-async fn draw_fleet(game: &mut Game) {
-    for e in game.enemy_fleet.enemies.iter_mut() {
+async fn draw_fighter_fleet(game: &mut Game) {
+    for e in game.enemy_fighters.actors.iter_mut() {
         e.position += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
+        if !e.is_formation_on && e.position.y >= e.formation.start_y {
+            e.velocity = e.formation.velocity;
+            e.is_formation_on = true;
+            e.fire_at_will = true;
+            //println!("Formation changed");
+        }
+
+        check_borders(e).await;
+        e.draw();
+    }
+}
+
+async fn draw_bomber_fleet(game: &mut Game) {
+    for e in game.enemy_bombers.actors.iter_mut() {
+        e.position += e.velocity * ENEMY_BOMBER_SPEED_FACTOR;
         if !e.is_formation_on && e.position.y >= e.formation.start_y {
             e.velocity = e.formation.velocity;
             e.is_formation_on = true;
@@ -115,7 +148,7 @@ async fn draw_fighter_bullets(game: &mut Game) {
 }
 
 async fn draw_enemy_fighter_bullets(game: &mut Game) {
-    for b in game.enemy_bullets.iter_mut() {
+    for b in game.enemy_fighters.bullets.iter_mut() {
         b.location += Vec2::new(0., 1.) * ENEMY_FIGHTER_SPEED_FACTOR;
         b.draw().await;
         if b.location.y > screen_height() {
@@ -124,7 +157,17 @@ async fn draw_enemy_fighter_bullets(game: &mut Game) {
     }
 }
 
-fn draw_clouds(game: &mut Game) {
+async fn draw_enemy_bomber_bullets(game: &mut Game) {
+    for b in game.enemy_bombers.bullets.iter_mut() {
+        b.location += Vec2::new(0., 1.) * ENEMY_BOMBER_SPEED_FACTOR;
+        b.draw().await;
+        if b.location.y > screen_height() {
+            b.is_alive = false;
+        }
+    }
+}
+
+async fn draw_clouds(game: &mut Game) {
     for c in game.clouds.iter_mut() {
         c.location += c.velocity * CLOUD_SPEED_FACTOR;
         if c.location.y - c.texture.height() > screen_height() {
@@ -151,25 +194,30 @@ async fn shoot(game: &mut Game) {
     }
     if is_key_down(KeyCode::S) {
         let bullets = game.fighter.spawn_bullets().await;
-        match bullets {
-            Some(mut b) => {
-                game.bullets.append(&mut b);
-                game.fighter.ammo_count -= 2;
-            }
-            None => {}
+        if let Some(mut b) = bullets {
+            game.bullets.append(&mut b);
+            game.fighter.ammo_count -= 2;
         }
     }
 }
 
 async fn shoot_e(game: &mut Game) {
-    for enemy in game.enemy_fleet.enemies.iter_mut() {
+    for enemy in game.enemy_fighters.actors.iter_mut() {
         if enemy.fire_at_will {
             let bullets = enemy.spawn_bullets().await;
-            match bullets {
-                Some(mut b) => {
-                    game.enemy_bullets.append(&mut b);
-                }
-                None => {}
+            if let Some(mut b) = bullets {
+                game.enemy_fighters.bullets.append(&mut b);
+            }
+        }
+    }
+}
+
+async fn shoot_b(game: &mut Game) {
+    for enemy in game.enemy_bombers.actors.iter_mut() {
+        if enemy.fire_at_will {
+            let bullets = enemy.spawn_bullets().await;
+            if let Some(mut b) = bullets {
+                game.enemy_bombers.bullets.append(&mut b);
             }
         }
     }
