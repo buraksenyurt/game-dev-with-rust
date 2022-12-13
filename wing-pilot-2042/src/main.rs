@@ -4,8 +4,8 @@ mod game;
 mod menu;
 
 use crate::common::constants::{
-    FIGHTER_BULLET_SPEED_FACTOR, CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
-    EXTRA_AMMO_SPEED_FACTOR,
+    CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
+    EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy::Enemy;
@@ -17,6 +17,7 @@ use crate::game::state::State;
 use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
 use macroquad::prelude::*;
+use std::f32::consts::PI;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -149,7 +150,7 @@ async fn draw_fighter_bullets(game: &mut Game) {
 
 async fn draw_enemy_fighter_bullets(game: &mut Game) {
     for b in game.enemy_fighters.bullets.iter_mut() {
-        b.location += Vec2::new(0., 1.) * ENEMY_FIGHTER_SPEED_FACTOR;
+        b.location += b.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
         b.draw().await;
         if b.location.y > screen_height() {
             b.is_alive = false;
@@ -159,7 +160,7 @@ async fn draw_enemy_fighter_bullets(game: &mut Game) {
 
 async fn draw_enemy_bomber_bullets(game: &mut Game) {
     for b in game.enemy_bombers.bullets.iter_mut() {
-        b.location += Vec2::new(0., 1.) * ENEMY_BOMBER_SPEED_FACTOR;
+        b.location += b.velocity * ENEMY_BOMBER_SPEED_FACTOR;
         b.draw().await;
         if b.location.y > screen_height() {
             b.is_alive = false;
@@ -204,7 +205,7 @@ async fn shoot(game: &mut Game) {
 async fn shoot_e(game: &mut Game) {
     for enemy in game.enemy_fighters.actors.iter_mut() {
         if enemy.fire_at_will {
-            let bullets = enemy.spawn_bullets().await;
+            let bullets = enemy.spawn_bullets(Vec2::new(0., 1.)).await;
             if let Some(mut b) = bullets {
                 game.enemy_fighters.bullets.append(&mut b);
             }
@@ -215,7 +216,14 @@ async fn shoot_e(game: &mut Game) {
 async fn shoot_b(game: &mut Game) {
     for enemy in game.enemy_bombers.actors.iter_mut() {
         if enemy.fire_at_will {
-            let bullets = enemy.spawn_bullets().await;
+            let v = (game.fighter.get_muzzle_point() - enemy.get_muzzle_point()).normalize();
+            let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+            let vel = Vec2::new(angle.cos(), angle.sin());
+            // println!(
+            //     "Bomber Vector {}, Fighter Vector {}, Distance Vector {}, Angle {} {}, Calculated Velocity {}",
+            //     enemy.position,game.fighter.position,v, angle.to_degrees(),angle, vel
+            // );
+            let bullets = enemy.spawn_bullets(vel).await;
             if let Some(mut b) = bullets {
                 game.enemy_bombers.bullets.append(&mut b);
             }

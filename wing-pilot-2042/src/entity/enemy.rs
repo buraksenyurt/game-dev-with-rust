@@ -45,16 +45,23 @@ impl Enemy {
         draw_texture(self.texture, self.position.x, self.position.y, WHITE);
     }
 
-    pub async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
+    pub fn get_muzzle_point(&self) -> Vec2 {
+        Vec2::new(
+            self.position.x + self.texture.width() * 0.5,
+            self.position.y + self.texture.height(),
+        )
+    }
+    pub async fn spawn_bullets(&mut self, bullet_velocity: Vec2) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
             match self.enemy_type {
                 EnemyType::Bomber => {
                     let cm = Vec2::new(
                         self.position.x + self.texture.width() * 0.5,
-                        self.position.y + self.texture.height() * 0.5,
+                        self.position.y + self.texture.height(),
                     );
-                    let bullet = Bullet::spawn(Owner::EnemyBomber, cm).await;
-                    self.cooling = get_frame_time() * get_fps() as f32 * 1.75;
+                    let mut bullet = Bullet::spawn(Owner::EnemyBomber, cm).await;
+                    bullet.velocity = bullet_velocity;
+                    self.cooling = get_frame_time() * get_fps() as f32 * 1.65;
                     Some(vec![bullet])
                 }
                 EnemyType::Fighter => {
@@ -66,8 +73,10 @@ impl Enemy {
                         self.position.x + (self.texture.width() - self.texture.width() * 0.2),
                         self.position.y + self.texture.height() * 0.8,
                     );
-                    let bullet_1 = Bullet::spawn(Owner::EnemyFighter, lm).await;
-                    let bullet_2 = Bullet::spawn(Owner::EnemyFighter, rm).await;
+                    let mut bullet_1 = Bullet::spawn(Owner::EnemyFighter, lm).await;
+                    bullet_1.velocity = bullet_velocity;
+                    let mut bullet_2 = Bullet::spawn(Owner::EnemyFighter, rm).await;
+                    bullet_2.velocity = bullet_velocity;
                     self.cooling = get_frame_time() * get_fps() as f32 * 0.35;
 
                     Some(vec![bullet_1, bullet_2])

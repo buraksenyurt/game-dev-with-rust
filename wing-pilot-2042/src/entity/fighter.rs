@@ -107,6 +107,12 @@ impl Fighter {
         self.ammo_count == 0
     }
 
+    pub fn get_muzzle_point(&self) -> Vec2 {
+        Vec2::new(
+            self.position.x + self.texture.width() * 0.5,
+            self.position.y,
+        )
+    }
     pub async fn draw(&self) {
         let params = DrawTextureParams {
             dest_size: Some(Vec2::new(self.texture.width(), self.texture.height())),

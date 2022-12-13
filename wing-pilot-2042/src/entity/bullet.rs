@@ -5,6 +5,7 @@ use macroquad::shapes::draw_rectangle;
 pub struct Bullet {
     owner: Owner,
     pub location: Vec2,
+    pub velocity: Vec2,
     pub is_alive: bool,
 }
 
@@ -13,6 +14,7 @@ impl Bullet {
         Self {
             owner,
             location,
+            velocity: Vec2::default(),
             is_alive: true,
         }
     }

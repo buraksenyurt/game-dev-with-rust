@@ -1,5 +1,4 @@
 use crate::entity::asset::Asset;
-use crate::entity::bullet::Bullet;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
 use crate::game::state::State;
