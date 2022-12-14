@@ -12,7 +12,6 @@ use crate::entity::enemy_type::EnemyType;
 use crate::entity::fleet::Fleet;
 use crate::game::game::Game;
 use crate::game::state::State;
-use crate::menu::builder::draw_info_bar;
 use game::conf::window_conf;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
@@ -58,17 +57,17 @@ async fn main() {
                     game.extra_ammo = Some(ammo);
                     //info!("Extra ammo created");
                 }
-                game.draw_fleet(EnemyType::Fighter).await;
-                game.draw_fleet(EnemyType::Bomber).await;
-                game.fighter.shift_fighter().await;
-                //shift_fighter(&mut game.fighter).await;
                 shoot(&mut game).await;
                 shoot_e(&mut game).await;
                 shoot_b(&mut game).await;
-                draw_fighter_bullets(&mut game).await;
-                draw_enemy_fighter_bullets(&mut game).await;
-                draw_enemy_bomber_bullets(&mut game).await;
-                draw_clouds(&mut game).await;
+
+                game.draw_fleet(EnemyType::Fighter).await;
+                game.draw_fleet(EnemyType::Bomber).await;
+                game.fighter.shift_fighter().await;
+                game.draw_fighter_bullets().await;
+                game.draw_bullets(EnemyType::Fighter).await;
+                game.draw_bullets(EnemyType::Bomber).await;
+                game.draw_clouds().await;
 
                 match &game.extra_ammo {
                     Some(mut ammo) => {
@@ -98,52 +97,12 @@ async fn main() {
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
 
                 game.fighter.draw().await;
-                draw_info_bar(&game).await;
+                game.draw_info_bar().await;
             }
             State::Dead => {}
             State::End => {}
         }
         next_frame().await
-    }
-}
-
-async fn draw_fighter_bullets(game: &mut Game) {
-    for b in game.fighter.bullets.iter_mut() {
-        b.location += Vec2::new(0., -1.) * FIGHTER_BULLET_SPEED_FACTOR;
-        b.draw().await;
-        if b.location.x < 0. {
-            b.is_alive = false;
-        }
-    }
-}
-
-async fn draw_enemy_fighter_bullets(game: &mut Game) {
-    for b in game.enemy_fighters.bullets.iter_mut() {
-        b.location += b.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-        b.draw().await;
-        if b.location.y > screen_height() {
-            b.is_alive = false;
-        }
-    }
-}
-
-async fn draw_enemy_bomber_bullets(game: &mut Game) {
-    for b in game.enemy_bombers.bullets.iter_mut() {
-        b.location += b.velocity * ENEMY_BOMBER_SPEED_FACTOR;
-        b.draw().await;
-        if b.location.y > screen_height() {
-            b.is_alive = false;
-        }
-    }
-}
-
-async fn draw_clouds(game: &mut Game) {
-    for c in game.clouds.iter_mut() {
-        c.location += c.velocity * CLOUD_SPEED_FACTOR;
-        if c.location.y - c.texture.height() > screen_height() {
-            c.on_stage = false;
-        }
-        c.draw();
     }
 }
 
