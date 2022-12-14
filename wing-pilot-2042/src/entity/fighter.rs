@@ -2,7 +2,9 @@ use crate::common::constants::{COOLING_FACTOR, FIGHTER_SPEED_FACTOR, MAX_AMMO};
 use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
-use macroquad::prelude::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D, Vec2};
+use macroquad::prelude::{
+    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Texture2D, Vec2,
+};
 use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
 
@@ -52,49 +54,85 @@ impl Fighter {
         }
     }
 
-    pub async fn shift_left(&mut self) {
+    pub async fn shift_fighter(&mut self) {
+        if is_key_down(KeyCode::Left) {
+            if is_key_down(KeyCode::Up) {
+                self.shift_left_up().await;
+            } else if is_key_down(KeyCode::Down) {
+                self.shift_left_down().await;
+            } else {
+                self.shift_left().await;
+            }
+        } else if is_key_down(KeyCode::Right) {
+            if is_key_down(KeyCode::Up) {
+                self.shift_right_up().await;
+            } else if is_key_down(KeyCode::Down) {
+                self.shift_right_down().await;
+            } else {
+                self.shift_right().await;
+            }
+        } else if is_key_down(KeyCode::Up) {
+            if is_key_down(KeyCode::Left) {
+                self.shift_left_up().await;
+            } else if is_key_down(KeyCode::Right) {
+                self.shift_right_up().await;
+            } else {
+                self.shift_up().await;
+            }
+        } else if is_key_down(KeyCode::Down) {
+            if is_key_down(KeyCode::Left) {
+                self.shift_left_down().await;
+            } else if is_key_down(KeyCode::Right) {
+                self.shift_right_down().await;
+            } else {
+                self.shift_down().await;
+            }
+        }
+    }
+
+    async fn shift_left(&mut self) {
         if self.position.x <= 0. {
             return;
         }
         self.position -= Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_right(&mut self) {
+    async fn shift_right(&mut self) {
         if self.position.x >= screen_width() - self.texture.width() {
             return;
         }
         self.position += Vec2::new(1., 0.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_up(&mut self) {
+    async fn shift_up(&mut self) {
         if self.position.y < 0. {
             return;
         }
         self.position -= Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_down(&mut self) {
+    async fn shift_down(&mut self) {
         if self.position.y > screen_height() - self.texture.height() {
             return;
         }
         self.position += Vec2::new(0., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_left_up(&mut self) {
+    async fn shift_left_up(&mut self) {
         if self.position.x <= 0. || self.position.y < 0. {
             return;
         }
         self.position -= Vec2::new(1., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_left_down(&mut self) {
+    async fn shift_left_down(&mut self) {
         if self.position.x <= 0. || self.position.y > screen_height() - self.texture.height() {
             return;
         }
         self.position += Vec2::new(-1., 1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_right_up(&mut self) {
+    async fn shift_right_up(&mut self) {
         if self.position.x > screen_width() - self.texture.width() || self.position.y < 0. {
             return;
         }
         self.position += Vec2::new(1., -1.) * FIGHTER_SPEED_FACTOR;
     }
-    pub async fn shift_right_down(&mut self) {
+    async fn shift_right_down(&mut self) {
         if self.position.x > screen_width() - self.texture.width()
             || self.position.y > screen_height() - self.texture.height()
         {
@@ -113,6 +151,7 @@ impl Fighter {
             self.position.y,
         )
     }
+
     pub async fn draw(&self) {
         let params = DrawTextureParams {
             dest_size: Some(Vec2::new(self.texture.width(), self.texture.height())),

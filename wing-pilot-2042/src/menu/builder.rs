@@ -4,9 +4,10 @@ use macroquad::prelude::{draw_text, measure_text, GOLD};
 
 pub async fn draw_info_bar(game: &Game) {
     let info = format!(
-        "Bullets {} Enemy Fighters {}",
+        "Bullets {} Enemies (F:{}) (B:{})",
         game.fighter.ammo_count,
-        game.enemy_fighters.actors.len()
+        game.enemy_fighters.actors.len(),
+        game.enemy_bombers.actors.len(),
     );
     let size = measure_text(info.as_str(), None, 24, 1.);
     draw_text(

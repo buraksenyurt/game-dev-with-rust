@@ -5,12 +5,10 @@ mod menu;
 
 use crate::common::constants::{
     CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
-    ENEMY_WARSHIP_SPEED_FACTOR, EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
+    EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
-use crate::entity::enemy::Enemy;
 use crate::entity::enemy_type::EnemyType;
-use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
 use crate::game::game::Game;
 use crate::game::state::State;
@@ -62,7 +60,8 @@ async fn main() {
                 }
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
-                shift_fighter(&mut game.fighter).await;
+                game.fighter.shift_fighter().await;
+                //shift_fighter(&mut game.fighter).await;
                 shoot(&mut game).await;
                 shoot_e(&mut game).await;
                 shoot_b(&mut game).await;
@@ -187,42 +186,6 @@ async fn shoot_b(game: &mut Game) {
             if let Some(mut b) = bullets {
                 game.enemy_bombers.bullets.append(&mut b);
             }
-        }
-    }
-}
-
-async fn shift_fighter(fighter: &mut Fighter) {
-    if is_key_down(KeyCode::Left) {
-        if is_key_down(KeyCode::Up) {
-            fighter.shift_left_up().await;
-        } else if is_key_down(KeyCode::Down) {
-            fighter.shift_left_down().await;
-        } else {
-            fighter.shift_left().await;
-        }
-    } else if is_key_down(KeyCode::Right) {
-        if is_key_down(KeyCode::Up) {
-            fighter.shift_right_up().await;
-        } else if is_key_down(KeyCode::Down) {
-            fighter.shift_right_down().await;
-        } else {
-            fighter.shift_right().await;
-        }
-    } else if is_key_down(KeyCode::Up) {
-        if is_key_down(KeyCode::Left) {
-            fighter.shift_left_up().await;
-        } else if is_key_down(KeyCode::Right) {
-            fighter.shift_right_up().await;
-        } else {
-            fighter.shift_up().await;
-        }
-    } else if is_key_down(KeyCode::Down) {
-        if is_key_down(KeyCode::Left) {
-            fighter.shift_left_down().await;
-        } else if is_key_down(KeyCode::Right) {
-            fighter.shift_right_down().await;
-        } else {
-            fighter.shift_down().await;
         }
     }
 }
