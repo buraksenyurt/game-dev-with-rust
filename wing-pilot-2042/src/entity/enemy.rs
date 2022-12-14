@@ -4,7 +4,9 @@ use crate::entity::enemy_type::EnemyType;
 use crate::entity::formation::Formation;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
-use macroquad::prelude::{draw_texture, get_frame_time, load_texture, Texture2D, Vec2};
+use macroquad::prelude::{
+    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Texture2D, Vec2,
+};
 use macroquad::time::get_fps;
 
 pub struct Enemy {
@@ -41,8 +43,18 @@ impl Enemy {
             cooling: get_frame_time(),
         }
     }
-    pub fn draw(&self) {
+    pub async fn draw(&self) {
         draw_texture(self.texture, self.position.x, self.position.y, WHITE);
+    }
+
+    pub async fn check_borders(&mut self) {
+        if (self.velocity.y < 0. && self.position.y + self.texture.height() < 0.)
+            || (self.velocity.x < 0. && self.position.x + self.texture.width() < 0.)
+            || (self.position.x > screen_width() + self.texture.width()
+                || self.position.y > screen_height() + self.texture.height())
+        {
+            self.on_stage = false;
+        }
     }
 
     pub fn get_muzzle_point(&self) -> Vec2 {

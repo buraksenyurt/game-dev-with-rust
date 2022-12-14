@@ -5,7 +5,7 @@ mod menu;
 
 use crate::common::constants::{
     CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
-    EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
+    ENEMY_WARSHIP_SPEED_FACTOR, EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
 };
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy::Enemy;
@@ -60,8 +60,8 @@ async fn main() {
                     game.extra_ammo = Some(ammo);
                     //info!("Extra ammo created");
                 }
-                draw_fighter_fleet(&mut game).await;
-                draw_bomber_fleet(&mut game).await;
+                game.draw_fleet(EnemyType::Fighter).await;
+                game.draw_fleet(EnemyType::Bomber).await;
                 shift_fighter(&mut game.fighter).await;
                 shoot(&mut game).await;
                 shoot_e(&mut game).await;
@@ -108,36 +108,6 @@ async fn main() {
     }
 }
 
-async fn draw_fighter_fleet(game: &mut Game) {
-    for e in game.enemy_fighters.actors.iter_mut() {
-        e.position += e.velocity * ENEMY_FIGHTER_SPEED_FACTOR;
-        if !e.is_formation_on && e.position.y >= e.formation.start_y {
-            e.velocity = e.formation.velocity;
-            e.is_formation_on = true;
-            e.fire_at_will = true;
-            //println!("Formation changed");
-        }
-
-        check_borders(e).await;
-        e.draw();
-    }
-}
-
-async fn draw_bomber_fleet(game: &mut Game) {
-    for e in game.enemy_bombers.actors.iter_mut() {
-        e.position += e.velocity * ENEMY_BOMBER_SPEED_FACTOR;
-        if !e.is_formation_on && e.position.y >= e.formation.start_y {
-            e.velocity = e.formation.velocity;
-            e.is_formation_on = true;
-            e.fire_at_will = true;
-            //println!("Formation changed");
-        }
-
-        check_borders(e).await;
-        e.draw();
-    }
-}
-
 async fn draw_fighter_bullets(game: &mut Game) {
     for b in game.fighter.bullets.iter_mut() {
         b.location += Vec2::new(0., -1.) * FIGHTER_BULLET_SPEED_FACTOR;
@@ -175,16 +145,6 @@ async fn draw_clouds(game: &mut Game) {
             c.on_stage = false;
         }
         c.draw();
-    }
-}
-
-async fn check_borders(e: &mut Enemy) {
-    if (e.velocity.y < 0. && e.position.y + e.texture.height() < 0.)
-        || (e.velocity.x < 0. && e.position.x + e.texture.width() < 0.)
-        || (e.position.x > screen_width() + e.texture.width()
-            || e.position.y > screen_height() + e.texture.height())
-    {
-        e.on_stage = false;
     }
 }
 
