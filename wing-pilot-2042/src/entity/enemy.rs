@@ -5,7 +5,7 @@ use crate::entity::formation::Formation;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture, get_frame_time, load_texture, rand, screen_height, screen_width, Texture2D, Vec2,
+    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Texture2D, Vec2,
 };
 use macroquad::time::get_fps;
 
@@ -109,19 +109,15 @@ impl Enemy {
                     Some(vec![bullet_1, bullet_2])
                 }
                 EnemyType::Warship(_) => {
-                    let um = Vec2::new(
-                        self.position.x + self.texture.width() * 0.5,
-                        self.position.y + self.texture.height() * 0.2,
-                    );
                     let dm = Vec2::new(
-                        self.position.x + self.texture.width() * 0.5,
-                        self.position.y + self.texture.height() * 0.8,
+                        self.position.x + self.texture.width() * 0.8,
+                        self.position.y + self.texture.height() * 0.5,
                     );
-                    let bullet_1 = Bullet::spawn(Owner::Warship, um).await;
-                    let bullet_2 = Bullet::spawn(Owner::Warship, dm).await;
+                    let mut bullet_1 = Bullet::spawn(Owner::Warship, dm).await;
+                    bullet_1.velocity = bullet_velocity;
                     self.cooling = get_frame_time() * get_fps() as f32 * 4.;
 
-                    Some(vec![bullet_1, bullet_2])
+                    Some(vec![bullet_1])
                 }
             }
         } else {

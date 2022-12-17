@@ -8,27 +8,25 @@ use macroquad::prelude::{rand, screen_height, screen_width};
 
 pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
     let x = rand::gen_range(screen_width() * 0.2, screen_width() - screen_width() * 0.2);
-    let mut y = 0.;
     let mut position = Vec2::new(x, -ENEMY_ENTRY_POINT_FACTOR);
 
-    match e_type {
-        Warship(wd) => match wd {
+    if let Warship(wd) = e_type {
+        match wd {
             WarshipDirection::Left => {
-                y = rand::gen_range(
+                let y = rand::gen_range(
                     screen_height() * 0.3,
                     screen_height() - screen_height() * 0.3,
                 );
                 position = Vec2::new(-ENEMY_ENTRY_POINT_FACTOR * 3., y);
             }
             WarshipDirection::Right => {
-                y = rand::gen_range(
+                let y = rand::gen_range(
                     screen_height() * 0.3,
                     screen_height() - screen_height() * 0.3,
                 );
                 position = Vec2::new(screen_width() + ENEMY_ENTRY_POINT_FACTOR * 3., y);
             }
-        },
-        _ => {}
+        }
     }
 
     let mut enemies: Vec<Enemy> = Vec::new();

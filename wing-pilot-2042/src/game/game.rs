@@ -8,6 +8,7 @@ use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
 use crate::game::state::State;
 use macroquad::prelude::{draw_text, measure_text, screen_height, Vec2, GOLD};
+use macroquad::window::screen_width;
 
 pub struct Game {
     pub state: State,
@@ -41,10 +42,21 @@ impl Game {
 
         for e in enemies.iter_mut() {
             e.position += e.velocity * speed_factor;
-            if !e.is_formation_on && e.position.y >= e.formation.start_y {
-                e.velocity = e.formation.velocity;
-                e.is_formation_on = true;
-                e.fire_at_will = true;
+            match actor {
+                EnemyType::Warship(_) => {
+                    if e.position.x >= screen_width() * 0.3 || e.position.x < screen_width() * 0.7 {
+                        //e.velocity = e.formation.velocity;
+                        //e.is_formation_on = true;
+                        e.fire_at_will = true;
+                    }
+                }
+                _ => {
+                    if !e.is_formation_on && e.position.y >= e.formation.start_y {
+                        e.velocity = e.formation.velocity;
+                        e.is_formation_on = true;
+                        e.fire_at_will = true;
+                    }
+                }
             }
 
             e.check_borders().await;

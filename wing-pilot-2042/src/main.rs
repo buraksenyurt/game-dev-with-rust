@@ -10,9 +10,7 @@ use crate::entity::fleet::Fleet;
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
-use macroquad::input::KeyCode::W;
 use macroquad::prelude::*;
-use macroquad::rand::rand;
 use std::f32::consts::PI;
 
 #[macroquad::main(window_conf)]
@@ -21,6 +19,8 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
     let mut game = Game::new(State::Playing).await;
     let mut extra_ammo_tick = 0;
+    let mut warship_direction = WarshipDirection::Right;
+
     loop {
         clear_background(DARKBLUE);
 
@@ -50,10 +50,9 @@ async fn main() {
                         game.enemy_bombers.lift_off_time -= 1;
                     }
                 }
-
                 if game.enemy_warships.actors.is_empty() && game.enemy_warships.bullets.is_empty() {
                     let left_or_right = rand::gen_range(0, 5);
-                    let warship_direction = match left_or_right % 3 {
+                    warship_direction = match left_or_right % 3 {
                         0 => WarshipDirection::Right,
                         _ => WarshipDirection::Left,
                     };
@@ -77,6 +76,7 @@ async fn main() {
                 shoot(&mut game).await;
                 shoot_e(&mut game).await;
                 shoot_b(&mut game).await;
+                shoot_ws(&mut game).await;
 
                 game.draw_fleet(EnemyType::Warship(WarshipDirection::Right))
                     .await;
@@ -86,6 +86,8 @@ async fn main() {
                 game.draw_fighter_bullets().await;
                 game.draw_bullets(EnemyType::Fighter).await;
                 game.draw_bullets(EnemyType::Bomber).await;
+                game.draw_bullets(EnemyType::Warship(warship_direction))
+                    .await;
                 game.draw_clouds().await;
 
                 match &game.extra_ammo {
@@ -115,6 +117,7 @@ async fn main() {
                 game.fighter.bullets.retain(|b| b.is_alive);
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
+                game.enemy_warships.bullets.retain(|b| b.is_alive);
 
                 game.fighter.draw().await;
                 game.draw_info_bar().await;
@@ -157,13 +160,23 @@ async fn shoot_b(game: &mut Game) {
             let v = (game.fighter.get_muzzle_point() - enemy.get_muzzle_point()).normalize();
             let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
             let vel = Vec2::new(angle.cos(), angle.sin());
-            // println!(
-            //     "Bomber Vector {}, Fighter Vector {}, Distance Vector {}, Angle {} {}, Calculated Velocity {}",
-            //     enemy.position,game.fighter.position,v, angle.to_degrees(),angle, vel
-            // );
             let bullets = enemy.spawn_bullets(vel).await;
             if let Some(mut b) = bullets {
                 game.enemy_bombers.bullets.append(&mut b);
+            }
+        }
+    }
+}
+
+async fn shoot_ws(game: &mut Game) {
+    for enemy in game.enemy_warships.actors.iter_mut() {
+        if enemy.fire_at_will {
+            let v = (game.fighter.get_muzzle_point() - enemy.get_muzzle_point()).normalize();
+            let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+            let vel = Vec2::new(angle.cos(), angle.sin());
+            let bullets = enemy.spawn_bullets(vel).await;
+            if let Some(mut b) = bullets {
+                game.enemy_warships.bullets.append(&mut b);
             }
         }
     }
