@@ -73,10 +73,16 @@ impl Enemy {
     }
 
     pub fn get_muzzle_point(&self) -> Vec2 {
-        Vec2::new(
-            self.position.x + self.texture.width() * 0.5,
-            self.position.y + self.texture.height(),
-        )
+        match self.enemy_type {
+            EnemyType::Warship(_) => Vec2::new(
+                self.position.x + self.texture.width() * 0.8,
+                self.position.y + self.texture.height() * 0.5,
+            ),
+            _ => Vec2::new(
+                self.position.x + self.texture.width() * 0.5,
+                self.position.y + self.texture.height(),
+            ),
+        }
     }
     pub async fn spawn_bullets(&mut self, bullet_velocity: Vec2) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
