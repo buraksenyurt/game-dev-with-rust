@@ -112,7 +112,7 @@ async fn main() {
                 }
 
                 if check_fighter_with_ammo(&mut game) {
-                    game.fighter.ammo_count+=1;
+                    game.fighter.ammo_count += 2;
                 }
 
                 game.clouds.retain(|c| c.on_stage);

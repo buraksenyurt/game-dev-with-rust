@@ -3,7 +3,7 @@ use macroquad::prelude::Rect;
 
 pub fn check_fighter_with_ammo(game: &mut Game) -> bool {
     //Axis-Aligned Bounding Box (AABB) Collision Detection
-    return match game.extra_ammo_box {
+    match game.extra_ammo_box {
         Some(ea) => {
             let fighter_box: Rect = game.fighter.get_body();
             if ea.location.x < fighter_box.x + fighter_box.w
@@ -13,8 +13,8 @@ pub fn check_fighter_with_ammo(game: &mut Game) -> bool {
             {
                 return true;
             }
-            return false;
+            false
         }
-        None => return false,
-    };
+        None => false,
+    }
 }
