@@ -1,6 +1,12 @@
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum EnemyType {
     Bomber,
     Fighter,
-    Warship,
+    Warship(WarshipDirection),
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum WarshipDirection {
+    Left,
+    Right,
 }

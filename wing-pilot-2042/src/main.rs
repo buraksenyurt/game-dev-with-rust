@@ -3,17 +3,16 @@ mod entity;
 mod game;
 mod menu;
 
-use crate::common::constants::{
-    CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
-    EXTRA_AMMO_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR,
-};
+use crate::common::constants::EXTRA_AMMO_SPEED_FACTOR;
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
-use crate::entity::enemy_type::EnemyType;
+use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fleet::Fleet;
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
+use macroquad::input::KeyCode::W;
 use macroquad::prelude::*;
+use macroquad::rand::rand;
 use std::f32::consts::PI;
 
 #[macroquad::main(window_conf)]
@@ -52,6 +51,24 @@ async fn main() {
                     }
                 }
 
+                if game.enemy_warships.actors.is_empty() && game.enemy_warships.bullets.is_empty() {
+                    let left_or_right = rand::gen_range(0, 5);
+                    let warship_direction = match left_or_right % 3 {
+                        0 => WarshipDirection::Right,
+                        _ => WarshipDirection::Left,
+                    };
+                    if game.enemy_warships.lift_off_time == 0 {
+                        game.enemy_warships =
+                            Fleet::new(1, EnemyType::Warship(warship_direction)).await;
+                        info!(
+                            "Fleet(WS) lift of time {}",
+                            game.enemy_warships.lift_off_time
+                        );
+                    } else {
+                        game.enemy_warships.lift_off_time -= 1;
+                    }
+                }
+
                 if game.fighter.out_of_ammo().await && game.extra_ammo == None {
                     let ammo = create_extra_ammo().await;
                     game.extra_ammo = Some(ammo);
@@ -61,6 +78,8 @@ async fn main() {
                 shoot_e(&mut game).await;
                 shoot_b(&mut game).await;
 
+                game.draw_fleet(EnemyType::Warship(WarshipDirection::Right))
+                    .await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
                 game.fighter.shift_fighter().await;
@@ -92,6 +111,7 @@ async fn main() {
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
                 game.enemy_bombers.actors.retain(|b| b.on_stage);
+                game.enemy_warships.actors.retain(|b| b.on_stage);
                 game.fighter.bullets.retain(|b| b.is_alive);
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);

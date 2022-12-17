@@ -1,11 +1,11 @@
 use crate::common::constants::COOLING_FACTOR;
 use crate::entity::bullet::Bullet;
-use crate::entity::enemy_type::EnemyType;
+use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::formation::Formation;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Texture2D, Vec2,
+    draw_texture, get_frame_time, load_texture, rand, screen_height, screen_width, Texture2D, Vec2,
 };
 use macroquad::time::get_fps;
 
@@ -23,18 +23,33 @@ pub struct Enemy {
 }
 
 impl Enemy {
-    pub async fn new(location: Vec2, enemy_type: EnemyType, formation: Formation) -> Self {
-        let texture = match enemy_type {
-            EnemyType::Bomber => load_texture("resources/bomber.png").await.unwrap(),
-            EnemyType::Fighter => load_texture("resources/enemy_fighter.png").await.unwrap(),
-            EnemyType::Warship => load_texture("resources/warship.png").await.unwrap(),
+    pub async fn new(position: Vec2, enemy_type: EnemyType, formation: Formation) -> Self {
+        let (texture, velocity) = match enemy_type {
+            EnemyType::Bomber => (
+                load_texture("resources/bomber.png").await.unwrap(),
+                Vec2::new(0., 1.),
+            ),
+            EnemyType::Fighter => (
+                load_texture("resources/enemy_fighter.png").await.unwrap(),
+                Vec2::new(0., 1.),
+            ),
+            EnemyType::Warship(wd) => match wd {
+                WarshipDirection::Right => (
+                    load_texture("resources/warship_right.png").await.unwrap(),
+                    Vec2::new(-1., 0.),
+                ),
+                WarshipDirection::Left => (
+                    load_texture("resources/warship_left.png").await.unwrap(),
+                    Vec2::new(1., 0.),
+                ),
+            },
         };
         //let formation = get_formation();
         Self {
-            position: location,
+            position,
             enemy_type,
             is_alive: true,
-            velocity: Vec2::default(),
+            velocity,
             formation,
             texture,
             is_formation_on: false,
@@ -93,7 +108,7 @@ impl Enemy {
 
                     Some(vec![bullet_1, bullet_2])
                 }
-                EnemyType::Warship => {
+                EnemyType::Warship(_) => {
                     let um = Vec2::new(
                         self.position.x + self.texture.width() * 0.5,
                         self.position.y + self.texture.height() * 0.2,

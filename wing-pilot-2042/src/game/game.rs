@@ -36,7 +36,7 @@ impl Game {
         let (enemies, speed_factor) = match actor {
             EnemyType::Fighter => (&mut self.enemy_fighters.actors, ENEMY_FIGHTER_SPEED_FACTOR),
             EnemyType::Bomber => (&mut self.enemy_bombers.actors, ENEMY_BOMBER_SPEED_FACTOR),
-            EnemyType::Warship => (&mut self.enemy_warships.actors, ENEMY_WARSHIP_SPEED_FACTOR),
+            EnemyType::Warship(_) => (&mut self.enemy_warships.actors, ENEMY_WARSHIP_SPEED_FACTOR),
         };
 
         for e in enemies.iter_mut() {
@@ -56,7 +56,7 @@ impl Game {
         let (bullets, speed_factor) = match actor {
             EnemyType::Bomber => (&mut self.enemy_bombers.bullets, ENEMY_BOMBER_SPEED_FACTOR),
             EnemyType::Fighter => (&mut self.enemy_fighters.bullets, ENEMY_FIGHTER_SPEED_FACTOR),
-            EnemyType::Warship => (&mut self.enemy_warships.bullets, ENEMY_BOMBER_SPEED_FACTOR),
+            EnemyType::Warship(_) => (&mut self.enemy_warships.bullets, ENEMY_BOMBER_SPEED_FACTOR),
         };
         for b in bullets.iter_mut() {
             b.location += b.velocity * speed_factor;
@@ -89,10 +89,11 @@ impl Game {
 
     pub async fn draw_info_bar(&self) {
         let info = format!(
-            "Bullets {} Enemies (F:{}) (B:{})",
+            "Bullets {} (F:{}) (B:{}) (WS:{})",
             self.fighter.ammo_count,
             self.enemy_fighters.actors.len(),
             self.enemy_bombers.actors.len(),
+            self.enemy_warships.actors.len()
         );
         let size = measure_text(info.as_str(), None, 24, 1.);
         draw_text(
