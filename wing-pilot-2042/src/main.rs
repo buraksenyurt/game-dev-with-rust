@@ -7,6 +7,7 @@ use crate::common::constants::EXTRA_AMMO_SPEED_FACTOR;
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fleet::Fleet;
+use crate::game::collider::check_fighter_with_ammo;
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
@@ -68,9 +69,9 @@ async fn main() {
                     }
                 }
 
-                if game.fighter.out_of_ammo().await && game.extra_ammo == None {
+                if game.fighter.out_of_ammo().await && game.extra_ammo_box == None {
                     let ammo = create_extra_ammo().await;
-                    game.extra_ammo = Some(ammo);
+                    game.extra_ammo_box = Some(ammo);
                     //info!("Extra ammo created");
                 }
                 shoot(&mut game).await;
@@ -90,24 +91,28 @@ async fn main() {
                     .await;
                 game.draw_clouds().await;
 
-                match &game.extra_ammo {
+                match &game.extra_ammo_box {
                     Some(mut ammo) => {
                         if extra_ammo_tick == ammo.lift_of_time.unwrap() {
                             ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
 
                             if ammo.location.y > screen_height() + ammo.texture.height() {
-                                game.extra_ammo = None;
+                                game.extra_ammo_box = None;
                                 extra_ammo_tick = 0;
                                 continue;
                             }
 
-                            game.extra_ammo = Some(ammo);
+                            game.extra_ammo_box = Some(ammo);
                             ammo.draw();
                         } else {
                             extra_ammo_tick += 1;
                         }
                     }
                     None => {}
+                }
+
+                if check_fighter_with_ammo(&mut game) {
+                    game.fighter.ammo_count+=1;
                 }
 
                 game.clouds.retain(|c| c.on_stage);

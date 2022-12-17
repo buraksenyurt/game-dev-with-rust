@@ -17,7 +17,7 @@ pub struct Game {
     pub enemy_warships: Fleet,
     pub fighter: Fighter,
     pub clouds: Vec<Asset>,
-    pub extra_ammo: Option<Asset>,
+    pub extra_ammo_box: Option<Asset>,
 }
 
 impl Game {
@@ -29,7 +29,7 @@ impl Game {
             enemy_warships: Fleet::default(),
             fighter: Fighter::new().await,
             clouds: Vec::default(),
-            extra_ammo: None,
+            extra_ammo_box: None,
         }
     }
 

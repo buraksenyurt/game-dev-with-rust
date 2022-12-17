@@ -3,7 +3,7 @@ use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Texture2D, Vec2,
+    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect, Texture2D, Vec2,
 };
 use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
@@ -149,6 +149,16 @@ impl Fighter {
         Vec2::new(
             self.position.x + self.texture.width() * 0.5,
             self.position.y,
+        )
+    }
+
+    pub fn get_body(&self) -> Rect {
+        let muzzle_point = self.get_muzzle_point();
+        Rect::new(
+            muzzle_point.x - 10.,
+            muzzle_point.y,
+            20.,
+            self.texture.height(),
         )
     }
 
