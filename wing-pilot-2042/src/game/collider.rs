@@ -1,6 +1,7 @@
 use crate::game::game::Game;
-use macroquad::prelude::{Rect};
+use macroquad::prelude::Rect;
 
+//Axis-Aligned Bounding Box (AABB) Collision Detection
 async fn aabb_check(source: Rect, target: Rect) -> bool {
     if source.x < target.x + target.w
         && source.x + source.w > target.x
@@ -12,7 +13,6 @@ async fn aabb_check(source: Rect, target: Rect) -> bool {
     false
 }
 pub async fn check_fighter_with_ammo(game: &mut Game) -> bool {
-    //Axis-Aligned Bounding Box (AABB) Collision Detection
     match game.extra_ammo_box {
         Some(ea) => {
             let fighter_box: Rect = game.fighter.get_body();
@@ -28,7 +28,7 @@ pub async fn check_fighter_with_ammo(game: &mut Game) -> bool {
     }
 }
 
-pub async fn check_enmyf_coll(game: &mut Game) {
+pub async fn check_enmy_f_coll(game: &mut Game) {
     let body = game.fighter.get_body();
     let wing = game.fighter.get_wing();
     let tail_wing = game.fighter.get_tail_wing();
@@ -40,6 +40,38 @@ pub async fn check_enmyf_coll(game: &mut Game) {
         {
             b.is_alive = false;
             println!("Boom...Enemy Fighter hit");
+        }
+    }
+}
+
+pub async fn check_enmy_b_coll(game: &mut Game) {
+    let body = game.fighter.get_body();
+    let wing = game.fighter.get_wing();
+    let tail_wing = game.fighter.get_tail_wing();
+    for b in game.enemy_bombers.bullets.iter_mut() {
+        let b_rect = b.get_rect().await;
+        if aabb_check(b_rect, body).await
+            || aabb_check(b_rect, wing).await
+            || aabb_check(b_rect, tail_wing).await
+        {
+            b.is_alive = false;
+            println!("Crash...Enemy Bomber hit");
+        }
+    }
+}
+
+pub async fn check_enmy_ws_coll(game: &mut Game) {
+    let body = game.fighter.get_body();
+    let wing = game.fighter.get_wing();
+    let tail_wing = game.fighter.get_tail_wing();
+    for b in game.enemy_warships.bullets.iter_mut() {
+        let b_rect = b.get_rect().await;
+        if aabb_check(b_rect, body).await
+            || aabb_check(b_rect, wing).await
+            || aabb_check(b_rect, tail_wing).await
+        {
+            b.is_alive = false;
+            println!("Bang...Enemy Warship hit");
         }
     }
 }
