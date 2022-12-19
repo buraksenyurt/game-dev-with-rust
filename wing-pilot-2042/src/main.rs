@@ -30,6 +30,8 @@ async fn main() {
         match game.state {
             State::Main => {}
             State::Playing => {
+                game.fighter.shift().await;
+
                 if game.clouds.is_empty() {
                     game.clouds = create_clouds(3).await;
                 }
@@ -85,7 +87,6 @@ async fn main() {
                     .await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
-                game.fighter.shift().await;
                 game.draw_fighter_bullets().await;
                 game.draw_bullets(EnemyType::Fighter).await;
                 game.draw_bullets(EnemyType::Bomber).await;

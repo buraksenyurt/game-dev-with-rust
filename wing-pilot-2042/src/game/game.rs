@@ -6,6 +6,7 @@ use crate::entity::asset::Asset;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
+use crate::game::scorebox::Scorebox;
 use crate::game::state::State;
 use macroquad::prelude::{draw_text, measure_text, screen_height, Vec2, GOLD};
 use macroquad::window::screen_width;
@@ -18,6 +19,7 @@ pub struct Game {
     pub fighter: Fighter,
     pub clouds: Vec<Asset>,
     pub extra_ammo_box: Option<Asset>,
+    pub score_box: Scorebox,
 }
 
 impl Game {
@@ -30,6 +32,7 @@ impl Game {
             fighter: Fighter::new().await,
             clouds: Vec::default(),
             extra_ammo_box: None,
+            score_box: Scorebox::default(),
         }
     }
 
@@ -101,11 +104,15 @@ impl Game {
 
     pub async fn draw_info_bar(&self) {
         let info = format!(
-            "Bullets {} (F:{}) (B:{}) (WS:{})",
+            "Bullets {} (F:{}) (B:{}) (WS:{}) Damages (F/B/WS) {}/{}/{} Player Hit {}",
             self.fighter.ammo_count,
             self.enemy_fighters.actors.len(),
             self.enemy_bombers.actors.len(),
-            self.enemy_warships.actors.len()
+            self.enemy_warships.actors.len(),
+            self.score_box.enemy_fighter_damage,
+            self.score_box.enemy_bomber_damage,
+            self.score_box.enemy_warship_damage,
+            self.score_box.player_hit
         );
         let size = measure_text(info.as_str(), None, 24, 1.);
         draw_text(
