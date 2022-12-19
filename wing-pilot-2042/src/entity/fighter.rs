@@ -54,7 +54,7 @@ impl Fighter {
         }
     }
 
-    pub async fn shift_fighter(&mut self) {
+    pub async fn shift(&mut self) {
         if is_key_down(KeyCode::Left) {
             if is_key_down(KeyCode::Up) {
                 self.shift_left_up().await;
@@ -160,6 +160,18 @@ impl Fighter {
             20.,
             self.texture.height(),
         )
+    }
+    pub fn get_wing(&self) -> Rect {
+        Rect::new(
+            self.position.x,
+            self.position.y + 22.,
+            self.texture.width(),
+            20.,
+        )
+    }
+
+    pub fn get_tail_wing(&self) -> Rect {
+        Rect::new(self.position.x + 40., self.position.y + 60., 40., 12.)
     }
 
     pub async fn draw(&self) {

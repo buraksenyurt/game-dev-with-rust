@@ -7,7 +7,7 @@ use crate::common::constants::EXTRA_AMMO_SPEED_FACTOR;
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fleet::Fleet;
-use crate::game::collider::check_fighter_with_ammo;
+use crate::game::collider::{check_enmyf_coll, check_fighter_with_ammo};
 use crate::game::game::Game;
 use crate::game::state::State;
 use game::conf::window_conf;
@@ -83,7 +83,7 @@ async fn main() {
                     .await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
-                game.fighter.shift_fighter().await;
+                game.fighter.shift().await;
                 game.draw_fighter_bullets().await;
                 game.draw_bullets(EnemyType::Fighter).await;
                 game.draw_bullets(EnemyType::Bomber).await;
@@ -111,9 +111,10 @@ async fn main() {
                     None => {}
                 }
 
-                if check_fighter_with_ammo(&mut game) {
+                if check_fighter_with_ammo(&mut game).await {
                     game.fighter.ammo_count += 2;
                 }
+                check_enmyf_coll(&mut game).await;
 
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
