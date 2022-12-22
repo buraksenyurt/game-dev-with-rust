@@ -144,7 +144,7 @@ pub async fn fighter_vs_warship(game: &mut Game) {
     }
 }
 
-pub async fn is_collision_exist(rect_list: Vec<Rect>, bullets: &mut Vec<Bullet>) -> bool {
+pub async fn is_collision_exist(rect_list: Vec<Rect>, bullets: &mut [Bullet]) -> bool {
     for b in bullets.iter_mut() {
         let b_rect = b.get_rect().await;
         for r in rect_list.iter() {

@@ -23,7 +23,6 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
     let mut game = Game::new(State::Main).await;
     let mut extra_ammo_tick = 0;
-    let mut warship_direction = Some(WarshipDirection::Right);
     loop {
         clear_background(DARKBLUE);
 
@@ -73,7 +72,7 @@ async fn main() {
                 }
                 if game.enemy_warships.actors.is_empty() && game.enemy_warships.bullets.is_empty() {
                     let left_or_right = rand::gen_range(0, 100);
-                    warship_direction = match left_or_right % 3 {
+                    let warship_direction = match left_or_right % 3 {
                         0 => Some(WarshipDirection::Right),
                         _ => Some(WarshipDirection::Left),
                     };
