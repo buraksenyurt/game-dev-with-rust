@@ -104,7 +104,7 @@ impl Game {
 
     pub async fn draw_info_bar(&self) {
         let info = format!(
-            "Bullets {} (F:{}) (B:{}) (WS:{}) Damages (F/B/WS) {}/{}/{} Player Hit {}",
+            "Bullets {} (F:{}) (B:{}) (WS:{}) Damages (F/B/WS) {}/{}/{} Player Hit/Damage {}/{}",
             self.fighter.ammo_count,
             self.enemy_fighters.actors.len(),
             self.enemy_bombers.actors.len(),
@@ -112,7 +112,8 @@ impl Game {
             self.score_box.enemy_fighter_damage,
             self.score_box.enemy_bomber_damage,
             self.score_box.enemy_warship_damage,
-            self.score_box.player_hit
+            self.score_box.player_hit,
+            self.fighter.shield
         );
         let size = measure_text(info.as_str(), None, 24, 1.);
         draw_text(

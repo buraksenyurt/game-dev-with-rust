@@ -40,6 +40,7 @@ pub async fn check_enmy_f_coll(game: &mut Game) {
         {
             b.is_alive = false;
             game.score_box.enemy_fighter_damage += 1;
+            game.fighter.shield -= 1;
         }
     }
 }
@@ -56,6 +57,7 @@ pub async fn check_enmy_b_coll(game: &mut Game) {
         {
             b.is_alive = false;
             game.score_box.enemy_bomber_damage += 1;
+            game.fighter.shield -= 1;
         }
     }
 }
@@ -72,6 +74,7 @@ pub async fn check_enmy_ws_coll(game: &mut Game) {
         {
             b.is_alive = false;
             game.score_box.enemy_warship_damage += 1;
+            game.fighter.shield -= 1;
         }
     }
 }

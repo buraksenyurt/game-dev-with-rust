@@ -1,4 +1,6 @@
-use crate::common::constants::{COOLING_FACTOR, FIGHTER_SPEED_FACTOR, MAX_AMMO};
+use crate::common::constants::{
+    COOLING_FACTOR, FIGHTER_DEFAULT_SHIELD_VALUE, FIGHTER_SPEED_FACTOR, MAX_AMMO,
+};
 use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
@@ -15,6 +17,7 @@ pub struct Fighter {
     texture: Texture2D,
     pub ammo_count: usize,
     cooling: f32,
+    pub shield: usize,
 }
 
 impl Fighter {
@@ -31,6 +34,7 @@ impl Fighter {
             texture,
             ammo_count: MAX_AMMO,
             cooling: get_frame_time(),
+            shield: FIGHTER_DEFAULT_SHIELD_VALUE,
         }
     }
 

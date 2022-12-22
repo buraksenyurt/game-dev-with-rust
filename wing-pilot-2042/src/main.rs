@@ -12,6 +12,7 @@ use crate::game::collider::{
 };
 use crate::game::game::Game;
 use crate::game::state::State;
+use crate::menu::builder::{draw_dead_menu, draw_end_menu, draw_main_menu};
 use game::conf::window_conf;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
@@ -20,16 +21,26 @@ use std::f32::consts::PI;
 async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
-    let mut game = Game::new(State::Playing).await;
+    let mut game = Game::new(State::Main).await;
     let mut extra_ammo_tick = 0;
     let mut warship_direction = WarshipDirection::Right;
-
     loop {
         clear_background(DARKBLUE);
 
         match game.state {
-            State::Main => {}
+            State::Main => {
+                draw_main_menu();
+                if is_key_pressed(KeyCode::Space) {
+                    game.state = State::Playing;
+                } else if is_key_pressed(KeyCode::Escape) {
+                    break;
+                }
+            }
             State::Playing => {
+                if game.fighter.shield == 0 {
+                    game.state = State::Dead;
+                    continue;
+                }
                 game.fighter.shift().await;
 
                 if game.clouds.is_empty() {
@@ -133,8 +144,23 @@ async fn main() {
                 game.fighter.draw().await;
                 game.draw_info_bar().await;
             }
-            State::Dead => {}
-            State::End => {}
+            State::Dead => {
+                draw_dead_menu(&game);
+                if is_key_pressed(KeyCode::Space) {
+                    game = Game::new(State::Playing).await;
+                    extra_ammo_tick = 0;
+                } else if is_key_pressed(KeyCode::Escape) {
+                    break;
+                }
+            }
+            State::End => {
+                draw_end_menu(&game);
+                if is_key_pressed(KeyCode::Enter) {
+                    //todo: Credits
+                } else if is_key_pressed(KeyCode::Escape) {
+                    break;
+                }
+            }
         }
         next_frame().await
     }
