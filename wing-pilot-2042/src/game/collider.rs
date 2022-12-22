@@ -1,4 +1,5 @@
 use crate::game::game::Game;
+use macroquad::math::Vec2;
 use macroquad::prelude::Rect;
 
 //Axis-Aligned Bounding Box (AABB) Collision Detection
@@ -41,6 +42,7 @@ pub async fn check_enmy_f_coll(game: &mut Game) {
             b.is_alive = false;
             game.score_box.enemy_fighter_damage += 3;
             game.fighter.shield -= 3;
+            game.fighter.is_got_shot = true;
         }
     }
 }

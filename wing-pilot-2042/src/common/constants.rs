@@ -11,3 +11,4 @@ pub const ENEMY_ENTRY_POINT_FACTOR: f32 = 100.;
 pub const FLEET_LIFT_OFF_TIME: i32 = 250;
 pub const CLOUD_SPEED_FACTOR: f32 = 0.15;
 pub const EXTRA_AMMO_SPEED_FACTOR: f32 = 2.;
+pub const EXPLOSION_FRAME_COUNT: f32 = 7.;

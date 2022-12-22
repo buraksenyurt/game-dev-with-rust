@@ -1,23 +1,28 @@
 use crate::common::constants::{
-    COOLING_FACTOR, FIGHTER_DEFAULT_SHIELD_VALUE, FIGHTER_SPEED_FACTOR, MAX_AMMO,
+    COOLING_FACTOR, EXPLOSION_FRAME_COUNT, FIGHTER_DEFAULT_SHIELD_VALUE, FIGHTER_SPEED_FACTOR,
+    MAX_AMMO,
 };
 use crate::entity::bullet::Bullet;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect, Texture2D, Vec2,
+    draw_texture_ex, get_time, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect,
+    Texture2D, Vec2,
 };
 use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
+use std::f32::consts::PI;
 
 pub struct Fighter {
     pub position: Vec2,
     pub life: usize,
     pub bullets: Vec<Bullet>,
     texture: Texture2D,
+    texture_explosion: Texture2D,
     pub ammo_count: usize,
     cooling: f32,
     pub shield: i32,
+    pub is_got_shot: bool,
 }
 
 impl Fighter {
@@ -27,14 +32,17 @@ impl Fighter {
             screen_width() * 0.5 - texture.width() * 0.5,
             screen_height() - texture.height(),
         );
+        let texture_explosion = load_texture("resources/explosion2.png").await.unwrap();
         Self {
             position,
             life: 3,
             bullets: Vec::new(),
             texture,
+            texture_explosion,
             ammo_count: MAX_AMMO,
             cooling: get_frame_time(),
             shield: FIGHTER_DEFAULT_SHIELD_VALUE,
+            is_got_shot: false,
         }
     }
 
@@ -189,6 +197,25 @@ impl Fighter {
             self.position.y,
             WHITE,
             params,
+        );
+    }
+
+    pub async fn draw_on_shot(&self) {
+        let frame_index = 6.;
+        draw_texture_ex(
+            self.texture_explosion,
+            self.position.x + self.texture.width() * 0.3,
+            self.position.y - 30.,
+            WHITE,
+            DrawTextureParams {
+                source: Some(Rect::new(
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT * frame_index,
+                    0f32,
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT,
+                    self.texture_explosion.height(),
+                )),
+                ..Default::default()
+            },
         );
     }
 }
