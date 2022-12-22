@@ -3,15 +3,15 @@ use crate::common::constants::{
     MAX_AMMO,
 };
 use crate::entity::bullet::Bullet;
+use crate::entity::enemy_type::EnemyType;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture_ex, get_time, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect,
+    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect,
     Texture2D, Vec2,
 };
 use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
-use std::f32::consts::PI;
 
 pub struct Fighter {
     pub position: Vec2,
@@ -23,6 +23,7 @@ pub struct Fighter {
     cooling: f32,
     pub shield: i32,
     pub is_got_shot: bool,
+    pub shot_owner: EnemyType,
 }
 
 impl Fighter {
@@ -32,7 +33,7 @@ impl Fighter {
             screen_width() * 0.5 - texture.width() * 0.5,
             screen_height() - texture.height(),
         );
-        let texture_explosion = load_texture("resources/explosion2.png").await.unwrap();
+        let texture_explosion = load_texture("resources/explosion.png").await.unwrap();
         Self {
             position,
             life: 3,
@@ -43,6 +44,7 @@ impl Fighter {
             cooling: get_frame_time(),
             shield: FIGHTER_DEFAULT_SHIELD_VALUE,
             is_got_shot: false,
+            shot_owner: EnemyType::Fighter,
         }
     }
 
@@ -201,18 +203,22 @@ impl Fighter {
     }
 
     pub async fn draw_on_shot(&self) {
-        let frame_index = 6.;
+        let frame_index = match self.shot_owner {
+            EnemyType::Bomber => 1.,
+            EnemyType::Fighter => 2.,
+            EnemyType::Warship(_) => 3.,
+        };
         draw_texture_ex(
             self.texture_explosion,
-            self.position.x + self.texture.width() * 0.3,
-            self.position.y - 30.,
+            self.position.x + self.texture.width() * 0.5,
+            self.position.y-self.texture_explosion.height(),
             WHITE,
             DrawTextureParams {
                 source: Some(Rect::new(
                     self.texture_explosion.width() / EXPLOSION_FRAME_COUNT * frame_index,
                     0f32,
-                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT,
-                    self.texture_explosion.height(),
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT ,
+                    self.texture_explosion.height() ,
                 )),
                 ..Default::default()
             },

@@ -12,20 +12,21 @@ pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
 
     if let Warship(wd) = e_type {
         match wd {
-            WarshipDirection::Left => {
+            Some(WarshipDirection::Left) => {
                 let y = rand::gen_range(
                     screen_height() * 0.3,
                     screen_height() - screen_height() * 0.3,
                 );
                 position = Vec2::new(-ENEMY_ENTRY_POINT_FACTOR * 3., y);
             }
-            WarshipDirection::Right => {
+            Some(WarshipDirection::Right) => {
                 let y = rand::gen_range(
                     screen_height() * 0.3,
                     screen_height() - screen_height() * 0.3,
                 );
                 position = Vec2::new(screen_width() + ENEMY_ENTRY_POINT_FACTOR * 3., y);
             }
+            _ => {}
         }
     }
 

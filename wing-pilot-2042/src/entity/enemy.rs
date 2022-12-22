@@ -34,11 +34,15 @@ impl Enemy {
                 Vec2::new(0., 1.),
             ),
             EnemyType::Warship(wd) => match wd {
-                WarshipDirection::Right => (
+                Some(WarshipDirection::Right) => (
                     load_texture("resources/warship_right.png").await.unwrap(),
                     Vec2::new(-1., 0.),
                 ),
-                WarshipDirection::Left => (
+                Some(WarshipDirection::Left) => (
+                    load_texture("resources/warship_left.png").await.unwrap(),
+                    Vec2::new(1., 0.),
+                ),
+                _ => (
                     load_texture("resources/warship_left.png").await.unwrap(),
                     Vec2::new(1., 0.),
                 ),

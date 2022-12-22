@@ -2,7 +2,7 @@
 pub enum EnemyType {
     Bomber,
     Fighter,
-    Warship(WarshipDirection),
+    Warship(Option<WarshipDirection>),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]

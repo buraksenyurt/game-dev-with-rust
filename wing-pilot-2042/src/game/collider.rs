@@ -1,5 +1,5 @@
+use crate::entity::enemy_type::EnemyType;
 use crate::game::game::Game;
-use macroquad::math::Vec2;
 use macroquad::prelude::Rect;
 
 //Axis-Aligned Bounding Box (AABB) Collision Detection
@@ -43,6 +43,7 @@ pub async fn check_enmy_f_coll(game: &mut Game) {
             game.score_box.enemy_fighter_damage += 3;
             game.fighter.shield -= 3;
             game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Fighter;
         }
     }
 }
@@ -60,6 +61,8 @@ pub async fn check_enmy_b_coll(game: &mut Game) {
             b.is_alive = false;
             game.score_box.enemy_bomber_damage += 2;
             game.fighter.shield -= 2;
+            game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Bomber;
         }
     }
 }
@@ -77,6 +80,8 @@ pub async fn check_enmy_ws_coll(game: &mut Game) {
             b.is_alive = false;
             game.score_box.enemy_warship_damage += 1;
             game.fighter.shield -= 1;
+            game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Warship(None);
         }
     }
 }

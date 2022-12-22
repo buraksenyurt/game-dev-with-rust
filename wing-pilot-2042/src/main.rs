@@ -23,7 +23,7 @@ async fn main() {
     rand::srand(miniquad::date::now() as _);
     let mut game = Game::new(State::Main).await;
     let mut extra_ammo_tick = 0;
-    let mut warship_direction = WarshipDirection::Right;
+    let mut warship_direction = Some(WarshipDirection::Right);
     loop {
         clear_background(DARKBLUE);
 
@@ -72,10 +72,10 @@ async fn main() {
                     }
                 }
                 if game.enemy_warships.actors.is_empty() && game.enemy_warships.bullets.is_empty() {
-                    let left_or_right = rand::gen_range(0, 5);
+                    let left_or_right = rand::gen_range(0, 100);
                     warship_direction = match left_or_right % 3 {
-                        0 => WarshipDirection::Right,
-                        _ => WarshipDirection::Left,
+                        0 => Some(WarshipDirection::Right),
+                        _ => Some(WarshipDirection::Left),
                     };
                     if game.enemy_warships.lift_off_time == 0 {
                         game.enemy_warships =
@@ -99,15 +99,14 @@ async fn main() {
                 shoot_b(&mut game).await;
                 shoot_ws(&mut game).await;
 
-                game.draw_fleet(EnemyType::Warship(WarshipDirection::Right))
+                game.draw_fleet(EnemyType::Warship(Some(WarshipDirection::Right)))
                     .await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
                 game.draw_fighter_bullets().await;
                 game.draw_bullets(EnemyType::Fighter).await;
                 game.draw_bullets(EnemyType::Bomber).await;
-                game.draw_bullets(EnemyType::Warship(warship_direction))
-                    .await;
+                game.draw_bullets(EnemyType::Warship(None)).await;
                 game.draw_clouds().await;
 
                 match &game.extra_ammo_box {
