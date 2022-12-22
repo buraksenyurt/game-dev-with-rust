@@ -21,7 +21,7 @@ use std::f32::consts::PI;
 async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
-    let mut game = Game::new(State::Main).await;
+    let mut game=Game::new(State::Main).await;
     let mut extra_ammo_tick = 0;
     let mut warship_direction = WarshipDirection::Right;
     loop {
@@ -31,13 +31,14 @@ async fn main() {
             State::Main => {
                 draw_main_menu();
                 if is_key_pressed(KeyCode::Space) {
-                    game.state = State::Playing;
+                    game = Game::new(State::Playing).await;
+                    extra_ammo_tick = 0;
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
             }
             State::Playing => {
-                if game.fighter.shield == 0 {
+                if game.fighter.shield <= 0 {
                     game.state = State::Dead;
                     continue;
                 }
@@ -149,15 +150,10 @@ async fn main() {
                 if is_key_pressed(KeyCode::Space) {
                     game = Game::new(State::Playing).await;
                     extra_ammo_tick = 0;
-                } else if is_key_pressed(KeyCode::Escape) {
-                    break;
+                }else if is_key_pressed(KeyCode::Enter){
+                    game.state=State::Main;
                 }
-            }
-            State::End => {
-                draw_end_menu(&game);
-                if is_key_pressed(KeyCode::Enter) {
-                    //todo: Credits
-                } else if is_key_pressed(KeyCode::Escape) {
+                else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
             }

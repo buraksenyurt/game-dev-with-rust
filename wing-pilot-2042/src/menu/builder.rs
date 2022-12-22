@@ -17,6 +17,7 @@ pub fn draw_dead_menu(game: &Game) {
         "".to_string(),
         game.score_box.to_string(),
         "Try again? Press SPACE".to_string(),
+        "For Main Press Enter".to_string(),
         "Press ESC to exit".to_string(),
     ];
 
@@ -35,18 +36,18 @@ pub fn draw_dead_menu(game: &Game) {
 //     draw_menu(&lines);
 // }
 
-pub fn draw_end_menu(game: &Game) {
-    let lines = vec![
-        "Congratulaions Lieutenant.".to_string(),
-        "".to_string(),
-        "Sky is clear.".to_string(),
-        game.score_box.to_string(),
-        "Press ENTER for Credits".to_string(),
-        "Press ESC to exit".to_string(),
-    ];
-
-    draw_menu(&lines);
-}
+// pub fn draw_end_menu(game: &Game) {
+//     let lines = vec![
+//         "Congratulaions Lieutenant.".to_string(),
+//         "".to_string(),
+//         "Sky is clear.".to_string(),
+//         game.score_box.to_string(),
+//         "Press ENTER for Credits".to_string(),
+//         "Press ESC to exit".to_string(),
+//     ];
+//
+//     draw_menu(&lines);
+// }
 
 fn draw_menu(lines: &[String]) {
     for (i, line) in lines.iter().enumerate() {

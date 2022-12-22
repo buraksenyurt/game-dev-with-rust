@@ -39,8 +39,8 @@ pub async fn check_enmy_f_coll(game: &mut Game) {
             || aabb_check(b_rect, tail_wing).await
         {
             b.is_alive = false;
-            game.score_box.enemy_fighter_damage += 1;
-            game.fighter.shield -= 1;
+            game.score_box.enemy_fighter_damage += 3;
+            game.fighter.shield -= 3;
         }
     }
 }
@@ -56,8 +56,8 @@ pub async fn check_enmy_b_coll(game: &mut Game) {
             || aabb_check(b_rect, tail_wing).await
         {
             b.is_alive = false;
-            game.score_box.enemy_bomber_damage += 1;
-            game.fighter.shield -= 1;
+            game.score_box.enemy_bomber_damage += 2;
+            game.fighter.shield -= 2;
         }
     }
 }

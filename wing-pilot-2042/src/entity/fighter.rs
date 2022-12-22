@@ -17,7 +17,7 @@ pub struct Fighter {
     texture: Texture2D,
     pub ammo_count: usize,
     cooling: f32,
-    pub shield: usize,
+    pub shield: i32,
 }
 
 impl Fighter {
