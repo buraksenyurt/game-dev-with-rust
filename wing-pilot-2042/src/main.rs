@@ -12,7 +12,7 @@ use crate::game::collider::{
 };
 use crate::game::game::Game;
 use crate::game::state::State;
-use crate::menu::builder::{draw_dead_menu, draw_end_menu, draw_main_menu};
+use crate::menu::builder::{draw_dead_menu, draw_main_menu};
 use game::conf::window_conf;
 use macroquad::prelude::*;
 use std::f32::consts::PI;
