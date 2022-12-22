@@ -158,15 +158,15 @@ impl Fighter {
         self.ammo_count == 0
     }
 
-    pub fn get_muzzle_point(&self) -> Vec2 {
+    pub async fn get_muzzle_point(&self) -> Vec2 {
         Vec2::new(
             self.position.x + self.texture.width() * 0.5,
             self.position.y,
         )
     }
 
-    pub fn get_body(&self) -> Rect {
-        let muzzle_point = self.get_muzzle_point();
+    pub async fn get_body(&self) -> Rect {
+        let muzzle_point = self.get_muzzle_point().await;
         Rect::new(
             muzzle_point.x - 10.,
             muzzle_point.y,
@@ -174,7 +174,7 @@ impl Fighter {
             self.texture.height(),
         )
     }
-    pub fn get_wing(&self) -> Rect {
+    pub async fn get_wing(&self) -> Rect {
         Rect::new(
             self.position.x,
             self.position.y + 22.,
@@ -183,7 +183,7 @@ impl Fighter {
         )
     }
 
-    pub fn get_tail_wing(&self) -> Rect {
+    pub async fn get_tail_wing(&self) -> Rect {
         Rect::new(self.position.x + 40., self.position.y + 60., 40., 12.)
     }
 

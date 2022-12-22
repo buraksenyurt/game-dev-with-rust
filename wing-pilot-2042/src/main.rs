@@ -8,7 +8,7 @@ use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fleet::Fleet;
 use crate::game::collider::{
-    check_enemy_b_coll, check_enemy_f_coll, check_enemy_ws_coll, check_fighter_with_ammo,
+    check_fighter_with_ammo, fighter_vs_bomber, fighter_vs_fighter, fighter_vs_warship,
 };
 use crate::game::game::Game;
 use crate::game::state::State;
@@ -132,9 +132,9 @@ async fn main() {
                 if check_fighter_with_ammo(&mut game).await {
                     game.fighter.ammo_count += 2;
                 }
-                check_enemy_f_coll(&mut game).await;
-                check_enemy_b_coll(&mut game).await;
-                check_enemy_ws_coll(&mut game).await;
+                fighter_vs_fighter(&mut game).await;
+                fighter_vs_bomber(&mut game).await;
+                fighter_vs_warship(&mut game).await;
 
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
@@ -192,7 +192,8 @@ async fn shoot_e(game: &mut Game) {
 async fn shoot_b(game: &mut Game) {
     for enemy in game.enemy_bombers.actors.iter_mut() {
         if enemy.fire_at_will {
-            let v = (game.fighter.get_muzzle_point() - enemy.get_muzzle_point()).normalize();
+            let v = (game.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
+                .normalize();
             let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
             let vel = Vec2::new(angle.cos(), angle.sin());
             let bullets = enemy.spawn_bullets(vel).await;
@@ -206,7 +207,8 @@ async fn shoot_b(game: &mut Game) {
 async fn shoot_ws(game: &mut Game) {
     for enemy in game.enemy_warships.actors.iter_mut() {
         if enemy.fire_at_will {
-            let v = (game.fighter.get_muzzle_point() - enemy.get_muzzle_point()).normalize();
+            let v = (game.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
+                .normalize();
             let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
             let vel = Vec2::new(angle.cos(), angle.sin());
             let bullets = enemy.spawn_bullets(vel).await;

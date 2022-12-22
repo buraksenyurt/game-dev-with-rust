@@ -5,7 +5,7 @@ use crate::entity::formation::Formation;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Texture2D, Vec2,
+    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Rect, Texture2D, Vec2,
 };
 use macroquad::time::get_fps;
 
@@ -62,6 +62,7 @@ impl Enemy {
             cooling: get_frame_time(),
         }
     }
+
     pub async fn draw(&self) {
         draw_texture(self.texture, self.position.x, self.position.y, WHITE);
     }
@@ -76,7 +77,7 @@ impl Enemy {
         }
     }
 
-    pub fn get_muzzle_point(&self) -> Vec2 {
+    pub async fn get_muzzle_point(&self) -> Vec2 {
         match self.enemy_type {
             EnemyType::Warship(_) => Vec2::new(
                 self.position.x + self.texture.width() * 0.8,
@@ -88,6 +89,52 @@ impl Enemy {
             ),
         }
     }
+
+    pub async fn get_body(&self) -> Option<Rect> {
+        match self.enemy_type {
+            EnemyType::Fighter => Some(Rect::new(
+                self.position.x + self.texture.width() * 0.5 - 15.,
+                self.position.y,
+                30.,
+                self.texture.height(),
+            )),
+            EnemyType::Bomber => Some(Rect::new(
+                self.position.x + self.texture.width() * 0.5 - 2.5,
+                self.position.y,
+                5.,
+                self.texture.height(),
+            )),
+            EnemyType::Warship(Some(_w)) => Some(Rect::new(
+                self.position.x,
+                self.position.y,
+                self.texture.width(),
+                self.texture.height(),
+            )),
+            _ => None,
+        }
+    }
+    pub async fn get_wing(&self) -> Option<Rect> {
+        match self.enemy_type {
+            EnemyType::Fighter => Some(Rect::new(
+                self.position.x,
+                self.position.y + self.texture.height() * 0.6,
+                self.texture.width(),
+                20.,
+            )),
+            EnemyType::Bomber => Some(Rect::new(
+                self.position.x,
+                self.position.y + self.texture.height() * 0.6,
+                self.texture.width(),
+                20.,
+            )),
+            _ => None,
+        }
+    }
+
+    pub async fn get_tail_wing(&self) -> Rect {
+        Rect::new(self.position.x + 40., self.position.y, 40., 10.)
+    }
+
     pub async fn spawn_bullets(&mut self, bullet_velocity: Vec2) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
             match self.enemy_type {
