@@ -143,6 +143,7 @@ async fn main() {
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
                 game.enemy_warships.bullets.retain(|b| b.is_alive);
+                //game.enemy_fighters.actors.retain(|a| a.shield <= 0);
 
                 game.fighter.draw().await;
                 game.draw_info_bar().await;

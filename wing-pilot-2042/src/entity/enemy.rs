@@ -1,4 +1,4 @@
-use crate::common::constants::COOLING_FACTOR;
+use crate::common::constants::*;
 use crate::entity::bullet::Bullet;
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::formation::Formation;
@@ -20,6 +20,7 @@ pub struct Enemy {
     pub fire_at_will: bool,
     pub on_stage: bool,
     cooling: f32,
+    pub shield: i32,
 }
 
 impl Enemy {
@@ -48,7 +49,12 @@ impl Enemy {
                 ),
             },
         };
-        //let formation = get_formation();
+        let shield = match enemy_type {
+            EnemyType::Fighter => ENEMY_FIGHTER_SHIELD,
+            EnemyType::Bomber => ENEMY_BOMBER_SHIELD,
+            EnemyType::Warship(Some(_ws)) => ENEMY_WARSHIP_SHIELD,
+            _ => 0,
+        };
         Self {
             position,
             enemy_type,
@@ -60,6 +66,7 @@ impl Enemy {
             fire_at_will: false,
             on_stage: true,
             cooling: get_frame_time(),
+            shield,
         }
     }
 

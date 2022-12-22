@@ -1,5 +1,5 @@
 use crate::entity::bullet::Bullet;
-use crate::entity::enemy_type::{EnemyType, WarshipDirection};
+use crate::entity::enemy_type::EnemyType;
 use crate::game::game::Game;
 use macroquad::prelude::Rect;
 
@@ -14,44 +14,6 @@ async fn aabb_check(source: Rect, target: &Rect) -> bool {
     }
     false
 }
-
-async fn get_fighter_bodies(game: &mut Game) -> Vec<Rect> {
-    let body = game.fighter.get_body().await;
-    let wing = game.fighter.get_wing().await;
-    let tail_wing = game.fighter.get_tail_wing().await;
-    vec![body, wing, tail_wing]
-}
-
-async fn get_enemy_bodies(game: &mut Game, et: EnemyType) -> Vec<Rect> {
-    let mut sources = Vec::new();
-    match et {
-        EnemyType::Fighter => {
-            for ef in game.enemy_fighters.actors.iter() {
-                sources.push(ef.get_body().await.unwrap());
-                sources.push(ef.get_wing().await.unwrap());
-                sources.push(ef.get_tail_wing().await);
-            }
-        }
-        EnemyType::Bomber => {
-            for eb in game.enemy_bombers.actors.iter() {
-                sources.push(eb.get_body().await.unwrap());
-                sources.push(eb.get_wing().await.unwrap());
-                sources.push(eb.get_tail_wing().await);
-            }
-        }
-        EnemyType::Warship(Some(_ws)) => {
-            for ws in game.enemy_warships.actors.iter() {
-                sources.push(ws.get_body().await.unwrap());
-            }
-        }
-        _ => (),
-    }
-    sources
-}
-
-// async fn get_bomber_bodies(game: &mut Game) -> Vec<Rect> {
-//
-// }
 
 pub async fn check_fighter_with_ammo(game: &mut Game) -> bool {
     match game.extra_ammo_box {
@@ -70,88 +32,103 @@ pub async fn check_fighter_with_ammo(game: &mut Game) -> bool {
 }
 
 pub async fn fighter_vs_fighter(game: &mut Game) {
-    if is_collision_exist(
-        get_fighter_bodies(game).await,
-        &mut game.enemy_fighters.bullets,
-    )
-    .await
-    {
-        game.score_box.enemy_fighter_damage += 3;
-        game.fighter.shield -= 3;
-        game.fighter.is_got_shot = true;
-        game.fighter.shot_owner = EnemyType::Fighter;
-    } else if is_collision_exist(
-        get_enemy_bodies(game, EnemyType::Fighter).await,
-        &mut game.fighter.bullets,
-    )
-    .await
-    {
-        println!("EF - Hitted the enemy fighter");
-        // game.score_box.enemy_fighter_damage += 3;
-        // game.fighter.shield -= 3;
-        // game.fighter.is_got_shot = true;
-        // game.fighter.shot_owner = EnemyType::Fighter;
+    for b in game.fighter.bullets.iter_mut() {
+        for f in game.enemy_fighters.actors.iter_mut() {
+            let bodies = vec![
+                f.get_body().await.unwrap(),
+                f.get_wing().await.unwrap(),
+                f.get_tail_wing().await,
+            ];
+            if is_collision_exist(bodies, b).await {
+                f.shield -= 1;
+                if f.shield <= 0 {
+                    f.on_stage = false;
+                }
+                //println!("Hitted the Fighter {}", f.shield);
+            }
+        }
+    }
+    for b in game.enemy_fighters.bullets.iter_mut() {
+        let bodies = vec![
+            game.fighter.get_body().await,
+            game.fighter.get_wing().await,
+            game.fighter.get_tail_wing().await,
+        ];
+        if is_collision_exist(bodies, b).await {
+            game.score_box.enemy_warship_damage += 3;
+            game.fighter.shield -= 3;
+            game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Bomber;
+        }
     }
 }
 
 pub async fn fighter_vs_bomber(game: &mut Game) {
-    if is_collision_exist(
-        get_fighter_bodies(game).await,
-        &mut game.enemy_bombers.bullets,
-    )
-    .await
-    {
-        game.score_box.enemy_bomber_damage += 2;
-        game.fighter.shield -= 2;
-        game.fighter.is_got_shot = true;
-        game.fighter.shot_owner = EnemyType::Bomber;
-    } else if is_collision_exist(
-        get_enemy_bodies(game, EnemyType::Bomber).await,
-        &mut game.fighter.bullets,
-    )
-    .await
-    {
-        println!("B - Hitted the bomber");
-        // game.score_box.enemy_fighter_damage += 3;
-        // game.fighter.shield -= 3;
-        // game.fighter.is_got_shot = true;
-        // game.fighter.shot_owner = EnemyType::Fighter;
+    for b in game.fighter.bullets.iter_mut() {
+        for bmbr in game.enemy_bombers.actors.iter_mut() {
+            let bodies = vec![
+                bmbr.get_body().await.unwrap(),
+                bmbr.get_wing().await.unwrap(),
+                bmbr.get_tail_wing().await,
+            ];
+            if is_collision_exist(bodies, b).await {
+                bmbr.shield -= 1;
+                if bmbr.shield <= 0 {
+                    bmbr.on_stage = false;
+                }
+                //println!("Hitted the Bomber{}", bmbr.shield);
+            }
+        }
+    }
+    for b in game.enemy_bombers.bullets.iter_mut() {
+        let bodies = vec![
+            game.fighter.get_body().await,
+            game.fighter.get_wing().await,
+            game.fighter.get_tail_wing().await,
+        ];
+        if is_collision_exist(bodies, b).await {
+            game.score_box.enemy_warship_damage += 2;
+            game.fighter.shield -= 2;
+            game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Bomber;
+        }
     }
 }
 
 pub async fn fighter_vs_warship(game: &mut Game) {
-    if is_collision_exist(
-        get_fighter_bodies(game).await,
-        &mut game.enemy_warships.bullets,
-    )
-    .await
-    {
-        game.score_box.enemy_warship_damage += 1;
-        game.fighter.shield -= 1;
-        game.fighter.is_got_shot = true;
-        game.fighter.shot_owner = EnemyType::Warship(None);
-    } else if is_collision_exist(
-        get_enemy_bodies(game, EnemyType::Warship(Some(WarshipDirection::Right))).await,
-        &mut game.fighter.bullets,
-    )
-    .await
-    {
-        println!("WS - Hitted the enemy Warship");
-        // game.score_box.enemy_fighter_damage += 3;
-        // game.fighter.shield -= 3;
-        // game.fighter.is_got_shot = true;
-        // game.fighter.shot_owner = EnemyType::Fighter;
+    for b in game.fighter.bullets.iter_mut() {
+        for ws in game.enemy_warships.actors.iter_mut() {
+            let bodies = vec![ws.get_body().await.unwrap()];
+            if is_collision_exist(bodies, b).await {
+                ws.shield -= 1;
+                if ws.shield <= 0 {
+                    ws.on_stage = false;
+                }
+                //println!("Hitted the warship {}", ws.shield);
+            }
+        }
+    }
+    for b in game.enemy_warships.bullets.iter_mut() {
+        let bodies = vec![
+            game.fighter.get_body().await,
+            game.fighter.get_wing().await,
+            game.fighter.get_tail_wing().await,
+        ];
+        if is_collision_exist(bodies, b).await {
+            game.score_box.enemy_warship_damage += 1;
+            game.fighter.shield -= 1;
+            game.fighter.is_got_shot = true;
+            game.fighter.shot_owner = EnemyType::Warship(None);
+        }
     }
 }
 
-pub async fn is_collision_exist(rect_list: Vec<Rect>, bullets: &mut [Bullet]) -> bool {
-    for b in bullets.iter_mut() {
-        let b_rect = b.get_rect().await;
-        for r in rect_list.iter() {
-            if aabb_check(b_rect, r).await {
-                b.is_alive = false;
-                return true;
-            }
+pub async fn is_collision_exist(rect_list: Vec<Rect>, bullet: &mut Bullet) -> bool {
+    let b_rect = bullet.get_rect().await;
+    for r in rect_list.iter() {
+        if aabb_check(b_rect, r).await {
+            bullet.is_alive = false;
+            return true;
         }
     }
     false
