@@ -8,7 +8,7 @@ use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fleet::Fleet;
 use crate::game::collider::{
-    check_enmy_b_coll, check_enmy_f_coll, check_enmy_ws_coll, check_fighter_with_ammo,
+    check_enemy_b_coll, check_enemy_f_coll, check_enemy_ws_coll, check_fighter_with_ammo,
 };
 use crate::game::game::Game;
 use crate::game::state::State;
@@ -132,9 +132,9 @@ async fn main() {
                 if check_fighter_with_ammo(&mut game).await {
                     game.fighter.ammo_count += 2;
                 }
-                check_enmy_f_coll(&mut game).await;
-                check_enmy_b_coll(&mut game).await;
-                check_enmy_ws_coll(&mut game).await;
+                check_enemy_f_coll(&mut game).await;
+                check_enemy_b_coll(&mut game).await;
+                check_enemy_ws_coll(&mut game).await;
 
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);

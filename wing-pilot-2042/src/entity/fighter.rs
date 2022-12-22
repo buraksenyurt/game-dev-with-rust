@@ -7,8 +7,7 @@ use crate::entity::enemy_type::EnemyType;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect,
-    Texture2D, Vec2,
+    draw_texture_ex, is_key_down, load_texture, DrawTextureParams, KeyCode, Rect, Texture2D, Vec2,
 };
 use macroquad::time::get_frame_time;
 use macroquad::window::{screen_height, screen_width};
@@ -211,14 +210,14 @@ impl Fighter {
         draw_texture_ex(
             self.texture_explosion,
             self.position.x + self.texture.width() * 0.5,
-            self.position.y-self.texture_explosion.height(),
+            self.position.y - self.texture_explosion.height(),
             WHITE,
             DrawTextureParams {
                 source: Some(Rect::new(
                     self.texture_explosion.width() / EXPLOSION_FRAME_COUNT * frame_index,
                     0f32,
-                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT ,
-                    self.texture_explosion.height() ,
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT,
+                    self.texture_explosion.height(),
                 )),
                 ..Default::default()
             },
