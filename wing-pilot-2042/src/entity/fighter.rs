@@ -3,6 +3,7 @@ use crate::common::constants::{
     MAX_AMMO,
 };
 use crate::entity::bullet::Bullet;
+use crate::entity::bullet_type::BulletType;
 use crate::entity::enemy_type::EnemyType;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
@@ -18,7 +19,7 @@ pub struct Fighter {
     pub bullets: Vec<Bullet>,
     texture: Texture2D,
     texture_explosion: Texture2D,
-    pub ammo_count: usize,
+    pub ammo_count: i32,
     cooling: f32,
     pub shield: i32,
     pub is_got_shot: bool,
@@ -48,8 +49,7 @@ impl Fighter {
     }
 
     pub async fn shoot(&mut self) {
-        if self.ammo_count == 0 {
-            //println!("Out of ammo");
+        if self.ammo_count <= 0 {
             return;
         }
         if is_key_down(KeyCode::S) {
@@ -58,9 +58,29 @@ impl Fighter {
                 self.bullets.append(&mut b);
                 self.ammo_count -= 2;
             }
+        } else if is_key_down(KeyCode::A) {
+            let bullet = Self::spawn_contra_missile(self).await;
+            if let Some(b) = bullet {
+                self.bullets.push(b);
+                self.ammo_count -= 1;
+            }
         }
     }
-
+    async fn spawn_contra_missile(&mut self) -> Option<Bullet> {
+        if self.cooling <= 0. {
+            let l = Vec2::new(
+                self.position.x + self.texture.width() * 0.5,
+                self.position.y,
+            );
+            let mut bullet = Bullet::spawn(Owner::Fighter, l).await;
+            bullet.bullet_type = BulletType::ContraMissile;
+            self.cooling = get_frame_time();
+            Some(bullet)
+        } else {
+            self.cooling -= get_frame_time() * COOLING_FACTOR;
+            None
+        }
+    }
     async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
             let lm = Vec2::new(
@@ -71,8 +91,10 @@ impl Fighter {
                 self.position.x + (self.texture.width() - self.texture.width() * 0.2),
                 self.position.y,
             );
-            let bullet_1 = Bullet::spawn(Owner::Fighter, lm).await;
-            let bullet_2 = Bullet::spawn(Owner::Fighter, rm).await;
+            let mut bullet_1 = Bullet::spawn(Owner::Fighter, lm).await;
+            bullet_1.bullet_type = BulletType::MachineGun;
+            let mut bullet_2 = Bullet::spawn(Owner::Fighter, rm).await;
+            bullet_2.bullet_type = BulletType::MachineGun;
             self.cooling = get_frame_time();
             Some(vec![bullet_1, bullet_2])
         } else {
@@ -169,7 +191,7 @@ impl Fighter {
     }
 
     pub async fn out_of_ammo(&self) -> bool {
-        self.ammo_count == 0
+        self.ammo_count <= 0
     }
 
     pub async fn get_muzzle_point(&self) -> Vec2 {

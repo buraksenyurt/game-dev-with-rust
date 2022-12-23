@@ -1,4 +1,5 @@
 use crate::entity::bullet::Bullet;
+use crate::entity::bullet_type::BulletType;
 use crate::entity::enemy_type::EnemyType;
 use crate::game::game::Game;
 use macroquad::prelude::Rect;
@@ -119,6 +120,25 @@ pub async fn fighter_vs_warship(game: &mut Game) {
             game.fighter.shield -= 1;
             game.fighter.is_got_shot = true;
             game.fighter.shot_owner = EnemyType::Warship(None);
+        }
+    }
+}
+
+pub async fn fighter_vs_warship_missile(game: &mut Game) {
+    for b in game
+        .fighter
+        .bullets
+        .iter_mut()
+        .find(|b| b.bullet_type == BulletType::ContraMissile)
+    {
+        for m in game.enemy_warships.bullets.iter_mut() {
+            print!("we are in");
+            let rect = Rect::new(m.location.x, m.location.y, 64., 64.);
+            if is_collision_exist(vec![rect], b).await {
+                println!("Collision check");
+                b.is_alive = false;
+                m.is_alive = false;
+            }
         }
     }
 }

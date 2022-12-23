@@ -2,6 +2,7 @@ pub mod asset;
 pub mod asset_builder;
 mod asset_type;
 pub mod bullet;
+pub mod bullet_type;
 pub mod enemy;
 pub mod enemy_builder;
 pub mod enemy_type;

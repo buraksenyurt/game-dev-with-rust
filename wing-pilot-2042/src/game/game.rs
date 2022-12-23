@@ -8,7 +8,7 @@ use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
 use crate::game::scorebox::Scorebox;
 use crate::game::state::State;
-use macroquad::prelude::{draw_text, info, measure_text, screen_height, Vec2, GOLD};
+use macroquad::prelude::{draw_text, measure_text, screen_height, Vec2, GOLD};
 use macroquad::time::get_frame_time;
 use macroquad::window::screen_width;
 use std::f32::consts::PI;
@@ -49,7 +49,7 @@ impl Game {
             e.position += e.velocity * speed_factor;
             match actor {
                 EnemyType::Warship(_) => {
-                    info!("Warship position {}", e.position);
+                    //info!("Warship position {}", e.position);
                     if e.position.x >= screen_width() * 0.3 || e.position.x < screen_width() * 0.7 {
                         //e.velocity = e.formation.velocity;
                         //e.is_formation_on = true;

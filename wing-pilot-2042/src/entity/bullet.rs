@@ -1,3 +1,4 @@
+use crate::entity::bullet_type::BulletType;
 use crate::entity::owner::Owner;
 use macroquad::math::Rect;
 use macroquad::prelude::{draw_texture_ex, load_texture, DrawTextureParams, Vec2, RED, WHITE};
@@ -9,6 +10,7 @@ pub struct Bullet {
     pub velocity: Vec2,
     pub rotation: f32,
     pub is_alive: bool,
+    pub bullet_type: BulletType,
 }
 
 impl Bullet {
@@ -19,6 +21,7 @@ impl Bullet {
             rotation: 0.,
             velocity: Vec2::default(),
             is_alive: true,
+            bullet_type: BulletType::Any,
         }
     }
 

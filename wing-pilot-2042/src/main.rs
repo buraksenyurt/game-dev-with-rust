@@ -5,9 +5,10 @@ mod menu;
 
 use crate::common::constants::{EXTRA_AMMO_SPEED_FACTOR, MAX_AMMO};
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
-use crate::entity::enemy_type::{EnemyType, WarshipDirection};
+use crate::entity::enemy_type::EnemyType;
 use crate::game::collider::{
     check_fighter_with_ammo, fighter_vs_bomber, fighter_vs_fighter, fighter_vs_warship,
+    fighter_vs_warship_missile,
 };
 use crate::game::game::Game;
 use crate::game::state::State;
@@ -65,8 +66,7 @@ async fn main() {
                     game.recalc_distance().await;
                 }
 
-                game.draw_fleet(EnemyType::Warship(Some(WarshipDirection::Right)))
-                    .await;
+                game.draw_fleet(EnemyType::Warship(None)).await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
                 game.draw_fighter_bullets().await;
@@ -79,13 +79,11 @@ async fn main() {
                     Some(mut ammo) => {
                         if extra_ammo_tick == ammo.lift_of_time.unwrap() {
                             ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
-
                             if ammo.location.y > screen_height() + ammo.texture.height() {
                                 game.extra_ammo_box = None;
                                 extra_ammo_tick = 0;
                                 continue;
                             }
-
                             game.extra_ammo_box = Some(ammo);
                             ammo.draw();
                         } else {
@@ -101,6 +99,7 @@ async fn main() {
                 fighter_vs_fighter(&mut game).await;
                 fighter_vs_bomber(&mut game).await;
                 fighter_vs_warship(&mut game).await;
+                fighter_vs_warship_missile(&mut game).await;
 
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
