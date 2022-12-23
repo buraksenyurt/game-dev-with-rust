@@ -3,10 +3,9 @@ mod entity;
 mod game;
 mod menu;
 
-use crate::common::constants::EXTRA_AMMO_SPEED_FACTOR;
+use crate::common::constants::{EXTRA_AMMO_SPEED_FACTOR, MAX_AMMO};
 use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
-use crate::entity::fleet::Fleet;
 use crate::game::collider::{
     check_fighter_with_ammo, fighter_vs_bomber, fighter_vs_fighter, fighter_vs_warship,
 };
@@ -15,7 +14,6 @@ use crate::game::state::State;
 use crate::menu::builder::{draw_dead_menu, draw_main_menu};
 use game::conf::window_conf;
 use macroquad::prelude::*;
-use std::f32::consts::PI;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -50,55 +48,21 @@ async fn main() {
                 if game.clouds.is_empty() {
                     game.clouds = create_clouds(3).await;
                 }
-                if game.enemy_fighters.actors.is_empty() && game.enemy_fighters.bullets.is_empty() {
-                    if game.enemy_fighters.lift_off_time == 0 {
-                        game.enemy_fighters = Fleet::new(4, EnemyType::Fighter).await;
-                        info!(
-                            "Fleet(F) lift of time {}",
-                            game.enemy_fighters.lift_off_time
-                        );
-                    } else {
-                        game.enemy_fighters.lift_off_time -= 1;
-                    }
-                }
-
-                if game.enemy_bombers.actors.is_empty() && game.enemy_bombers.bullets.is_empty() {
-                    if game.enemy_bombers.lift_off_time == 0 {
-                        game.enemy_bombers = Fleet::new(3, EnemyType::Bomber).await;
-                        info!("Fleet(B) lift of time {}", game.enemy_bombers.lift_off_time);
-                    } else {
-                        game.enemy_bombers.lift_off_time -= 1;
-                    }
-                }
-                if game.enemy_warships.actors.is_empty() && game.enemy_warships.bullets.is_empty() {
-                    let left_or_right = rand::gen_range(0, 100);
-                    let warship_direction = match left_or_right % 3 {
-                        0 => Some(WarshipDirection::Right),
-                        _ => Some(WarshipDirection::Left),
-                    };
-                    if game.enemy_warships.lift_off_time == 0 {
-                        game.enemy_warships =
-                            Fleet::new(1, EnemyType::Warship(warship_direction)).await;
-                        info!(
-                            "Fleet(WS) lift of time {}",
-                            game.enemy_warships.lift_off_time
-                        );
-                    } else {
-                        game.enemy_warships.lift_off_time -= 1;
-                    }
-                }
+                game.spawn_enemy_fighters().await;
+                game.spawn_enemy_bombers().await;
+                game.spawn_enemy_warships().await;
 
                 if game.fighter.out_of_ammo().await && game.extra_ammo_box == None {
                     let ammo = create_extra_ammo().await;
                     game.extra_ammo_box = Some(ammo);
                     //info!("Extra ammo created");
                 }
-                shoot(&mut game).await;
-                shoot_e(&mut game).await;
-                shoot_b(&mut game).await;
-                shoot_ws(&mut game).await;
+                game.fighter.shoot().await;
+                game.enemy_shot().await;
+                game.bomber_shot().await;
+                game.warship_shot().await;
                 if rand::gen_range(0, 100) == 0 {
-                    recalc_distance(&mut game).await;
+                    game.recalc_distance().await;
                 }
 
                 game.draw_fleet(EnemyType::Warship(Some(WarshipDirection::Right)))
@@ -131,7 +95,7 @@ async fn main() {
                     None => {}
                 }
 
-                if check_fighter_with_ammo(&mut game).await {
+                if check_fighter_with_ammo(&mut game).await && game.fighter.ammo_count <= MAX_AMMO {
                     game.fighter.ammo_count += 2;
                 }
                 fighter_vs_fighter(&mut game).await;
@@ -146,7 +110,6 @@ async fn main() {
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
                 game.enemy_warships.bullets.retain(|b| b.is_alive);
-                //game.enemy_fighters.actors.retain(|a| a.shield <= 0);
 
                 game.fighter.draw().await;
                 game.draw_info_bar().await;
@@ -164,70 +127,5 @@ async fn main() {
             }
         }
         next_frame().await
-    }
-}
-
-async fn shoot(game: &mut Game) {
-    if game.fighter.ammo_count == 0 {
-        //println!("Out of ammo");
-        return;
-    }
-    if is_key_down(KeyCode::S) {
-        let bullets = game.fighter.spawn_bullets().await;
-        if let Some(mut b) = bullets {
-            game.fighter.bullets.append(&mut b);
-            game.fighter.ammo_count -= 2;
-        }
-    }
-}
-
-async fn shoot_e(game: &mut Game) {
-    for enemy in game.enemy_fighters.actors.iter_mut() {
-        if enemy.fire_at_will {
-            let bullets = enemy.spawn_bullets(Vec2::new(0., 1.), 0.).await;
-            if let Some(mut b) = bullets {
-                game.enemy_fighters.bullets.append(&mut b);
-            }
-        }
-    }
-}
-
-async fn shoot_b(game: &mut Game) {
-    for enemy in game.enemy_bombers.actors.iter_mut() {
-        if enemy.fire_at_will {
-            let v = (game.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
-                .normalize();
-            let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
-            let vel = Vec2::new(angle.cos(), angle.sin());
-            let bullets = enemy.spawn_bullets(vel, angle).await;
-            if let Some(mut b) = bullets {
-                game.enemy_bombers.bullets.append(&mut b);
-            }
-        }
-    }
-}
-
-async fn shoot_ws(game: &mut Game) {
-    for enemy in game.enemy_warships.actors.iter_mut() {
-        if enemy.fire_at_will {
-            let v = (game.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
-                .normalize();
-            let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
-            let vel = Vec2::new(angle.cos(), angle.sin());
-            let bullets = enemy.spawn_bullets(vel, angle).await;
-            if let Some(mut b) = bullets {
-                game.enemy_warships.bullets.append(&mut b);
-            }
-        }
-    }
-}
-
-async fn recalc_distance(game: &mut Game) {
-    for b in game.enemy_warships.bullets.iter_mut() {
-        let v = (game.fighter.get_muzzle_point().await - b.location).normalize();
-        let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
-        let vel = Vec2::new(angle.cos(), angle.sin());
-        b.rotation = angle;
-        b.velocity = vel;
     }
 }

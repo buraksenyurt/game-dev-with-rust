@@ -47,7 +47,21 @@ impl Fighter {
         }
     }
 
-    pub async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
+    pub async fn shoot(&mut self) {
+        if self.ammo_count == 0 {
+            //println!("Out of ammo");
+            return;
+        }
+        if is_key_down(KeyCode::S) {
+            let bullets = Self::spawn_bullets(self).await;
+            if let Some(mut b) = bullets {
+                self.bullets.append(&mut b);
+                self.ammo_count -= 2;
+            }
+        }
+    }
+
+    async fn spawn_bullets(&mut self) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
             let lm = Vec2::new(
                 self.position.x + self.texture.width() * 0.2,

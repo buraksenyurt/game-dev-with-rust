@@ -3,13 +3,15 @@ use crate::common::constants::{
     ENEMY_WARSHIP_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR, INFO_BAR_MARGIN,
 };
 use crate::entity::asset::Asset;
-use crate::entity::enemy_type::EnemyType;
+use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
 use crate::game::scorebox::Scorebox;
 use crate::game::state::State;
-use macroquad::prelude::{draw_text, measure_text, screen_height, Vec2, GOLD};
+use macroquad::prelude::{draw_text, info, measure_text, screen_height, Vec2, GOLD};
+use macroquad::time::get_frame_time;
 use macroquad::window::screen_width;
+use std::f32::consts::PI;
 
 pub struct Game {
     pub state: State,
@@ -47,6 +49,7 @@ impl Game {
             e.position += e.velocity * speed_factor;
             match actor {
                 EnemyType::Warship(_) => {
+                    info!("Warship position {}", e.position);
                     if e.position.x >= screen_width() * 0.3 || e.position.x < screen_width() * 0.7 {
                         //e.velocity = e.formation.velocity;
                         //e.is_formation_on = true;
@@ -123,5 +126,92 @@ impl Game {
             24.,
             GOLD,
         );
+    }
+
+    pub async fn enemy_shot(&mut self) {
+        for enemy in self.enemy_fighters.actors.iter_mut() {
+            if enemy.fire_at_will {
+                let bullets = enemy.spawn_bullets(Vec2::new(0., 1.), 0.).await;
+                if let Some(mut b) = bullets {
+                    self.enemy_fighters.bullets.append(&mut b);
+                }
+            }
+        }
+    }
+
+    pub async fn bomber_shot(&mut self) {
+        for enemy in self.enemy_bombers.actors.iter_mut() {
+            if enemy.fire_at_will {
+                let v = (self.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
+                    .normalize();
+                let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+                let vel = Vec2::new(angle.cos(), angle.sin());
+                let bullets = enemy.spawn_bullets(vel, angle).await;
+                if let Some(mut b) = bullets {
+                    self.enemy_bombers.bullets.append(&mut b);
+                }
+            }
+        }
+    }
+
+    pub async fn warship_shot(&mut self) {
+        for enemy in self.enemy_warships.actors.iter_mut() {
+            if enemy.fire_at_will {
+                let v = (self.fighter.get_muzzle_point().await - enemy.get_muzzle_point().await)
+                    .normalize();
+                let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+                let vel = Vec2::new(angle.cos(), angle.sin());
+                let bullets = enemy.spawn_bullets(vel, angle).await;
+                if let Some(mut b) = bullets {
+                    self.enemy_warships.bullets.append(&mut b);
+                }
+            }
+        }
+    }
+
+    pub async fn recalc_distance(&mut self) {
+        for b in self.enemy_warships.bullets.iter_mut() {
+            let v = (self.fighter.get_muzzle_point().await - b.location).normalize();
+            let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+            let vel = Vec2::new(angle.cos(), angle.sin());
+            b.rotation = angle;
+            b.velocity = vel;
+        }
+    }
+
+    pub async fn spawn_enemy_fighters(&mut self) {
+        if self.enemy_fighters.actors.is_empty() && self.enemy_fighters.bullets.is_empty() {
+            if self.enemy_fighters.lift_off_time == 0 {
+                self.enemy_fighters = Fleet::new(4, EnemyType::Fighter).await;
+            } else {
+                self.enemy_fighters.lift_off_time -= 1;
+            }
+        }
+    }
+
+    pub async fn spawn_enemy_warships(&mut self) {
+        if self.enemy_warships.actors.is_empty() && self.enemy_warships.bullets.is_empty() {
+            let v = get_frame_time().floor() % 2.;
+            let warship_direction = match v == 0. {
+                true => Some(WarshipDirection::Left),
+                _ => Some(WarshipDirection::Right),
+            };
+            //println!("Left or right {}", v);
+            if self.enemy_warships.lift_off_time == 0 {
+                self.enemy_warships = Fleet::new(1, EnemyType::Warship(warship_direction)).await;
+            } else {
+                self.enemy_warships.lift_off_time -= 1;
+            }
+        }
+    }
+
+    pub async fn spawn_enemy_bombers(&mut self) {
+        if self.enemy_bombers.actors.is_empty() && self.enemy_bombers.bullets.is_empty() {
+            if self.enemy_bombers.lift_off_time == 0 {
+                self.enemy_bombers = Fleet::new(3, EnemyType::Bomber).await;
+            } else {
+                self.enemy_bombers.lift_off_time -= 1;
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ use crate::entity::enemy_type::EnemyType::Warship;
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::formation::get_formation;
 use macroquad::math::Vec2;
-use macroquad::prelude::{rand, screen_height, screen_width};
+use macroquad::prelude::{info, rand, screen_height, screen_width};
 
 pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
     let x = rand::gen_range(screen_width() * 0.2, screen_width() - screen_width() * 0.2);
@@ -25,6 +25,7 @@ pub async fn create_enemies(count: usize, e_type: EnemyType) -> Vec<Enemy> {
                     screen_height() - screen_height() * 0.3,
                 );
                 position = Vec2::new(screen_width() + ENEMY_ENTRY_POINT_FACTOR * 3., y);
+                info!("Created Warship at position {}", position);
             }
             _ => {}
         }
