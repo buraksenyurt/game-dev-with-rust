@@ -97,6 +97,9 @@ async fn main() {
                 shoot_e(&mut game).await;
                 shoot_b(&mut game).await;
                 shoot_ws(&mut game).await;
+                if rand::gen_range(0, 100) == 0 {
+                    recalc_distance(&mut game).await;
+                }
 
                 game.draw_fleet(EnemyType::Warship(Some(WarshipDirection::Right)))
                     .await;
@@ -216,5 +219,15 @@ async fn shoot_ws(game: &mut Game) {
                 game.enemy_warships.bullets.append(&mut b);
             }
         }
+    }
+}
+
+async fn recalc_distance(game: &mut Game) {
+    for b in game.enemy_warships.bullets.iter_mut() {
+        let v = (game.fighter.get_muzzle_point().await - b.location).normalize();
+        let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
+        let vel = Vec2::new(angle.cos(), angle.sin());
+        b.rotation = angle;
+        b.velocity = vel;
     }
 }
