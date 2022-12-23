@@ -62,7 +62,7 @@ async fn main() {
                 game.enemy_shot().await;
                 game.bomber_shot().await;
                 game.warship_shot().await;
-                if rand::gen_range(0, 100) == 0 {
+                if rand::gen_range(0, 25) == 0 {
                     game.recalc_distance().await;
                 }
 
@@ -104,11 +104,11 @@ async fn main() {
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
                 game.enemy_bombers.actors.retain(|b| b.on_stage);
-                game.enemy_warships.actors.retain(|b| b.on_stage);
+                game.enemy_warships.actors.retain(|ws| ws.on_stage);
                 game.fighter.bullets.retain(|b| b.is_alive);
                 game.enemy_fighters.bullets.retain(|f| f.is_alive);
                 game.enemy_bombers.bullets.retain(|b| b.is_alive);
-                game.enemy_warships.bullets.retain(|b| b.is_alive);
+                game.enemy_warships.bullets.retain(|ws| ws.is_alive);
 
                 game.fighter.draw().await;
                 game.draw_info_bar().await;

@@ -55,6 +55,12 @@ impl Game {
                         //e.is_formation_on = true;
                         e.fire_at_will = true;
                     }
+                    if e.out_of_borders().await {
+                        self.enemy_warships
+                            .bullets
+                            .iter_mut()
+                            .for_each(|mut b| b.is_alive = false);
+                    }
                 }
                 _ => {
                     if !e.is_formation_on && e.position.y >= e.formation.start_y {
@@ -64,8 +70,7 @@ impl Game {
                     }
                 }
             }
-
-            e.check_borders().await;
+            e.out_of_borders().await;
             e.draw().await;
         }
     }
@@ -89,7 +94,7 @@ impl Game {
         for b in self.fighter.bullets.iter_mut() {
             b.location += Vec2::new(0., -1.) * FIGHTER_BULLET_SPEED_FACTOR;
             b.draw().await;
-            if b.location.x < 0. {
+            if b.location.y < -10. {
                 b.is_alive = false;
             }
         }

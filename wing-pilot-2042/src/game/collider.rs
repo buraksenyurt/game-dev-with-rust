@@ -104,6 +104,10 @@ pub async fn fighter_vs_warship(game: &mut Game) {
                 ws.shield -= 1;
                 if ws.shield <= 0 {
                     ws.on_stage = false;
+                    game.enemy_warships
+                        .bullets
+                        .iter_mut()
+                        .for_each(|mut b| b.is_alive = false);
                 }
                 //println!("Hitted the warship {}", ws.shield);
             }
@@ -125,17 +129,17 @@ pub async fn fighter_vs_warship(game: &mut Game) {
 }
 
 pub async fn fighter_vs_warship_missile(game: &mut Game) {
-    for b in game
-        .fighter
-        .bullets
-        .iter_mut()
-        .find(|b| b.bullet_type == BulletType::ContraMissile)
-    {
-        for m in game.enemy_warships.bullets.iter_mut() {
-            print!("we are in");
-            let rect = Rect::new(m.location.x, m.location.y, 64., 64.);
+    for m in game.enemy_warships.bullets.iter_mut() {
+        let rect = Rect::new(m.location.x - 32., m.location.y - 32., 64., 64.);
+        if let Some(b) = game
+            .fighter
+            .bullets
+            .iter_mut()
+            .find(|b| b.bullet_type == BulletType::ContraMissile)
+        {
+            //let v = Vec2::new(b.location.x - m.location.x, b.location.y - m.location.y);
             if is_collision_exist(vec![rect], b).await {
-                println!("Collision check");
+                //println!("Collision check");
                 b.is_alive = false;
                 m.is_alive = false;
             }

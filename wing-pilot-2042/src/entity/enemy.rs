@@ -74,14 +74,16 @@ impl Enemy {
         draw_texture(self.texture, self.position.x, self.position.y, WHITE);
     }
 
-    pub async fn check_borders(&mut self) {
+    pub async fn out_of_borders(&mut self) -> bool {
         if (self.velocity.y < 0. && self.position.y + self.texture.height() < 0.)
             || (self.velocity.x < 0. && self.position.x + self.texture.width() < 0.)
             || (self.position.x > screen_width() + self.texture.width()
                 || self.position.y > screen_height() + self.texture.height())
         {
             self.on_stage = false;
+            return true;
         }
+        false
     }
 
     pub async fn get_muzzle_point(&self) -> Vec2 {
