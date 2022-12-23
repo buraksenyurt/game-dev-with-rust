@@ -142,7 +142,7 @@ impl Enemy {
         Rect::new(self.position.x + 40., self.position.y, 40., 10.)
     }
 
-    pub async fn spawn_bullets(&mut self, bullet_velocity: Vec2) -> Option<Vec<Bullet>> {
+    pub async fn spawn_bullets(&mut self, vel: Vec2, rad: f32) -> Option<Vec<Bullet>> {
         if self.cooling <= 0. {
             match self.enemy_type {
                 EnemyType::Bomber => {
@@ -151,7 +151,7 @@ impl Enemy {
                         self.position.y + self.texture.height(),
                     );
                     let mut bullet = Bullet::spawn(Owner::EnemyBomber, cm).await;
-                    bullet.velocity = bullet_velocity;
+                    bullet.velocity = vel;
                     self.cooling = get_frame_time() * get_fps() as f32 * 1.65;
                     Some(vec![bullet])
                 }
@@ -165,9 +165,9 @@ impl Enemy {
                         self.position.y + self.texture.height() * 0.8,
                     );
                     let mut bullet_1 = Bullet::spawn(Owner::EnemyFighter, lm).await;
-                    bullet_1.velocity = bullet_velocity;
+                    bullet_1.velocity = vel;
                     let mut bullet_2 = Bullet::spawn(Owner::EnemyFighter, rm).await;
-                    bullet_2.velocity = bullet_velocity;
+                    bullet_2.velocity = vel;
                     self.cooling = get_frame_time() * get_fps() as f32 * 0.35;
 
                     Some(vec![bullet_1, bullet_2])
@@ -178,7 +178,8 @@ impl Enemy {
                         self.position.y + self.texture.height() * 0.5,
                     );
                     let mut bullet_1 = Bullet::spawn(Owner::Warship, dm).await;
-                    bullet_1.velocity = bullet_velocity;
+                    bullet_1.velocity = vel;
+                    bullet_1.rotation = rad;
                     self.cooling = get_frame_time() * get_fps() as f32 * 4.;
 
                     Some(vec![bullet_1])

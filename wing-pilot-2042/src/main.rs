@@ -181,7 +181,7 @@ async fn shoot(game: &mut Game) {
 async fn shoot_e(game: &mut Game) {
     for enemy in game.enemy_fighters.actors.iter_mut() {
         if enemy.fire_at_will {
-            let bullets = enemy.spawn_bullets(Vec2::new(0., 1.)).await;
+            let bullets = enemy.spawn_bullets(Vec2::new(0., 1.), 0.).await;
             if let Some(mut b) = bullets {
                 game.enemy_fighters.bullets.append(&mut b);
             }
@@ -196,7 +196,7 @@ async fn shoot_b(game: &mut Game) {
                 .normalize();
             let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
             let vel = Vec2::new(angle.cos(), angle.sin());
-            let bullets = enemy.spawn_bullets(vel).await;
+            let bullets = enemy.spawn_bullets(vel, angle).await;
             if let Some(mut b) = bullets {
                 game.enemy_bombers.bullets.append(&mut b);
             }
@@ -211,7 +211,7 @@ async fn shoot_ws(game: &mut Game) {
                 .normalize();
             let angle = 2. * PI - v.angle_between(Vec2::new(1., 0.));
             let vel = Vec2::new(angle.cos(), angle.sin());
-            let bullets = enemy.spawn_bullets(vel).await;
+            let bullets = enemy.spawn_bullets(vel, angle).await;
             if let Some(mut b) = bullets {
                 game.enemy_warships.bullets.append(&mut b);
             }

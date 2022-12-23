@@ -1,12 +1,13 @@
 use crate::entity::owner::Owner;
 use macroquad::math::Rect;
-use macroquad::prelude::{Vec2, BLACK, RED, WHITE};
+use macroquad::prelude::{draw_texture_ex, load_texture, DrawTextureParams, Vec2, RED, WHITE};
 use macroquad::shapes::draw_rectangle;
 
 pub struct Bullet {
     owner: Owner,
     pub location: Vec2,
     pub velocity: Vec2,
+    pub rotation: f32,
     pub is_alive: bool,
 }
 
@@ -15,6 +16,7 @@ impl Bullet {
         Self {
             owner,
             location,
+            rotation: 0.,
             velocity: Vec2::default(),
             is_alive: true,
         }
@@ -29,7 +31,12 @@ impl Bullet {
                 draw_rectangle(self.location.x, self.location.y, 6., 6., RED);
             }
             Owner::Warship => {
-                draw_rectangle(self.location.x, self.location.y, 5., 5., BLACK);
+                let texture = load_texture("resources/ws_missile.png").await.unwrap();
+                let params = DrawTextureParams {
+                    rotation: self.rotation,
+                    ..Default::default()
+                };
+                draw_texture_ex(texture, self.location.x, self.location.y, WHITE, params);
             }
         }
     }
