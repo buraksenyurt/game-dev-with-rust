@@ -1,6 +1,6 @@
 use crate::common::constants::{
     CLOUD_SPEED_FACTOR, ENEMY_BOMBER_SPEED_FACTOR, ENEMY_FIGHTER_SPEED_FACTOR,
-    ENEMY_WARSHIP_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR, INFO_BAR_MARGIN,
+    ENEMY_WARSHIP_SPEED_FACTOR, FIGHTER_BULLET_SPEED_FACTOR, GROUND_SPEED_FACTOR, INFO_BAR_MARGIN,
 };
 use crate::entity::asset::Asset;
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
@@ -20,6 +20,7 @@ pub struct Game {
     pub enemy_warships: Fleet,
     pub fighter: Fighter,
     pub clouds: Vec<Asset>,
+    pub grounds: Vec<Asset>,
     pub extra_ammo_box: Option<Asset>,
     pub score_box: Scorebox,
 }
@@ -33,6 +34,7 @@ impl Game {
             enemy_warships: Fleet::default(),
             fighter: Fighter::new().await,
             clouds: Vec::default(),
+            grounds: Vec::default(),
             extra_ammo_box: None,
             score_box: Scorebox::default(),
         }
@@ -107,6 +109,16 @@ impl Game {
                 c.on_stage = false;
             }
             c.draw();
+        }
+    }
+
+    pub async fn draw_grounds(&mut self) {
+        for g in self.grounds.iter_mut() {
+            g.location += g.velocity * GROUND_SPEED_FACTOR;
+            if g.location.y - g.texture.height() > screen_height() {
+                g.on_stage = false;
+            }
+            g.draw();
         }
     }
 

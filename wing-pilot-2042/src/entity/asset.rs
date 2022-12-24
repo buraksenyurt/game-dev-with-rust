@@ -15,21 +15,23 @@ pub struct Asset {
 
 impl Asset {
     pub async fn new(asset_type: AssetType, location: Vec2) -> Self {
-        let cloud_names = vec![
+        let clouds = vec![
             "resources/cloud1.png",
             "resources/cloud2.png",
             "resources/cloud3.png",
             "resources/cloud4.png",
             "resources/cloud5.png",
         ];
+        let grounds = vec!["resources/ground_1.png", "resources/ground_2.png"];
         let texture = match asset_type {
-            AssetType::Fuel => load_texture("resources/fuel_station.png").await.unwrap(),
-            AssetType::GreenLand => load_texture("resources/greenland.png").await.unwrap(),
-            AssetType::Island => load_texture("resources/island.png").await.unwrap(),
+            AssetType::Ground => {
+                let index = rand::gen_range(0, grounds.len());
+                load_texture(grounds[index]).await.unwrap()
+            }
             AssetType::ExtraAmmo => load_texture("resources/extra_ammo.png").await.unwrap(),
             AssetType::Cloud => {
-                let index = rand::gen_range(0, 5);
-                load_texture(cloud_names[index]).await.unwrap()
+                let index = rand::gen_range(0, clouds.len());
+                load_texture(clouds[index]).await.unwrap()
             }
             AssetType::None => Texture2D::empty(),
         };

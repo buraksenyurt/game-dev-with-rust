@@ -4,7 +4,8 @@ mod game;
 mod menu;
 
 use crate::common::constants::{EXTRA_AMMO_SPEED_FACTOR, MAX_AMMO};
-use crate::entity::asset_builder::{create_clouds, create_extra_ammo};
+use crate::entity::asset_builder::{create_assets, create_extra_ammo};
+use crate::entity::asset_type::AssetType;
 use crate::entity::enemy_type::EnemyType;
 use crate::game::collider::{
     check_fighter_with_ammo, fighter_vs_bomber, fighter_vs_fighter, fighter_vs_warship,
@@ -46,9 +47,13 @@ async fn main() {
                 }
                 game.fighter.shift().await;
 
-                if game.clouds.is_empty() {
-                    game.clouds = create_clouds(3).await;
+                if game.grounds.is_empty() {
+                    game.grounds = create_assets(1, AssetType::Ground).await;
                 }
+                if game.clouds.is_empty() {
+                    game.clouds = create_assets(3, AssetType::Cloud).await;
+                }
+
                 game.spawn_enemy_fighters().await;
                 game.spawn_enemy_bombers().await;
                 game.spawn_enemy_warships().await;
@@ -74,6 +79,7 @@ async fn main() {
                 game.draw_bullets(EnemyType::Bomber).await;
                 game.draw_bullets(EnemyType::Warship(None)).await;
                 game.draw_clouds().await;
+                game.draw_grounds().await;
 
                 match &game.extra_ammo_box {
                     Some(mut ammo) => {
