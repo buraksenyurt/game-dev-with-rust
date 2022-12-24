@@ -22,7 +22,11 @@ impl Asset {
             "resources/cloud4.png",
             "resources/cloud5.png",
         ];
-        let grounds = vec!["resources/ground_1.png", "resources/ground_2.png"];
+        let grounds = vec![
+            "resources/ground_1.png",
+            "resources/ground_2.png",
+            "resources/ground_3.png",
+        ];
         let texture = match asset_type {
             AssetType::Ground => {
                 let index = rand::gen_range(0, grounds.len());

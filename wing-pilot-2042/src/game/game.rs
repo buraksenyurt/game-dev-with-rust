@@ -48,9 +48,11 @@ impl Game {
         };
 
         for e in enemies.iter_mut() {
-            e.position += e.velocity * speed_factor;
             match actor {
                 EnemyType::Warship(_) => {
+                    if !e.wait {
+                        e.position += e.velocity * speed_factor;
+                    }
                     //info!("Warship position {}", e.position);
                     if e.position.x >= screen_width() * 0.3 || e.position.x < screen_width() * 0.7 {
                         //e.velocity = e.formation.velocity;
@@ -65,6 +67,7 @@ impl Game {
                     }
                 }
                 _ => {
+                    e.position += e.velocity * speed_factor;
                     if !e.is_formation_on && e.position.y >= e.formation.start_y {
                         e.velocity = e.formation.velocity;
                         e.is_formation_on = true;

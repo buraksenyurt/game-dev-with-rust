@@ -2,7 +2,7 @@ use crate::entity::bullet::Bullet;
 use crate::entity::bullet_type::BulletType;
 use crate::entity::enemy_type::EnemyType;
 use crate::game::game::Game;
-use macroquad::prelude::Rect;
+use macroquad::prelude::{Rect, Vec2};
 
 //Axis-Aligned Bounding Box (AABB) Collision Detection
 async fn aabb_check(source: Rect, target: &Rect) -> bool {
@@ -142,6 +142,21 @@ pub async fn fighter_vs_warship_missile(game: &mut Game) {
                 //println!("Collision check");
                 b.is_alive = false;
                 m.is_alive = false;
+            }
+        }
+    }
+}
+
+pub async fn warship_vs_ground(game: &mut Game) {
+    for ws in game.enemy_warships.actors.iter_mut() {
+        for g in game.grounds.iter() {
+            let d = Vec2::new(
+                g.location.x - (ws.position.x + ws.texture.width()),
+                (g.location.y + g.texture.height()) - ws.position.y,
+            );
+            println!("{}", d.length());
+            if d.length() < 25. {
+                ws.wait = true;
             }
         }
     }

@@ -21,6 +21,7 @@ pub struct Enemy {
     pub on_stage: bool,
     cooling: f32,
     pub shield: i32,
+    pub wait: bool,
 }
 
 impl Enemy {
@@ -67,6 +68,7 @@ impl Enemy {
             on_stage: true,
             cooling: get_frame_time(),
             shield,
+            wait: false,
         }
     }
 

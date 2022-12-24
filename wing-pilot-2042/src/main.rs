@@ -9,7 +9,7 @@ use crate::entity::asset_type::AssetType;
 use crate::entity::enemy_type::EnemyType;
 use crate::game::collider::{
     check_fighter_with_ammo, fighter_vs_bomber, fighter_vs_fighter, fighter_vs_warship,
-    fighter_vs_warship_missile,
+    fighter_vs_warship_missile, warship_vs_ground,
 };
 use crate::game::game::Game;
 use crate::game::state::State;
@@ -71,6 +71,7 @@ async fn main() {
                     game.recalc_distance().await;
                 }
 
+                game.draw_grounds().await;
                 game.draw_fleet(EnemyType::Warship(None)).await;
                 game.draw_fleet(EnemyType::Fighter).await;
                 game.draw_fleet(EnemyType::Bomber).await;
@@ -79,7 +80,6 @@ async fn main() {
                 game.draw_bullets(EnemyType::Bomber).await;
                 game.draw_bullets(EnemyType::Warship(None)).await;
                 game.draw_clouds().await;
-                game.draw_grounds().await;
 
                 match &game.extra_ammo_box {
                     Some(mut ammo) => {
@@ -106,6 +106,7 @@ async fn main() {
                 fighter_vs_bomber(&mut game).await;
                 fighter_vs_warship(&mut game).await;
                 fighter_vs_warship_missile(&mut game).await;
+                warship_vs_ground(&mut game).await;
 
                 game.clouds.retain(|c| c.on_stage);
                 game.enemy_fighters.actors.retain(|f| f.on_stage);
