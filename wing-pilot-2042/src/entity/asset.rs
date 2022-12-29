@@ -1,5 +1,5 @@
 use crate::entity::asset_type::AssetType;
-use macroquad::prelude::{draw_texture, load_texture, Vec2, WHITE};
+use macroquad::prelude::{draw_texture, load_texture, Rect, Vec2, WHITE};
 use macroquad::rand;
 use macroquad::texture::Texture2D;
 
@@ -52,6 +52,15 @@ impl Asset {
 
     pub fn draw(&self) {
         draw_texture(self.texture, self.location.x, self.location.y, WHITE);
+    }
+
+    pub async fn get_rect(&self, scale: f32) -> Rect {
+        Rect::new(
+            self.location.x - (self.location.x * scale),
+            self.location.y - (self.location.y * scale),
+            self.texture.width() + (self.texture.width() * scale),
+            self.texture.height() + (self.texture.height() * scale),
+        )
     }
 }
 
