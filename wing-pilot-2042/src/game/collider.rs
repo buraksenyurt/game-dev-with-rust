@@ -57,7 +57,7 @@ pub async fn fighter_vs_fighter(game: &mut Game) {
             game.fighter.get_tail_wing().await,
         ];
         if is_collision_exist(bodies, b).await {
-            game.score_box.enemy_warship_damage += 3;
+            game.score_box.enemy_fighter_damage += 3;
             game.fighter.shield -= 3;
             game.fighter.is_got_shot = true;
             game.fighter.shot_owner = EnemyType::Fighter;
@@ -90,7 +90,7 @@ pub async fn fighter_vs_bomber(game: &mut Game) {
             game.fighter.get_tail_wing().await,
         ];
         if is_collision_exist(bodies, b).await {
-            game.score_box.enemy_warship_damage += 2;
+            game.score_box.enemy_bomber_damage += 2;
             game.fighter.shield -= 2;
             game.fighter.is_got_shot = true;
             game.fighter.shot_owner = EnemyType::Bomber;

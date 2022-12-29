@@ -31,6 +31,12 @@ impl WinningCriteria {
         }
     }
     pub async fn is_mission_accomplished(&self) -> bool {
-        self.max_bomber <= 0 && self.max_warship <= 0 && self.max_fighter <= 0
+        self.max_warship <= 0 && self.max_fighter <= 0
+    }
+
+    pub fn increase_level(&mut self, add_bomber: i16, add_fighter: i16, add_warship: i16) {
+        self.max_bomber += add_bomber;
+        self.max_warship += add_warship;
+        self.max_fighter += add_fighter;
     }
 }

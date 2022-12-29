@@ -3,6 +3,7 @@ use crate::entity::bullet::Bullet;
 use crate::entity::enemy::Enemy;
 use crate::entity::enemy_builder::create_enemies;
 use crate::entity::enemy_type::EnemyType;
+use macroquad::logging::info;
 use macroquad::prelude::rand;
 use macroquad::time::get_frame_time;
 
@@ -14,12 +15,14 @@ pub struct Fleet {
 
 impl Fleet {
     pub async fn new(count: usize, e_type: EnemyType) -> Self {
+        let lift_off_time = rand::gen_range(
+            get_frame_time() as i32,
+            get_frame_time() as i32 + FLEET_LIFT_OFF_TIME,
+        );
+        info!("{:?} lift of time {}", e_type, lift_off_time);
         Self {
             actors: create_enemies(count, e_type).await,
-            lift_off_time: rand::gen_range(
-                get_frame_time() as i32,
-                get_frame_time() as i32 + FLEET_LIFT_OFF_TIME,
-            ),
+            lift_off_time,
             bullets: Vec::default(),
         }
     }

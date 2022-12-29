@@ -239,7 +239,7 @@ impl Game {
             && self.wining_criteria.max_bomber > 0
         {
             if self.enemy_bombers.lift_off_time == 0 {
-                self.enemy_bombers = Fleet::new(3, EnemyType::Bomber).await;
+                self.enemy_bombers = Fleet::new(4, EnemyType::Bomber).await;
             } else {
                 self.enemy_bombers.lift_off_time -= 1;
             }

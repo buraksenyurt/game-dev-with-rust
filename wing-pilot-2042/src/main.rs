@@ -37,7 +37,7 @@ async fn main() {
                 }
             }
             State::Playing => {
-                info!("{}", game.wining_criteria);
+                //info!("{}", game.wining_criteria);
                 if game.wining_criteria.is_mission_accomplished().await {
                     info!("Win");
                     game.state = State::Win;
@@ -140,7 +140,9 @@ async fn main() {
             State::Win => {
                 draw_win_menu(&game);
                 if is_key_pressed(KeyCode::Space) {
-                    todo!("must add next level");
+                    game = Game::new(State::Playing).await;
+                    game.wining_criteria.increase_level(6, 8, 3);
+                    extra_ammo_tick = 0;
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }
