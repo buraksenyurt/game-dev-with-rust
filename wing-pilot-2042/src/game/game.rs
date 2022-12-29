@@ -51,6 +51,10 @@ impl Game {
         };
 
         for e in enemies.iter_mut() {
+            if e.is_got_shot {
+                e.draw_on_shot().await;
+                e.is_got_shot = false;
+            }
             match actor {
                 EnemyType::Warship(_) => {
                     if !e.wait {

@@ -5,7 +5,8 @@ use crate::entity::formation::Formation;
 use crate::entity::owner::Owner;
 use macroquad::color::WHITE;
 use macroquad::prelude::{
-    draw_texture, get_frame_time, load_texture, screen_height, screen_width, Rect, Texture2D, Vec2,
+    draw_texture, draw_texture_ex, get_frame_time, load_texture, screen_height, screen_width,
+    DrawTextureParams, Rect, Texture2D, Vec2,
 };
 use macroquad::time::get_fps;
 
@@ -14,8 +15,10 @@ pub struct Enemy {
     pub velocity: Vec2,
     pub formation: Formation,
     pub is_alive: bool,
+    pub is_got_shot: bool,
     pub enemy_type: EnemyType,
     pub texture: Texture2D,
+    pub texture_explosion: Texture2D,
     pub is_formation_on: bool,
     pub fire_at_will: bool,
     pub on_stage: bool,
@@ -60,9 +63,11 @@ impl Enemy {
             position,
             enemy_type,
             is_alive: true,
+            is_got_shot: false,
             velocity,
             formation,
             texture,
+            texture_explosion: load_texture("resources/explosion.png").await.unwrap(),
             is_formation_on: false,
             fire_at_will: false,
             on_stage: true,
@@ -74,6 +79,24 @@ impl Enemy {
 
     pub async fn draw(&self) {
         draw_texture(self.texture, self.position.x, self.position.y, WHITE);
+    }
+
+    pub async fn draw_on_shot(&self) {
+        draw_texture_ex(
+            self.texture_explosion,
+            self.position.x + self.texture.width() * 0.5,
+            self.position.y + self.texture.height(),
+            WHITE,
+            DrawTextureParams {
+                source: Some(Rect::new(
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT * 2.,
+                    0f32,
+                    self.texture_explosion.width() / EXPLOSION_FRAME_COUNT,
+                    self.texture_explosion.height(),
+                )),
+                ..Default::default()
+            },
+        );
     }
 
     pub async fn out_of_borders(&mut self) -> bool {

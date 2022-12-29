@@ -42,6 +42,7 @@ pub async fn fighter_vs_fighter(game: &mut Game) {
             ];
             if is_collision_exist(bodies, b).await {
                 f.shield -= 1;
+                f.is_got_shot = true;
                 if f.shield <= 0 {
                     f.on_stage = false;
                     game.wining_criteria.max_fighter -= 1;
@@ -75,6 +76,7 @@ pub async fn fighter_vs_bomber(game: &mut Game) {
             ];
             if is_collision_exist(bodies, b).await {
                 bmbr.shield -= 1;
+                bmbr.is_got_shot = true;
                 if bmbr.shield <= 0 {
                     bmbr.on_stage = false;
                     game.wining_criteria.max_bomber -= 1;
@@ -104,6 +106,7 @@ pub async fn fighter_vs_warship(game: &mut Game) {
             let bodies = vec![ws.get_body().await.unwrap()];
             if is_collision_exist(bodies, b).await {
                 ws.shield -= 1;
+                ws.is_got_shot = true;
                 if ws.shield <= 0 {
                     ws.on_stage = false;
                     game.wining_criteria.max_warship -= 1;

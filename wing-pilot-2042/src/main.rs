@@ -15,6 +15,8 @@ use crate::game::game::Game;
 use crate::game::state::State;
 use crate::menu::builder::{draw_dead_menu, draw_main_menu, draw_win_menu};
 use game::conf::window_conf;
+use macroquad::audio;
+use macroquad::audio::PlaySoundParams;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]
@@ -25,7 +27,6 @@ async fn main() {
     let mut extra_ammo_tick = 0;
     loop {
         clear_background(DARKBLUE);
-
         match game.state {
             State::Main => {
                 draw_main_menu();
