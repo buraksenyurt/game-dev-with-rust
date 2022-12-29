@@ -15,8 +15,6 @@ use crate::game::game::Game;
 use crate::game::state::State;
 use crate::menu::builder::{draw_dead_menu, draw_main_menu, draw_win_menu};
 use game::conf::window_conf;
-use macroquad::audio;
-use macroquad::audio::PlaySoundParams;
 use macroquad::prelude::*;
 
 #[macroquad::main(window_conf)]

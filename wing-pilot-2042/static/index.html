@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Wing Pilot 2024</title>
+        <style>
+            html,
+            body,
+            canvas {
+                margin: 0px;
+                padding: 0px;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                position: absolute;
+                background: black;
+                z-index: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <canvas id="glcanvas" tabindex='1' onfocus="event.preventDefault()"></canvas>
+        <script src="gl.js"></script>
+        <script>load("wing-man-2042.wasm");</script>
+    </body>
+
+</html>
