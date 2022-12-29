@@ -1,6 +1,6 @@
 use crate::entity::asset::Asset;
 use crate::entity::asset_type::AssetType;
-use macroquad::prelude::{info, rand, screen_width, Vec2};
+use macroquad::prelude::{rand, screen_width, Vec2};
 use macroquad::window::screen_height;
 
 pub async fn create_assets(count: usize, asset_type: AssetType) -> Vec<Asset> {
@@ -31,6 +31,6 @@ pub async fn create_extra_ammo() -> Asset {
     ammo.location.x = x;
     ammo.location.y = -y;
     ammo.lift_of_time = Some(rand::gen_range(100, 500));
-    info!("Ammo lift of time {}", ammo.lift_of_time.unwrap());
+    //info!("Ammo lift of time {}", ammo.lift_of_time.unwrap());
     ammo
 }

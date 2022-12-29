@@ -203,7 +203,10 @@ impl Game {
     }
 
     pub async fn spawn_enemy_fighters(&mut self) {
-        if self.enemy_fighters.actors.is_empty() && self.enemy_fighters.bullets.is_empty() {
+        if self.enemy_fighters.actors.is_empty()
+            && self.enemy_fighters.bullets.is_empty()
+            && self.wining_criteria.max_fighter > 0
+        {
             if self.enemy_fighters.lift_off_time == 0 {
                 self.enemy_fighters = Fleet::new(4, EnemyType::Fighter).await;
             } else {
@@ -213,13 +216,15 @@ impl Game {
     }
 
     pub async fn spawn_enemy_warships(&mut self) {
-        if self.enemy_warships.actors.is_empty() && self.enemy_warships.bullets.is_empty() {
+        if self.enemy_warships.actors.is_empty()
+            && self.enemy_warships.bullets.is_empty()
+            && self.wining_criteria.max_warship > 0
+        {
             let v = get_frame_time().floor() % 2.;
             let warship_direction = match v == 0. {
                 true => Some(WarshipDirection::Left),
                 _ => Some(WarshipDirection::Right),
             };
-            //println!("Left or right {}", v);
             if self.enemy_warships.lift_off_time == 0 {
                 self.enemy_warships = Fleet::new(1, EnemyType::Warship(warship_direction)).await;
             } else {
@@ -229,7 +234,10 @@ impl Game {
     }
 
     pub async fn spawn_enemy_bombers(&mut self) {
-        if self.enemy_bombers.actors.is_empty() && self.enemy_bombers.bullets.is_empty() {
+        if self.enemy_bombers.actors.is_empty()
+            && self.enemy_bombers.bullets.is_empty()
+            && self.wining_criteria.max_bomber > 0
+        {
             if self.enemy_bombers.lift_off_time == 0 {
                 self.enemy_bombers = Fleet::new(3, EnemyType::Bomber).await;
             } else {

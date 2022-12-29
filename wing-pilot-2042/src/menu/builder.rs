@@ -24,17 +24,17 @@ pub fn draw_dead_menu(game: &Game) {
     draw_menu(&lines);
 }
 
-// pub fn draw_win_menu(game: &Game) {
-//     let lines = vec![
-//         "Congratulation Lieutenant. You did it!".to_string(),
-//         "".to_string(),
-//         game.score.to_string(),
-//         "Are you ready to next stage? Press SPACE".to_string(),
-//         "Press ESC to exit".to_string(),
-//     ];
-//
-//     draw_menu(&lines);
-// }
+pub fn draw_win_menu(game: &Game) {
+    let lines = vec![
+        "Congratulation Lieutenant. You did it!".to_string(),
+        "".to_string(),
+        game.score_box.to_string(),
+        "Are you ready to next stage? Press SPACE".to_string(),
+        "Press ESC to exit".to_string(),
+    ];
+
+    draw_menu(&lines);
+}
 
 // pub fn draw_end_menu(game: &Game) {
 //     let lines = vec![

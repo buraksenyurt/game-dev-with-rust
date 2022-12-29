@@ -13,7 +13,7 @@ use crate::game::collider::{
 };
 use crate::game::game::Game;
 use crate::game::state::State;
-use crate::menu::builder::{draw_dead_menu, draw_main_menu};
+use crate::menu::builder::{draw_dead_menu, draw_main_menu, draw_win_menu};
 use game::conf::window_conf;
 use macroquad::prelude::*;
 
@@ -37,6 +37,12 @@ async fn main() {
                 }
             }
             State::Playing => {
+                info!("{}", game.wining_criteria);
+                if game.wining_criteria.is_mission_accomplished().await {
+                    info!("Win");
+                    game.state = State::Win;
+                    continue;
+                }
                 if game.fighter.is_got_shot {
                     game.fighter.draw_on_shot().await;
                     game.fighter.is_got_shot = false;
@@ -54,15 +60,9 @@ async fn main() {
                     game.clouds = create_assets(3, AssetType::Cloud).await;
                 }
 
-                if game.wining_criteria.max_fighter > 0 {
-                    game.spawn_enemy_fighters().await;
-                }
-                if game.wining_criteria.max_bomber > 0 {
-                    game.spawn_enemy_bombers().await;
-                }
-                if game.wining_criteria.max_warship > 0 {
-                    game.spawn_enemy_warships().await;
-                }
+                game.spawn_enemy_fighters().await;
+                game.spawn_enemy_bombers().await;
+                game.spawn_enemy_warships().await;
 
                 if game.fighter.out_of_ammo().await && game.extra_ammo_box == None {
                     let ammo = create_extra_ammo().await;
@@ -110,9 +110,7 @@ async fn main() {
                 }
                 fighter_vs_fighter(&mut game).await;
                 fighter_vs_bomber(&mut game).await;
-                if game.wining_criteria.max_warship > 0 {
-                    fighter_vs_warship(&mut game).await;
-                }
+                fighter_vs_warship(&mut game).await;
                 fighter_vs_warship_missile(&mut game).await;
                 warship_vs_ground(&mut game).await;
 
@@ -135,6 +133,14 @@ async fn main() {
                     extra_ammo_tick = 0;
                 } else if is_key_pressed(KeyCode::Enter) {
                     game.state = State::Main;
+                } else if is_key_pressed(KeyCode::Escape) {
+                    break;
+                }
+            }
+            State::Win => {
+                draw_win_menu(&game);
+                if is_key_pressed(KeyCode::Space) {
+                    todo!("must add next level");
                 } else if is_key_pressed(KeyCode::Escape) {
                     break;
                 }

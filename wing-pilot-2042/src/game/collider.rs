@@ -45,8 +45,8 @@ pub async fn fighter_vs_fighter(game: &mut Game) {
                 if f.shield <= 0 {
                     f.on_stage = false;
                     game.wining_criteria.max_fighter -= 1;
+                    game.score_box.player_hit += 1;
                 }
-                //println!("Hitted the Fighter {}", f.shield);
             }
         }
     }
@@ -78,8 +78,8 @@ pub async fn fighter_vs_bomber(game: &mut Game) {
                 if bmbr.shield <= 0 {
                     bmbr.on_stage = false;
                     game.wining_criteria.max_bomber -= 1;
+                    game.score_box.player_hit += 1;
                 }
-                //println!("Hitted the Bomber{}", bmbr.shield);
             }
         }
     }
@@ -107,12 +107,12 @@ pub async fn fighter_vs_warship(game: &mut Game) {
                 if ws.shield <= 0 {
                     ws.on_stage = false;
                     game.wining_criteria.max_warship -= 1;
+                    game.score_box.player_hit += 1;
                     game.enemy_warships
                         .bullets
                         .iter_mut()
                         .for_each(|mut b| b.is_alive = false);
                 }
-                //println!("Hitted the warship {}", ws.shield);
             }
         }
     }
@@ -142,7 +142,6 @@ pub async fn fighter_vs_warship_missile(game: &mut Game) {
         {
             //let v = Vec2::new(b.location.x - m.location.x, b.location.y - m.location.y);
             if is_collision_exist(vec![rect], b).await {
-                //println!("Collision check");
                 b.is_alive = false;
                 m.is_alive = false;
             }
