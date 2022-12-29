@@ -54,9 +54,15 @@ async fn main() {
                     game.clouds = create_assets(3, AssetType::Cloud).await;
                 }
 
-                game.spawn_enemy_fighters().await;
-                game.spawn_enemy_bombers().await;
-                game.spawn_enemy_warships().await;
+                if game.wining_criteria.max_fighter > 0 {
+                    game.spawn_enemy_fighters().await;
+                }
+                if game.wining_criteria.max_bomber > 0 {
+                    game.spawn_enemy_bombers().await;
+                }
+                if game.wining_criteria.max_warship > 0 {
+                    game.spawn_enemy_warships().await;
+                }
 
                 if game.fighter.out_of_ammo().await && game.extra_ammo_box == None {
                     let ammo = create_extra_ammo().await;
@@ -104,7 +110,9 @@ async fn main() {
                 }
                 fighter_vs_fighter(&mut game).await;
                 fighter_vs_bomber(&mut game).await;
-                fighter_vs_warship(&mut game).await;
+                if game.wining_criteria.max_warship > 0 {
+                    fighter_vs_warship(&mut game).await;
+                }
                 fighter_vs_warship_missile(&mut game).await;
                 warship_vs_ground(&mut game).await;
 

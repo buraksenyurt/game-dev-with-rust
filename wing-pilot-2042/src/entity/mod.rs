@@ -10,3 +10,4 @@ pub mod fighter;
 pub mod fleet;
 pub mod formation;
 pub mod owner;
+pub mod win_criteria;

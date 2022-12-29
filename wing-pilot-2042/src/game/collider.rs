@@ -44,6 +44,7 @@ pub async fn fighter_vs_fighter(game: &mut Game) {
                 f.shield -= 1;
                 if f.shield <= 0 {
                     f.on_stage = false;
+                    game.wining_criteria.max_fighter -= 1;
                 }
                 //println!("Hitted the Fighter {}", f.shield);
             }
@@ -59,7 +60,7 @@ pub async fn fighter_vs_fighter(game: &mut Game) {
             game.score_box.enemy_warship_damage += 3;
             game.fighter.shield -= 3;
             game.fighter.is_got_shot = true;
-            game.fighter.shot_owner = EnemyType::Bomber;
+            game.fighter.shot_owner = EnemyType::Fighter;
         }
     }
 }
@@ -76,6 +77,7 @@ pub async fn fighter_vs_bomber(game: &mut Game) {
                 bmbr.shield -= 1;
                 if bmbr.shield <= 0 {
                     bmbr.on_stage = false;
+                    game.wining_criteria.max_bomber -= 1;
                 }
                 //println!("Hitted the Bomber{}", bmbr.shield);
             }
@@ -104,6 +106,7 @@ pub async fn fighter_vs_warship(game: &mut Game) {
                 ws.shield -= 1;
                 if ws.shield <= 0 {
                     ws.on_stage = false;
+                    game.wining_criteria.max_warship -= 1;
                     game.enemy_warships
                         .bullets
                         .iter_mut()

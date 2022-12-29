@@ -6,6 +6,7 @@ use crate::entity::asset::Asset;
 use crate::entity::enemy_type::{EnemyType, WarshipDirection};
 use crate::entity::fighter::Fighter;
 use crate::entity::fleet::Fleet;
+use crate::entity::win_criteria::WinningCriteria;
 use crate::game::scorebox::Scorebox;
 use crate::game::state::State;
 use macroquad::prelude::{draw_text, measure_text, screen_height, Vec2, GOLD};
@@ -23,6 +24,7 @@ pub struct Game {
     pub grounds: Vec<Asset>,
     pub extra_ammo_box: Option<Asset>,
     pub score_box: Scorebox,
+    pub wining_criteria: WinningCriteria,
 }
 
 impl Game {
@@ -37,6 +39,7 @@ impl Game {
             grounds: Vec::default(),
             extra_ammo_box: None,
             score_box: Scorebox::default(),
+            wining_criteria: WinningCriteria::default(),
         }
     }
 
