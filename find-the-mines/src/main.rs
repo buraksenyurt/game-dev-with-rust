@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 #[cfg(feature = "debug")]
 use bevy_inspector_egui::WorldInspectorPlugin;
+use board_plugin::BoardPlugin;
 
 fn main() {
     // Uygulama nesnesi oluşturuldu
@@ -21,6 +22,8 @@ fn main() {
     // Inspector plugin'i ekleniyor
     #[cfg(feature = "debug")] // fonksiyon içindeki bu makro kullanımı ilk kez görüyorum.
     app.add_plugin(WorldInspectorPlugin::new());
+    // BoardPlugin ekleniyor. Bu oyun tahtasını çizen bileşenleri kullanan plugin.
+    app.add_plugin(BoardPlugin);
     // başlangıçta sistemi ayarlarken iki boyutlu bir ortografik kamera da ekleniyor.
     // Klasik bir sistem her frame için çalışırken startup sistemleri sadece başlangıçta
     // bir kereliğine çalışır.

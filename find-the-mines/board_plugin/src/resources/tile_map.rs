@@ -1,7 +1,7 @@
+use crate::components::Coordinates;
 use crate::resources::tile::Tile;
 use rand::{thread_rng, Rng};
 use std::ops::{Deref, DerefMut};
-use crate::components::Coordinates;
 
 /*
    Ekran iki boyutlu bir array gibi düşünülürse zemin haritasını tutmamız gerekecektir.
@@ -85,6 +85,24 @@ impl TileMap {
                 *tile = Tile::MineNeighbor(num);
             }
         }
+    }
+
+    // Debug pencersine bilgi amaçlı güncel harita bilgisini çizecek olan fonksiyon
+    pub fn info(&self) -> String {
+        let mut buffer = format!(
+            "Map ({}, {}) Mayın sayısı {}:\n",
+            self.width, self.height, self.mine_count
+        );
+        let line: String = (0..=(self.width + 1)).into_iter().map(|_| '-').collect();
+        buffer = format!("{}{}\n", buffer, line);
+        for line in self.iter().rev() {
+            buffer = format!("{}|", buffer);
+            for tile in line.iter() {
+                buffer = format!("{}{}", buffer, tile.info());
+            }
+            buffer = format!("{}|\n", buffer);
+        }
+        format!("{}{}", buffer, line)
     }
 }
 

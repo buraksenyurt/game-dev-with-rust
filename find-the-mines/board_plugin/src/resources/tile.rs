@@ -23,7 +23,7 @@ impl Tile {
 
     // Debug modda ekrana çıktı vermek için kullanabileceğimiz fonksiyon
     #[cfg(feature = "debug")]
-    pub fn println(&self) -> String {
+    pub fn info(&self) -> String {
         format!(
             "{}",
             match self {
