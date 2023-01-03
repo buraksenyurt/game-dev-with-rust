@@ -2,8 +2,8 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
-- [ ] **12 - wing-pilot-2024;** Bu sefer Commodore 64'te sıkça oynadığım 1942 oyununun bir benzerini Macroquad çatısını kullanarak gerçekleştirmeye çalışıyorum.
-- [ ] **11 - missile-commander;** Bu örnekte 80lerin meşhur Atari oyunlarından Missile Command'in bir benzerini yazmaya çalışıyorum. Amacım Missile Command arkasındaki matematiği keşfetmek ve Rust örneğinde uygulayabilmek. Ayrıca stage mantığını kurgulamaya ve seviyelerde ilerledikçe oyunu zorlaştırmaya çalışıyorum.
+- [x] **12 - wing-pilot-2024;** Bu sefer Commodore 64'te sıkça oynadığım 1942 oyununun bir benzerini Macroquad çatısını kullanarak gerçekleştirmeye çalışıyorum.
+- [x] **11 - missile-commander;** Bu örnekte 80lerin meşhur Atari oyunlarından Missile Command'in bir benzerini yazmaya çalışıyorum. Amacım Missile Command arkasındaki matematiği keşfetmek ve Rust örneğinde uygulayabilmek. Ayrıca stage mantığını kurgulamaya ve seviyelerde ilerledikçe oyunu zorlaştırmaya çalışıyorum.
 - [x] **10 - life-game;** Conway'in life game oyununu Rust ile yazmaya çalıştım.
 - [x] **09 - Wolf-Tank;** Macroquad motorunu kullanarak yazmaya çalıştığım basit bir RPG. Minik bir tankı kontrol etmeye çalışıyoruz.
 - [x] **08 - Tetra-Pong;** Basit 2D oyun geliştirme çatılarından olan [Tetra](https://tetra.seventeencups.net/) geliştirilen bir başka Ping-Pong örneği. Sitedeki tutorial'ı takip ediyorum.
