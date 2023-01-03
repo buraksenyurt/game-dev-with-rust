@@ -1,0 +1,19 @@
+[package]
+name = "find-the-mines"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+debug = ["board_plugin/debug","bevy-inspector-egui"]
+
+[dependencies]
+bevy = "0.9.1"
+board_plugin = {path = "board_plugin"}
+
+bevy-inspector-egui = {version = "0.14.0",optional=true}
+
+[workspace]
+members = [
+    "board_plugin"
+]

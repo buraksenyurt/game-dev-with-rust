@@ -2,6 +2,7 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
+- [ ] **13 - Minesweeper;** [Şu dev.to makalesindeki](https://dev.to/qongzi/bevy-minesweeper-part-1-534c) örneği takip ederek Windows'un meşhur mayın bulma oyununun Bevy oyun motoru ile nasıl yazıldığını öğrenmeye çalışıyorum.
 - [x] **12 - wing-pilot-2024;** Bu sefer Commodore 64'te sıkça oynadığım 1942 oyununun bir benzerini Macroquad çatısını kullanarak gerçekleştirmeye çalışıyorum.
 - [x] **11 - missile-commander;** Bu örnekte 80lerin meşhur Atari oyunlarından Missile Command'in bir benzerini yazmaya çalışıyorum. Amacım Missile Command arkasındaki matematiği keşfetmek ve Rust örneğinde uygulayabilmek. Ayrıca stage mantığını kurgulamaya ve seviyelerde ilerledikçe oyunu zorlaştırmaya çalışıyorum.
 - [x] **10 - life-game;** Conway'in life game oyununu Rust ile yazmaya çalıştım.

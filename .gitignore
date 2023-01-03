@@ -22,3 +22,8 @@ workspace.xml
 target/
 bin/*
 obj/*
+
+
+# Added by cargo
+
+/target
