@@ -19,7 +19,11 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 
 ## Örnek Çalışma Zamanları
 
-Henüz geliştirilmesine devam ettiğim Atari Missile Command oyununa ait bir çalışma zamanı görüntüsü aşağıdaki gibidir.
+WingMand 2042 oyununa ait bir ekran görüntüsü de aşağıdaki gibidir.
+
+![assets/wingman2042.gif](assets/wingman2042.gif)
+
+Atari Missile Command oyununa ait bir çalışma zamanı görüntüsü aşağıdaki gibidir.
 
 ![assets/miscmdgp.gif](assets/miscmdgp.gif)
 
