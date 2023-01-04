@@ -6,16 +6,21 @@
    kullanan Player, Enemy gibi entity'lerden bahsedebiliriz.
    Movement gibi bir sistem tasarlayıp Position ve Velocity bileşenlerini içerek tüm entity'ler
    için işletebiliriz.
+
+   Bevy modülerliğe önem veren bir oyun motoru. Bu nedenle tüm özellikler birer plugin olarak
+   uyarlanır. Kendi plugin'lerimizi yazabiliriz de ama bevy birçok varsayılan plugin sağlar.
 */
 use bevy::app::App;
 use bevy::ecs::component::Component;
-use bevy::prelude::{Commands, Query, With};
+use bevy::prelude::{Commands, Plugin, Query, With};
+use bevy::DefaultPlugins;
 
 fn main() {
+    // Default plugins var sayılan bazı plugin'ler ekler.
+    // Standart bir pencere ve sonsuz oyun döngüsü bunlar arasındadır.
     App::new()
-        .add_startup_system(add_players)
-        .add_system(first_system)
-        .add_system(greetings_for_all)
+        .add_plugins(DefaultPlugins)
+        .add_plugin(FirstPlugin)
         .run();
 }
 
@@ -46,3 +51,15 @@ struct Player;
 
 #[derive(Component)]
 struct Title(String);
+
+// Tasarladığımız add_players, first_system ve greetings_all sistemlerini
+// bir plugin altında toplayabilir ve ana uygulama motoruna ekleyebiliriz.
+pub struct FirstPlugin;
+
+impl Plugin for FirstPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(add_players)
+            .add_system(first_system)
+            .add_system(greetings_for_all);
+    }
+}
