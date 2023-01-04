@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 #[cfg(feature = "debug")]
 use bevy_inspector_egui::WorldInspectorPlugin;
+use board_plugin::resources::BoardOptions;
 use board_plugin::BoardPlugin;
 
 fn main() {
@@ -24,6 +25,15 @@ fn main() {
     app.add_plugin(WorldInspectorPlugin::new());
     // BoardPlugin ekleniyor. Bu oyun tahtasını çizen bileşenleri kullanan plugin.
     app.add_plugin(BoardPlugin);
+    // Oyun tahtasına ait seçenekleri board_options içerisinde organize etmiştik.
+    // Bunu bir resource olarak app nesnesine enjekte ediyoruz.
+    app.insert_resource(BoardOptions {
+        map_size: (24, 24),
+        mine_count: 32,
+        tile_padding: 3.,
+        ..Default::default()
+    });
+
     // başlangıçta sistemi ayarlarken iki boyutlu bir ortografik kamera da ekleniyor.
     // Klasik bir sistem her frame için çalışırken startup sistemleri sadece başlangıçta
     // bir kereliğine çalışır.
