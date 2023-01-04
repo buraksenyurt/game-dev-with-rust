@@ -1,3 +1,9 @@
+use bevy::app::App;
+
 fn main() {
-    println!("Hello, world!");
+    App::new().add_system(first_system).run();
+}
+
+fn first_system() {
+    println!("First contact with first system :P");
 }
