@@ -1,5 +1,6 @@
-use crate::{AsciiSheet, TILE_SIZE};
+use crate::{TILE_SIZE};
 use bevy::prelude::*;
+use crate::ascii::AsciiSheet;
 
 #[derive(Component)]
 pub struct Player {
