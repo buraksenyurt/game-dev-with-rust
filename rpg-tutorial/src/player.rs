@@ -13,7 +13,9 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(spawn).add_system(movement);
+        app.add_startup_system(spawn)
+            .add_system(camera_follow)
+            .add_system(movement);
     }
 }
 
@@ -78,4 +80,14 @@ fn spawn(mut commands: Commands, ascii_res: Res<AsciiSheet>) {
     commands.entity(sprite).insert(Player {
         movement_speed: 2.5,
     });
+}
+
+fn camera_follow(
+    query: Query<&Transform, With<Player>>,
+    mut cam_query: Query<&mut Transform, (Without<Player>, With<Camera>)>,
+) {
+    let transform = query.single();
+    let mut camera_transform = cam_query.single_mut();
+    camera_transform.translation.x = transform.translation.x;
+    camera_transform.translation.y = transform.translation.y;
 }
