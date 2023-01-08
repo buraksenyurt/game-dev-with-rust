@@ -1,8 +1,10 @@
 mod ascii;
 mod player;
+mod tile_map;
 
 use crate::ascii::AsciiPlugin;
 use crate::player::PlayerPlugin;
+use crate::tile_map::TileMapPlugin;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 
@@ -25,6 +27,7 @@ fn main() {
         .add_startup_system_set(SystemSet::new().with_system(setup))
         .add_plugin(PlayerPlugin)
         .add_plugin(AsciiPlugin)
+        .add_plugin(TileMapPlugin)
         .run();
 }
 

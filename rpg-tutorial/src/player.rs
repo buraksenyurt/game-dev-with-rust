@@ -1,6 +1,6 @@
-use crate::{TILE_SIZE};
+use crate::ascii::{spawn_sprite, AsciiSheet};
+use crate::TILE_SIZE;
 use bevy::prelude::*;
-use crate::ascii::AsciiSheet;
 
 #[derive(Component)]
 pub struct Player {
@@ -37,21 +37,15 @@ fn movement(
 }
 
 fn spawn(mut commands: Commands, ascii_res: Res<AsciiSheet>) {
-    let mut sprite = TextureAtlasSprite::new(0);
-    sprite.color = Color::GOLD;
-    sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
-    commands.spawn((
-        SpriteSheetBundle {
-            sprite,
-            texture_atlas: ascii_res.0.clone(),
-            transform: Transform {
-                translation: Vec3::new(0., 0., 100.),
-                ..default()
-            },
-            ..default()
-        },
-        Player {
-            movement_speed: 2.5,
-        },
-    ));
+    let sprite = spawn_sprite(
+        &mut commands,
+        &ascii_res,
+        0,
+        Color::GOLD,
+        Vec3::new(2. * TILE_SIZE, -2. * TILE_SIZE, 900.),
+    );
+
+    commands.entity(sprite).insert(Player {
+        movement_speed: 2.5,
+    });
 }
