@@ -1,4 +1,5 @@
 mod player;
+mod ascii;
 
 use crate::player::PlayerPlugin;
 use bevy::prelude::*;
@@ -6,6 +7,7 @@ use bevy::render::camera::ScalingMode;
 
 pub const SIZE: (f32, f32) = (1600., 900.);
 pub const RESOLUTION: f32 = SIZE.0 / SIZE.1;
+pub const TILE_SIZE: f32 = 0.1;
 
 fn main() {
     App::new()
@@ -47,7 +49,7 @@ fn load_ascii(
     assets_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let ascii_img = assets_server.load("ascii_map.png");
+    let ascii_img = assets_server.load("ascii_map2.png");
     let atlas = TextureAtlas::from_grid(ascii_img, Vec2::splat(32.), 16, 16, None, None);
     let atlas_handle = texture_atlases.add(atlas);
     commands.insert_resource(AsciiSheet(atlas_handle));
