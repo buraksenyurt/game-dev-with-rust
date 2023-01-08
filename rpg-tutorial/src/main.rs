@@ -16,6 +16,7 @@ fn main() {
             ..default()
         }))
         .add_startup_system(setup)
+        .add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
         .run();
 }
 
@@ -31,4 +32,18 @@ fn setup(mut commands: Commands) {
         },
         ..default()
     });
+}
+
+#[derive(Resource)]
+struct AsciiSheet(Handle<TextureAtlas>);
+
+fn load_ascii(
+    mut commands: Commands,
+    assets_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    let ascii_img = assets_server.load("ascii_map.png");
+    let atlas = TextureAtlas::from_grid(ascii_img, Vec2::splat(512. / 16.), 16, 16, None, None);
+    let atlas_handle = texture_atlases.add(atlas);
+    commands.insert_resource(AsciiSheet(atlas_handle));
 }
