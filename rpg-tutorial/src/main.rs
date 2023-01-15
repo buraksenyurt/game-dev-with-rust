@@ -1,9 +1,11 @@
 mod ascii;
+mod combat;
 mod game_state;
 mod player;
 mod tile_map;
 
 use crate::ascii::AsciiPlugin;
+use crate::combat::CombatPlugin;
 use crate::game_state::GameState;
 use crate::player::PlayerPlugin;
 use crate::tile_map::TileMapPlugin;
@@ -31,6 +33,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(AsciiPlugin)
         .add_plugin(TileMapPlugin)
+        .add_plugin(CombatPlugin)
         .run();
 }
 

@@ -11,6 +11,11 @@ pub struct Player {
     just_moved: bool,
 }
 
+#[derive(Component)]
+pub struct EncounterTrucker {
+    timer: Timer,
+}
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -19,7 +24,7 @@ impl Plugin for PlayerPlugin {
             .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide))
             .add_system_set(
                 SystemSet::on_update(GameState::Overworld)
-                    .with_system(combat.after("movement"))
+                    .with_system(on_combat.after("movement"))
                     .with_system(camera_follow.after("movement"))
                     .with_system(movement.label("movement")),
             )
@@ -81,12 +86,13 @@ fn is_collision_with_wall(player_pos: Vec3, wall_translation: Vec3) -> bool {
     collision.is_some()
 }
 
-fn combat(
-    query: Query<(&Player, &Transform)>,
+fn on_combat(
+    mut player_query: Query<(&Player, &mut EncounterTrucker, &Transform)>,
     enc_query: Query<&Transform, (With<EncounterBuilder>, Without<Player>)>,
     mut state: ResMut<State<GameState>>,
+    time: Res<Time>,
 ) {
-    let (player, player_transform) = query.single();
+    let (player, mut encounter_tracker, player_transform) = player_query.single_mut();
     let player_translation = player_transform.translation;
 
     if player.just_moved
@@ -94,8 +100,11 @@ fn combat(
             .iter()
             .any(|&transform| is_collision_with_wall(player_translation, transform.translation))
     {
-        info!("Oyuncu savaş bölgesine girdi");
-        state.set(GameState::Combat).expect("State değiştirilemedi");
+        encounter_tracker.timer.tick(time.delta());
+        if encounter_tracker.timer.just_finished() {
+            info!("Oyuncu savaş bölgesinde");
+            state.set(GameState::Combat).expect("State değiştirilemedi");
+        }
     }
 }
 
@@ -108,10 +117,15 @@ fn spawn(mut commands: Commands, ascii_res: Res<AsciiSheet>) {
         Vec3::new(2. * TILE_SIZE, -2. * TILE_SIZE, 900.),
     );
 
-    commands.entity(sprite).insert(Player {
-        movement_speed: 2.5,
-        just_moved: false,
-    });
+    commands
+        .entity(sprite)
+        .insert(Player {
+            movement_speed: 2.5,
+            just_moved: false,
+        })
+        .insert(EncounterTrucker {
+            timer: Timer::from_seconds(1., TimerMode::Repeating),
+        });
 }
 
 fn camera_follow(

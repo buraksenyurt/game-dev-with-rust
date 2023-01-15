@@ -1,4 +1,5 @@
 use crate::ascii::{spawn_sprite, AsciiSheet};
+use crate::game_state::GameState;
 use crate::TILE_SIZE;
 use bevy::prelude::*;
 use std::fs::File;
@@ -12,9 +13,14 @@ pub struct TileCollider;
 #[derive(Component)]
 pub struct EncounterBuilder;
 
+#[derive(Component)]
+struct Map;
+
 impl Plugin for TileMapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(create);
+        app.add_startup_system(create)
+            .add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(show))
+            .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide));
     }
 }
 
@@ -49,9 +55,36 @@ fn create(mut commands: Commands, ascii_res: Res<AsciiSheet>) {
 
     commands
         .spawn(Name::new("Map"))
+        .insert(Map)
         .insert(ComputedVisibility::default())
         .insert(Visibility::VISIBLE)
         .insert(Transform::default())
         .insert(GlobalTransform::default())
         .push_children(&tiles);
+}
+
+fn show(
+    child_query: Query<&Children, With<Map>>,
+    mut child_visibility_query: Query<&mut Visibility, Without<Map>>,
+) {
+    if let Ok(children) = child_query.get_single() {
+        for child in children.iter() {
+            if let Ok(mut child_vis) = child_visibility_query.get_mut(*child) {
+                child_vis.is_visible = true;
+            }
+        }
+    }
+}
+
+fn hide(
+    child_query: Query<&Children, With<Map>>,
+    mut child_visibility_query: Query<&mut Visibility, Without<Map>>,
+) {
+    if let Ok(children) = child_query.get_single() {
+        for child in children.iter() {
+            if let Ok(mut child_vis) = child_visibility_query.get_mut(*child) {
+                child_vis.is_visible = false;
+            }
+        }
+    }
 }
