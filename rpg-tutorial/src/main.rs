@@ -1,8 +1,10 @@
 mod ascii;
+mod game_state;
 mod player;
 mod tile_map;
 
 use crate::ascii::AsciiPlugin;
+use crate::game_state::GameState;
 use crate::player::PlayerPlugin;
 use crate::tile_map::TileMapPlugin;
 use bevy::prelude::*;
@@ -14,6 +16,7 @@ pub const TILE_SIZE: f32 = 0.1;
 
 fn main() {
     App::new()
+        .add_state(GameState::Overworld)
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 title: "RPG Tutorial".to_string(),

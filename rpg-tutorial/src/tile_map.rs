@@ -9,6 +9,9 @@ pub struct TileMapPlugin;
 #[derive(Component)]
 pub struct TileCollider;
 
+#[derive(Component)]
+pub struct EncounterBuilder;
+
 impl Plugin for TileMapPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(create);
@@ -35,6 +38,9 @@ fn create(mut commands: Commands, ascii_res: Res<AsciiSheet>) {
                 // engelleyebiliriz.
                 if char == '#' {
                     commands.entity(tile).insert(TileCollider);
+                }
+                if char == '~' {
+                    commands.entity(tile).insert(EncounterBuilder);
                 }
                 tiles.push(tile);
             }
