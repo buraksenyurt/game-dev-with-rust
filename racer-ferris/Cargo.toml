@@ -1,0 +1,8 @@
+[package]
+name = "racer-ferris"
+version = "0.1.0"
+edition = "2021"
+description = "Racer Ferris. A simple game development tutorial from Udemy"
+
+[dependencies]
+rusty_engine = "5.2.1"
