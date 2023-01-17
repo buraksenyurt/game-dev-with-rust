@@ -1,6 +1,8 @@
 use rusty_engine::prelude::bevy::log::info;
 use rusty_engine::prelude::*;
 
+const PLAYER_MOVEMENT_SPEED: f32 = 100.;
+
 fn main() {
     let mut game = Game::new();
 
@@ -60,13 +62,38 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
             }
 
             game_state.score.current += 1;
-            info!("Oyuncu bir puan kazandı. Güncel skor: {}", game_state.score.current);
+            info!(
+                "Oyuncu bir puan kazandı. Güncel skor: {}",
+                game_state.score.current
+            );
         }
     }
 
-    let players_car = engine.sprites.get_mut("Player").unwrap();
-    players_car.translation.x += 75. * engine.delta_f32;
+    let player = engine.sprites.get_mut("Player").unwrap();
 
-    // let keiras_car = engine.sprites.get_mut("Keira").unwrap();
-    // keiras_car.translation.x -= 50. * engine.delta_f32;
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Up, KeyCode::W])
+    {
+        player.translation.y += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+    }
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Down, KeyCode::S])
+    {
+        player.translation.y -= PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+    }
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Left, KeyCode::A])
+    {
+        player.translation.x -= PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+    }
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Right, KeyCode::D])
+    {
+        player.translation.x += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+    }
+
 }
