@@ -4,19 +4,19 @@ use rusty_engine::prelude::*;
 fn main() {
     let mut game = Game::new();
 
-    let veyron = game.add_sprite("Player", SpritePreset::RacingCarYellow);
-    veyron.translation = Vec2::new(-200., 0.);
-    veyron.rotation = EAST;
-    veyron.scale = 0.5;
+    let walle = game.add_sprite("Player", "robot.png");
+    walle.translation = Vec2::new(-200., 0.);
+    walle.rotation = EAST;
+    walle.scale = 1.;
     //veyron.layer=1.;
-    veyron.collision = true;
+    walle.collision = true;
 
-    let esprit = game.add_sprite("Keira", SpritePreset::RacingCarBlue);
-    esprit.translation = Vec2::new(200., 0.);
-    esprit.rotation = WEST;
-    esprit.scale = 0.5;
+    let battery = game.add_sprite("AAA", "battery.png");
+    battery.translation = Vec2::new(200., 0.);
+    battery.rotation = WEST;
+    battery.scale = 0.8;
     //esprit.layer=2.;
-    esprit.collision = true;
+    battery.collision = true;
 
     game.add_logic(game_logic);
     game.run(GameState::default());
