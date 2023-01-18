@@ -13,37 +13,32 @@ fn main() {
     //veyron.layer=1.;
     walle.collision = true;
 
-    let battery = game.add_sprite("AAA", "battery.png");
-    battery.translation = Vec2::new(200., 0.);
-    battery.rotation = WEST;
-    battery.scale = 0.8;
-    //esprit.layer=2.;
-    battery.collision = true;
-
     game.add_logic(game_logic);
     game.run(GameState::default());
 }
 
 struct Score {
-    high: u32,
+    //high: u32,
     current: u32,
 }
 
 struct GameState {
     score: Score,
-    enemy_labels: Vec<String>,
-    spawn_timer: Timer,
+    battery_index: i32,
+    //enemy_labels: Vec<String>,
+    //spawn_timer: Timer,
 }
 
 impl Default for GameState {
     fn default() -> Self {
         Self {
             score: Score {
-                high: 0,
+                //high: 0,
                 current: 0,
             },
-            enemy_labels: Vec::new(),
-            spawn_timer: Timer::from_seconds(1., false),
+            //enemy_labels: Vec::new(),
+            //spawn_timer: Timer::from_seconds(1., false),
+            battery_index: 0,
         }
     }
 }
@@ -96,4 +91,17 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
         player.translation.x += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
     }
 
+    if engine.mouse_state.just_pressed(MouseButton::Left) {
+        if let Some(mouse_location) = engine.mouse_state.location() {
+            let battery_label = format!("BTRY_{}", game_state.battery_index);
+            game_state.battery_index += 1;
+
+            let battery = engine.add_sprite(battery_label.clone(), "battery.png");
+            battery.translation = mouse_location;
+            //battery.rotation = WEST;
+            battery.scale = 0.8;
+            //esprit.layer=2.;
+            battery.collision = true;
+        }
+    }
 }
