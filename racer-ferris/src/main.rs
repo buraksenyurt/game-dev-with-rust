@@ -13,12 +13,18 @@ fn main() {
     //veyron.layer=1.;
     walle.collision = true;
 
+    let text_high_score = game.add_text("lblHighScore", "High Score : 0");
+    text_high_score.translation = Vec2::new(420., 320.);
+
+    let text_current_score = game.add_text("lblCurrentScore", "Score : 0");
+    text_current_score.translation = Vec2::new(-420., 320.);
+
     game.add_logic(game_logic);
     game.run(GameState::default());
 }
 
 struct Score {
-    //high: u32,
+    high: u32,
     current: u32,
 }
 
@@ -33,7 +39,7 @@ impl Default for GameState {
     fn default() -> Self {
         Self {
             score: Score {
-                //high: 0,
+                high: 0,
                 current: 0,
             },
             //enemy_labels: Vec::new(),
@@ -57,10 +63,18 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
             }
 
             game_state.score.current += 1;
-            info!(
-                "Oyuncu bir puan kazandı. Güncel skor: {}",
-                game_state.score.current
-            );
+            let text_current_score = engine.texts.get_mut("lblCurrentScore").unwrap();
+            text_current_score.value = format!("Score: {}", game_state.score.current);
+            // info!(
+            //     "Oyuncu bir puan kazandı. Güncel skor: {}",
+            //     game_state.score.current
+            // );
+
+            if game_state.score.current > game_state.score.high {
+                game_state.score.high = game_state.score.current;
+                let text_high_score = engine.texts.get_mut("lblHighScore").unwrap();
+                text_high_score.value = format!("High Score: {}", game_state.score.high);
+            }
         }
     }
 
@@ -103,5 +117,11 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
             //esprit.layer=2.;
             battery.collision = true;
         }
+    }
+
+    if engine.keyboard_state.pressed(KeyCode::R) {
+        game_state.score.current = 0;
+        let text_current_score = engine.texts.get_mut("lblCurrentScore").unwrap();
+        text_current_score.value = "Score: 0".to_string();
     }
 }
