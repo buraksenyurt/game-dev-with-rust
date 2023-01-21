@@ -1,3 +1,4 @@
+use rand::{thread_rng, Rng};
 use rusty_engine::prelude::bevy::log::info;
 use rusty_engine::prelude::*;
 
@@ -5,7 +6,8 @@ const PLAYER_MOVEMENT_SPEED: f32 = 100.;
 
 fn main() {
     let mut game = Game::new();
-    game.audio_manager.play_music("Wagner_The_Valkyrie.ogg",0.1);
+    game.audio_manager
+        .play_music("Wagner_The_Valkyrie.ogg", 0.1);
 
     let walle = game.add_sprite("Player", "robot.png");
     walle.translation = Vec2::new(-200., 0.);
@@ -33,7 +35,7 @@ struct GameState {
     score: Score,
     battery_index: i32,
     //enemy_labels: Vec<String>,
-    //spawn_timer: Timer,
+    spawn_timer: Timer,
 }
 
 impl Default for GameState {
@@ -44,7 +46,7 @@ impl Default for GameState {
                 current: 0,
             },
             //enemy_labels: Vec::new(),
-            //spawn_timer: Timer::from_seconds(1., false),
+            spawn_timer: Timer::from_seconds(2., true),
             battery_index: 0,
         }
     }
@@ -76,7 +78,7 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
                 let text_high_score = engine.texts.get_mut("lblHighScore").unwrap();
                 text_high_score.value = format!("High Score: {}", game_state.score.high);
             }
-            engine.audio_manager.play_sfx(SfxPreset::Minimize1,0.2);
+            engine.audio_manager.play_sfx(SfxPreset::Minimize1, 0.2);
         }
     }
 
@@ -107,18 +109,28 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
         player.translation.x += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
     }
 
-    if engine.mouse_state.just_pressed(MouseButton::Left) {
-        if let Some(mouse_location) = engine.mouse_state.location() {
-            let battery_label = format!("BTRY_{}", game_state.battery_index);
-            game_state.battery_index += 1;
+    // if engine.mouse_state.just_pressed(MouseButton::Left) {
+    //     if let Some(mouse_location) = engine.mouse_state.location() {
+    //         let battery_label = format!("BTRY_{}", game_state.battery_index);
+    //         game_state.battery_index += 1;
+    //
+    //         let battery = engine.add_sprite(battery_label.clone(), "battery.png");
+    //         battery.translation = mouse_location;
+    //         //battery.rotation = WEST;
+    //         battery.scale = 0.8;
+    //         //esprit.layer=2.;
+    //         battery.collision = true;
+    //     }
+    // }
 
-            let battery = engine.add_sprite(battery_label.clone(), "battery.png");
-            battery.translation = mouse_location;
-            //battery.rotation = WEST;
-            battery.scale = 0.8;
-            //esprit.layer=2.;
-            battery.collision = true;
-        }
+    if game_state.spawn_timer.tick(engine.delta).just_finished() {
+        let battery_label = format!("BTRY_{}", game_state.battery_index);
+        game_state.battery_index += 1;
+        let battery = engine.add_sprite(battery_label.clone(), "battery.png");
+        battery.translation.x = thread_rng().gen_range(-420. ..420.);
+        battery.translation.y = thread_rng().gen_range(-320. ..320.);
+        battery.scale = 0.8;
+        battery.collision = true;
     }
 
     if engine.keyboard_state.pressed(KeyCode::R) {

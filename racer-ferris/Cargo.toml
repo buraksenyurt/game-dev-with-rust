@@ -5,4 +5,5 @@ edition = "2021"
 description = "Racer Ferris. A simple game development tutorial from Udemy"
 
 [dependencies]
+rand = "0.8.5"
 rusty_engine = "5.2.1"
