@@ -5,6 +5,7 @@ const PLAYER_MOVEMENT_SPEED: f32 = 100.;
 
 fn main() {
     let mut game = Game::new();
+    game.audio_manager.play_music("Wagner_The_Valkyrie.ogg",0.1);
 
     let walle = game.add_sprite("Player", "robot.png");
     walle.translation = Vec2::new(-200., 0.);
@@ -75,6 +76,7 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
                 let text_high_score = engine.texts.get_mut("lblHighScore").unwrap();
                 text_high_score.value = format!("High Score: {}", game_state.score.high);
             }
+            engine.audio_manager.play_sfx(SfxPreset::Minimize1,0.2);
         }
     }
 
