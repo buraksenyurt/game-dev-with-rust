@@ -3,9 +3,18 @@ use rusty_engine::prelude::bevy::log::info;
 use rusty_engine::prelude::*;
 
 const PLAYER_MOVEMENT_SPEED: f32 = 100.;
+const MAX_WARP_COUNT: u8 = 3;
 
 fn main() {
     let mut game = Game::new();
+
+    game.window_settings(WindowDescriptor {
+        title: "Eat the Garbage!".to_string(),
+        width: 1366.,
+        height: 768.,
+        ..Default::default()
+    });
+
     game.audio_manager
         .play_music("Wagner_The_Valkyrie.ogg", 0.1);
 
@@ -36,6 +45,25 @@ struct GameState {
     battery_index: i32,
     //enemy_labels: Vec<String>,
     spawn_timer: Timer,
+    booster: SpeedPowerup,
+}
+
+struct SpeedPowerup {
+    timer: Timer,
+    max: u8,
+    value: f32,
+    is_active: bool,
+}
+
+impl SpeedPowerup {
+    pub fn new() -> Self {
+        Self {
+            max: MAX_WARP_COUNT,
+            value: 1.,
+            is_active: false,
+            timer: Timer::from_seconds(3., true),
+        }
+    }
 }
 
 impl Default for GameState {
@@ -48,6 +76,7 @@ impl Default for GameState {
             //enemy_labels: Vec::new(),
             spawn_timer: Timer::from_seconds(2., true),
             battery_index: 0,
+            booster: SpeedPowerup::new(),
         }
     }
 }
@@ -94,40 +123,38 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
         .keyboard_state
         .pressed_any(&[KeyCode::Up, KeyCode::W])
     {
-        player.translation.y += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+        player.translation.y += PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
         .pressed_any(&[KeyCode::Down, KeyCode::S])
     {
-        player.translation.y -= PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+        player.translation.y -= PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
         .pressed_any(&[KeyCode::Left, KeyCode::A])
     {
-        player.translation.x -= PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+        player.translation.x -= PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
         .pressed_any(&[KeyCode::Right, KeyCode::D])
     {
-        player.translation.x += PLAYER_MOVEMENT_SPEED * engine.delta_f32;
+        player.translation.x += PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
 
-    // if engine.mouse_state.just_pressed(MouseButton::Left) {
-    //     if let Some(mouse_location) = engine.mouse_state.location() {
-    //         let battery_label = format!("BTRY_{}", game_state.battery_index);
-    //         game_state.battery_index += 1;
-    //
-    //         let battery = engine.add_sprite(battery_label.clone(), "battery.png");
-    //         battery.translation = mouse_location;
-    //         //battery.rotation = WEST;
-    //         battery.scale = 0.8;
-    //         //esprit.layer=2.;
-    //         battery.collision = true;
-    //     }
-    // }
+    if game_state.booster.max > 0 && engine.keyboard_state.just_pressed(KeyCode::W) {
+        game_state.booster.is_active = true;
+        game_state.booster.value = 3.;
+        game_state.booster.timer.reset();
+        game_state.booster.max -= 1;
+    }
+
+    if game_state.booster.timer.tick(engine.delta).just_finished() && game_state.booster.is_active {
+        game_state.booster.is_active = false;
+        game_state.booster.value = 1.;
+    }
 
     if game_state.spawn_timer.tick(engine.delta).just_finished() {
         let battery_label = format!("BTRY_{}", game_state.battery_index);
@@ -141,6 +168,7 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
 
     if engine.keyboard_state.pressed(KeyCode::R) {
         game_state.score.current = 0;
+        game_state.booster = SpeedPowerup::new();
         let text_current_score = engine.texts.get_mut("lblCurrentScore").unwrap();
         text_current_score.value = "Score: 0".to_string();
     }
