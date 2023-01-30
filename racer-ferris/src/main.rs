@@ -56,6 +56,12 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
     // game_state.score.current += 1;
     // info!("Güncel skor {}", game_state.score.current);
 
+    if engine.keyboard_state.just_pressed(KeyCode::Q) {
+        engine.should_exit = true;
+    }
+
+    set_texts_position(engine);
+
     for event in engine.collision_events.drain(..) {
         info!("{:#?}", event);
         if event.state == CollisionState::Begin && event.pair.one_starts_with("Player") {
@@ -138,4 +144,13 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
         let text_current_score = engine.texts.get_mut("lblCurrentScore").unwrap();
         text_current_score.value = "Score: 0".to_string();
     }
+}
+
+fn set_texts_position(engine: &mut Engine) {
+    let score = engine.texts.get_mut("lblCurrentScore").unwrap();
+    score.translation.x = engine.window_dimensions.x / 2. - 100.;
+    score.translation.y = engine.window_dimensions.y / 2. - 50.;
+    let high_score = engine.texts.get_mut("lblHighScore").unwrap();
+    high_score.translation.x = -engine.window_dimensions.x / 2. + 100.;
+    high_score.translation.y = engine.window_dimensions.y / 2. - 50.;
 }
