@@ -2,7 +2,7 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
-- [ ] **16 - pod-race; Ultimate Rust 2 kursundaki son örnek bir araba yarış oyunu. O bölümü tamamlamaya çalışıyorum.
+- [x] **16 - pod-race;** Ultimate Rust 2 kursundaki son örnek bir araba yarış oyunu. O bölümü tamamlamaya çalışıyorum.
 - [x] **15 - racer-ferris;** Aldığım Ultimate Rust 2: Intermediate Concepts isimli Udemy eğitimde [rusty engine](https://cleancut.github.io/rusty_engine/00-welcome.html) kullanılarak geliştirilen bir oyun var. Bunu tamamlamaya çalışacağım.
 - ~~[ ] **14 - rpg-tutorial;** [Bu adreste](https://github.com/mwbryant/monster-fighter) yer alan örneği uygulayıp Bevy ile basit bir platform oyunu nasıl inşa edilebilir öğrenmeye çalışıyorum.~~ Valla bu ikinci denemem. Yine bitiremedim.
 - ~~[ ] **13 - Minesweeper;** [Şu dev.to makalesindeki](https://dev.to/qongzi/bevy-minesweeper-part-1-534c) örneği takip ederek Windows'un meşhur mayın bulma oyununun Bevy oyun motoru ile nasıl yazıldığını öğrenmeye çalışıyorum.~~
