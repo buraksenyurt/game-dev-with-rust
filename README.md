@@ -2,7 +2,8 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
-- [ ] **15 - racer-ferris;** Aldığım Ultimate Rust 2: Intermediate Concepts isimli Udemy eğitimde [rusty engine](https://cleancut.github.io/rusty_engine/00-welcome.html) kullanılarak geliştirilen bir oyun var. Bunu tamamlamaya çalışacağım.
+- [ ] **16 - pod-race; Ultimate Rust 2 kursundaki son örnek bir araba yarış oyunu. O bölümü tamamlamaya çalışıyorum.
+- [x] **15 - racer-ferris;** Aldığım Ultimate Rust 2: Intermediate Concepts isimli Udemy eğitimde [rusty engine](https://cleancut.github.io/rusty_engine/00-welcome.html) kullanılarak geliştirilen bir oyun var. Bunu tamamlamaya çalışacağım.
 - ~~[ ] **14 - rpg-tutorial;** [Bu adreste](https://github.com/mwbryant/monster-fighter) yer alan örneği uygulayıp Bevy ile basit bir platform oyunu nasıl inşa edilebilir öğrenmeye çalışıyorum.~~ Valla bu ikinci denemem. Yine bitiremedim.
 - ~~[ ] **13 - Minesweeper;** [Şu dev.to makalesindeki](https://dev.to/qongzi/bevy-minesweeper-part-1-534c) örneği takip ederek Windows'un meşhur mayın bulma oyununun Bevy oyun motoru ile nasıl yazıldığını öğrenmeye çalışıyorum.~~
 - [x] **12 - wing-pilot-2024;** Bu sefer Commodore 64'te sıkça oynadığım 1942 oyununun bir benzerini Macroquad çatısını kullanarak gerçekleştirmeye çalışıyorum.
@@ -20,6 +21,10 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 - [x] **00 - crayz_invaders;** isimli ilk örnekte Jeremy Chone'un [şu adresteki öğretisini](https://www.youtube.com/watch?v=j7qHwb7geIM) birebire takip ederek ilerlemekteyim. Bu örnekte [Bevy](https://crates.io/crates/bevy) isimli Crate kullanılıyor ve Space Invaders benzeri bir konsol oyunu geliştiriliyor. Bevy'nin kullanılması dışında _Entity Component System_ odaklı oyun motorlarının nasıl kullanıldığı da öğreniliyor.
 
 ## Örnek Çalışma Zamanları
+
+racer-ferris olarak adlandırdığım ama esasında boşluktaki bataryaları toplayan bir robotun yer aldığı örneğin çalışma zamanı. Wagner ile birlikte :D
+
+![assets/eat_the_garbage.gif](assets/eat_the_garbage.gif)
 
 WingMand 2042 oyununa ait bir ekran görüntüsü de aşağıdaki gibidir.
 
