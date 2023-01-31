@@ -21,6 +21,9 @@ impl Default for GameState {
 fn main() {
     let mut game = Game::new();
 
+    let health_message = game.add_text("health_message", "Health: 5");
+    health_message.translation = Vec2::new(550., 320.);
+
     create_player(&mut game);
     game.audio_manager.play_music("jamsi4.ogg", 0.2);
     create_road_lines(&mut game);
@@ -28,6 +31,46 @@ fn main() {
 
     game.add_logic(game_logic);
     game.run(GameState::default());
+}
+
+fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
+    if game_state.lost {
+        return;
+    }
+
+    let mut direction = 0.;
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Up, KeyCode::W])
+    {
+        direction += 1.;
+    }
+    if engine
+        .keyboard_state
+        .pressed_any(&[KeyCode::Down, KeyCode::S])
+    {
+        direction -= 1.;
+    }
+    let player1 = engine.sprites.get_mut("player1").unwrap();
+    player1.translation.y += direction * PLAYER_SPEED * engine.delta_f32;
+    player1.rotation = direction * 0.15;
+    if player1.translation.y < -360. || player1.translation.y > 360. {
+        game_state.health = 0;
+    }
+
+    move_road_objects(engine);
+    detect_collisions(engine, game_state);
+    is_it_over(engine, game_state);
+}
+
+fn is_it_over(engine: &mut Engine, game_state: &mut GameState) {
+    if game_state.health == 0 {
+        game_state.lost = true;
+        let game_over_text = engine.add_text("Oyun sona erdi", "Oyun Bitti");
+        game_over_text.font_size = 128.;
+        engine.audio_manager.stop_music();
+        engine.audio_manager.play_sfx("jingle1.ogg", 0.5);
+    }
 }
 
 fn create_player(game: &mut Game<GameState>) {
@@ -60,28 +103,18 @@ fn create_obstacles(game: &mut Game<GameState>) {
     }
 }
 
-fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
-    let mut direction = 0.;
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Up, KeyCode::W])
-    {
-        direction += 1.;
+fn detect_collisions(engine: &mut Engine, game_state: &mut GameState) {
+    let health_message = engine.texts.get_mut("health_message").unwrap();
+    for event in engine.collision_events.drain(..) {
+        if !event.pair.either_contains("player1") || event.state.is_end() {
+            continue;
+        }
+        if game_state.health > 0 {
+            game_state.health -= 1;
+            health_message.value = format!("Health: {}", game_state.health);
+            engine.audio_manager.play_sfx("sfx_impact.ogg", 0.5);
+        }
     }
-    if engine
-        .keyboard_state
-        .pressed_any(&[KeyCode::Down, KeyCode::S])
-    {
-        direction -= 1.;
-    }
-    let player1 = engine.sprites.get_mut("player1").unwrap();
-    player1.translation.y += direction * PLAYER_SPEED * engine.delta_f32;
-    player1.rotation = direction * 0.15;
-    if player1.translation.y < -360. || player1.translation.y > 360. {
-        game_state.health = 0;
-    }
-
-    move_road_objects(engine);
 }
 
 fn move_road_objects(engine: &mut Engine) {
