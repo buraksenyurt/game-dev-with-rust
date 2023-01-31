@@ -1,0 +1,9 @@
+[package]
+name = "pod-race"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rusty_engine = "5.2.1"
