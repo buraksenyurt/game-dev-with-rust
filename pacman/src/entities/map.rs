@@ -9,6 +9,7 @@
 */
 
 use crate::common::contants::{TILE_MAP_HEIGHT, TILE_MAP_WIDTH};
+use crate::common::position::Position;
 use crate::entities::cell::{Tile, TileType};
 use crate::entities::line::Line;
 use crate::entities::pellets::Pellets;
@@ -129,6 +130,19 @@ impl Map {
         Line {
             map: &self,
             index: 0,
+        }
+    }
+
+    // Matriste parametre olarak gelen konumdaki değeri döndüren fonksiyon
+    // Eğer koordinatlar 0 dan küçük veya matris ebatlarından büyükse None döner.
+    // Aksi halde x ve y hesaplamaya katılarak vektördeki indisin olduğu Tile nesnesi döndürülür.
+    pub fn get(&self, pos: &Position) -> Option<Tile> {
+        if (pos.x < 0 || pos.x >= TILE_MAP_WIDTH as i32)
+            || (pos.y < 0 || pos.y >= TILE_MAP_HEIGHT as i32)
+        {
+            None
+        } else {
+            Some(self.tiles[TILE_MAP_WIDTH * pos.y as usize + pos.x as usize])
         }
     }
 }
