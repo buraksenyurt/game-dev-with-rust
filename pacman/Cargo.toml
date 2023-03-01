@@ -1,0 +1,7 @@
+[package]
+name = "pacman"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+piston = "0.53.2"
