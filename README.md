@@ -2,6 +2,8 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
+- [ ] **18 - mazes;** Jamis Buck'ın [Mazes for Programmers](http://www.mazesforprogrammers.com/) isimli kitabının ilk bölümünde başlayan Binary Tree algoritmasına göre labirent oluşturma ve çözüm için Dijkstra algoritmasının uygulanmasını ele aldığım örnek. Kitap konuyu Ruby ile ele almış ben Rust'a evirmeye çalışıyorum. 
+- [ ] **17 - pacman;** Klasik pacman oyununu [şu repodaki örneğine bakarak](https://github.com/mendess/rust-pacman) yazmaya ve rust kodlama bilgimi artırmaya çalıştığım örnek.
 - [x] **16 - pod-race;** Ultimate Rust 2 kursundaki son örnek bir araba yarış oyunu. O bölümü tamamlamaya çalışıyorum.
 - [x] **15 - racer-ferris;** Aldığım Ultimate Rust 2: Intermediate Concepts isimli Udemy eğitimde [rusty engine](https://cleancut.github.io/rusty_engine/00-welcome.html) kullanılarak geliştirilen bir oyun var. Bunu tamamlamaya çalışacağım.
 - ~~[ ] **14 - rpg-tutorial;** [Bu adreste](https://github.com/mwbryant/monster-fighter) yer alan örneği uygulayıp Bevy ile basit bir platform oyunu nasıl inşa edilebilir öğrenmeye çalışıyorum.~~ Valla bu ikinci denemem. Yine bitiremedim.
