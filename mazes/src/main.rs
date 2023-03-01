@@ -127,22 +127,23 @@ impl Grid {
         for c in self.cells.clone().iter_mut() {
             let (row, column) = (c.row, c.column);
             println!("(row X column) = ( {} X {} )", row, column);
+            let index = self.get_index(row, column) as usize;
             let north_index = self.get_index(row - 1, column);
             let south_index = self.get_index(row + 1, column);
             let west_index = self.get_index(row, column - 1);
             let east_index = self.get_index(row, column + 1);
 
             if north_index > 0 {
-                c.north = Some(Box::new(self.cells[north_index as usize].clone()));
+                self.cells[index].north = Some(Box::new(self.cells[north_index as usize].clone()));
             }
             if south_index > 0 {
-                c.south = Some(Box::new(self.cells[south_index as usize].clone()));
+                self.cells[index].south = Some(Box::new(self.cells[south_index as usize].clone()));
             }
             if east_index > 0 {
-                c.east = Some(Box::new(self.cells[east_index as usize].clone()));
+                self.cells[index].east = Some(Box::new(self.cells[east_index as usize].clone()));
             }
             if west_index > 0 {
-                c.west = Some(Box::new(self.cells[west_index as usize].clone()));
+                self.cells[index].west = Some(Box::new(self.cells[west_index as usize].clone()));
             }
         }
     }
@@ -192,7 +193,7 @@ mod test {
     }
 
     #[test]
-    fn create_grid_test() {
+    fn create_and_arange_cells_test() {
         let mut grid = Grid::new(4, 4);
         grid.prepare();
         grid.arrange();
@@ -200,5 +201,15 @@ mod test {
         assert_eq!(grid.cells[4].mark, 4);
         assert_eq!(grid.cells[6].mark, 6);
         assert_eq!(grid.cells[16].mark, 16);
+
+        assert!(grid.cells[0].north.is_none());
+        assert!(grid.cells[0].south.is_some());
+        assert!(grid.cells[0].west.is_none());
+        assert!(grid.cells[0].east.is_some());
+
+        assert!(grid.cells[6].north.is_some());
+        assert!(grid.cells[6].south.is_some());
+        assert!(grid.cells[6].west.is_some());
+        assert!(grid.cells[6].east.is_some());
     }
 }
