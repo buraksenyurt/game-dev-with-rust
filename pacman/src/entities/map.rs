@@ -14,7 +14,7 @@ use crate::entities::cell::{Tile, TileType};
 use crate::entities::line::Line;
 use crate::entities::pellets::Pellets;
 
-const TILES_MAP: [&'static str; 31] = [
+const TILES_MAP: [&str; 31] = [
     "############################",
     "#............##............#",
     "#.####.#####.##.#####.####.#",
@@ -128,7 +128,7 @@ impl Map {
     // Map matrisini satır satır dolaşmamızı sağlayan fonksiyon
     pub fn read_lines(&self) -> Line {
         Line {
-            map: &self,
+            map: self,
             index: 0,
         }
     }

@@ -49,10 +49,8 @@ fn main() {
                 // asıl çizim operasyonlarını icra eden nesnenin draw fonksiyonu
                 view.draw(&controller, &c, g);
             })
-        } else {
-            if controller.event(&event) {
-                break;
-            }
+        } else if controller.event(&event) {
+            break;
         }
     }
 }

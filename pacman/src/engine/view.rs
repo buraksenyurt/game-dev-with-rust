@@ -1,9 +1,8 @@
 use crate::common::contants::{DOT_COLOR, POWERUP_COLOR, TILE_SIZE, WALL_COLOR};
 use crate::engine::controller::Controller;
 use crate::entities::cell::{Tile, TileType};
-use graphics::types::Color;
-use graphics::{CircleArc, Context, Rectangle, Text};
-use opengl_graphics::{GlGraphics, Texture};
+use graphics::{CircleArc, Context, Rectangle};
+use opengl_graphics::GlGraphics;
 use std::f64::consts::PI;
 
 /*
@@ -19,7 +18,7 @@ pub struct View {
 impl View {
     pub fn new() -> Self {
         // Blinky, Pinky, Inky, Clyde
-        let mut ghosts = vec!['B', 'P', 'I', 'C'];
+        let ghosts = vec!['B', 'P', 'I', 'C'];
         Self {
             x_offset: 0.,
             y_offset: 0.,

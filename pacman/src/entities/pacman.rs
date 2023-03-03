@@ -57,10 +57,7 @@ impl Pacman {
             Direction::Left => (self.pos.x - 1, self.pos.y),
             Direction::Right => (self.pos.x + 1, self.pos.y),
         };
-        match self.map.get(&Position::new(x, y)) {
-            None | Some(Tile::Wall) => false,
-            _ => true,
-        }
+        !matches!(self.map.get(&Position::new(x, y)), None | Some(Tile::Wall))
     }
 
     // oyun döngüsündeki kilit fonksiyon. Her tick event'i gerçekleştiğinde bazı aksiyonlar alınır.
