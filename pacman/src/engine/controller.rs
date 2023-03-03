@@ -5,6 +5,7 @@
    olayları yönettiğimiz nesne.
 */
 use crate::common::direction::Direction;
+use crate::entities::map::Map;
 use crate::entities::pacman::Pacman;
 use piston::Button::Keyboard;
 use piston::{Event, Key, PressEvent, UpdateEvent};
@@ -43,5 +44,9 @@ impl Controller {
         }
 
         false
+    }
+
+    pub fn get_map(&self) -> &Map {
+        self.game.get_map()
     }
 }

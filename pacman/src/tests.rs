@@ -2,11 +2,12 @@
 pub mod test {
     use crate::common::contants::{TILE_MAP_HEIGHT, TILE_MAP_WIDTH};
     use crate::common::position::Position;
-    use crate::entities::cell::Tile;
     use crate::entities::cell::Tile::{NotWall, Wall};
     use crate::entities::cell::TileType::Dot;
+    use crate::entities::cell::{Tile, TileType};
     use crate::entities::map::Map;
     use crate::entities::pacman::Pacman;
+    use graphics::math::dot;
 
     #[test]
     fn create_ground_test() {
@@ -46,5 +47,32 @@ pub mod test {
         let pos = Position::new(2, 2);
         let get_result = map.get(&pos);
         assert_eq!(get_result, Some(Wall));
+    }
+
+    #[test]
+    fn how_many_tiles() {
+        let mut wall_count = 0;
+        let mut dot_count = 0;
+        let mut room_count = 0;
+        let mut powerup_count = 0;
+        let mut empty_count = 0;
+        let map = Map::default();
+
+        for line in map.read_lines() {
+            for tile in line.iter() {
+                match tile {
+                    Wall => wall_count += 1,
+                    NotWall(Dot) => dot_count += 1,
+                    NotWall(TileType::Powerup) => powerup_count += 1,
+                    NotWall(TileType::Empty) => empty_count += 1,
+                    Tile::Room => room_count += 1,
+                }
+            }
+        }
+        assert_eq!(wall_count, 548);
+        assert_eq!(dot_count, 242);
+        assert_eq!(room_count, 20);
+        assert_eq!(powerup_count, 4);
+        assert_eq!(empty_count, 54);
     }
 }
