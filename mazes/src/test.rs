@@ -44,24 +44,23 @@ mod test {
 
     #[test]
     fn grid_size_test() {
-        let mut grid = Grid::new(4, 4);
+        let mut grid = Grid::new(4);
         assert_eq!(grid.get_size(), 16);
 
-        let mut grid = Grid::new(4, 6);
-        assert_eq!(grid.get_size(), 24);
+        let mut grid = Grid::new(5);
+        assert_eq!(grid.get_size(), 25);
     }
 
     #[test]
     fn create_and_arange_cells_test() {
-        let mut grid = Grid::new(4, 4);
+        let mut grid = Grid::new(4);
         grid.prepare();
-        grid.arrange();
         assert_eq!(grid.cells[0].mark, 0);
         assert_eq!(grid.cells[4].mark, 4);
         assert_eq!(grid.cells[6].mark, 6);
-        assert_eq!(grid.cells[16].mark, 16);
+        assert_eq!(grid.cells[15].mark, 15);
 
-        // 0X0 hücresinin kuzey hücresi olmaz
+        // 0X0 hücresinin kuzey hücresi olamaz
         assert!(grid.cells[0].north.is_none());
         // güney komşusu olur
         assert!(grid.cells[0].south.is_some());

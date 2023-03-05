@@ -11,8 +11,8 @@ impl<'a> Iterator for GridRow<'a> {
 
     fn next(&mut self) -> Option<&'a [Cell]> {
         let (col_count, row_count) = (
-            self.grid.get_column_count() as usize,
-            self.grid.get_row_count() as usize,
+            self.grid.get_dimension() as usize,
+            self.grid.get_dimension() as usize,
         );
         let line_start = self.line_number * row_count;
         self.line_number += 1;

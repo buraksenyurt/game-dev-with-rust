@@ -1,41 +1,38 @@
 use crate::cell::Cell;
 use crate::grid_row::GridRow;
+use rand::Rng;
 
 pub struct Grid {
-    row_count: i32,
-    column_count: i32,
+    dimension: i32,
     pub cells: Vec<Cell>,
 }
 
 impl Grid {
-    pub fn new(rows: i32, columns: i32) -> Self {
+    pub fn new(dimension: i32) -> Self {
         Self {
-            row_count: rows,
-            column_count: columns,
+            dimension,
             cells: vec![],
         }
     }
     pub fn get_size(&self) -> i32 {
-        self.row_count * self.column_count
+        self.dimension * self.dimension
     }
-    pub fn get_column_count(&self) -> i32 {
-        self.column_count
-    }
-    pub fn get_row_count(&self) -> i32 {
-        self.row_count
+    pub fn get_dimension(&self) -> i32 {
+        self.dimension
     }
     pub fn prepare(&mut self) {
         let mut index = 0;
-        for x in 0..self.column_count {
-            for y in 0..self.row_count {
+        for x in 0..self.dimension {
+            for y in 0..self.dimension {
                 self.cells.push(Cell::init(x, y, index));
                 index += 1;
             }
         }
+        self.arrange();
         //println!("Last index number {}",index);
     }
     fn get_index(&self, row: i32, column: i32) -> i32 {
-        (row * self.column_count) + column
+        (row * self.dimension) + column
     }
 
     /*
@@ -58,26 +55,27 @@ impl Grid {
        let y = index / WIDTH;
     */
 
-    pub fn arrange(&mut self) {
+    fn arrange(&mut self) {
         for c in self.cells.clone().iter_mut() {
             let (row, column) = (c.row, c.column);
-            println!("(row X column) = ( {} X {} )", row, column);
             let index = self.get_index(row, column) as usize;
+            let max_size = self.get_size();
+            //println!("(row X column) = ( {} X {} ),Index={}", row, column, index);
             let north_index = self.get_index(row - 1, column);
             let south_index = self.get_index(row + 1, column);
             let west_index = self.get_index(row, column - 1);
             let east_index = self.get_index(row, column + 1);
 
-            if north_index > 0 {
+            if north_index > 0 && north_index < max_size {
                 self.cells[index].north = Some(Box::new(self.cells[north_index as usize].clone()));
             }
-            if south_index > 0 {
+            if south_index > 0 && south_index < max_size {
                 self.cells[index].south = Some(Box::new(self.cells[south_index as usize].clone()));
             }
-            if east_index > 0 {
+            if east_index > 0 && east_index < max_size {
                 self.cells[index].east = Some(Box::new(self.cells[east_index as usize].clone()));
             }
-            if west_index > 0 {
+            if west_index > 0 && west_index < max_size {
                 self.cells[index].west = Some(Box::new(self.cells[west_index as usize].clone()));
             }
         }

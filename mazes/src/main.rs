@@ -9,13 +9,20 @@ use crate::grid::Grid;
 mod cell;
 mod grid;
 mod grid_row;
+mod maze_builder;
 mod test;
 
 fn main() {
-    let mut grid = Grid::new(4, 5);
+    let mut grid = Grid::new(5);
     grid.prepare();
-    println!("Grid size {}", grid.get_size());
 
+    println!("Grid size {}", grid.get_size());
+    write_to_console(&grid);
+
+    //let mazed = maze_builder::with_btree(&grid);
+}
+
+pub fn write_to_console(grid: &Grid) {
     for row in grid.iter_rows() {
         for cell in row.iter() {
             print!("{}\t", cell.mark);
