@@ -73,4 +73,8 @@ impl Pacman {
         //TODO Hayaletler hareket ettirilecek
         //TODO Hayalet ile pacman arasındaki etkileşimler(çarpışma gibi) kontrol edilecek
     }
+
+    pub fn get_location(&self) -> (Position, Direction) {
+        (Position::new(self.pos.x, self.pos.y), self.target_dir)
+    }
 }

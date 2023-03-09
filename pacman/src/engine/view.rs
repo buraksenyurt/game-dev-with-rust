@@ -1,8 +1,10 @@
 use crate::common::contants::{DOT_COLOR, POWERUP_COLOR, TILE_SIZE, WALL_COLOR};
+use crate::common::direction::Direction;
+use crate::common::utility::{calculate_square, load_texture};
 use crate::engine::controller::Controller;
 use crate::entities::cell::{Tile, TileType};
-use graphics::{CircleArc, Context, Rectangle};
-use opengl_graphics::GlGraphics;
+use graphics::{CircleArc, Context, Image, Rectangle};
+use opengl_graphics::{GlGraphics, Texture};
 use std::f64::consts::PI;
 
 /*
@@ -13,16 +15,25 @@ pub struct View {
     x_offset: f64,
     y_offset: f64,
     ghosts: Vec<char>,
+    pacman_textures: [Texture; 4],
 }
 
 impl View {
     pub fn new() -> Self {
         // Blinky, Pinky, Inky, Clyde
         let ghosts = vec!['B', 'P', 'I', 'C'];
+        // Pacman hareket ederken hangi yöne döndüyse ona uygun bir texture gösterilecek
+        let pacman_textures = [
+            load_texture("pacman_right"),
+            load_texture("pacman_down"),
+            load_texture("pacman_left"),
+            load_texture("pacman_up"),
+        ];
         Self {
             x_offset: 0.,
             y_offset: 0.,
             ghosts,
+            pacman_textures,
         }
     }
 
@@ -83,5 +94,20 @@ impl View {
             y += TILE_SIZE;
             x = 0.;
         }
+
+        // Oyun sahasındaki pacman'in güncel pozisyon ve gitmek istediği yön bilgileri alınır
+        let (p, d) = controller.get_pacman();
+
+        // Gitmek istediği yön bilgisine göre uygun texture çekilir
+        let pacman_texture = match d {
+            Direction::Up => &self.pacman_textures[3],
+            Direction::Left => &self.pacman_textures[2],
+            Direction::Down => &self.pacman_textures[1],
+            Direction::Right => &self.pacman_textures[0],
+        };
+        // Pacman ilgili konuma gelecek şekilde çizdirilir
+        Image::new()
+            .rect(offset(calculate_square(TILE_SIZE, p.x, p.y)))
+            .draw(pacman_texture, &c.draw_state, c.transform, g);
     }
 }
