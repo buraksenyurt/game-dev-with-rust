@@ -145,4 +145,14 @@ impl Map {
             Some(self.tiles[TILE_MAP_WIDTH * pos.y as usize + pos.x as usize])
         }
     }
+
+    // Pacman bir noktayı yediğinde bu noktayı pellet listesinden çıkarmalı
+    // ve yerine boş bir tile koymalıyız.
+    pub fn eat_the_dot(&mut self, pos: Position) {
+        if let Some(Tile::NotWall(TileType::Dot)) = self.get(&pos) {
+            self.pellets.count -= 1;
+        }
+        self.tiles[TILE_MAP_WIDTH * pos.y as usize + pos.x as usize] =
+            Tile::NotWall(TileType::Empty);
+    }
 }

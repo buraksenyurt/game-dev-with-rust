@@ -1,5 +1,6 @@
 use crate::common::contants::PACMAN_START_POS;
 
+#[derive(Clone, Copy)]
 pub struct Position {
     pub x: i32,
     pub y: i32,

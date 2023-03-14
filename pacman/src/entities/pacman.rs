@@ -96,14 +96,14 @@ impl Pacman {
         // Elde edilen pozisyona göre haritada ne olduğuna bakılır
         match self.map.get(&position) {
             /*
-                map.get'de bir pozisyon olmamasının tek şartı Pacman'in oyun sahası dışında olmasıdır.
-                Pacman oyununda hatırlanacağı üzere tam ortada ekranın solundan veya sağından
-                çıkılıp ters noktadan tekrar oyuna girilmesi mümkündür.
+               map.get'de bir pozisyon olmamasının tek şartı Pacman'in oyun sahası dışında olmasıdır.
+               Pacman oyununda hatırlanacağı üzere tam ortada ekranın solundan veya sağından
+               çıkılıp ters noktadan tekrar oyuna girilmesi mümkündür.
 
-                Sol tarafan çıkılması halinde pacman'in x değeri -1 dir.
-                Sağ taraftan çıkılma halinde ise bu değer sahanın genişliği ile eş değerdir.
+               Sol tarafan çıkılması halinde pacman'in x değeri -1 dir.
+               Sağ taraftan çıkılma halinde ise bu değer sahanın genişliği ile eş değerdir.
 
-             */
+            */
             None => {
                 if position.x == -1 {
                     // Pacman sahanın solundan çıktıysa sağ uçtan tekrar giriş yapsın
@@ -118,7 +118,7 @@ impl Pacman {
                 self.pos = position;
                 match powerup {
                     TileType::Dot => {
-                        // noktanın yenmesi lazım
+                        self.map.eat_the_dot(position);
                     }
                     TileType::Empty => {}
                     TileType::Powerup => {
