@@ -146,12 +146,14 @@ impl Map {
         }
     }
 
-    // Pacman bir noktayı yediğinde bu noktayı pellet listesinden çıkarmalı
-    // ve yerine boş bir tile koymalıyız.
-    pub fn eat_the_dot(&mut self, pos: Position) {
+    // Pacman bir noktadan geçerken pellet veya farklı bir powerup
+    // olup olmadığının kontrolünün yaptığımız fonksiyon.
+    pub fn eat_something(&mut self, pos: Position) {
+        // Eğer bir nokta ile karşılaşmışsa bu yenmeli ve toplam nokta(pellet) sayısı azaltılmalı
         if let Some(Tile::NotWall(TileType::Dot)) = self.get(&pos) {
             self.pellets.count -= 1;
         }
+        // Sonrasında geçilen kare boş bir zemin ile değiştirilir
         self.tiles[TILE_MAP_WIDTH * pos.y as usize + pos.x as usize] =
             Tile::NotWall(TileType::Empty);
     }

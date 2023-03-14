@@ -7,3 +7,5 @@ pub const WALL_COLOR: Color = [0., 0., 255., 1.0];
 pub const DOT_COLOR: Color = [0., 0., 0., 1.0];
 pub const POWERUP_COLOR: Color = [255., 0., 255., 1.0];
 pub const TILE_SIZE: f64 = 20.;
+pub const EAT_PELLET_SCORE: u32 = 5;
+pub const EAT_POWERUP_SCORE: u32 = 10;

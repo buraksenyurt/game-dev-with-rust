@@ -1,8 +1,9 @@
-use crate::common::contants::TILE_MAP_WIDTH;
+use crate::common::contants::{EAT_PELLET_SCORE, EAT_POWERUP_SCORE, TILE_MAP_WIDTH};
 use crate::common::direction::Direction;
 use crate::common::position::Position;
 use crate::entities::cell::{Tile, TileType};
 use crate::entities::map::Map;
+use crate::entities::score::Score;
 use piston::Key::P;
 
 pub struct Pacman {
@@ -11,8 +12,7 @@ pub struct Pacman {
     dir: Direction,
     target_dir: Direction,
     ticks: u32,
-    score: u32,
-    lives: u8,
+    score: Score,
 }
 
 impl Pacman {
@@ -29,8 +29,7 @@ impl Default for Pacman {
             dir: Direction::Left,
             target_dir: Direction::Left,
             ticks: 0,
-            lives: 3,
-            score: 0,
+            score: Score::default(),
         }
     }
 }
@@ -39,7 +38,7 @@ impl Pacman {
     // Pacman'in gideceği yönü ayarlayan fonksiyon
     pub fn set_direction(&mut self, candidate: Direction) {
         // Pacman'in geçerli canı var mı?
-        if self.lives == 0 {
+        if self.score.lives == 0 {
             return;
         }
         // Hedef koordinatları yönlendir
@@ -68,7 +67,7 @@ impl Pacman {
         //TODO Tüm noktalar yenmiş mi kontrolü yapılacak
 
         // Pacman'in canları tükendiyse bu fonksiyon daha fazla çalışmasın
-        if self.lives == 0 {
+        if self.score.lives == 0 {
             return;
         }
         self.go();
@@ -116,13 +115,18 @@ impl Pacman {
             Some(Tile::NotWall(powerup)) => {
                 // Duvar olmadığı sürece Pacman hareketine kesintisiz olarak devam eder.
                 self.pos = position;
+                // Bir PowerUp ile karşılaşıldığında TileType'a göre hareket edilir.
                 match powerup {
+                    // Nokta ile ifade edilen Pellet'ler Pacman'in yemeğe çalıştığı yemişlerdir
                     TileType::Dot => {
-                        self.map.eat_the_dot(position);
+                        self.map.eat_something(position); // Hücreyi sahadan çıkarır
+                        self.score.total_point += EAT_PELLET_SCORE;
                     }
                     TileType::Empty => {}
+                    // Bir PowerUp söz konusu ise puan buna göre artırlır.
                     TileType::Powerup => {
-                        // powerup kullanımı
+                        self.map.eat_something(position); // Hücreyi sahadan çıkarır
+                        self.score.total_point += EAT_POWERUP_SCORE;
                     }
                 }
             }
