@@ -1,4 +1,6 @@
-use crate::common::contants::{DOT_COLOR, POWERUP_COLOR, TILE_SIZE, WALL_COLOR};
+use crate::common::contants::{
+    DOT_COLOR, POWERUP_COLOR, TILE_MAP_HEIGHT, TILE_MAP_WIDTH, TILE_SIZE, WALL_COLOR,
+};
 use crate::common::direction::Direction;
 use crate::common::utility::{calculate_square, load_texture};
 use crate::engine::controller::Controller;
@@ -14,14 +16,20 @@ use std::f64::consts::PI;
 pub struct View {
     x_offset: f64,
     y_offset: f64,
-    ghosts: Vec<char>,
+    ghosts: [Texture; 4],
     pacman_textures: [Texture; 4],
+    fruits: [Texture; 5],
 }
 
 impl View {
     pub fn new() -> Self {
         // Blinky, Pinky, Inky, Clyde
-        let ghosts = vec!['B', 'P', 'I', 'C'];
+        let ghosts = [
+            load_texture("blinky"),
+            load_texture("clyde"),
+            load_texture("inky"),
+            load_texture("pinky"),
+        ];
         // Pacman hareket ederken hangi yöne döndüyse ona uygun bir texture gösterilecek
         let pacman_textures = [
             load_texture("pacman_right"),
@@ -29,11 +37,19 @@ impl View {
             load_texture("pacman_left"),
             load_texture("pacman_up"),
         ];
+        let fruits = [
+            load_texture("apple"),
+            load_texture("cherry"),
+            load_texture("mellon"),
+            load_texture("orange"),
+            load_texture("strawberry"),
+        ];
         Self {
             x_offset: 0.,
             y_offset: 0.,
             ghosts,
             pacman_textures,
+            fruits,
         }
     }
 
@@ -94,6 +110,17 @@ impl View {
             y += TILE_SIZE;
             x = 0.;
         }
+
+        // Meyveler çizdirilir
+        self.fruits.iter().enumerate().for_each(|(i, f)| {
+            Image::new()
+                .rect(offset(calculate_square(
+                    TILE_SIZE,
+                    (TILE_MAP_WIDTH - i - 1) as i32,
+                    (TILE_MAP_HEIGHT + 1) as i32,
+                )))
+                .draw(f, &c.draw_state, c.transform, g)
+        });
 
         // Oyun sahasındaki pacman'in güncel pozisyon ve gitmek istediği yön bilgileri alınır
         let (p, d) = controller.get_pacman();

@@ -1,4 +1,5 @@
 pub mod cell;
+pub mod ghosts;
 pub mod line;
 pub mod map;
 pub mod pacman;
