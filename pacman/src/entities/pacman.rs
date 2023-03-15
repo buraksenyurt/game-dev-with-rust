@@ -2,6 +2,7 @@ use crate::common::contants::{EAT_PELLET_SCORE, EAT_POWERUP_SCORE, TILE_MAP_WIDT
 use crate::common::direction::Direction;
 use crate::common::position::Position;
 use crate::entities::cell::{Tile, TileType};
+use crate::entities::ghosts::{Ghost, GhostController};
 use crate::entities::map::Map;
 use crate::entities::score::Score;
 use piston::Key::P;
@@ -13,6 +14,7 @@ pub struct Pacman {
     target_dir: Direction,
     ticks: u32,
     score: Score,
+    ghost_controller: GhostController,
 }
 
 impl Pacman {
@@ -30,6 +32,7 @@ impl Default for Pacman {
             target_dir: Direction::Left,
             ticks: 0,
             score: Score::default(),
+            ghost_controller: GhostController::new(),
         }
     }
 }
@@ -77,6 +80,11 @@ impl Pacman {
 
     pub fn get_location(&self) -> (Position, Direction) {
         (Position::new(self.pos.x, self.pos.y), self.target_dir)
+    }
+
+    // Oyundaki hayaletleri almak için
+    pub fn get_ghosts(&self) -> &[Ghost] {
+        &self.ghost_controller.get()
     }
 
     // Pacman karakterini hareket ettiren fonksiyon

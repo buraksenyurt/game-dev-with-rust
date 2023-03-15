@@ -6,6 +6,7 @@
 */
 use crate::common::direction::Direction;
 use crate::common::position::Position;
+use crate::entities::ghosts::Ghost;
 use crate::entities::map::Map;
 use crate::entities::pacman::Pacman;
 use piston::Button::Keyboard;
@@ -53,5 +54,9 @@ impl Controller {
 
     pub fn get_pacman(&self) -> (Position, Direction) {
         self.game.get_location()
+    }
+
+    pub fn get_ghosts(&self) -> &[Ghost] {
+        self.game.get_ghosts()
     }
 }

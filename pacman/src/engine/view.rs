@@ -136,5 +136,16 @@ impl View {
         Image::new()
             .rect(offset(calculate_square(TILE_SIZE, p.x, p.y)))
             .draw(pacman_texture, &c.draw_state, c.transform, g);
+
+        // Sahadaki hayaletlerin çizdirildiği kısım
+        for (i, ghost) in controller.get_ghosts().iter().enumerate() {
+            Image::new()
+                .rect(offset(calculate_square(
+                    TILE_SIZE,
+                    ghost.get_position().x,
+                    ghost.get_position().y,
+                )))
+                .draw(&self.ghosts[i], &c.draw_state, c.transform, g);
+        }
     }
 }
