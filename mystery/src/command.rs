@@ -39,9 +39,15 @@ mod command_tests {
     #[test]
     fn should_parse_works() {
         let mut cmd = Command::default();
+
         let input = "Kapıyı aç";
         cmd.parse(input);
-        assert_eq!(cmd.verb, "aç");
         assert_eq!(cmd.noun, "Kapıyı");
+        assert_eq!(cmd.verb, "aç");
+
+        let input = "ışığı yak";
+        cmd.parse(input);
+        assert_eq!(cmd.noun, "ışığı");
+        assert_eq!(cmd.verb, "yak");
     }
 }
