@@ -10,12 +10,12 @@ fn main() {
     println!("Dışarıda yağmur yağdığını hayal mayal duyuyor gibisin ama baş ağrın korkunç.");
     println!("Gözlerini açmaya çalıştığın sırada telefon çalıyor.\n");
 
-    let mut command = Command::default();
     let mut output: String;
+    let mut command: Command;
     loop {
         command = controller::take_input();
 
-        if command.verb == "bitir" {
+        if matches!(command, Command::Quit) {
             break;
         }
         output = update_state(&command);
