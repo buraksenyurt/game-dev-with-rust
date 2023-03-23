@@ -2,9 +2,9 @@
 // Sola dön, aynaya bak, merdiveni tırman, şurubu iç gibi ifadeleri temsil etmeye çalışacağız.
 #[derive(Debug, PartialEq)]
 pub enum Command {
-    Walk(String),
+    GetUp,
+    Jump(String),
     Look(String),
-    GetUp(String),
     Unknown(String),
     Quit,
 }
@@ -16,12 +16,12 @@ mod command_tests {
 
     #[test]
     fn should_parse_works() {
-        let input = "Ayağa kalk";
+        let input = "Etrafa bak";
         let cmd = parse(input);
-        assert_eq!(cmd, Command::GetUp("ayağa".to_string()));
+        assert_eq!(cmd, Command::Look("etrafa".to_string()));
 
-        let input = "kapıya yürü";
+        let input = "kapıya sıçra";
         let cmd = parse(input);
-        assert_eq!(cmd, Command::Walk("kapıya".to_string()));
+        assert_eq!(cmd, Command::Jump("kapıya".to_string()));
     }
 }

@@ -1,4 +1,5 @@
 use crate::command::Command;
+use log::info;
 use std::io;
 use std::io::Write;
 
@@ -21,27 +22,14 @@ pub fn parse(input: &str) -> Command {
     let mut parts = lovercase.trim().split_whitespace();
     let noun = parts.next().unwrap_or_default().to_string();
     let verb = parts.next().unwrap_or_default().to_string();
+    info!("Parse işlemi. Noun : {} Verb : {}", noun, verb);
 
     match verb.as_str() {
         "bak" => Command::Look(noun),
-        "yürü" => Command::Walk(noun),
-        "kalk" => Command::GetUp(noun),
+        "sıçra" => Command::Jump(noun),
+        "kalk" => Command::GetUp,
         "bitir" => Command::Quit,
         _ => Command::Unknown(input.trim().to_string()),
-    }
-}
-
-// Oyuncunun girdiği komuta göre state güncellemesi için kullanılacak yardımcı fonksiyon
-pub fn update_state(command: &Command) -> String {
-    match command {
-        Command::Walk(_) => "Etraf çok karanlık. Telefonu bulabilecek misin?".to_string(),
-        Command::GetUp(_) => {
-            "Bu zifiri karanlıkta odada ilerlemek zor olabilir. Eğer gerçekten bir odadaysan."
-                .to_string()
-        }
-        Command::Look(_) => "Etrafı kolaçan etmek iyi fikir. Ellerini kullan.".to_string(),
-        Command::Quit => "Kapatılıyor. Oynadığın için teşekkürler.".to_string(),
-        Command::Unknown(input) => format!("{} Söylediğini nasıl yapabiliriz bilemiyorum.", input),
     }
 }
 
