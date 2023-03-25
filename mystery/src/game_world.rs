@@ -1,27 +1,50 @@
 use crate::command::Command;
 use crate::location::Location;
+use crate::object::Object;
 use crate::player::Player;
 use log::info;
 
 // Oyun dünyasını temsil eden veri yapısıdır.
 // Sahadaki oyuncuyu lokasyonu ile birlikte tutar.
-// Ayrıca oyundaki mekanları da bir vektör dizisinde taşır.
+// Oyundaki yerler, aletler ve aktörler de object türünden bir vektörde tutulur.
 pub struct GameWorld {
     pub player: Player,
-    pub locations: Vec<Location>,
+    pub objects: Vec<Object>,
 }
 
 impl Default for GameWorld {
     fn default() -> Self {
         Self {
             player: Player { position: 0 },
-            locations: vec![
-                Location::new("Oda".to_string(), "karanlık bir odadasın.".to_string()),
-                Location::new("Mekik".to_string(), "güvertedesin.".to_string()),
-                Location::new(
-                    "Göl Evi".to_string(),
+            objects: vec![
+                Object::new("Oda".to_string(), "karanlık bir odadasın".to_string(), None),
+                Object::new("Mekik".to_string(), "güvertedesin".to_string(), None),
+                Object::new(
+                    "Gölevi".to_string(),
                     "çocukluğunda gittiğin göl evinin terasındasın".to_string(),
+                    None,
                 ),
+                Object::new(
+                    "Telsiz".to_string(),
+                    "iletişim telsizi".to_string(),
+                    Some(Location(0)),
+                ),
+                Object::new(
+                    "Seyir Defteri".to_string(),
+                    "seyir defteri".to_string(),
+                    Some(Location(1)),
+                ),
+                Object::new(
+                    "Robot".to_string(),
+                    "asistan robot".to_string(),
+                    Some(Location(2)),
+                ),
+                Object::new(
+                    "Kitap".to_string(),
+                    "denizler altında yirmi bin fersah".to_string(),
+                    Some(Location(3)),
+                ),
+                Object::new("Köpek".to_string(), "azman".to_string(), Some(Location(4))),
             ],
         }
     }
@@ -46,9 +69,9 @@ impl GameWorld {
         let mut output = String::new();
 
         // var olan mekanlar dolaşılırken index değeri ve Location nesneleri ele alınır
-        for (idx, location) in self.locations.iter().enumerate() {
+        for (idx, obj) in self.objects.iter().enumerate() {
             // eğer metin komutuyla gelen noun değeri kayıtlı bir location'a denk geliyorsa
-            if *noun == location.name.to_lowercase() {
+            if *noun == obj.name.to_lowercase() {
                 // o anki lokasyonun indis değeri ile oyuncunun kendi pozisyon değerini karşılaştır
                 if idx == self.player.position {
                     // Aynı ise zaten oradadır.
@@ -78,8 +101,8 @@ impl GameWorld {
         match noun.as_str() {
             "etrafa" | "" => format!(
                 "{}. Şu anda {}",
-                self.locations[self.player.position].name,
-                self.locations[self.player.position].description
+                self.objects[self.player.position].name,
+                self.objects[self.player.position].description
             ),
             _ => format!("Nereye bakmak istediğini anlamadım."),
         }

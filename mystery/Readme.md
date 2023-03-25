@@ -9,3 +9,11 @@ RUST_LOG=info cargo run
 # testleri koşmak için
 cargo test
 ```
+
+## Notlar
+
+Lokasyonlar ve lokasyonlardaki nesneler.
+
+- Oda (Telsiz)
+- Mekik (Seyir Defteri, Robot)
+- Gölevi (Kitap, Köpek)

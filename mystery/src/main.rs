@@ -6,6 +6,7 @@ mod command;
 mod controller;
 mod game_world;
 mod location;
+mod object;
 mod player;
 
 fn main() {
