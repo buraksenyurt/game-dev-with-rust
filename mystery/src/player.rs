@@ -1,3 +1,5 @@
+use crate::location::Location;
+
 pub struct Player {
-    pub position: usize,
+    pub position: Location,
 }
