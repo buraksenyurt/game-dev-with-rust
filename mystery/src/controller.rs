@@ -26,7 +26,7 @@ pub fn parse(input: &str) -> Command {
 
     match verb.as_str() {
         "bak" => Command::Look(noun),
-        "sıçra" => Command::Jump(noun),
+        "git" => Command::Jump(noun),
         "kalk" => Command::GetUp,
         "bitir" => Command::Quit,
         _ => Command::Unknown(input.trim().to_string()),

@@ -19,36 +19,42 @@ impl Default for GameWorld {
                 position: Location(0),
             },
             objects: vec![
-                Object::new("Oda".to_string(), "karanlık bir odadasın".to_string(), None),
-                Object::new("Mekik".to_string(), "güvertedesin".to_string(), None),
+                Object::new("Oda".to_string(),"Odaya".to_string(), "Maceranın başladığı yer.".to_string(), None),
+                Object::new("Mekik".to_string(), "Mekiğe".to_string(),"Kaptan köşkündesin.".to_string(), None),
                 Object::new(
                     "Gölevi".to_string(),
-                    "çocukluğunda gittiğin göl evinin terasındasın".to_string(),
+                    "Gölevine".to_string(),
+                    "Çocukluğunda gittiğin göl evinin terasındasın.".to_string(),
                     None,
                 ),
                 Object::new(
                     "Telsiz".to_string(),
-                    "iletişim telsizi".to_string(),
+                    "Telsizi".to_string(),
+                    "İletişim telsizini çalıştır.".to_string(),
                     Some(Location(LOC_ROOM)),
                 ),
                 Object::new(
                     "Seyir Defteri".to_string(),
-                    "seyir defteri".to_string(),
+                    "Seyir defterini".to_string(),
+                    "Seyir defterindeki kayıtlara bak.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
                     "Robot".to_string(),
-                    "asistan robot".to_string(),
+                    "Robotu".to_string(),
+                    "Asistan robotunla konuş.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
                     "Kitap".to_string(),
-                    "denizler altında yirmi bin fersah".to_string(),
+                    "Kitabı".to_string(),
+                    "'Denizler altında yirmi bin fersah'. Tekrar okumak ister misin?".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
                 Object::new(
                     "Köpek".to_string(),
-                    "azman".to_string(),
+                    "Köpeği".to_string(),
+                    "'Azman' ile oyna.".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
             ],
@@ -63,7 +69,7 @@ impl GameWorld {
             Command::Jump(noun) => self.jump(noun),
             Command::Look(noun) => self.look(noun),
             Command::GetUp => "Ayaktasın.".to_string(),
-            Command::Quit => "Kapatılıyor. Oynadığın için teşekkürler.".to_string(),
+            Command::Quit => "Simülasyon Kapatılıyor. Oynadığın için teşekkürler.".to_string(),
             Command::Unknown(input) => {
                 format!("{} Söylediğini nasıl yapabiliriz bilemiyorum.", input)
             }
@@ -96,7 +102,7 @@ impl GameWorld {
             "etrafa" | "" => {
                 let (list_string, _) = self.get_objects(self.player.position);
                 format!(
-                    "{}\nBulunduğun yer, {}.\n",
+                    "Yer: {}\n{}\n",
                     self.objects[self.player.position.0].name,
                     self.objects[self.player.position.0].description
                 ) + list_string.as_str()
@@ -106,7 +112,7 @@ impl GameWorld {
     }
 
     fn object_has_name(&self, object: &Object, noun: &String) -> bool {
-        *noun == object.name.to_lowercase()
+        *noun == object.noun.to_lowercase()
     }
     fn get_object_idx(&self, noun: &String) -> Option<Location> {
         let mut result: Option<Location> = None;
@@ -137,7 +143,7 @@ impl GameWorld {
 
         match (input_loc, real_loc, container_loc, player_loc) {
             (None, _, _, _) => {
-                output = format!("'{}'... Bunu anlayamadım.", message);
+                output = format!("'{}'...Bunu anlayamadım.", message);
                 (output, None)
             }
             (Some(object_idx), _, _, _) if object_idx.0 == player_loc.0 => {
@@ -182,10 +188,10 @@ impl GameWorld {
                 (_, None) => continue,
                 (_, Some(obj_loc)) if obj_loc == location => {
                     if count == 0 {
-                        output = output + &format!("Gördüğün:\n");
+                        output = output + &format!("Seçeneklerin:\n");
                     }
                     count += 1;
-                    output = output + &format!("{}\n", obj.description);
+                    output = output + &format!("\t- {}\n", obj.description);
                 }
                 _ => continue,
             }

@@ -20,7 +20,7 @@ mod command_tests {
         let cmd = parse(input);
         assert_eq!(cmd, Command::Look("etrafa".to_string()));
 
-        let input = "kapıya sıçra";
+        let input = "kapıya git";
         let cmd = parse(input);
         assert_eq!(cmd, Command::Jump("kapıya".to_string()));
     }
