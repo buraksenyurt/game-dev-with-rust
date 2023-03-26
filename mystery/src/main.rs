@@ -6,6 +6,7 @@ mod command;
 mod controller;
 mod game_world;
 mod location;
+mod noun;
 mod object;
 mod player;
 
@@ -22,12 +23,11 @@ fn main() {
     let mut game_world: GameWorld = GameWorld::default();
     loop {
         command = controller::take_input();
-
+        output = game_world.update_state(&command);
+        update_screen(output);
         if matches!(command, Command::Quit) {
             break;
         }
-        output = game_world.update_state(&command);
-        update_screen(output);
     }
 
     println!("Görüşmek üzere!");

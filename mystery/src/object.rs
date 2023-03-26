@@ -1,9 +1,9 @@
 use crate::location::Location;
+use crate::noun::Noun;
 
 // Oyundaki mekanlar, alet edavatlar ve hatta aktörler şimdilik Object olarak ifade ediliyor
 pub struct Object {
-    pub name: String,
-    pub noun:String,
+    pub noun: Noun,
     pub description: String,
     // Aslında fiziki sabit mekanlar için lokasyon kullanmayacağız ama alet edavatın
     // ve hatta karakterlerin lokasyon bilgisi gerekli. Bu nedenle opsiyonel.
@@ -11,9 +11,8 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn new(name: String,noun:String, description: String, location: Option<Location>) -> Self {
+    pub fn new(noun: Noun, description: String, location: Option<Location>) -> Self {
         Self {
-            name,
             noun,
             description,
             location,

@@ -3,6 +3,7 @@ use crate::location::{Location, LOC_LAKEHOUSE, LOC_ROOM, LOC_SPACESHIP};
 use crate::object::Object;
 use crate::player::Player;
 use log::info;
+use crate::noun::Noun;
 
 // Oyun dünyasını temsil eden veri yapısıdır.
 // Sahadaki oyuncuyu lokasyonu ile birlikte tutar.
@@ -19,41 +20,43 @@ impl Default for GameWorld {
                 position: Location(0),
             },
             objects: vec![
-                Object::new("Oda".to_string(),"Odaya".to_string(), "Maceranın başladığı yer.".to_string(), None),
-                Object::new("Mekik".to_string(), "Mekiğe".to_string(),"Kaptan köşkündesin.".to_string(), None),
                 Object::new(
-                    "Gölevi".to_string(),
-                    "Gölevine".to_string(),
+                    Noun::new("Oda".to_string(),"Odaya".to_string()),
+                    "Maceranın başladığı yer.".to_string(),
+                    None,
+                ),
+                Object::new(
+                    Noun::new("Mekik".to_string(),"Mekiğe".to_string()),
+                    "Kaptan köşkündesin.".to_string(),
+                    None,
+                ),
+                Object::new(
+                    Noun::new("Gölevi".to_string(),"Gölevine".to_string()),
                     "Çocukluğunda gittiğin göl evinin terasındasın.".to_string(),
                     None,
                 ),
                 Object::new(
-                    "Telsiz".to_string(),
-                    "Telsizi".to_string(),
+                    Noun::new("Telsiz".to_string(),"Telsizi".to_string()),
                     "İletişim telsizini çalıştır.".to_string(),
                     Some(Location(LOC_ROOM)),
                 ),
                 Object::new(
-                    "Seyir Defteri".to_string(),
-                    "Seyir defterini".to_string(),
+                    Noun::new("Seyir Defteri".to_string(),"Seyir defterini".to_string()),
                     "Seyir defterindeki kayıtlara bak.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
-                    "Robot".to_string(),
-                    "Robotu".to_string(),
+                    Noun::new("Robot".to_string(),"Robotu".to_string()),
                     "Asistan robotunla konuş.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
-                    "Kitap".to_string(),
-                    "Kitabı".to_string(),
+                    Noun::new("Kitap".to_string(),"Kitabı".to_string()),
                     "'Denizler altında yirmi bin fersah'. Tekrar okumak ister misin?".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
                 Object::new(
-                    "Köpek".to_string(),
-                    "Köpeği".to_string(),
+                    Noun::new("Köpek".to_string(),"Köpeği".to_string()),
                     "'Azman' ile oyna.".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
@@ -69,9 +72,9 @@ impl GameWorld {
             Command::Jump(noun) => self.jump(noun),
             Command::Look(noun) => self.look(noun),
             Command::GetUp => "Ayaktasın.".to_string(),
-            Command::Quit => "Simülasyon Kapatılıyor. Oynadığın için teşekkürler.".to_string(),
+            Command::Quit => "Simülasyon Kapatılıyor. Benimle oynadığın için teşekkürler :)".to_string(),
             Command::Unknown(input) => {
-                format!("{} Söylediğini nasıl yapabiliriz bilemiyorum.", input)
+                format!("'{}'...Hım...Söylediğini nasıl yapabiliriz bilemedim.", input)
             }
         }
     }
@@ -103,7 +106,7 @@ impl GameWorld {
                 let (list_string, _) = self.get_objects(self.player.position);
                 format!(
                     "Yer: {}\n{}\n",
-                    self.objects[self.player.position.0].name,
+                    self.objects[self.player.position.0].noun.name,
                     self.objects[self.player.position.0].description
                 ) + list_string.as_str()
             }
@@ -112,7 +115,7 @@ impl GameWorld {
     }
 
     fn object_has_name(&self, object: &Object, noun: &String) -> bool {
-        *noun == object.noun.to_lowercase()
+        *noun == object.noun.real.to_lowercase()
     }
     fn get_object_idx(&self, noun: &String) -> Option<Location> {
         let mut result: Option<Location> = None;
