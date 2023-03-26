@@ -19,7 +19,7 @@ pub fn take_input() -> Command {
 // girilen metni iki parça olarak ele alır ve Command nesnesine dönüştürüp geri döndürür
 pub fn parse(input: &str) -> Command {
     let lovercase = input.to_lowercase();
-    let mut parts = lovercase.trim().split_whitespace();
+    let mut parts = lovercase.split_whitespace();
     let noun = parts.next().unwrap_or_default().to_string();
     let verb = parts.next().unwrap_or_default().to_string();
     info!("Parse işlemi. Noun : {} Verb : {}", noun, verb);

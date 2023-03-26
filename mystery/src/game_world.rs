@@ -1,9 +1,9 @@
 use crate::command::Command;
 use crate::location::{Location, LOC_LAKEHOUSE, LOC_ROOM, LOC_SPACESHIP};
+use crate::noun::Noun;
 use crate::object::Object;
 use crate::player::Player;
 use log::info;
-use crate::noun::Noun;
 
 // Oyun dünyasını temsil eden veri yapısıdır.
 // Sahadaki oyuncuyu lokasyonu ile birlikte tutar.
@@ -21,42 +21,42 @@ impl Default for GameWorld {
             },
             objects: vec![
                 Object::new(
-                    Noun::new("Oda".to_string(),"Odaya".to_string()),
+                    Noun::new("Oda".to_string(), "Odaya".to_string()),
                     "Maceranın başladığı yer.".to_string(),
                     None,
                 ),
                 Object::new(
-                    Noun::new("Mekik".to_string(),"Mekiğe".to_string()),
+                    Noun::new("Mekik".to_string(), "Mekiğe".to_string()),
                     "Kaptan köşkündesin.".to_string(),
                     None,
                 ),
                 Object::new(
-                    Noun::new("Gölevi".to_string(),"Gölevine".to_string()),
+                    Noun::new("Gölevi".to_string(), "Gölevine".to_string()),
                     "Çocukluğunda gittiğin göl evinin terasındasın.".to_string(),
                     None,
                 ),
                 Object::new(
-                    Noun::new("Telsiz".to_string(),"Telsizi".to_string()),
+                    Noun::new("Telsiz".to_string(), "Telsizi".to_string()),
                     "İletişim telsizini çalıştır.".to_string(),
                     Some(Location(LOC_ROOM)),
                 ),
                 Object::new(
-                    Noun::new("Seyir Defteri".to_string(),"Seyir defterini".to_string()),
+                    Noun::new("Seyir Defteri".to_string(), "Seyir defterini".to_string()),
                     "Seyir defterindeki kayıtlara bak.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
-                    Noun::new("Robot".to_string(),"Robotu".to_string()),
+                    Noun::new("Robot".to_string(), "Robotu".to_string()),
                     "Asistan robotunla konuş.".to_string(),
                     Some(Location(LOC_SPACESHIP)),
                 ),
                 Object::new(
-                    Noun::new("Kitap".to_string(),"Kitabı".to_string()),
+                    Noun::new("Kitap".to_string(), "Kitabı".to_string()),
                     "'Denizler altında yirmi bin fersah'. Tekrar okumak ister misin?".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
                 Object::new(
-                    Noun::new("Köpek".to_string(),"Köpeği".to_string()),
+                    Noun::new("Köpek".to_string(), "Köpeği".to_string()),
                     "'Azman' ile oyna.".to_string(),
                     Some(Location(LOC_LAKEHOUSE)),
                 ),
@@ -72,9 +72,14 @@ impl GameWorld {
             Command::Jump(noun) => self.jump(noun),
             Command::Look(noun) => self.look(noun),
             Command::GetUp => "Ayaktasın.".to_string(),
-            Command::Quit => "Simülasyon Kapatılıyor. Benimle oynadığın için teşekkürler :)".to_string(),
+            Command::Quit => {
+                "Simülasyon Kapatılıyor. Benimle oynadığın için teşekkürler :)".to_string()
+            }
             Command::Unknown(input) => {
-                format!("'{}'...Hım...Söylediğini nasıl yapabiliriz bilemedim.", input)
+                format!(
+                    "'{}'...Hım...Söylediğini nasıl yapabiliriz bilemedim.",
+                    input
+                )
             }
         }
     }
@@ -88,12 +93,12 @@ impl GameWorld {
         match (obj_opt, player_loc) {
             (None, _) => output_vis,
             (Some(obj_loc), player_loc) if obj_loc.0 == player_loc.0 => {
-                format!("Zaten oradasın.\n")
+                "Zaten oradasın.\n".to_string()
             }
             (Some(obj_loc), _) => {
                 self.player.position.0 = obj_loc.0;
                 info!("Oyuncunun geldiği lokasyon -> {}", self.player.position.0);
-                format!("İşte...\n\n") + &self.look(&"etrafa".to_string())
+                "İşte...\n\n".to_string() + &self.look(&"etrafa".to_string())
             }
         }
     }
@@ -110,7 +115,7 @@ impl GameWorld {
                     self.objects[self.player.position.0].description
                 ) + list_string.as_str()
             }
-            _ => format!("Nereye bakmak istediğini anlamadım."),
+            _ => "Nereye bakmak istediğini anlamadım.".to_string(),
         }
     }
 
@@ -120,7 +125,7 @@ impl GameWorld {
     fn get_object_idx(&self, noun: &String) -> Option<Location> {
         let mut result: Option<Location> = None;
         for (idx, obj) in self.objects.iter().enumerate() {
-            if self.object_has_name(&obj, noun) {
+            if self.object_has_name(obj, noun) {
                 result = Some(Location(idx));
                 break;
             }
@@ -161,7 +166,7 @@ impl GameWorld {
             (Some(object_idx), Some(object_loc), _, player_loc) if object_loc.0 == player_loc.0 => {
                 (output, Some(object_idx))
             }
-            (Some(object_idx), object_loc, _, _) if object_loc == None => {
+            (Some(object_idx), object_loc, _, _) if object_loc.is_none() => {
                 (output, Some(object_idx))
             }
             (Some(object_idx), Some(_), Some(obj_container_loc), _)
@@ -191,7 +196,7 @@ impl GameWorld {
                 (_, None) => continue,
                 (_, Some(obj_loc)) if obj_loc == location => {
                     if count == 0 {
-                        output = output + &format!("Seçeneklerin:\n");
+                        output += "Seçeneklerin:\n";
                     }
                     count += 1;
                     output = output + &format!("\t- {}\n", obj.description);
