@@ -1,5 +1,5 @@
 use crate::command::Command;
-use crate::location::{Location, LOC_LAKEHOUSE, LOC_ROOM, LOC_SPACESHIP};
+use crate::location::{Location, LOC_LAKEHOUSE, LOC_PLAYER, LOC_ROOM, LOC_SPACESHIP};
 use crate::noun::Noun;
 use crate::object::Object;
 use crate::player::Player;
@@ -85,27 +85,42 @@ impl GameWorld {
             Command::Get(noun) => self.get(noun),
             Command::Give(noun) => self.give(noun),
             Command::Drop(noun) => self.drop(noun),
-            Command::Inventory => self.inventory()
+            Command::Inventory(noun) => self.inventory(noun),
         }
     }
 
-    pub fn inventory(&mut self)->String{
+    // Oyuncu bir takım eşyaları alabilir. Bunları alet çantasında tuttuğunu düşünelim.
+    // Herhangibi andan 'araçlarımı listele' veya 'aletlerimi listele' yazarsa,
+    // çantasında hangi nesneler olduğunu görebilir.
+    pub fn inventory(&mut self, noun: &str) -> String {
+        match noun {
+            "araçlarımı" | "aletlerimi" => {
+                let (tool_list, count) = self.get_objects(Location(LOC_PLAYER));
+                if count == 0 {
+                    "Alet çantanda hiçbir şey yok.\n".to_string()
+                } else {
+                    tool_list
+                }
+            }
+            _ => {
+                "Eğer aletleri listelemek istiyorsan 'araçlarımı listele' diyebilirsin.".to_string()
+            }
+        }
+    }
+
+    pub fn talk(&mut self, noun: &str) -> String {
         unimplemented!()
     }
 
-    pub fn talk(&mut self,noun:&String)->String{
+    pub fn get(&mut self, noun: &str) -> String {
         unimplemented!()
     }
 
-    pub fn get(&mut self,noun:&String)->String{
+    pub fn give(&mut self, noun: &str) -> String {
         unimplemented!()
     }
 
-    pub fn give(&mut self,noun:&String)->String{
-        unimplemented!()
-    }
-
-    pub fn drop(&mut self,noun:&String)->String{
+    pub fn drop(&mut self, noun: &str) -> String {
         unimplemented!()
     }
 
@@ -224,7 +239,7 @@ impl GameWorld {
                         output += "Seçeneklerin:\n";
                     }
                     count += 1;
-                    output = output + &format!("\t- {}\n", obj.description);
+                    output = output + &format!("\t- [{}], {}\n", obj.noun.name, obj.description);
                 }
                 _ => continue,
             }

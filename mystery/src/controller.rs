@@ -1,5 +1,4 @@
 use crate::command::Command;
-use log::info;
 use std::io;
 use std::io::Write;
 use std::str::FromStr;
