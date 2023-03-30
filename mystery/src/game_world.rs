@@ -81,7 +81,32 @@ impl GameWorld {
                     input
                 )
             }
+            Command::Talk(noun) => self.talk(noun),
+            Command::Get(noun) => self.get(noun),
+            Command::Give(noun) => self.give(noun),
+            Command::Drop(noun) => self.drop(noun),
+            Command::Inventory => self.inventory()
         }
+    }
+
+    pub fn inventory(&mut self)->String{
+        unimplemented!()
+    }
+
+    pub fn talk(&mut self,noun:&String)->String{
+        unimplemented!()
+    }
+
+    pub fn get(&mut self,noun:&String)->String{
+        unimplemented!()
+    }
+
+    pub fn give(&mut self,noun:&String)->String{
+        unimplemented!()
+    }
+
+    pub fn drop(&mut self,noun:&String)->String{
+        unimplemented!()
     }
 
     // Oyuncunun mekanlar arasında sıçramasını gerçekleştiren fonksiyon

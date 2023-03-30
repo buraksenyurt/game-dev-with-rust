@@ -28,6 +28,11 @@ pub fn parse(input: &str) -> Command {
         "bak" => Command::Look(noun),
         "git" => Command::Jump(noun),
         "kalk" => Command::GetUp,
+        "sor" => Command::Talk(noun),
+        "al" => Command::Get(noun),
+        "ver" => Command::Give(noun),
+        "bırak" => Command::Drop(noun),
+        "aletler" => Command::Inventory,
         "bitir" => Command::Quit,
         _ => Command::Unknown(input.trim().to_string()),
     }

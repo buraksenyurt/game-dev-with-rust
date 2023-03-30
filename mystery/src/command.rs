@@ -6,6 +6,11 @@ pub enum Command {
     Jump(String),
     Look(String),
     Unknown(String),
+    Talk(String),
+    Get(String),
+    Give(String),
+    Drop(String),
+    Inventory,
     Quit,
 }
 
