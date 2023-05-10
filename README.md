@@ -2,6 +2,7 @@
 
 Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıyı nasıl kullanacağımı öğrenmek istiyorum. 
 
+- [ ] **20 - jumper;** Bevy kullanılan basit bir 2D platform macerası. Karakter sürekli zıplayarak bir borudan diğerine atlayarak ilerlemeye çalışır. Yere düşerse yanar. Ne kadar uzağa giderse o kadar başarılır olur. Arada sırada karışdan kendisine çarpabilecek kuş veya başka bir şey de gelebilir.
 - [ ] **19 - mystery;** Robert Kerr'ün [şu adresteki harika öğretisini](https://www.riskpeep.com/2022/08/make-text-adventure-game-rust-1.html) takip ederek metin tabanlı bir macera oyunu nasıl geliştirilir öğrenmeye çalışıyorum. Bu sırada Rust'ın temel bilgilerini de tekrar etmiş oluyorum.
 - [ ] **18 - mazes;** Jamis Buck'ın [Mazes for Programmers](http://www.mazesforprogrammers.com/) isimli kitabının ilk bölümünde başlayan Binary Tree algoritmasına göre labirent oluşturma ve çözüm için Dijkstra algoritmasının uygulanmasını ele aldığım örnek. Kitap konuyu Ruby ile ele almış ben Rust'a evirmeye çalışıyorum. 
 - [ ] **17 - pacman;** Klasik pacman oyununu [şu repodaki örneğine bakarak](https://github.com/mendess/rust-pacman) yazmaya ve rust kodlama bilgimi artırmaya çalıştığım örnek.
