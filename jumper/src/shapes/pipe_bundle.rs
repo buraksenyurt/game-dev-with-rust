@@ -1,7 +1,7 @@
-use bevy::prelude::{Bundle, Sprite, SpriteBundle, Transform, Vec3};
-use bevy_rapier2d::prelude::{Collider, RigidBody};
 use crate::shapes::pipe::Pipe;
 use crate::shapes::pipe_type::PipeType;
+use bevy::prelude::{Bundle, Sprite, SpriteBundle, Transform, Vec3};
+use bevy_rapier2d::prelude::{Collider, RigidBody};
 
 #[derive(Bundle)]
 pub struct PipeBundle {

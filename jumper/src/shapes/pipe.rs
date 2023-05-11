@@ -1,5 +1,5 @@
-use bevy::prelude::Color;
 use crate::shapes::pipe_type::PipeType;
+use bevy::prelude::Color;
 
 pub struct Pipe {
     pub x: f32,
