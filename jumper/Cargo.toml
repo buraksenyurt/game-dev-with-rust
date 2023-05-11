@@ -8,6 +8,7 @@ authors = ["Burak Selim Senyurt"]
 [dependencies]
 bevy = {version = "0.10.1", features = ["dynamic_linking"]}
 bevy_rapier2d = "0.21.0"
+rand = "0.8.5"
 
 [profile.dev]
 opt-level = 1
