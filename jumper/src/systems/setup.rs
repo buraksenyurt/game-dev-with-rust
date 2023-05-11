@@ -1,10 +1,11 @@
 use crate::constants::{FLOOR_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH};
-use crate::shapes::pipe::{spawn_pipe, Pipe};
+use crate::shapes::pipe::{Pipe};
 use crate::shapes::pipe_type::PipeType;
 use crate::shapes::square::{spawn_square, Square};
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_rapier2d::prelude::{Collider, KinematicCharacterController, RigidBody};
+use crate::shapes::pipe_bundle::PipeBundle;
 
 pub fn setup_system(
     mut commands: Commands,
@@ -35,7 +36,7 @@ pub fn setup_system(
         color: Color::GOLD,
         pipe_type: PipeType::Big(60.),
     };
-    spawn_pipe(&mut commands, gold_pipe);
+    commands.spawn(PipeBundle::new(gold_pipe));
 
     let white_pipe = Pipe {
         x: SCREEN_WIDTH * 0.1,
@@ -46,7 +47,7 @@ pub fn setup_system(
         color: Color::ANTIQUE_WHITE,
         pipe_type: PipeType::Small(20.),
     };
-    spawn_pipe(&mut commands, white_pipe);
+    commands.spawn(PipeBundle::new(white_pipe));
 
     let purple_pipe = Pipe {
         x: SCREEN_WIDTH * 0.2,
@@ -57,7 +58,7 @@ pub fn setup_system(
         color: Color::PURPLE,
         pipe_type: PipeType::Midi(40.),
     };
-    spawn_pipe(&mut commands, purple_pipe);
+    commands.spawn(PipeBundle::new(purple_pipe));
 
     for _ in 0..3 {
         let square = Square(Color::ORANGE_RED);
