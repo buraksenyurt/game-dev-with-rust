@@ -3,6 +3,7 @@ mod shapes;
 mod systems;
 
 use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::systems::movement::movement;
 use crate::systems::setup::setup_system;
 use bevy::app::App;
 use bevy::prelude::*;
@@ -26,5 +27,6 @@ fn main() {
         .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.))
         .add_startup_system(setup_system)
+        .add_system(movement)
         .run();
 }

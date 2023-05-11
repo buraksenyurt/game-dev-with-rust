@@ -4,7 +4,7 @@ use crate::shapes::pipe_type::PipeType;
 use crate::shapes::square::{spawn_square, Square};
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
-use bevy_rapier2d::prelude::{Collider, RigidBody};
+use bevy_rapier2d::prelude::{Collider, KinematicCharacterController, RigidBody};
 
 pub fn setup_system(
     mut commands: Commands,
@@ -16,45 +16,46 @@ pub fn setup_system(
             mesh: meshes.add(shape::Circle::default().into()).into(),
             material: materials.add(ColorMaterial::from(Color::DARK_GREEN)),
             transform: Transform {
-                translation: Vec3::new(0., 0., 0.),
+                translation: Vec3::new(-SCREEN_WIDTH * 0.5 + 30., 0., 0.),
                 scale: Vec3::new(60., 60., 1.),
                 ..Default::default()
             },
             ..default()
         })
-        .insert(RigidBody::Dynamic)
-        .insert(Collider::ball(0.5));
+        .insert(RigidBody::KinematicPositionBased)
+        .insert(Collider::ball(0.5))
+        .insert(KinematicCharacterController::default());
 
     let gold_pipe = Pipe {
         x: 0.,
-        y: -SCREEN_HEIGHT * 0.5 + 50.,
+        y: -SCREEN_HEIGHT * 0.5 + 50. + FLOOR_HEIGHT,
         z: 0.,
         hegiht: 100.,
         z_deep: 1.,
         color: Color::GOLD,
-        pipe_type: PipeType::BIG,
+        pipe_type: PipeType::Big(60.),
     };
     spawn_pipe(&mut commands, gold_pipe);
 
     let white_pipe = Pipe {
         x: SCREEN_WIDTH * 0.1,
-        y: -SCREEN_HEIGHT * 0.5 + 100.,
+        y: -SCREEN_HEIGHT * 0.5 + 100. + FLOOR_HEIGHT,
         z: 0.,
         hegiht: 200.,
         z_deep: 1.,
         color: Color::ANTIQUE_WHITE,
-        pipe_type: PipeType::SMALL,
+        pipe_type: PipeType::Small(20.),
     };
     spawn_pipe(&mut commands, white_pipe);
 
     let purple_pipe = Pipe {
         x: SCREEN_WIDTH * 0.2,
-        y: -SCREEN_HEIGHT * 0.5 + 50.,
+        y: -SCREEN_HEIGHT * 0.5 + 50. + FLOOR_HEIGHT,
         z: 0.,
         hegiht: 100.,
         z_deep: 1.,
         color: Color::PURPLE,
-        pipe_type: PipeType::MIDI,
+        pipe_type: PipeType::Midi(40.),
     };
     spawn_pipe(&mut commands, purple_pipe);
 

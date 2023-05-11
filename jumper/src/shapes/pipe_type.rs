@@ -1,5 +1,5 @@
 pub enum PipeType {
-    SMALL,
-    MIDI,
-    BIG,
+    Small(f32),
+    Midi(f32),
+    Big(f32),
 }

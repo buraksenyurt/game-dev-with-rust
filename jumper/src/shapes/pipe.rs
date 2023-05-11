@@ -1,4 +1,3 @@
-use crate::constants::STD_PIPE_WIDTH;
 use crate::shapes::pipe_type::PipeType;
 use bevy::prelude::{Color, Commands, Sprite, SpriteBundle, Transform, Vec3};
 use bevy_rapier2d::prelude::{Collider, RigidBody};
@@ -15,9 +14,9 @@ pub struct Pipe {
 
 pub fn spawn_pipe(commands: &mut Commands, p: Pipe) {
     let width = match p.pipe_type {
-        PipeType::SMALL => STD_PIPE_WIDTH * 0.5,
-        PipeType::MIDI => STD_PIPE_WIDTH,
-        PipeType::BIG => STD_PIPE_WIDTH * 1.2,
+        PipeType::Small(s) => s,
+        PipeType::Midi(s) => s,
+        PipeType::Big(s) => s,
     };
     commands
         .spawn(SpriteBundle {
