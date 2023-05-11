@@ -1,23 +1,27 @@
+use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH, STD_PIPE_WIDTH};
+use crate::shapes::pipe::{spawn_pipe, Pipe};
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
-use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH, STD_PIPE_WIDTH};
-use crate::shapes::pipe::{Pipe, spawn_pipe};
+use bevy_rapier2d::prelude::{Collider, RigidBody};
 
 pub fn setup_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::default().into()).into(),
-        material: materials.add(ColorMaterial::from(Color::DARK_GREEN)),
-        transform: Transform {
-            translation: Vec3::new(0., 0., 0.),
-            scale: Vec3::new(60., 60., 1.),
-            ..Default::default()
-        },
-        ..default()
-    });
+    commands
+        .spawn(MaterialMesh2dBundle {
+            mesh: meshes.add(shape::Circle::default().into()).into(),
+            material: materials.add(ColorMaterial::from(Color::DARK_GREEN)),
+            transform: Transform {
+                translation: Vec3::new(0., 0., 0.),
+                scale: Vec3::new(60., 60., 1.),
+                ..Default::default()
+            },
+            ..default()
+        })
+        .insert(RigidBody::Dynamic)
+        .insert(Collider::ball(0.5));
 
     let gold_pipe = Pipe {
         x: 0.,
