@@ -4,6 +4,7 @@ mod systems;
 
 use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::systems::animation::animation;
+use crate::systems::jump::{fall_down, jump_to, rise_high};
 use crate::systems::movement::movement;
 use crate::systems::setup::setup_system;
 use bevy::app::App;
@@ -30,5 +31,8 @@ fn main() {
         .add_startup_system(setup_system)
         .add_system(movement)
         .add_system(animation)
+        .add_system(jump_to)
+        .add_system(rise_high)
+        .add_system(fall_down)
         .run();
 }

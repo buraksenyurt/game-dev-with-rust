@@ -8,12 +8,16 @@ pub fn movement(
     mut query: Query<&mut KinematicCharacterController>,
 ) {
     let mut player = query.single_mut();
-    let mut translation = Vec2::new(0.0, 0.0);
+    let mut mov = 0.;
     if input.pressed(KeyCode::Right) || input.pressed(KeyCode::D) {
-        translation.x += time.delta_seconds() * PLAYER_VELOCITY;
+        mov += time.delta_seconds() * PLAYER_VELOCITY;
     }
     if input.pressed(KeyCode::Left) || input.pressed(KeyCode::A) {
-        translation.x += time.delta_seconds() * PLAYER_VELOCITY * -1.0;
+        mov += time.delta_seconds() * PLAYER_VELOCITY * -1.0;
     }
-    player.translation = Some(translation);
+
+    match player.translation {
+        Some(v) => player.translation = Some(Vec2::new(mov, v.y)),
+        None => player.translation = Some(Vec2::new(mov, 0.)),
+    }
 }

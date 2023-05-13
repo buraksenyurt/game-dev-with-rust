@@ -43,21 +43,6 @@ pub fn setup_system(
         .insert(Collider::cuboid(1.5, 1.5))
         .insert(KinematicCharacterController::default());
 
-    // commands
-    //     .spawn(MaterialMesh2dBundle {
-    //         mesh: meshes.add(shape::Circle::default().into()).into(),
-    //         material: materials.add(ColorMaterial::from(Color::DARK_GREEN)),
-    //         transform: Transform {
-    //             translation: Vec3::new(-SCREEN_WIDTH * 0.5 + 30., 0., 0.),
-    //             scale: Vec3::new(60., 60., 1.),
-    //             ..Default::default()
-    //         },
-    //         ..default()
-    //     })
-    //     .insert(RigidBody::KinematicPositionBased)
-    //     .insert(Collider::ball(0.5))
-    //     .insert(KinematicCharacterController::default());
-
     let gold_pipe = Pipe {
         x: 0.,
         y: -SCREEN_HEIGHT * 0.5 + 50. + FLOOR_HEIGHT,
