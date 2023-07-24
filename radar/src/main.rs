@@ -1,8 +1,12 @@
 //! Radar Game
 //! The aim of this game is to shoot vehicles that appear on the radar.
-//! However, it is necessary to pay attention to the distinction between friend and foe.
-//! Hitting allied forces is minus points.//
-// In general, the basic functionalities of ggez are covered.
+//! However, it is necessary to pay attention to the distinction between allie and enemy.
+//! (Even if UFO)
+//! Hitting allied forces is minus points.
+//! In general, the basic functionalities of ggez are covered.
+//! For example, drawing a line or a circle.
+//! On the other hand, the subject of changing time-based geometric objects is also discussed.
+//! In addition, the mouse click event was also evaluated and the player score was calculated accordingly.
 
 use ggez::conf::WindowMode;
 use ggez::event::MouseButton;
@@ -18,6 +22,8 @@ use std::f32::consts::PI;
 
 const SCREEN_WIDTH: f32 = 400.;
 const SCREEN_HEIGHT: f32 = 400.;
+const ALLIE_HIT_POINT: i16 = -15;
+const ENEMY_HIT_POINT: i16 = 5;
 
 pub fn main() -> GameResult {
     let cb = ggez::ContextBuilder::new("Radar Jam", "BSŞ").window_mode(
@@ -42,6 +48,7 @@ struct Vehicle {
     is_alive: bool,
     is_spawned: bool,
     v_type: VehicleType,
+    r: f32,
 }
 
 #[derive(Copy, Clone)]
@@ -68,13 +75,14 @@ impl Default for Vehicle {
             is_spawned: false,
             is_alive: true,
             v_type: VehicleType::Unknown,
+            r: 10.,
         }
     }
 }
 
 struct Player {
     click_point: Vec2,
-    score: i32,
+    score: i16,
 }
 
 impl GameState {
@@ -178,7 +186,7 @@ impl event::EventHandler<GameError> for GameState {
                 ctx,
                 graphics::DrawMode::fill(),
                 self.vehicle.pos,
-                10.,
+                self.vehicle.r,
                 0.025,
                 Color::from(self.vehicle.v_type),
             )?;
@@ -226,8 +234,8 @@ impl event::EventHandler<GameError> for GameState {
         if distance <= 10. {
             // mouse click in circle
             match self.vehicle.v_type {
-                VehicleType::Allie => self.player.score -= 15,
-                VehicleType::Enemy => self.player.score += 10,
+                VehicleType::Allie => self.player.score += ALLIE_HIT_POINT,
+                VehicleType::Enemy => self.player.score += ENEMY_HIT_POINT,
                 VehicleType::Unknown => {}
             }
             self.vehicle = Vehicle::default();
