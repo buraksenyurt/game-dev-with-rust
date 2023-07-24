@@ -33,27 +33,60 @@ pub fn main() -> GameResult {
 struct GameState {
     circle_r: f32,
     angle: f32,
-    score: f32,
-    mouse: Mouse,
-    enemy_x: f32,
-    enemy_y: f32,
-    enemy_is_live: bool,
-    enemy_spawned: bool,
+    player: Player,
+    vehicle: Vehicle,
 }
 
-struct Mouse(Point2<f32>);
+struct Vehicle {
+    pos: Vec2,
+    is_alive: bool,
+    is_spawned: bool,
+    v_type: VehicleType,
+}
+
+#[derive(Copy, Clone)]
+enum VehicleType {
+    Allie,
+    Enemy,
+    Unknown,
+}
+
+impl From<VehicleType> for Color {
+    fn from(value: VehicleType) -> Self {
+        match value {
+            VehicleType::Allie => Color::from_rgb(141, 202, 255),
+            VehicleType::Enemy => Color::from_rgb(134, 1, 17),
+            VehicleType::Unknown => Color::from_rgb(60, 208, 112),
+        }
+    }
+}
+
+impl Default for Vehicle {
+    fn default() -> Self {
+        Self {
+            pos: Vec2::new(0., 0.),
+            is_spawned: false,
+            is_alive: true,
+            v_type: VehicleType::Unknown,
+        }
+    }
+}
+
+struct Player {
+    pos: Point2<f32>,
+    score: i32,
+}
 
 impl GameState {
     fn new(ctx: &mut Context) -> GameResult<GameState> {
         Ok(GameState {
             circle_r: 0.,
             angle: 0.,
-            score: 0.,
-            mouse: Mouse(ctx.mouse.position()),
-            enemy_x: 0.,
-            enemy_y: 0.,
-            enemy_is_live: false,
-            enemy_spawned: false,
+            player: Player {
+                pos: ctx.mouse.position(),
+                score: 0,
+            },
+            vehicle: Vehicle::default(),
         })
     }
 }
@@ -65,14 +98,22 @@ impl event::EventHandler<ggez::GameError> for GameState {
             self.circle_r = 0.;
         }
         self.circle_r = &self.circle_r + 0.8;
-        self.angle = &self.angle + PI / 90.;
-        // Calculate random enemey points
-        if ctx.time.ticks() % 120 == 0 {
+        self.angle += PI / 90.;
+        // Calculate random vehicle points
+        if ctx.time.ticks() % 180 == 0 {
             let mut rng = rand::thread_rng();
-            let angle: f32 = rng.gen_range(-360.0..360.);
-            self.enemy_x = SCREEN_WIDTH * 0.5 + &self.circle_r * angle.cos();
-            self.enemy_y = SCREEN_HEIGHT * 0.5 + &self.circle_r * angle.sin();
-            self.enemy_spawned = true;
+            let angle: f32 = rng.gen_range(-2. * PI..2. * PI);
+            self.vehicle.pos = Vec2::new(
+                SCREEN_WIDTH * 0.5 + self.circle_r * angle.cos(),
+                SCREEN_HEIGHT * 0.5 + self.circle_r * angle.sin(),
+            );
+            self.vehicle.is_spawned = true;
+            let random_type: u8 = rng.gen_range(0..3);
+            match random_type {
+                0 => self.vehicle.v_type = VehicleType::Allie,
+                1 => self.vehicle.v_type = VehicleType::Enemy,
+                _ => self.vehicle.v_type = VehicleType::Unknown,
+            }
         }
         Ok(())
     }
@@ -97,8 +138,8 @@ impl event::EventHandler<ggez::GameError> for GameState {
             &[
                 Vec2::new(SCREEN_WIDTH / 2., SCREEN_HEIGHT / 2.),
                 Vec2::new(
-                    SCREEN_WIDTH / 2. + &self.circle_r * &self.angle.cos(),
-                    SCREEN_HEIGHT / 2. + &self.circle_r * &self.angle.sin(),
+                    SCREEN_WIDTH / 2. + self.circle_r * self.angle.cos(),
+                    SCREEN_HEIGHT / 2. + self.circle_r * self.angle.sin(),
                 ),
             ],
             2.,
@@ -131,21 +172,21 @@ impl event::EventHandler<ggez::GameError> for GameState {
             canvas.draw(&line, graphics::DrawParam::from([0., 0.]));
         }
 
-        // Enemey draw
-        if self.enemy_spawned {
-            let enemy_circle = graphics::Mesh::new_circle(
+        // Vehicle draw
+        if self.vehicle.is_spawned {
+            let vehicle = graphics::Mesh::new_circle(
                 ctx,
                 graphics::DrawMode::fill(),
-                vec2(self.enemy_x, self.enemy_y),
+                self.vehicle.pos,
                 10.,
-                0.1,
-                Color::WHITE,
+                0.025,
+                Color::from(self.vehicle.v_type),
             )?;
-            canvas.draw(&enemy_circle, graphics::DrawParam::from([0., 0.]));
+            canvas.draw(&vehicle, graphics::DrawParam::from([0., 0.]));
         }
 
         // Informal text draw
-        let score_text = Text::new(format!("score:{}  r:{}", self.score, self.circle_r));
+        let score_text = Text::new(format!("score:{}  r:{}", self.player.score, self.circle_r));
         canvas.draw(&score_text, graphics::DrawParam::from([0., 0.]));
 
         // Mouse cursor draw
