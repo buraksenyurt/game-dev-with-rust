@@ -5,13 +5,13 @@
 // In general, the basic functionalities of ggez are covered.
 
 use ggez::conf::WindowMode;
+use ggez::event::MouseButton;
 use ggez::graphics::Text;
-use ggez::mint::Point2;
 use ggez::{
     event,
     glam::*,
     graphics::{self, Color},
-    Context, GameResult,
+    Context, GameError, GameResult,
 };
 use rand::Rng;
 use std::f32::consts::PI;
@@ -73,25 +73,25 @@ impl Default for Vehicle {
 }
 
 struct Player {
-    pos: Point2<f32>,
+    click_point: Vec2,
     score: i32,
 }
 
 impl GameState {
-    fn new(ctx: &mut Context) -> GameResult<GameState> {
+    fn new(_ctx: &mut Context) -> GameResult<GameState> {
         Ok(GameState {
             circle_r: 0.,
             angle: 0.,
             player: Player {
-                pos: ctx.mouse.position(),
                 score: 0,
+                click_point: Vec2::default(),
             },
             vehicle: Vehicle::default(),
         })
     }
 }
 
-impl event::EventHandler<ggez::GameError> for GameState {
+impl event::EventHandler<GameError> for GameState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         // Increase radius of radar circle
         if self.circle_r >= SCREEN_WIDTH / 2. {
@@ -173,7 +173,7 @@ impl event::EventHandler<ggez::GameError> for GameState {
         }
 
         // Vehicle draw
-        if self.vehicle.is_spawned {
+        if self.vehicle.is_spawned && self.vehicle.is_alive {
             let vehicle = graphics::Mesh::new_circle(
                 ctx,
                 graphics::DrawMode::fill(),
@@ -186,7 +186,10 @@ impl event::EventHandler<ggez::GameError> for GameState {
         }
 
         // Informal text draw
-        let score_text = Text::new(format!("score:{}  r:{}", self.player.score, self.circle_r));
+        let score_text = Text::new(format!(
+            "Score:{}|r:{}|({})",
+            self.player.score, self.circle_r, self.player.click_point
+        ));
         canvas.draw(&score_text, graphics::DrawParam::from([0., 0.]));
 
         // Mouse cursor draw
@@ -206,6 +209,29 @@ impl event::EventHandler<ggez::GameError> for GameState {
         canvas.draw(&mouse_line, graphics::DrawParam::from(ctx.mouse.position()));
 
         canvas.finish(ctx)?;
+
+        Ok(())
+    }
+
+    fn mouse_button_down_event(
+        &mut self,
+        _ctx: &mut Context,
+        _button: MouseButton,
+        x: f32,
+        y: f32,
+    ) -> Result<(), GameError> {
+        self.player.click_point = Vec2::new(x, y);
+
+        let distance = ((x - self.vehicle.pos.x).powi(2) + (y - self.vehicle.pos.y).powi(2)).sqrt();
+        if distance <= 10. {
+            // mouse click in circle
+            match self.vehicle.v_type {
+                VehicleType::Allie => self.player.score -= 15,
+                VehicleType::Enemy => self.player.score += 10,
+                VehicleType::Unknown => {}
+            }
+            self.vehicle = Vehicle::default();
+        }
 
         Ok(())
     }
