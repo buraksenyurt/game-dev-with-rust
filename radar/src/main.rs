@@ -14,6 +14,7 @@ use ggez::{
     Context, GameResult,
 };
 use rand::Rng;
+use std::f32::consts::PI;
 
 const SCREEN_WIDTH: f32 = 400.;
 const SCREEN_HEIGHT: f32 = 400.;
@@ -31,6 +32,7 @@ pub fn main() -> GameResult {
 
 struct GameState {
     circle_r: f32,
+    angle: f32,
     score: f32,
     mouse: Mouse,
     enemy_x: f32,
@@ -45,6 +47,7 @@ impl GameState {
     fn new(ctx: &mut Context) -> GameResult<GameState> {
         Ok(GameState {
             circle_r: 0.,
+            angle: 0.,
             score: 0.,
             mouse: Mouse(ctx.mouse.position()),
             enemy_x: 0.,
@@ -62,7 +65,7 @@ impl event::EventHandler<ggez::GameError> for GameState {
             self.circle_r = 0.;
         }
         self.circle_r = &self.circle_r + 0.8;
-
+        self.angle = &self.angle + PI / 90.;
         // Calculate random enemey points
         if ctx.time.ticks() % 120 == 0 {
             let mut rng = rand::thread_rng();
@@ -75,7 +78,6 @@ impl event::EventHandler<ggez::GameError> for GameState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
 
         // Radar circle draw
@@ -88,6 +90,21 @@ impl event::EventHandler<ggez::GameError> for GameState {
             Color::from_rgb(0, 143, 17),
         )?;
         canvas.draw(&circle, Vec2::new(0., 0.));
+
+        // draw circle line
+        let circle_line = graphics::Mesh::new_line(
+            ctx,
+            &[
+                Vec2::new(SCREEN_WIDTH / 2., SCREEN_HEIGHT / 2.),
+                Vec2::new(
+                    SCREEN_WIDTH / 2. + &self.circle_r * &self.angle.cos(),
+                    SCREEN_HEIGHT / 2. + &self.circle_r * &self.angle.sin(),
+                ),
+            ],
+            2.,
+            Color::from_rgb(0, 143, 17),
+        )?;
+        canvas.draw(&circle_line, Vec2::new(0., 0.));
 
         // Grid lines draw
         for i in 1..4 {
