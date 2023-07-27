@@ -1,0 +1,14 @@
+[package]
+name = "one-more-time"
+description = "Bir kez daha Bevy oyun motorunu deniyorum"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+opt-level=1
+
+[profile.dev.package."*"]
+opt-level=3
+
+[dependencies]
+bevy={version="0.11.0",features=["dynamic_linking"]}
