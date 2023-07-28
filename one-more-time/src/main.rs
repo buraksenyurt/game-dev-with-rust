@@ -6,6 +6,8 @@ use rand::Rng;
 
 const MOVEMENT_SPEED: f32 = 120.;
 const DEFAULT_GOLD_VALUE: i32 = 1000;
+const DEFAULT_DONUT_LIFE_TIME: f32 = 3.5;
+const DONUT_COST: i32 = 100;
 
 fn main() {
     App::new()
@@ -25,7 +27,7 @@ fn main() {
         )
         .insert_resource(Gold(DEFAULT_GOLD_VALUE))
         .add_systems(Startup, setup)
-        .add_systems(Update, (movement, spawn_donut))
+        .add_systems(Update, (movement, spawn_donut, claim_donut))
         .run();
 }
 
@@ -42,14 +44,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
     commands.spawn(camera);
     let hero_texture = asset_server.load("blocky.png");
-    // commands.spawn(SpriteBundle {
-    //     sprite: Sprite {
-    //         custom_size: Some(Vec2::new(33., 48.)),
-    //         ..default()
-    //     },
-    //     texture: hero_texture,
-    //     ..default()
-    // });
     commands.spawn((
         SpriteBundle {
             texture: hero_texture,
@@ -88,6 +82,18 @@ pub struct Player {
     pub speed: f32,
 }
 
+#[derive(Component)]
+pub struct Donut {
+    pub life_time: Timer,
+    pub donut_type: DonutType,
+}
+
+pub enum DonutType {
+    Blue,
+    White,
+    Red,
+}
+
 #[derive(Resource)]
 pub struct Gold(pub i32);
 
@@ -102,22 +108,53 @@ fn spawn_donut(
         return;
     }
     let player_transform = player.single();
-    if gold.0 >= 100 {
-        gold.0 -= 100;
+    if gold.0 >= DONUT_COST {
+        gold.0 -= DONUT_COST;
 
         info!("Oyuncunun kalan altını {}", gold.0);
         let mut rng = rand::thread_rng();
         let number = rng.gen_range(1..10);
-        let texture = match number {
-            1 | 3 | 5 => asset_server.load("blue_donut.png"),
-            2 | 4 | 6 => asset_server.load("red_donut.png"),
-            _ => asset_server.load("white_donut.png"),
+        let (texture, donut_type) = match number {
+            1 | 3 | 5 => (asset_server.load("blue_donut.png"), DonutType::Blue),
+            2 | 4 | 6 => (asset_server.load("red_donut.png"), DonutType::Red),
+            _ => (asset_server.load("white_donut.png"), DonutType::White),
         };
 
-        commands.spawn(SpriteBundle {
-            texture,
-            transform: *player_transform,
-            ..default()
-        });
+        commands.spawn((
+            SpriteBundle {
+                texture,
+                transform: *player_transform,
+                ..default()
+            },
+            Donut {
+                life_time: Timer::from_seconds(DEFAULT_DONUT_LIFE_TIME, TimerMode::Once),
+                donut_type,
+            },
+        ));
+    }
+}
+
+fn claim_donut(
+    mut commands: Commands,
+    time: Res<Time>,
+    mut donuts: Query<(Entity, &mut Donut)>,
+    mut gold: ResMut<Gold>,
+) {
+    for (entity, mut donut) in &mut donuts {
+        donut.life_time.tick(time.delta());
+        if donut.life_time.finished() {
+            info!("{:?} ID li entity yok ediliyor", entity);
+            let price = match donut.donut_type {
+                DonutType::Blue => 25,
+                DonutType::White => 50,
+                DonutType::Red => 75,
+            };
+            gold.0 += price;
+            commands.entity(entity).despawn();
+            info!(
+                "Donut {} altına satıldı. Güncel altın miktarı {}",
+                price, gold.0
+            );
+        }
     }
 }
