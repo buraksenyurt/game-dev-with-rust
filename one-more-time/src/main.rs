@@ -27,7 +27,7 @@ fn main() {
         )
         .insert_resource(Gold(DEFAULT_GOLD_VALUE))
         .add_systems(Startup, setup)
-        .add_systems(Update, (movement, spawn_donut, claim_donut))
+        .add_systems(Update, (movement, spawn_donut, claim_donut, scoreboard))
         .run();
 }
 
@@ -53,6 +53,24 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             speed: MOVEMENT_SPEED,
         },
     ));
+    commands.spawn((
+        TextBundle::from_sections([
+            TextSection::new(
+                "Kasa: ",
+                TextStyle {
+                    font_size: 24.0,
+                    color: Color::GOLD,
+                    ..default()
+                },
+            ),
+            TextSection::from_style(TextStyle {
+                font_size: 24.0,
+                color: Color::GOLD,
+                ..default()
+            }),
+        ]),
+        ScoreText,
+    ));
 }
 
 fn movement(
@@ -76,26 +94,6 @@ fn movement(
         }
     }
 }
-
-#[derive(Component)]
-pub struct Player {
-    pub speed: f32,
-}
-
-#[derive(Component)]
-pub struct Donut {
-    pub life_time: Timer,
-    pub donut_type: DonutType,
-}
-
-pub enum DonutType {
-    Blue,
-    White,
-    Red,
-}
-
-#[derive(Resource)]
-pub struct Gold(pub i32);
 
 fn spawn_donut(
     mut commands: Commands,
@@ -147,7 +145,7 @@ fn claim_donut(
             let price = match donut.donut_type {
                 DonutType::Blue => 25,
                 DonutType::White => 50,
-                DonutType::Red => 75,
+                DonutType::Red => 125,
             };
             gold.0 += price;
             commands.entity(entity).despawn();
@@ -158,3 +156,32 @@ fn claim_donut(
         }
     }
 }
+
+fn scoreboard(mut query: Query<&mut Text, With<ScoreText>>, gold: ResMut<Gold>) {
+    for mut text in &mut query {
+        text.sections[1].value = format!("{}", gold.0);
+    }
+}
+
+#[derive(Component)]
+pub struct ScoreText;
+
+#[derive(Component)]
+pub struct Player {
+    pub speed: f32,
+}
+
+#[derive(Component)]
+pub struct Donut {
+    pub life_time: Timer,
+    pub donut_type: DonutType,
+}
+
+pub enum DonutType {
+    Blue,
+    White,
+    Red,
+}
+
+#[derive(Resource)]
+pub struct Gold(pub i32);
