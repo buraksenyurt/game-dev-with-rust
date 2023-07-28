@@ -27,7 +27,16 @@ fn main() {
         )
         .insert_resource(Gold(DEFAULT_GOLD_VALUE))
         .add_systems(Startup, setup)
-        .add_systems(Update, (movement, spawn_donut, claim_donut, scoreboard))
+        .add_systems(
+            Update,
+            (
+                movement,
+                spawn_donut,
+                claim_donut,
+                scoreboard,
+                customer_movement,
+            ),
+        )
         .run();
 }
 
@@ -53,6 +62,66 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             speed: MOVEMENT_SPEED,
         },
     ));
+
+    //TODO Müşteri üretimlerini otomatize edelim.
+    // Rastgele renklerde gelsinler
+    // Renge göre doğru renkteki donut dağıtılmalı.
+    let customer_texture = asset_server.load("customer_red.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: customer_texture,
+            transform: Transform::from_xyz(200., 0., 0.),
+            ..default()
+        },
+        Customer { speed: 35. },
+    ));
+
+    let customer_texture = asset_server.load("customer_white.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: customer_texture,
+            transform: Transform::from_xyz(200., -50., 0.),
+            ..default()
+        },
+        Customer { speed: 45. },
+    ));
+
+    let customer_texture = asset_server.load("customer_blue.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: customer_texture,
+            transform: Transform::from_xyz(200., 50., 0.),
+            ..default()
+        },
+        Customer { speed: 65. },
+    ));
+
+    // TODO: Restoran masalarının yerleştirilmesini de otomatize edelim
+    let desk_texture = asset_server.load("desk.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture,
+            transform: Transform::from_xyz(50., 50., 0.),
+            ..default()
+        },
+    ));
+    let desk_texture = asset_server.load("desk.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture,
+            transform: Transform::from_xyz(50., 0., 0.),
+            ..default()
+        },
+    ));
+    let desk_texture = asset_server.load("desk.png");
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture,
+            transform: Transform::from_xyz(50., -50., 0.),
+            ..default()
+        },
+    ));
+
     commands.spawn((
         TextBundle::from_sections([
             TextSection::new(
@@ -90,6 +159,15 @@ fn movement(
             transform.translation.x += velocity;
         }
         if input.pressed(KeyCode::A) || input.pressed(KeyCode::Left) {
+            transform.translation.x -= velocity;
+        }
+    }
+}
+
+fn customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Res<Time>) {
+    for (mut transform, customer) in &mut customers {
+        if transform.translation.x >= 75. {
+            let velocity = customer.speed * time.delta_seconds();
             transform.translation.x -= velocity;
         }
     }
@@ -168,6 +246,11 @@ pub struct ScoreText;
 
 #[derive(Component)]
 pub struct Player {
+    pub speed: f32,
+}
+
+#[derive(Component)]
+pub struct Customer {
     pub speed: f32,
 }
 
