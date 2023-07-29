@@ -1,3 +1,9 @@
+mod builder;
+mod components;
+mod enums;
+
+use crate::components::*;
+use crate::enums::DonutType;
 use bevy::core_pipeline::clear_color::ClearColorConfig;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
@@ -52,6 +58,9 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         min_height: 144.,
     };
     commands.spawn(camera);
+
+    builder::create_desks(&mut commands, &asset_server);
+    builder::create_customers(&mut commands, &asset_server);
     let hero_texture = asset_server.load("blocky.png");
     commands.spawn((
         SpriteBundle {
@@ -60,65 +69,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         Player {
             speed: MOVEMENT_SPEED,
-        },
-    ));
-
-    //TODO Müşteri üretimlerini otomatize edelim.
-    // Rastgele renklerde gelsinler
-    // Renge göre doğru renkteki donut dağıtılmalı.
-    let customer_texture = asset_server.load("customer_red.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: customer_texture,
-            transform: Transform::from_xyz(200., 0., 0.),
-            ..default()
-        },
-        Customer { speed: 35. },
-    ));
-
-    let customer_texture = asset_server.load("customer_white.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: customer_texture,
-            transform: Transform::from_xyz(200., -50., 0.),
-            ..default()
-        },
-        Customer { speed: 45. },
-    ));
-
-    let customer_texture = asset_server.load("customer_blue.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: customer_texture,
-            transform: Transform::from_xyz(200., 50., 0.),
-            ..default()
-        },
-        Customer { speed: 65. },
-    ));
-
-    // TODO: Restoran masalarının yerleştirilmesini de otomatize edelim
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., 50., 0.),
-            ..default()
-        },
-    ));
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., 0., 0.),
-            ..default()
-        },
-    ));
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., -50., 0.),
-            ..default()
         },
     ));
 
@@ -239,31 +189,6 @@ fn scoreboard(mut query: Query<&mut Text, With<ScoreText>>, gold: ResMut<Gold>) 
     for mut text in &mut query {
         text.sections[1].value = format!("{}", gold.0);
     }
-}
-
-#[derive(Component)]
-pub struct ScoreText;
-
-#[derive(Component)]
-pub struct Player {
-    pub speed: f32,
-}
-
-#[derive(Component)]
-pub struct Customer {
-    pub speed: f32,
-}
-
-#[derive(Component)]
-pub struct Donut {
-    pub life_time: Timer,
-    pub donut_type: DonutType,
-}
-
-pub enum DonutType {
-    Blue,
-    White,
-    Red,
 }
 
 #[derive(Resource)]
