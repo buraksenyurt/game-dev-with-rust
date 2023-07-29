@@ -14,7 +14,7 @@ pub struct Customer {
     pub speed: f32,
 }
 
-#[derive(Component)]
+#[derive(Component, Debug, Clone)]
 pub struct Donut {
     pub life_time: Timer,
     pub donut_type: DonutType,

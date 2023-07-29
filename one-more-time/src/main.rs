@@ -16,6 +16,8 @@ const MOVEMENT_SPEED: f32 = 120.;
 const DEFAULT_GOLD_VALUE: i32 = 1000;
 const DEFAULT_DONUT_LIFE_TIME: f32 = 10.;
 const DONUT_COST: i32 = 100;
+const WINDOW_WIDTH: f32 = 640.;
+const WINDOW_HEIGHT: f32 = 480.;
 
 fn main() {
     App::new()
@@ -25,7 +27,7 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "One More Time Blocky".into(),
-                        resolution: (640., 480.).into(),
+                        resolution: (WINDOW_WIDTH, WINDOW_HEIGHT).into(),
                         resizable: false,
                         ..default()
                     }),
@@ -34,18 +36,19 @@ fn main() {
                 .build(),
         )
         .insert_resource(GameState {
-            gold_value: DEFAULT_GOLD_VALUE,
+            balance: DEFAULT_GOLD_VALUE,
             cook_donut_count: 0,
         })
         .add_systems(Startup, setup)
         .add_systems(
             Update,
             (
-                movement,
+                player_movement,
                 spawn_donut,
                 claim_donut,
                 scoreboard,
                 customer_movement,
+                donut_movement,
             ),
         )
         .run();
@@ -98,23 +101,31 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 }
 
-fn movement(
+fn player_movement(
     mut player: Query<(&mut Transform, &Player)>,
     input: Res<Input<KeyCode>>,
     time: Res<Time>,
 ) {
     for (mut transform, player) in &mut player {
         let velocity = player.speed * time.delta_seconds();
-        if input.pressed(KeyCode::W) || input.pressed(KeyCode::Up) {
+        if input.pressed(KeyCode::W)
+            || input.pressed(KeyCode::Up) && transform.translation.y <= WINDOW_HEIGHT / 6.5
+        {
             transform.translation.y += velocity;
         }
-        if input.pressed(KeyCode::S) || input.pressed(KeyCode::Down) {
+        if input.pressed(KeyCode::S)
+            || input.pressed(KeyCode::Down) && transform.translation.y >= -WINDOW_HEIGHT / 6.
+        {
             transform.translation.y -= velocity;
         }
-        if input.pressed(KeyCode::D) || input.pressed(KeyCode::Right) {
+        if input.pressed(KeyCode::D)
+            || input.pressed(KeyCode::Right) && transform.translation.x <= WINDOW_WIDTH / 22.
+        {
             transform.translation.x += velocity;
         }
-        if input.pressed(KeyCode::A) || input.pressed(KeyCode::Left) {
+        if input.pressed(KeyCode::A)
+            || input.pressed(KeyCode::Left) && transform.translation.x >= -WINDOW_WIDTH / 6.
+        {
             transform.translation.x -= velocity;
         }
     }
@@ -122,7 +133,7 @@ fn movement(
 
 fn customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Res<Time>) {
     for (mut transform, customer) in &mut customers {
-        if transform.translation.x >= 75. {
+        if transform.translation.x >= WINDOW_WIDTH / 9. {
             let velocity = customer.speed * time.delta_seconds();
             transform.translation.x -= velocity;
         }
@@ -139,20 +150,25 @@ fn spawn_donut(
     if !input.just_pressed(KeyCode::Space) {
         return;
     }
-    if game_state.cook_donut_count == 3 {
+    if game_state.cook_donut_count == 1 {
         return;
     }
     let player_transform = player.single().clone();
-    if game_state.gold_value >= DONUT_COST {
-        game_state.gold_value -= DONUT_COST;
+    if game_state.balance >= DONUT_COST {
+        game_state.balance -= DONUT_COST;
 
-        info!("Oyuncunun kalan altını {}", game_state.gold_value);
+        info!("Oyuncunun kalan altını {}", game_state.balance);
         let mut rng = rand::thread_rng();
         let number = rng.gen_range(1..10);
         let (texture, donut_type) = match number {
             1 | 3 | 5 => (asset_server.load("blue_donut.png"), DonutType::Blue),
             2 | 4 | 6 => (asset_server.load("red_donut.png"), DonutType::Red),
             _ => (asset_server.load("white_donut.png"), DonutType::White),
+        };
+
+        let donut = Donut {
+            life_time: Timer::from_seconds(DEFAULT_DONUT_LIFE_TIME, TimerMode::Once),
+            donut_type,
         };
 
         commands.spawn((
@@ -165,15 +181,23 @@ fn spawn_donut(
                 ),
                 ..default()
             },
-            Donut {
-                life_time: Timer::from_seconds(DEFAULT_DONUT_LIFE_TIME, TimerMode::Once),
-                donut_type,
-            },
+            donut,
         ));
         game_state.cook_donut_count += 1;
     }
 }
 
+fn donut_movement(
+    mut donuts: Query<(&mut Transform, &Donut)>,
+    player: Query<(&Transform, &Player), Without<Donut>>,
+) {
+    for (mut transform, _donut) in &mut donuts {
+        let player_transform = player.single();
+        transform.translation.x = player_transform.0.translation.x + 10.;
+        transform.translation.y = player_transform.0.translation.y;
+        transform.translation.z = player_transform.0.translation.z;
+    }
+}
 fn claim_donut(
     mut commands: Commands,
     time: Res<Time>,
@@ -189,12 +213,12 @@ fn claim_donut(
                 DonutType::White => 50,
                 DonutType::Red => 125,
             };
-            game_state.gold_value += price;
+            game_state.balance += price;
             game_state.cook_donut_count -= 1;
             commands.entity(entity).despawn();
             info!(
                 "Donut {} altına satıldı. Güncel altın miktarı {}",
-                price, game_state.gold_value
+                price, game_state.balance
             );
         }
     }
@@ -202,6 +226,6 @@ fn claim_donut(
 
 fn scoreboard(mut query: Query<&mut Text, With<ScoreText>>, game_state: ResMut<GameState>) {
     for mut text in &mut query {
-        text.sections[1].value = format!("{}", game_state.gold_value);
+        text.sections[1].value = format!("{}", game_state.balance);
     }
 }
