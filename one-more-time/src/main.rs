@@ -1,9 +1,11 @@
 mod builder;
 mod components;
 mod enums;
+mod resources;
 
 use crate::components::*;
-use crate::enums::DonutType;
+use crate::enums::*;
+use crate::resources::*;
 use bevy::core_pipeline::clear_color::ClearColorConfig;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
@@ -12,7 +14,7 @@ use rand::Rng;
 
 const MOVEMENT_SPEED: f32 = 120.;
 const DEFAULT_GOLD_VALUE: i32 = 1000;
-const DEFAULT_DONUT_LIFE_TIME: f32 = 3.5;
+const DEFAULT_DONUT_LIFE_TIME: f32 = 10.;
 const DONUT_COST: i32 = 100;
 
 fn main() {
@@ -31,7 +33,10 @@ fn main() {
                 })
                 .build(),
         )
-        .insert_resource(Gold(DEFAULT_GOLD_VALUE))
+        .insert_resource(GameState {
+            gold_value: DEFAULT_GOLD_VALUE,
+            cook_donut_count: 0,
+        })
         .add_systems(Startup, setup)
         .add_systems(
             Update,
@@ -61,6 +66,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     builder::create_desks(&mut commands, &asset_server);
     builder::create_customers(&mut commands, &asset_server);
+
     let hero_texture = asset_server.load("blocky.png");
     commands.spawn((
         SpriteBundle {
@@ -93,11 +99,11 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn movement(
-    mut characters: Query<(&mut Transform, &Player)>,
+    mut player: Query<(&mut Transform, &Player)>,
     input: Res<Input<KeyCode>>,
     time: Res<Time>,
 ) {
-    for (mut transform, player) in &mut characters {
+    for (mut transform, player) in &mut player {
         let velocity = player.speed * time.delta_seconds();
         if input.pressed(KeyCode::W) || input.pressed(KeyCode::Up) {
             transform.translation.y += velocity;
@@ -127,17 +133,20 @@ fn spawn_donut(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     input: Res<Input<KeyCode>>,
-    mut gold: ResMut<Gold>,
+    mut game_state: ResMut<GameState>,
     player: Query<&Transform, With<Player>>,
 ) {
     if !input.just_pressed(KeyCode::Space) {
         return;
     }
-    let player_transform = player.single();
-    if gold.0 >= DONUT_COST {
-        gold.0 -= DONUT_COST;
+    if game_state.cook_donut_count == 3 {
+        return;
+    }
+    let player_transform = player.single().clone();
+    if game_state.gold_value >= DONUT_COST {
+        game_state.gold_value -= DONUT_COST;
 
-        info!("Oyuncunun kalan altını {}", gold.0);
+        info!("Oyuncunun kalan altını {}", game_state.gold_value);
         let mut rng = rand::thread_rng();
         let number = rng.gen_range(1..10);
         let (texture, donut_type) = match number {
@@ -149,7 +158,11 @@ fn spawn_donut(
         commands.spawn((
             SpriteBundle {
                 texture,
-                transform: *player_transform,
+                transform: Transform::from_xyz(
+                    player_transform.translation.x + 15.,
+                    player_transform.translation.y,
+                    player_transform.translation.z,
+                ),
                 ..default()
             },
             Donut {
@@ -157,6 +170,7 @@ fn spawn_donut(
                 donut_type,
             },
         ));
+        game_state.cook_donut_count += 1;
     }
 }
 
@@ -164,7 +178,7 @@ fn claim_donut(
     mut commands: Commands,
     time: Res<Time>,
     mut donuts: Query<(Entity, &mut Donut)>,
-    mut gold: ResMut<Gold>,
+    mut game_state: ResMut<GameState>,
 ) {
     for (entity, mut donut) in &mut donuts {
         donut.life_time.tick(time.delta());
@@ -175,21 +189,19 @@ fn claim_donut(
                 DonutType::White => 50,
                 DonutType::Red => 125,
             };
-            gold.0 += price;
+            game_state.gold_value += price;
+            game_state.cook_donut_count -= 1;
             commands.entity(entity).despawn();
             info!(
                 "Donut {} altına satıldı. Güncel altın miktarı {}",
-                price, gold.0
+                price, game_state.gold_value
             );
         }
     }
 }
 
-fn scoreboard(mut query: Query<&mut Text, With<ScoreText>>, gold: ResMut<Gold>) {
+fn scoreboard(mut query: Query<&mut Text, With<ScoreText>>, game_state: ResMut<GameState>) {
     for mut text in &mut query {
-        text.sections[1].value = format!("{}", gold.0);
+        text.sections[1].value = format!("{}", game_state.gold_value);
     }
 }
-
-#[derive(Resource)]
-pub struct Gold(pub i32);
