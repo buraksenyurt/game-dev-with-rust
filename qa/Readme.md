@@ -370,3 +370,97 @@ pub struct Score {
     pub lose: u16,
 }
 ```
+
+## 05 - İşin İçerisine Birden Fazla Oyuncu Girdiğinde Vector Kullanılabilir
+
+Bir Vector tanımlayıp wilson buraya eklenir. Immutable olma hali vurgulanır ama daha da önemlisi burada **Use of moved value** probleminin ortaya çıkmasıdır.
+
+```rust
+fn main() {
+    let mut players = vec![];
+
+    let wilson = Player::new(
+        23,
+        "Can Kilod Van Dam",
+        Level::Pro(Score { win: 23, lose: 5 }),
+    );
+    players.push(wilson);
+
+    let revenue = match wilson.level {
+        Level::Beginner(s) => match s.win {
+            20..=50 => 100,
+            _ => 125,
+        },
+        Level::Pro(s) => match s.lose {
+            0..=10 => 250,
+            11..=20 => 100,
+            _ => 0,
+        },
+        Level::Veteran(_) | Level::Elit => 250,
+    };
+
+    println!(
+        "{}({}) isimli oyuncunun ödülü {} coin",
+        wilson.nick_name, wilson.level, revenue
+    );
+
+    //println!("{}", wilson.nick_name);
+}
+```
+
+Yukarıdaki kod için derleyici şöyle bir hata mesajı verir.
+
+```text
+error[E0382]: borrow of moved value: `wilson.level`
+  --> src/main.rs:28:27
+   |
+6  |     let wilson = Player::new(
+   |         ------ move occurs because `wilson` has type `Player<'_>`, which does not implement the `Copy` trait
+...
+11 |     players.push(wilson);
+   |                  ------ value moved here
+...
+28 |         wilson.nick_name, wilson.level, revenue
+   |                           ^^^^^^^^^^^^ value borrowed here after move
+   |
+```
+
+Çözüm noktasında wilson isimli oyuncuyu vektöre referans olarak eklemek kabul edilebilir.
+
+```rust
+fn main() {
+    let mut players = vec![];
+
+    let wilson = Player::new(
+        23,
+        "Can Kilod Van Dam",
+        Level::Pro(Score { win: 23, lose: 5 }),
+    );
+    players.push(&wilson);
+
+    let revenue = match wilson.level {
+        Level::Beginner(s) => match s.win {
+            20..=50 => 100,
+            _ => 125,
+        },
+        Level::Pro(s) => match s.lose {
+            0..=10 => 250,
+            11..=20 => 100,
+            _ => 0,
+        },
+        Level::Veteran(_) | Level::Elit => 250,
+    };
+
+    println!(
+        "{}({}) isimli oyuncunun ödülü {} coin",
+        wilson.nick_name, wilson.level, revenue
+    );
+
+    //println!("{}", wilson.nick_name);
+}
+```
+
+## Notlar
+
+- println! makrosunun yardım kutucuğunu mutlaka gösterelim. lock notuna değinelim. Harici linke gidip kaynak kodunu da açalım.
+

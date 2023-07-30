@@ -1,11 +1,15 @@
 use std::fmt::{Display, Formatter};
 
 fn main() {
+    let mut players = vec![];
+
     let wilson = Player::new(
         23,
         "Can Kilod Van Dam",
         Level::Pro(Score { win: 23, lose: 5 }),
     );
+    players.push(&wilson);
+
     let revenue = match wilson.level {
         Level::Beginner(s) => match s.win {
             20..=50 => 100,
