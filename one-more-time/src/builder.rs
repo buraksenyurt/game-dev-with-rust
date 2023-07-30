@@ -64,7 +64,10 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
             transform: Transform::from_xyz(200., y, 0.),
             ..default()
         },
-        Customer { speed: 65. },
+        Customer {
+            speed: 65.,
+            donut_type: DonutType::Blue,
+        },
     ));
     let customer_texture = asset_server.load("customer_white.png");
     let y = match directions[1] {
@@ -78,7 +81,10 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
             transform: Transform::from_xyz(200., y, 0.),
             ..default()
         },
-        Customer { speed: 45. },
+        Customer {
+            speed: 45.,
+            donut_type: DonutType::White,
+        },
     ));
     let customer_texture = asset_server.load("customer_red.png");
     let y = match directions[2] {
@@ -92,6 +98,9 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
             transform: Transform::from_xyz(200., y, 0.),
             ..default()
         },
-        Customer { speed: 35. },
+        Customer {
+            speed: 35.,
+            donut_type: DonutType::Red,
+        },
     ));
 }

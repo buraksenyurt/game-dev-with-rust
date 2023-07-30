@@ -13,9 +13,9 @@ use bevy::DefaultPlugins;
 use rand::Rng;
 
 const MOVEMENT_SPEED: f32 = 120.;
-const DEFAULT_GOLD_VALUE: i32 = 1000;
+const BALANCE_INIT_VALUE: f32 = 1000.;
 const DEFAULT_DONUT_LIFE_TIME: f32 = 10.;
-const DONUT_COST: i32 = 100;
+const DONUT_COST: f32 = 100.;
 const WINDOW_WIDTH: f32 = 640.;
 const WINDOW_HEIGHT: f32 = 480.;
 
@@ -36,7 +36,7 @@ fn main() {
                 .build(),
         )
         .insert_resource(GameState {
-            balance: DEFAULT_GOLD_VALUE,
+            balance: BALANCE_INIT_VALUE,
             cook_donut_count: 0,
         })
         .add_systems(Startup, setup)
@@ -49,6 +49,7 @@ fn main() {
                 scoreboard,
                 customer_movement,
                 donut_movement,
+                leave_donut,
             ),
         )
         .run();
@@ -140,6 +141,25 @@ fn customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Re
     }
 }
 
+fn leave_donut(
+    mut commands: Commands,
+    input: Res<Input<KeyCode>>,
+    mut game_state: ResMut<GameState>,
+    mut donuts: Query<(Entity, &Donut)>,
+) {
+    if game_state.cook_donut_count == 0 {
+        return;
+    }
+    if input.just_pressed(KeyCode::Space) {
+        for (entity, donut) in &mut donuts {
+            commands.entity(entity).despawn();
+            game_state.cook_donut_count -= 1;
+            if !donut.is_delivered {
+                game_state.balance -= 10.;
+            }
+        }
+    }
+}
 fn spawn_donut(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -169,6 +189,8 @@ fn spawn_donut(
         let donut = Donut {
             life_time: Timer::from_seconds(DEFAULT_DONUT_LIFE_TIME, TimerMode::Once),
             donut_type,
+            is_delivered: false,
+            is_leaved: false,
         };
 
         commands.spawn((
@@ -207,13 +229,15 @@ fn claim_donut(
     for (entity, mut donut) in &mut donuts {
         donut.life_time.tick(time.delta());
         if donut.life_time.finished() {
-            info!("{:?} ID li entity yok ediliyor", entity);
+            //info!("{:?} ID li entity yok ediliyor", entity);
             let price = match donut.donut_type {
-                DonutType::Blue => 25,
-                DonutType::White => 50,
-                DonutType::Red => 125,
+                DonutType::Blue => 25.,
+                DonutType::White => 50.,
+                DonutType::Red => 125.,
             };
-            game_state.balance += price;
+            if donut.is_delivered {
+                game_state.balance += price * 1.15;
+            }
             game_state.cook_donut_count -= 1;
             commands.entity(entity).despawn();
             info!(
