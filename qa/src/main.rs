@@ -9,8 +9,22 @@ fn main() {
         Level::Pro(Score { win: 23, lose: 5 }),
     );
     players.push(&wilson);
+    let cesika = Player::new(32, "Jesica Abla", Level::Elit);
+    players.push(&cesika);
+    let con = Player::new(13, "Con Wik", Level::Beginner(Score { win: 10, lose: 4 }));
+    players.push(&con);
 
-    let revenue = match wilson.level {
+    players.iter().for_each(|p| {
+        let revenue = calculate_revenue(p);
+        println!(
+            "{}({}) isimli oyuncunun ödülü {} coin",
+            p.nick_name, p.level, revenue
+        );
+    });
+}
+
+fn calculate_revenue(player: &Player) -> i32 {
+    let revenue = match player.level {
         Level::Beginner(s) => match s.win {
             20..=50 => 100,
             _ => 125,
@@ -22,13 +36,7 @@ fn main() {
         },
         Level::Veteran(_) | Level::Elit => 250,
     };
-
-    println!(
-        "{}({}) isimli oyuncunun ödülü {} coin",
-        wilson.nick_name, wilson.level, revenue
-    );
-
-    //println!("{}", wilson.nick_name);
+    revenue
 }
 
 pub struct Player<'a> {
