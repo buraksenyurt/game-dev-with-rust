@@ -18,7 +18,7 @@ const DEFAULT_DONUT_LIFE_TIME: f32 = 10.;
 const DONUT_COST: f32 = 100.;
 const WINDOW_WIDTH: f32 = 640.;
 const WINDOW_HEIGHT: f32 = 480.;
-const DONUT_DISTANCE_FROM_COOK:f32=20.;
+const DONUT_DISTANCE_FROM_COOK: f32 = 20.;
 
 fn main() {
     App::new()
@@ -153,21 +153,56 @@ fn leave_donut(
     mut commands: Commands,
     input: Res<Input<KeyCode>>,
     mut game_state: ResMut<GameState>,
-    mut donuts: Query<(Entity, &Donut)>,
+    mut donuts: Query<(Entity, &mut Donut)>,
+    desks: Query<(Entity, &Desk)>,
 ) {
     if game_state.cook_donut_count == 0 {
         return;
     }
     if input.just_pressed(KeyCode::Space) {
-        for (entity, donut) in &mut donuts {
+        for (entity, mut donut) in &mut donuts {
+            if donut.is_delivered {
+                continue;
+            }
+            let current_location = donut.location;
+            if current_location.x > 25. {
+                for (_, desk) in &desks {
+                    if desk.donut_type == desk.donut_type {
+                        donut.is_delivered = true;
+                        donut.is_leaved = true;
+                        info!("'{}', masaya bırakıldı", donut.donut_type);
+                        let price = match donut.donut_type {
+                            DonutType::Blue => 25.,
+                            DonutType::White => 50.,
+                            DonutType::Red => 125.,
+                        };
+                        game_state.balance += price * 1.15;
+                    } else {
+                        game_state.balance -= 25.;
+                    }
+                }
+            }
+
             commands.entity(entity).despawn();
             game_state.cook_donut_count -= 1;
-            if !donut.is_delivered {
-                game_state.balance -= 10.;
-            }
         }
     }
 }
+
+// fn check_donuts_delivering(
+//     game_state: ResMut<GameState>,
+//     mut donuts: Query<(Entity, &mut Donut)>,
+//     mut desks: Query<(Entity, &Desk)>,
+// ) {
+//     if game_state.cook_donut_count == 0 {
+//         return;
+//     }
+//
+//     for (_, mut donut) in &mut donuts {
+//
+//     }
+// }
+
 fn spawn_donut(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
