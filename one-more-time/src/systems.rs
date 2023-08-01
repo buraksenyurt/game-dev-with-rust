@@ -116,12 +116,7 @@ pub fn sys_leave_donut(
                             if current_location.y >= 32. {
                                 info!("Donut üst bölgede");
                                 if donut.donut_type == desk.donut_type.clone().unwrap() {
-                                    calc_sell_price(
-                                        &mut commands,
-                                        &mut game_state,
-                                        entity,
-                                        &mut donut,
-                                    );
+                                    calc_sell_price(&mut game_state, &mut donut);
                                     break;
                                 }
                             }
@@ -130,12 +125,7 @@ pub fn sys_leave_donut(
                             if current_location.y >= -17.5 && current_location.y < 17.5 {
                                 info!("Donut orta bölgede");
                                 if donut.donut_type == desk.donut_type.clone().unwrap() {
-                                    calc_sell_price(
-                                        &mut commands,
-                                        &mut game_state,
-                                        entity,
-                                        &mut donut,
-                                    );
+                                    calc_sell_price(&mut game_state, &mut donut);
                                 }
                             }
                         }
@@ -143,12 +133,7 @@ pub fn sys_leave_donut(
                             if current_location.y <= -32. {
                                 info!("Donut alt bölgede");
                                 if donut.donut_type == desk.donut_type.clone().unwrap() {
-                                    calc_sell_price(
-                                        &mut commands,
-                                        &mut game_state,
-                                        entity,
-                                        &mut donut,
-                                    );
+                                    calc_sell_price(&mut game_state, &mut donut);
                                 }
                             }
                         }
@@ -161,12 +146,7 @@ pub fn sys_leave_donut(
     }
 }
 
-fn calc_sell_price(
-    commands: &mut Commands,
-    game_state: &mut ResMut<GameState>,
-    entity: Entity,
-    donut: &mut Mut<Donut>,
-) {
+fn calc_sell_price(game_state: &mut ResMut<GameState>, donut: &mut Mut<Donut>) {
     info!("Çörek türleri de aynı. '{}'", donut.donut_type);
     donut.is_delivered = true;
     let price = match donut.donut_type {
