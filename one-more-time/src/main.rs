@@ -18,6 +18,7 @@ const DEFAULT_DONUT_LIFE_TIME: f32 = 10.;
 const DONUT_COST: f32 = 100.;
 const WINDOW_WIDTH: f32 = 640.;
 const WINDOW_HEIGHT: f32 = 480.;
+const DONUT_DISTANCE_FROM_COOK:f32=20.;
 
 fn main() {
     App::new()
@@ -193,21 +194,24 @@ fn spawn_donut(
             _ => (asset_server.load("white_donut.png"), DonutType::White),
         };
 
+        let target_location = Transform::from_xyz(
+            player_transform.translation.x + DONUT_DISTANCE_FROM_COOK,
+            player_transform.translation.y,
+            player_transform.translation.z,
+        );
+
         let donut = Donut {
             life_time: Timer::from_seconds(DEFAULT_DONUT_LIFE_TIME, TimerMode::Once),
             donut_type,
             is_delivered: false,
             is_leaved: false,
+            location: target_location.translation,
         };
 
         commands.spawn((
             SpriteBundle {
                 texture,
-                transform: Transform::from_xyz(
-                    player_transform.translation.x + 15.,
-                    player_transform.translation.y,
-                    player_transform.translation.z,
-                ),
+                transform: target_location,
                 ..default()
             },
             donut,
@@ -217,14 +221,15 @@ fn spawn_donut(
 }
 
 fn donut_movement(
-    mut donuts: Query<(&mut Transform, &Donut)>,
+    mut donuts: Query<(&mut Transform, &mut Donut)>,
     player: Query<(&Transform, &Player), Without<Donut>>,
 ) {
-    for (mut transform, _donut) in &mut donuts {
+    for (mut transform, mut donut) in &mut donuts {
         let player_transform = player.single();
-        transform.translation.x = player_transform.0.translation.x + 10.;
+        transform.translation.x = player_transform.0.translation.x + DONUT_DISTANCE_FROM_COOK;
         transform.translation.y = player_transform.0.translation.y;
         transform.translation.z = player_transform.0.translation.z;
+        donut.location = transform.translation;
     }
 }
 fn claim_donut(
