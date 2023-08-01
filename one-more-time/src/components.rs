@@ -1,4 +1,4 @@
-use crate::enums::DonutType;
+use crate::enums::{DonutType, Region};
 use bevy::prelude::*;
 
 #[derive(Component)]
@@ -21,4 +21,10 @@ pub struct Donut {
     pub donut_type: DonutType,
     pub is_delivered: bool,
     pub is_leaved: bool,
+}
+
+#[derive(Component)]
+pub struct Desk {
+    pub region: Region,
+    pub donut_type: Option<DonutType>,
 }

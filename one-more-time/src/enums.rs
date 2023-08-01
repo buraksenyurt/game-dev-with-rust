@@ -6,8 +6,8 @@ pub enum DonutType {
 }
 
 #[derive(PartialEq)]
-pub enum CustomerDirection {
-    Up,
+pub enum Region {
+    Upside,
     Center,
-    Down,
+    Downside,
 }

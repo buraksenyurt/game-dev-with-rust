@@ -132,11 +132,18 @@ fn player_movement(
     }
 }
 
-fn customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Res<Time>) {
+fn customer_movement(
+    mut customers: Query<(&mut Transform, &Customer)>,
+    mut desks: Query<(Entity, &mut Desk)>,
+    time: Res<Time>,
+) {
     for (mut transform, customer) in &mut customers {
         if transform.translation.x >= WINDOW_WIDTH / 9. {
             let velocity = customer.speed * time.delta_seconds();
             transform.translation.x -= velocity;
+            for (_, mut desk) in &mut desks {
+                desk.donut_type = Option::from(customer.donut_type.clone());
+            }
         }
     }
 }
