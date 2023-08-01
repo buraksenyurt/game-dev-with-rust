@@ -56,7 +56,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             ..default()
         },
         Desk {
-            region: directions[0].into(),
+            region: directions[0],
             donut_type: Some(DonutType::Blue),
         },
     ));
@@ -85,7 +85,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             ..default()
         },
         Desk {
-            region: directions[1].into(),
+            region: directions[1],
             donut_type: Some(DonutType::White),
         },
     ));
@@ -114,7 +114,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             ..default()
         },
         Desk {
-            region: directions[2].into(),
+            region: directions[2],
             donut_type: Some(DonutType::Red),
         },
     ));

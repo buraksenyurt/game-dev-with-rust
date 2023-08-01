@@ -115,7 +115,7 @@ pub fn sys_leave_donut(
                         Region::Upside => {
                             if current_location.y >= 32. {
                                 info!("Donut üst bölgede");
-                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                     break;
                                 }
@@ -124,7 +124,7 @@ pub fn sys_leave_donut(
                         Region::Center => {
                             if current_location.y >= -17.5 && current_location.y < 17.5 {
                                 info!("Donut orta bölgede");
-                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                 }
                             }
@@ -132,7 +132,7 @@ pub fn sys_leave_donut(
                         Region::Downside => {
                             if current_location.y <= -32. {
                                 info!("Donut alt bölgede");
-                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                 }
                             }
@@ -171,7 +171,7 @@ pub fn sys_spawn_donut(
     if game_state.cook_donut_count == 1 {
         return;
     }
-    let player_transform = player.single().clone();
+    let player_transform = *player.single();
     if game_state.balance >= DONUT_COST {
         game_state.balance -= DONUT_COST;
 
