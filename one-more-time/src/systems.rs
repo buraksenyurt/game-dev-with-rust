@@ -21,8 +21,7 @@ pub fn sys_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     };
     commands.spawn(camera);
 
-    builder::create_desks(&mut commands, &asset_server);
-    builder::create_customers(&mut commands, &asset_server);
+    builder::create_schene(&mut commands, &asset_server);
 
     let hero_texture = asset_server.load("blocky.png");
     commands.spawn((
@@ -85,18 +84,11 @@ pub fn sys_player_movement(
     }
 }
 
-pub fn sys_customer_movement(
-    mut customers: Query<(&mut Transform, &Customer)>,
-    mut desks: Query<(Entity, &mut Desk)>,
-    time: Res<Time>,
-) {
+pub fn sys_customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Res<Time>) {
     for (mut transform, customer) in &mut customers {
         if transform.translation.x >= WINDOW_WIDTH / 9. {
             let velocity = customer.speed * time.delta_seconds();
             transform.translation.x -= velocity;
-            for (_, mut desk) in &mut desks {
-                desk.donut_type = Option::from(customer.donut_type.clone());
-            }
         }
     }
 }
@@ -119,7 +111,8 @@ pub fn sys_leave_donut(
             let current_location = donut.location;
             if current_location.x > 25. {
                 for (_, desk) in &desks {
-                    if desk.donut_type == desk.donut_type {
+                    //info!("Desk -> {}",desk.donut_type.clone().unwrap());
+                    if donut.donut_type == desk.donut_type.clone().unwrap() {
                         donut.is_delivered = true;
                         donut.is_leaved = true;
                         info!("'{}', masaya bırakıldı", donut.donut_type);

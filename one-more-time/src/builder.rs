@@ -3,46 +3,7 @@ use crate::enums::*;
 use bevy::prelude::*;
 use rand::Rng;
 
-pub fn create_desks(commands: &mut Commands, asset_server: &Res<AssetServer>) {
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., 50., 0.),
-            ..default()
-        },
-        Desk {
-            region: Region::Upside,
-            donut_type: None,
-        },
-    ));
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., 0., 0.),
-            ..default()
-        },
-        Desk {
-            region: Region::Center,
-            donut_type: None,
-        },
-    ));
-    let desk_texture = asset_server.load("desk.png");
-    commands.spawn((
-        SpriteBundle {
-            texture: desk_texture,
-            transform: Transform::from_xyz(50., -50., 0.),
-            ..default()
-        },
-        Desk {
-            region: Region::Downside,
-            donut_type: None,
-        },
-    ));
-}
-
-pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
     let mut directions: Vec<Region> = Vec::new();
     let mut rng = rand::thread_rng();
 
@@ -70,6 +31,7 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
         }
     }
 
+    let desk_texture = asset_server.load("desk.png");
     let customer_texture = asset_server.load("customer_blue.png");
     let y = match directions[0] {
         Region::Upside => 50.,
@@ -87,6 +49,18 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
             donut_type: DonutType::Blue,
         },
     ));
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture.clone(),
+            transform: Transform::from_xyz(50., y, 0.),
+            ..default()
+        },
+        Desk {
+            region: directions[0].into(),
+            donut_type: Some(DonutType::Blue),
+        },
+    ));
+
     let customer_texture = asset_server.load("customer_white.png");
     let y = match directions[1] {
         Region::Upside => 50.,
@@ -104,6 +78,18 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
             donut_type: DonutType::White,
         },
     ));
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture.clone(),
+            transform: Transform::from_xyz(50., y, 0.),
+            ..default()
+        },
+        Desk {
+            region: directions[1].into(),
+            donut_type: Some(DonutType::White),
+        },
+    ));
+
     let customer_texture = asset_server.load("customer_red.png");
     let y = match directions[2] {
         Region::Upside => 50.,
@@ -119,6 +105,17 @@ pub fn create_customers(commands: &mut Commands, asset_server: &Res<AssetServer>
         Customer {
             speed: 35.,
             donut_type: DonutType::Red,
+        },
+    ));
+    commands.spawn((
+        SpriteBundle {
+            texture: desk_texture.clone(),
+            transform: Transform::from_xyz(50., y, 0.),
+            ..default()
+        },
+        Desk {
+            region: directions[2].into(),
+            donut_type: Some(DonutType::Red),
         },
     ));
 }
