@@ -111,27 +111,71 @@ pub fn sys_leave_donut(
             let current_location = donut.location;
             if current_location.x > 25. {
                 for (_, desk) in &desks {
-                    //info!("Desk -> {}",desk.donut_type.clone().unwrap());
-                    if donut.donut_type == desk.donut_type.clone().unwrap() {
-                        donut.is_delivered = true;
-                        donut.is_leaved = true;
-                        info!("'{}', masaya bırakıldı", donut.donut_type);
-                        let price = match donut.donut_type {
-                            DonutType::Blue => 25.,
-                            DonutType::White => 50.,
-                            DonutType::Red => 125.,
-                        };
-                        game_state.balance += price * 1.15;
-                    } else {
-                        game_state.balance -= 25.;
+                    match desk.region {
+                        Region::Upside => {
+                            if current_location.y >= 32. {
+                                info!("Donut üst bölgede");
+                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                    calc_sell_price(
+                                        &mut commands,
+                                        &mut game_state,
+                                        entity,
+                                        &mut donut,
+                                    );
+                                    break;
+                                }
+                            }
+                        }
+                        Region::Center => {
+                            if current_location.y >= -17.5 && current_location.y < 17.5 {
+                                info!("Donut orta bölgede");
+                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                    calc_sell_price(
+                                        &mut commands,
+                                        &mut game_state,
+                                        entity,
+                                        &mut donut,
+                                    );
+                                }
+                            }
+                        }
+                        Region::Downside => {
+                            if current_location.y <= -32. {
+                                info!("Donut alt bölgede");
+                                if donut.donut_type == desk.donut_type.clone().unwrap() {
+                                    calc_sell_price(
+                                        &mut commands,
+                                        &mut game_state,
+                                        entity,
+                                        &mut donut,
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
             }
-
             commands.entity(entity).despawn();
             game_state.cook_donut_count -= 1;
         }
     }
+}
+
+fn calc_sell_price(
+    commands: &mut Commands,
+    game_state: &mut ResMut<GameState>,
+    entity: Entity,
+    donut: &mut Mut<Donut>,
+) {
+    info!("Çörek türleri de aynı. '{}'", donut.donut_type);
+    donut.is_delivered = true;
+    let price = match donut.donut_type {
+        DonutType::Blue => 25.,
+        DonutType::White => 50.,
+        DonutType::Red => 125.,
+    };
+    info!("Sell price {}", price * 1.15);
+    game_state.balance += price * 1.15;
 }
 
 pub fn sys_spawn_donut(
@@ -208,21 +252,8 @@ pub fn sys_claim_donut(
     for (entity, mut donut) in &mut donuts {
         donut.life_time.tick(time.delta());
         if donut.life_time.finished() {
-            //info!("{:?} ID li entity yok ediliyor", entity);
-            let price = match donut.donut_type {
-                DonutType::Blue => 25.,
-                DonutType::White => 50.,
-                DonutType::Red => 125.,
-            };
-            if donut.is_delivered {
-                game_state.balance += price * 1.15;
-            }
             game_state.cook_donut_count -= 1;
             commands.entity(entity).despawn();
-            info!(
-                "Donut {} altına satıldı. Güncel altın miktarı {}",
-                price, game_state.balance
-            );
         }
     }
 }

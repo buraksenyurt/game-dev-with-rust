@@ -12,7 +12,7 @@ impl Display for DonutType {
         let title = match self {
             DonutType::Blue => "Nefis orman meyveli tatlı çörek.",
             DonutType::White => "Vanilay ve saf sütten yapılmış kreması ile harika bir çörek.",
-            DonutType::Red => "İçin alabildiğine vişne dolgusu ile kaplı şeytan çöreğimiz.",
+            DonutType::Red => "İçine alabildiğine vişne dolgusu ile kaplı şeytan çöreğimiz.",
         };
         write!(f, "{}", title)
     }
