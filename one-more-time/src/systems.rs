@@ -86,7 +86,7 @@ pub fn sys_player_movement(
 
 pub fn sys_customer_movement(mut customers: Query<(&mut Transform, &Customer)>, time: Res<Time>) {
     for (mut transform, customer) in &mut customers {
-        if transform.translation.x >= WINDOW_WIDTH / 9. {
+        if transform.translation.x >= WINDOW_WIDTH / 9. && !customer.is_get {
             let velocity = customer.speed * time.delta_seconds();
             transform.translation.x -= velocity;
         }
@@ -99,6 +99,7 @@ pub fn sys_leave_donut(
     mut game_state: ResMut<GameState>,
     mut donuts: Query<(Entity, &mut Donut)>,
     desks: Query<(Entity, &Desk)>,
+    mut customers: Query<(Entity, &mut Customer)>,
 ) {
     if game_state.cook_donut_count == 0 {
         return;
@@ -117,9 +118,15 @@ pub fn sys_leave_donut(
                                 info!("Donut üst bölgede");
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
+
+                                    customers
+                                        .iter_mut()
+                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .for_each(|(_, mut c)| c.is_get = true);
+
                                     break;
                                 } else {
-                                    game_state.balance -= 10.;
+                                    game_state.balance -= donut.penalty_cost;
                                 }
                             }
                         }
@@ -128,8 +135,12 @@ pub fn sys_leave_donut(
                                 info!("Donut orta bölgede");
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
+                                    customers
+                                        .iter_mut()
+                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
-                                    game_state.balance -= 10.;
+                                    game_state.balance -= donut.penalty_cost;
                                 }
                             }
                         }
@@ -138,8 +149,12 @@ pub fn sys_leave_donut(
                                 info!("Donut alt bölgede");
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
+                                    customers
+                                        .iter_mut()
+                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
-                                    game_state.balance -= 10.;
+                                    game_state.balance -= donut.penalty_cost;
                                 }
                             }
                         }
@@ -202,7 +217,11 @@ pub fn sys_spawn_donut(
             is_delivered: false,
             is_leaved: false,
             location: target_location.translation,
-            penalty_cost: 10.,
+            penalty_cost: match donut_type {
+                DonutType::Blue => 12.5,
+                DonutType::White => 17.5,
+                DonutType::Red => 8.5,
+            },
         };
 
         commands.spawn((
@@ -251,5 +270,23 @@ pub fn sys_show_scoreboard(
 ) {
     for mut text in &mut query {
         text.sections[1].value = format!("{}", game_state.balance);
+    }
+}
+
+pub fn sys_return_customers(
+    mut commands: Commands,
+    mut customers: Query<(&mut Transform, &mut Customer, Entity)>,
+    time: Res<Time>,
+) {
+    for (mut transform, mut customer, e) in customers.iter_mut() {
+        if customer.is_get {
+            let velocity = customer.speed * time.delta_seconds();
+            transform.translation.x += velocity;
+            if transform.translation.x >= WINDOW_WIDTH * 0.5 - transform.translation.x {
+                customer.is_get = false;
+                commands.entity(e).despawn();
+                info!("{:?} {:?} despawn işlemi", e, transform.translation);
+            }
+        }
     }
 }

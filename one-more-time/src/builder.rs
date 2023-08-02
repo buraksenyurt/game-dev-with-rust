@@ -55,6 +55,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
             Customer {
                 speed: 65.,
                 donut_type: donuts[i],
+                is_get: false,
             },
         ));
         commands.spawn((

@@ -13,6 +13,7 @@ pub struct Player {
 pub struct Customer {
     pub speed: f32,
     pub donut_type: DonutType,
+    pub is_get: bool,
 }
 
 #[derive(Component, Debug, Clone)]

@@ -42,6 +42,7 @@ fn main() {
                 sys_customer_movement,
                 sys_donut_movement,
                 sys_leave_donut,
+                sys_return_customers,
             ),
         )
         .run();
