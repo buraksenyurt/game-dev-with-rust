@@ -3,22 +3,19 @@ mod ware_house;
 
 use crate::model::Player;
 use crate::ware_house::WareHouse;
-use std::{
-    io::{self, stdin},
-    time::SystemTime,
-};
+use chrono::Local;
+use std::io::stdin;
 
 fn main() {
     let mut quiz = WareHouse::load_quiz();
 
     println!("Nick name? ");
     let mut nick_name = String::new();
-    let reader = io::stdin();
-    reader.read_line(&mut nick_name).expect("Can't read!"); // Nasıl hata yaptırtabiliriz?
+    stdin().read_line(&mut nick_name).expect("Can't read!"); // Nasıl hata yaptırtabiliriz?
     let nick_name = nick_name.trim().to_string();
     let mut player = Player {
         nick_name,
-        enter_time: SystemTime::now(), // bunun yerine chrono küfesini kullanıp Local::now() ile ilerlemek lazım.
+        enter_time: Local::now().time(), // bunun yerine chrono küfesini kullanıp Local::now() ile ilerlemek lazım.
         point: 0,
     };
     println!("{}", player);

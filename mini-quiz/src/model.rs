@@ -1,9 +1,9 @@
+use chrono::NaiveTime;
 use std::fmt::Display;
-use std::time::SystemTime;
 
 pub struct Player {
     pub nick_name: String,
-    pub enter_time: SystemTime,
+    pub enter_time: NaiveTime,
     pub point: u32,
 }
 

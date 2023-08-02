@@ -3,7 +3,7 @@ use crate::model::*;
 pub struct WareHouse;
 
 impl WareHouse {
-    pub(crate) fn load_quiz() -> Vec<Question> {
+    pub fn load_quiz() -> Vec<Question> {
         vec![
             Question {
                 title: "1 Byte bellekte kaç Bit yer kaplar?".to_string(),
