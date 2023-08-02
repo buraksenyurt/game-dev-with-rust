@@ -22,6 +22,7 @@ pub struct Donut {
     pub is_delivered: bool,
     pub is_leaved: bool,
     pub location: Vec3,
+    pub penalty_cost: f32,
 }
 
 #[derive(Component)]

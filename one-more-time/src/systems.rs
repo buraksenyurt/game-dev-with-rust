@@ -118,6 +118,8 @@ pub fn sys_leave_donut(
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                     break;
+                                } else {
+                                    game_state.balance -= 10.;
                                 }
                             }
                         }
@@ -126,6 +128,8 @@ pub fn sys_leave_donut(
                                 info!("Donut orta bölgede");
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
+                                } else {
+                                    game_state.balance -= 10.;
                                 }
                             }
                         }
@@ -134,6 +138,8 @@ pub fn sys_leave_donut(
                                 info!("Donut alt bölgede");
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
+                                } else {
+                                    game_state.balance -= 10.;
                                 }
                             }
                         }
@@ -196,6 +202,7 @@ pub fn sys_spawn_donut(
             is_delivered: false,
             is_leaved: false,
             location: target_location.translation,
+            penalty_cost: 10.,
         };
 
         commands.spawn((
