@@ -110,13 +110,13 @@ pub fn sys_leave_donut(
             if donut.is_delivered {
                 continue;
             }
-            let current_location = donut.location;
-            if current_location.x > 25. {
+            let donut_location = donut.location;
+            if donut_location.x > 25. {
                 for (_, desk) in &desks {
                     match desk.region {
                         Region::Upside => {
-                            if current_location.y >= 32. {
-                                info!("Donut üst bölgede");
+                            if donut_location.y >= 32. {
+                                info!("Donut üst bölgede. Desk Type {}", desk.donut_type.unwrap());
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
 
@@ -135,8 +135,8 @@ pub fn sys_leave_donut(
                             }
                         }
                         Region::Center => {
-                            if current_location.y >= -17.5 && current_location.y < 17.5 {
-                                info!("Donut orta bölgede");
+                            if donut_location.y >= -17.5 && donut_location.y < 17.5 {
+                                info!("Donut orta bölgede. Desk Type {}", desk.donut_type.unwrap());
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                     customers
@@ -152,8 +152,8 @@ pub fn sys_leave_donut(
                             }
                         }
                         Region::Downside => {
-                            if current_location.y <= -32. {
-                                info!("Donut alt bölgede");
+                            if donut_location.y <= -32. {
+                                info!("Donut alt bölgede. Desk Type {}", desk.donut_type.unwrap());
                                 if donut.donut_type == desk.donut_type.unwrap() {
                                     calc_sell_price(&mut game_state, &mut donut);
                                     customers
@@ -288,7 +288,7 @@ pub fn sys_return_customers(
     mut customers: Query<(&mut Transform, &mut Customer, Entity)>,
     time: Res<Time>,
     asset_server: Res<AssetServer>,
-    game_state: Res<GameState>,
+    mut desks: Query<(&mut Desk, Entity)>,
 ) {
     for (mut transform, mut customer, e) in customers.iter_mut() {
         if customer.is_get {
@@ -298,36 +298,49 @@ pub fn sys_return_customers(
                 customer.is_get = false;
                 commands.entity(e).despawn();
                 info!("{:?} {:?} despawn işlemi", e, transform.translation);
-                spawn_new_customer(&mut commands, &asset_server, customer, &game_state);
+                let new_donut_type = get_random_donut();
+                spawn_new_customer(
+                    &mut commands,
+                    &asset_server,
+                    new_donut_type,
+                    customer.region,
+                );
+                for (mut desk, _entity) in desks.iter_mut() {
+                    if desk.region == customer.region {
+                        desk.donut_type = Some(new_donut_type);
+                        break;
+                    }
+                }
             }
         }
     }
 }
 
+fn get_random_donut() -> DonutType {
+    let mut rng = rand::thread_rng();
+    let donuts = vec![DonutType::Blue, DonutType::White, DonutType::Red];
+    let number = rng.gen_range(0..=2);
+    donuts[number]
+}
+
 fn spawn_new_customer(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
-    customer: Mut<Customer>,
-    game_state: &Res<GameState>,
+    new_donut_type: DonutType,
+    region: Region,
 ) {
-    let mut rng = rand::thread_rng();
-
-    let donuts = vec![DonutType::Blue, DonutType::White, DonutType::Red];
-    let mut posibilites: Vec<DonutType> = Vec::new();
-    for c in &game_state.customers_inside {
-        if donuts.contains(&c.donut_type) {
-            continue;
-        } else {
-            posibilites.push(c.donut_type);
-        }
-    }
-    let number = rng.gen_range(0..=posibilites.len());
+    let customer = Customer {
+        speed: 65.,
+        donut_type: new_donut_type,
+        is_get: false,
+        region,
+    };
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load(get_file_name(donuts[number])),
+            texture: asset_server.load(get_file_name(new_donut_type)),
             transform: Transform::from_xyz(
                 200.,
-                match customer.region {
+                match region {
                     Region::Upside => 50.,
                     Region::Center => 0.,
                     Region::Downside => -50.,
@@ -336,11 +349,6 @@ fn spawn_new_customer(
             ),
             ..default()
         },
-        Customer {
-            speed: 65.,
-            donut_type: donuts[number],
-            is_get: false,
-            region: customer.region,
-        },
+        customer,
     ));
 }
