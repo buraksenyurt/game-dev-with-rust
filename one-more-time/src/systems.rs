@@ -289,6 +289,7 @@ pub fn sys_check_waiting_customers(time: Res<Time>, mut customers: Query<(&mut C
 pub fn sys_claim_waiting_customers(
     mut commands: Commands,
     mut customers: Query<(&mut Transform, &Customer, Entity)>,
+    asset_server: Res<AssetServer>,
     _time: Res<Time>,
 ) {
     for (mut transform, customer, entity) in customers.iter_mut() {
@@ -297,6 +298,8 @@ pub fn sys_claim_waiting_customers(
             if transform.translation.x >= WINDOW_WIDTH * 0.5 - transform.translation.x {
                 info!("Customer despawned on x={}", transform.translation.x);
                 commands.entity(entity).despawn();
+                let donut_type = get_random_donut();
+                spawn_new_customer(&mut commands, &asset_server, donut_type, customer.region);
             }
         }
     }
