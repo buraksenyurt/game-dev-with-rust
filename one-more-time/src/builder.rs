@@ -3,14 +3,6 @@ use crate::enums::*;
 use bevy::prelude::*;
 use rand::Rng;
 
-fn get_file_name(donut_type: DonutType) -> String {
-    match donut_type {
-        DonutType::Blue => "customer_blue.png".to_string(),
-        DonutType::White => "customer_white.png".to_string(),
-        DonutType::Red => "customer_red.png".to_string(),
-    }
-}
-
 pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
     let mut directions: Vec<Region> = Vec::new();
     let mut rng = rand::thread_rng();
@@ -56,6 +48,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 speed: 65.,
                 donut_type: donuts[i],
                 is_get: false,
+                direction: directions[i],
             },
         ));
         commands.spawn((
@@ -69,5 +62,13 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 donut_type: Some(donuts[i]),
             },
         ));
+    }
+}
+
+pub fn get_file_name(donut_type: DonutType) -> String {
+    match donut_type {
+        DonutType::Blue => "customer_blue.png".to_string(),
+        DonutType::White => "customer_white.png".to_string(),
+        DonutType::Red => "customer_red.png".to_string(),
     }
 }

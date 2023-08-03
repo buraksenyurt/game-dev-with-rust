@@ -1,4 +1,5 @@
 use crate::builder;
+use crate::builder::get_file_name;
 use crate::components::*;
 use crate::constants::*;
 use crate::enums::*;
@@ -277,6 +278,7 @@ pub fn sys_return_customers(
     mut commands: Commands,
     mut customers: Query<(&mut Transform, &mut Customer, Entity)>,
     time: Res<Time>,
+    asset_server: Res<AssetServer>,
 ) {
     for (mut transform, mut customer, e) in customers.iter_mut() {
         if customer.is_get {
@@ -286,7 +288,39 @@ pub fn sys_return_customers(
                 customer.is_get = false;
                 commands.entity(e).despawn();
                 info!("{:?} {:?} despawn işlemi", e, transform.translation);
+                spawn_new_customer(&mut commands, &asset_server, customer);
             }
         }
     }
+}
+
+fn spawn_new_customer(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    customer: Mut<Customer>,
+) {
+    let mut rng = rand::thread_rng();
+    let number = rng.gen_range(0..=2);
+    let donuts = vec![DonutType::Blue, DonutType::White, DonutType::Red];
+    commands.spawn((
+        SpriteBundle {
+            texture: asset_server.load(get_file_name(donuts[number])),
+            transform: Transform::from_xyz(
+                200.,
+                match customer.direction {
+                    Region::Upside => 50.,
+                    Region::Center => 0.,
+                    Region::Downside => -50.,
+                },
+                0.,
+            ),
+            ..default()
+        },
+        Customer {
+            speed: 65.,
+            donut_type: donuts[number],
+            is_get: false,
+            direction: customer.direction,
+        },
+    ));
 }
