@@ -274,6 +274,34 @@ pub fn sys_claim_donut(
     }
 }
 
+pub fn sys_check_waiting_customers(time: Res<Time>, mut customers: Query<(&mut Customer, Entity)>) {
+    for (mut cust, _entity) in customers.iter_mut() {
+        if !cust.can_return {
+            cust.life_time.tick(time.delta());
+            if cust.life_time.finished() && !cust.is_get {
+                info!("Customer can return");
+                cust.can_return = true;
+            }
+        }
+    }
+}
+
+pub fn sys_claim_waiting_customers(
+    mut commands: Commands,
+    mut customers: Query<(&mut Transform, &Customer, Entity)>,
+    _time: Res<Time>,
+) {
+    for (mut transform, customer, entity) in customers.iter_mut() {
+        if customer.can_return {
+            transform.translation.x += 1.75; // * time.delta_seconds(); delta_seconds koyunca olduğu yerde sayıyor
+            if transform.translation.x >= WINDOW_WIDTH * 0.5 - transform.translation.x {
+                info!("Customer despawned on x={}", transform.translation.x);
+                commands.entity(entity).despawn();
+            }
+        }
+    }
+}
+
 pub fn sys_show_scoreboard(
     mut query: Query<&mut Text, With<ScoreText>>,
     game_state: ResMut<GameState>,
@@ -334,6 +362,8 @@ fn spawn_new_customer(
         donut_type: new_donut_type,
         is_get: false,
         region,
+        life_time: Timer::from_seconds(CUSTOMER_WAIT_TIME, TimerMode::Once),
+        can_return: false,
     };
     commands.spawn((
         SpriteBundle {

@@ -1,4 +1,5 @@
 use crate::components::*;
+use crate::constants::CUSTOMER_WAIT_TIME;
 use crate::enums::*;
 use bevy::prelude::*;
 use rand::Rng;
@@ -49,6 +50,8 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 donut_type: donuts[i],
                 is_get: false,
                 region: directions[i],
+                life_time: Timer::from_seconds(CUSTOMER_WAIT_TIME, TimerMode::Once),
+                can_return: false,
             },
         ));
         commands.spawn((

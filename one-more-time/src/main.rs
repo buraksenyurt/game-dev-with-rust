@@ -44,6 +44,8 @@ fn main() {
                 sys_donut_movement,
                 sys_leave_donut,
                 sys_return_customers,
+                sys_check_waiting_customers,
+                sys_claim_waiting_customers,
             ),
         )
         .run();
