@@ -30,6 +30,7 @@ fn main() {
         .insert_resource(GameState {
             balance: BALANCE_INIT_VALUE,
             cook_donut_count: 0,
+            customers_inside: Vec::new(),
         })
         .add_systems(Startup, sys_setup)
         .add_systems(

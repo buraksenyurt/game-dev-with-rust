@@ -122,7 +122,10 @@ pub fn sys_leave_donut(
 
                                     customers
                                         .iter_mut()
-                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .filter(|(_, c)| {
+                                            c.donut_type == donut.donut_type
+                                                && c.region == Region::Upside
+                                        })
                                         .for_each(|(_, mut c)| c.is_get = true);
 
                                     break;
@@ -138,7 +141,10 @@ pub fn sys_leave_donut(
                                     calc_sell_price(&mut game_state, &mut donut);
                                     customers
                                         .iter_mut()
-                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .filter(|(_, c)| {
+                                            c.donut_type == donut.donut_type
+                                                && c.region == Region::Center
+                                        })
                                         .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
                                     game_state.balance -= donut.penalty_cost;
@@ -152,7 +158,10 @@ pub fn sys_leave_donut(
                                     calc_sell_price(&mut game_state, &mut donut);
                                     customers
                                         .iter_mut()
-                                        .filter(|(_, c)| c.donut_type == donut.donut_type)
+                                        .filter(|(_, c)| {
+                                            c.donut_type == donut.donut_type
+                                                && c.region == Region::Downside
+                                        })
                                         .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
                                     game_state.balance -= donut.penalty_cost;
@@ -279,6 +288,7 @@ pub fn sys_return_customers(
     mut customers: Query<(&mut Transform, &mut Customer, Entity)>,
     time: Res<Time>,
     asset_server: Res<AssetServer>,
+    game_state: Res<GameState>,
 ) {
     for (mut transform, mut customer, e) in customers.iter_mut() {
         if customer.is_get {
@@ -288,7 +298,7 @@ pub fn sys_return_customers(
                 customer.is_get = false;
                 commands.entity(e).despawn();
                 info!("{:?} {:?} despawn işlemi", e, transform.translation);
-                spawn_new_customer(&mut commands, &asset_server, customer);
+                spawn_new_customer(&mut commands, &asset_server, customer, &game_state);
             }
         }
     }
@@ -298,16 +308,26 @@ fn spawn_new_customer(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     customer: Mut<Customer>,
+    game_state: &Res<GameState>,
 ) {
     let mut rng = rand::thread_rng();
-    let number = rng.gen_range(0..=2);
+
     let donuts = vec![DonutType::Blue, DonutType::White, DonutType::Red];
+    let mut posibilites: Vec<DonutType> = Vec::new();
+    for c in &game_state.customers_inside {
+        if donuts.contains(&c.donut_type) {
+            continue;
+        } else {
+            posibilites.push(c.donut_type);
+        }
+    }
+    let number = rng.gen_range(0..=posibilites.len());
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load(get_file_name(donuts[number])),
             transform: Transform::from_xyz(
                 200.,
-                match customer.direction {
+                match customer.region {
                     Region::Upside => 50.,
                     Region::Center => 0.,
                     Region::Downside => -50.,
@@ -320,7 +340,7 @@ fn spawn_new_customer(
             speed: 65.,
             donut_type: donuts[number],
             is_get: false,
-            direction: customer.direction,
+            region: customer.region,
         },
     ));
 }

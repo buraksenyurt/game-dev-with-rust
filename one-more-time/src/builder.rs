@@ -48,7 +48,7 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 speed: 65.,
                 donut_type: donuts[i],
                 is_get: false,
-                direction: directions[i],
+                region: directions[i],
             },
         ));
         commands.spawn((

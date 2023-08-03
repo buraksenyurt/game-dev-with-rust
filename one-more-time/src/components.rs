@@ -9,12 +9,12 @@ pub struct Player {
     pub speed: f32,
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 pub struct Customer {
     pub speed: f32,
     pub donut_type: DonutType,
     pub is_get: bool,
-    pub direction: Region,
+    pub region: Region,
 }
 
 #[derive(Component, Debug, Clone)]
