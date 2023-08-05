@@ -86,5 +86,49 @@
         "is_correct": false
       }
     ]
+  },
+  {
+    "title": "Aşağıdaki terminal komutlarından hangisi doğrudur?",
+    "point": 4,
+    "answers": [
+      {
+        "title": "cargo add package rand",
+        "is_correct": false
+      },
+      {
+        "title": "cargo add rand",
+        "is_correct": true
+      },
+      {
+        "title": "cargo --package --add rand",
+        "is_correct": false
+      },
+      {
+        "title": "cargo feature add rand",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "title": "Rust dilinde kullanılan String ve &str arasındaki fark nedir?",
+    "point": 5,
+    "answers": [
+      {
+        "title": "String mutable bir karakter dizisi iken, &str immutable bir karakter dizisidir.",
+        "is_correct": true
+      },
+      {
+        "title": "String bir sabit uzunlukta karakter dizisiyken, &str dinamik olarak büyüyen karakter dizisidir.",
+        "is_correct": false
+      },
+      {
+        "title": "String bir sınıf iken &str bir struct'tır.",
+        "is_correct": false
+      },
+      {
+        "title": "String heap bellek bölgesinde tutulan ve dinamik büyüken bir metin dizisiyken, &str stack'de duran ve dinamik büyüyen bir karakter dizisidir.",
+        "is_correct": false
+      }
+    ]
   }
 ]
