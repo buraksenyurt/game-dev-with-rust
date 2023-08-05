@@ -1,3 +1,4 @@
+use crate::common::get_file_name;
 use crate::components::*;
 use crate::constants::CUSTOMER_WAIT_TIME;
 use crate::enums::*;
@@ -65,13 +66,5 @@ pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
                 donut_type: Some(donuts[i]),
             },
         ));
-    }
-}
-
-pub fn get_file_name(donut_type: DonutType) -> String {
-    match donut_type {
-        DonutType::Blue => "customer_blue.png".to_string(),
-        DonutType::White => "customer_white.png".to_string(),
-        DonutType::Red => "customer_red.png".to_string(),
     }
 }

@@ -1,9 +1,9 @@
-use crate::builder;
-use crate::builder::get_file_name;
+use crate::common::{get_donut_cost, get_donut_penalty_cost};
 use crate::components::*;
 use crate::constants::*;
 use crate::enums::*;
 use crate::resources::*;
+use crate::{builder, common};
 use bevy::core_pipeline::clear_color::ClearColorConfig;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
@@ -130,7 +130,7 @@ pub fn sys_leave_donut(
 
                                     break;
                                 } else {
-                                    game_state.balance -= donut.penalty_cost;
+                                    game_state.balance -= get_donut_penalty_cost(donut.donut_type);
                                 }
                             }
                         }
@@ -147,7 +147,7 @@ pub fn sys_leave_donut(
                                         })
                                         .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
-                                    game_state.balance -= donut.penalty_cost;
+                                    game_state.balance -= get_donut_penalty_cost(donut.donut_type);
                                 }
                             }
                         }
@@ -164,7 +164,7 @@ pub fn sys_leave_donut(
                                         })
                                         .for_each(|(_, mut c)| c.is_get = true);
                                 } else {
-                                    game_state.balance -= donut.penalty_cost;
+                                    game_state.balance -= get_donut_penalty_cost(donut.donut_type);
                                 }
                             }
                         }
@@ -180,11 +180,7 @@ pub fn sys_leave_donut(
 fn calc_sell_price(game_state: &mut ResMut<GameState>, donut: &mut Mut<Donut>) {
     info!("Çörek türleri de aynı. '{}'", donut.donut_type);
     donut.is_delivered = true;
-    let price = match donut.donut_type {
-        DonutType::Blue => 25.,
-        DonutType::White => 50.,
-        DonutType::Red => 125.,
-    };
+    let price = get_donut_cost(donut.donut_type);
     info!("Sell price {}", price * 1.15);
     game_state.balance += price * 1.15;
 }
@@ -204,8 +200,6 @@ pub fn sys_spawn_donut(
     }
     let player_transform = *player.single();
     if game_state.balance >= DONUT_COST {
-        game_state.balance -= DONUT_COST;
-
         info!("Oyuncunun kalan altını {}", game_state.balance);
         let mut rng = rand::thread_rng();
         let number = rng.gen_range(1..10);
@@ -214,7 +208,7 @@ pub fn sys_spawn_donut(
             2 | 4 | 6 => (asset_server.load("red_donut.png"), DonutType::Red),
             _ => (asset_server.load("white_donut.png"), DonutType::White),
         };
-
+        game_state.balance -= get_donut_cost(donut_type);
         let target_location = Transform::from_xyz(
             player_transform.translation.x + DONUT_DISTANCE_FROM_COOK,
             player_transform.translation.y,
@@ -227,11 +221,6 @@ pub fn sys_spawn_donut(
             is_delivered: false,
             is_leaved: false,
             location: target_location.translation,
-            penalty_cost: match donut_type {
-                DonutType::Blue => 12.5,
-                DonutType::White => 17.5,
-                DonutType::Red => 8.5,
-            },
         };
 
         commands.spawn((
@@ -290,6 +279,7 @@ pub fn sys_claim_waiting_customers(
     mut commands: Commands,
     mut customers: Query<(&mut Transform, &Customer, Entity)>,
     asset_server: Res<AssetServer>,
+    mut game_state: ResMut<GameState>,
     _time: Res<Time>,
 ) {
     for (mut transform, customer, entity) in customers.iter_mut() {
@@ -300,6 +290,8 @@ pub fn sys_claim_waiting_customers(
                 commands.entity(entity).despawn();
                 let donut_type = get_random_donut();
                 spawn_new_customer(&mut commands, &asset_server, donut_type, customer.region);
+
+                game_state.balance -= get_donut_penalty_cost(donut_type);
             }
         }
     }
@@ -370,7 +362,7 @@ fn spawn_new_customer(
     };
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load(get_file_name(new_donut_type)),
+            texture: asset_server.load(common::get_file_name(new_donut_type)),
             transform: Transform::from_xyz(
                 200.,
                 match region {
