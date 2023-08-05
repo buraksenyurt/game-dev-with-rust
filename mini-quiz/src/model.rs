@@ -25,7 +25,7 @@ impl Display for Score {
 }
 
 impl Display for Player {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "'{}' - [{:?}]", self.nick_name, self.enter_time)
     }
 }
@@ -41,4 +41,10 @@ pub struct Question {
     pub title: String,
     pub answers: Vec<Answer>,
     pub point: u32,
+}
+
+impl Display for Question {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Q : {} [{}] Point", self.title, self.point)
+    }
 }

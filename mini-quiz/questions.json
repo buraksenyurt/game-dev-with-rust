@@ -79,7 +79,7 @@
       },
       {
         "title": "Fonksiyonu belirten parametre sayısı kadar çalıştırır.",
-        "is_correct": true
+        "is_correct": false
       },
       {
         "title": "Bir anlamı yoktur. Opsiyoneldir.",

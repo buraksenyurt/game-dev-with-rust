@@ -6,13 +6,14 @@ use crate::model::{Player, Score};
 use crate::view::Terminal;
 use crate::ware_house::WareHouse;
 use chrono::Local;
+use colorized::{Color, Colors};
 use std::io::stdin;
 use std::path::Path;
 
 fn main() {
     let mut quiz = WareHouse::load_quiz(Path::new("./questions.json")).expect("System problem.");
     Terminal::print_intro();
-    println!("Please give me your name");
+    println!("\nPlease give me your name\n");
     let mut nick_name = String::new();
     stdin().read_line(&mut nick_name).expect("Can't read!"); // Nasıl hata yaptırtabiliriz?
     let nick_name = nick_name.trim().to_string();
@@ -26,22 +27,15 @@ fn main() {
     println!("{}", player);
 
     while let Some(q) = quiz.pop() {
-        println!("\nQ : {} [{}] Point", q.title, q.point);
-        let mut correct_answer: usize = 0;
-        for (i, answer) in q.answers.iter().enumerate() {
-            if answer.is_correct {
-                correct_answer = i + 1;
-            }
-            println!("\t[{}]-{}", i + 1, answer.title);
-        }
-        println!("Your answer ?");
+        let correct_answer = Terminal::display_question(&q);
         let mut user_answer = String::new();
         stdin().read_line(&mut user_answer).expect("Can't read!");
         let user_answer = user_answer.trim().parse::<usize>().expect("isn't numeric");
         match user_answer {
             1..=4 => {}
             _ => {
-                println!("Please write valid choice (1,2,3,4)");
+                let text = "Please write valid choice (1,2,3,4)".color(Colors::RedBg);
+                println!("{}", text);
                 quiz.push(q);
                 continue;
             }
@@ -54,7 +48,7 @@ fn main() {
         }
     }
 
-    println!("Game finished.");
+    println!("\nGame finished.");
     println!("{}", player.score);
 }
 

@@ -1,3 +1,6 @@
+use crate::model::Question;
+use colorized::{Color, Colors};
+
 pub struct Terminal;
 
 impl Terminal {
@@ -17,7 +20,22 @@ impl Terminal {
             line,
         ];
         for line in lines {
-            println!("{}", line);
+            println!("{}", line.color(Colors::CyanFg));
         }
+    }
+
+    pub fn display_question(q: &Question) -> usize {
+        let mut correct_answer_id = 0;
+        println!("\n{}", q.to_string().color(Colors::YellowFg));
+        for (i, answer) in q.answers.iter().enumerate() {
+            if answer.is_correct {
+                correct_answer_id = i + 1;
+            }
+            let text = format!("\t[{}]-{}", i + 1, answer.title);
+            println!("{}", text.color(Colors::MagentaFg));
+        }
+        let text = "What is your answer ?".color(Colors::BrightBlueFg);
+        println!("{}", text);
+        correct_answer_id
     }
 }
