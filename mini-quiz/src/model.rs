@@ -1,4 +1,5 @@
 use chrono::NaiveTime;
+use serde::Deserialize;
 use std::fmt::Display;
 
 pub struct Player {
@@ -13,11 +14,13 @@ impl Display for Player {
     }
 }
 
+#[derive(Deserialize)]
 pub struct Answer {
     pub title: String,
     pub is_correct: bool,
 }
 
+#[derive(Deserialize)]
 pub struct Question {
     pub title: String,
     pub answers: Vec<Answer>,

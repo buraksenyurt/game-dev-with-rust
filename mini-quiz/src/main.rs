@@ -5,9 +5,10 @@ use crate::model::Player;
 use crate::ware_house::WareHouse;
 use chrono::Local;
 use std::io::stdin;
+use std::path::Path;
 
 fn main() {
-    let mut quiz = WareHouse::load_quiz();
+    let mut quiz = WareHouse::load_quiz(Path::new("./questions.json")).expect("Sistemsel problem.");
 
     println!("Nick name? ");
     let mut nick_name = String::new();
@@ -52,10 +53,11 @@ fn main() {
 #[cfg(test)]
 mod test {
     use crate::ware_house::*;
+    use std::path::Path;
 
     #[test]
     fn should_first_question_loaded() {
-        let quiz = WareHouse::load_quiz();
+        let quiz = WareHouse::load_quiz(Path::new("./questions.json")).unwrap();
         assert!(quiz.len() > 0);
         assert_eq!(
             quiz[0].title,

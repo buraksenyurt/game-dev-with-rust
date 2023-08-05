@@ -1,0 +1,90 @@
+[
+  {
+    "title": "1 Byte bellekte kaç Bit yer kaplar?",
+    "point": 4,
+    "answers": [
+      {
+        "title": "64 bit",
+        "is_correct": false
+      },
+      {
+        "title": "32 bit",
+        "is_correct": false
+      },
+      {
+        "title": "1024 bit",
+        "is_correct": false
+      },
+      {
+        "title": "8 bit",
+        "is_correct": true
+      }
+    ]
+  },
+  {
+    "title": "NoSQL'in açılımı nedir",
+    "point": 3,
+    "answers": [
+      {
+        "title": "Not only SQL",
+        "is_correct": true
+      },
+      {
+        "title": "Need only SQL",
+        "is_correct": false
+      },
+      {
+        "title": "No SQL",
+        "is_correct": false
+      },
+      {
+        "title": "Not Open SQL",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "title": "Rust dili ile aşağıdakilerden hangisi yanlıştır",
+    "point": 8,
+    "answers": [
+      {
+        "title": "Değişkenler varsayılan olarak immutable'dır.",
+        "is_correct": false
+      },
+      {
+        "title": "Derleme zamanında Borrow-Checker mekanizması ile bellek kullanımları kontrol edilir.",
+        "is_correct": false
+      },
+      {
+        "title": "RGC isimli Garbage Collector mekanizmasını kullanır.",
+        "is_correct": true
+      },
+      {
+        "title": "Farklı dillerle entegrasyon için FFI kabiliyetine sahiptir.",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "title": "Rust dilinde bazı fonksiyonların arkasında ! işareti görüyoruz. vec!, println! gibi. Bu ne anlama gelir.",
+    "point": 7,
+    "answers": [
+      {
+        "title": "Hataya sebep olabilecek bir fonksiyondur, dikkatli kullanılmalıdır.",
+        "is_correct": false
+      },
+      {
+        "title": "Bir makro olduğunu gösterir.",
+        "is_correct": true
+      },
+      {
+        "title": "Fonksiyonu belirten parametre sayısı kadar çalıştırır.",
+        "is_correct": true
+      },
+      {
+        "title": "Bir anlamı yoktur. Opsiyoneldir.",
+        "is_correct": false
+      }
+    ]
+  }
+]
