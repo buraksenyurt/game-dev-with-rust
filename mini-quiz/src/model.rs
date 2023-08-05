@@ -1,11 +1,27 @@
 use chrono::NaiveTime;
 use serde::Deserialize;
-use std::fmt::Display;
+use std::fmt::{Display, Formatter};
 
 pub struct Player {
     pub nick_name: String,
     pub enter_time: NaiveTime,
-    pub point: u32,
+    pub score: Score,
+}
+
+#[derive(Default)]
+pub struct Score {
+    pub total_point: u32,
+    pub correct: u8,
+    pub wrong: u8,
+}
+impl Display for Score {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Correct: {}, Wrong: {}, Total Point: {}",
+            self.correct, self.wrong, self.total_point
+        )
+    }
 }
 
 impl Display for Player {

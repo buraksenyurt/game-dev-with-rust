@@ -1,28 +1,32 @@
 mod model;
+mod view;
 mod ware_house;
 
-use crate::model::Player;
+use crate::model::{Player, Score};
+use crate::view::Terminal;
 use crate::ware_house::WareHouse;
 use chrono::Local;
 use std::io::stdin;
 use std::path::Path;
 
 fn main() {
-    let mut quiz = WareHouse::load_quiz(Path::new("./questions.json")).expect("Sistemsel problem.");
-
-    println!("Nick name? ");
+    let mut quiz = WareHouse::load_quiz(Path::new("./questions.json")).expect("System problem.");
+    Terminal::print_intro();
+    println!("Please give me your name");
     let mut nick_name = String::new();
     stdin().read_line(&mut nick_name).expect("Can't read!"); // Nasıl hata yaptırtabiliriz?
     let nick_name = nick_name.trim().to_string();
+    println!("Hello {} :)", nick_name);
+
     let mut player = Player {
         nick_name,
         enter_time: Local::now().time(), // bunun yerine chrono küfesini kullanıp Local::now() ile ilerlemek lazım.
-        point: 0,
+        score: Score::default(),
     };
     println!("{}", player);
 
     while let Some(q) = quiz.pop() {
-        println!("{}", q.title);
+        println!("\nQ : {} [{}] Point", q.title, q.point);
         let mut correct_answer: usize = 0;
         for (i, answer) in q.answers.iter().enumerate() {
             if answer.is_correct {
@@ -43,11 +47,15 @@ fn main() {
             }
         }
         if user_answer == correct_answer {
-            player.point += q.point;
+            player.score.total_point += q.point;
+            player.score.correct += 1;
+        } else {
+            player.score.wrong += 1;
         }
     }
 
-    println!("Your total score is {}", player.point);
+    println!("Game finished.");
+    println!("{}", player.score);
 }
 
 #[cfg(test)]
