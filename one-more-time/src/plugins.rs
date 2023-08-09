@@ -16,7 +16,7 @@ impl Plugin for GamePlugin {
 pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
+    fn build(&self, app: &mut App) {
         app.add_systems(Startup, sys_show_menu)
             .add_systems(Update, sys_change_visibility);
     }
