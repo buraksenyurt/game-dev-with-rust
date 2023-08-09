@@ -33,3 +33,6 @@ pub struct Desk {
     pub region: Region,
     pub donut_type: Option<DonutType>,
 }
+
+#[derive(Component)]
+pub struct Menu;

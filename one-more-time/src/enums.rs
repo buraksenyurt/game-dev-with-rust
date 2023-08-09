@@ -1,3 +1,4 @@
+use bevy::prelude::{States, SystemSet};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -23,4 +24,11 @@ pub enum Region {
     Upside,
     Center,
     Downside,
+}
+
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States, SystemSet)]
+pub enum GameState {
+    #[default]
+    MainMenu,
+    Playing,
 }

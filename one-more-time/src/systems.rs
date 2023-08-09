@@ -8,6 +8,7 @@ use bevy::core_pipeline::clear_color::ClearColorConfig;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 use rand::Rng;
+use std::process::exit;
 
 pub fn sys_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut camera = Camera2dBundle {
@@ -97,7 +98,7 @@ pub fn sys_customer_movement(mut customers: Query<(&mut Transform, &Customer)>, 
 pub fn sys_leave_donut(
     mut commands: Commands,
     input: Res<Input<KeyCode>>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveParameters>,
     mut donuts: Query<(Entity, &mut Donut)>,
     desks: Query<(Entity, &Desk)>,
     mut customers: Query<(Entity, &mut Customer)>,
@@ -177,7 +178,7 @@ pub fn sys_leave_donut(
     }
 }
 
-fn calc_sell_price(game_state: &mut ResMut<GameState>, donut: &mut Mut<Donut>) {
+fn calc_sell_price(game_state: &mut ResMut<LiveParameters>, donut: &mut Mut<Donut>) {
     info!("Çörek türleri de aynı. '{}'", donut.donut_type);
     donut.is_delivered = true;
     let price = get_donut_cost(donut.donut_type);
@@ -189,7 +190,7 @@ pub fn sys_spawn_donut(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     input: Res<Input<KeyCode>>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveParameters>,
     player: Query<&Transform, With<Player>>,
 ) {
     if !input.just_pressed(KeyCode::Space) {
@@ -252,7 +253,7 @@ pub fn sys_claim_donut(
     mut commands: Commands,
     time: Res<Time>,
     mut donuts: Query<(Entity, &mut Donut)>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveParameters>,
 ) {
     for (entity, mut donut) in &mut donuts {
         donut.life_time.tick(time.delta());
@@ -279,7 +280,7 @@ pub fn sys_claim_waiting_customers(
     mut commands: Commands,
     mut customers: Query<(&mut Transform, &Customer, Entity)>,
     asset_server: Res<AssetServer>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveParameters>,
     _time: Res<Time>,
 ) {
     for (mut transform, customer, entity) in customers.iter_mut() {
@@ -299,7 +300,7 @@ pub fn sys_claim_waiting_customers(
 
 pub fn sys_show_scoreboard(
     mut query: Query<&mut Text, With<ScoreText>>,
-    game_state: ResMut<GameState>,
+    game_state: ResMut<LiveParameters>,
 ) {
     for mut text in &mut query {
         text.sections[1].value = format!("{}", game_state.balance);
@@ -376,4 +377,106 @@ fn spawn_new_customer(
         },
         customer,
     ));
+}
+
+pub fn sys_start_game(keys: Res<Input<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
+    if keys.just_pressed(KeyCode::G) {
+        info!("Oyun başlatılıyor");
+        next_state.set(GameState::Playing);
+    } else if keys.just_pressed(KeyCode::X) {
+        info!("Oyundan çıkılıyor");
+        exit(1);
+    }
+}
+
+pub fn sys_show_menu(mut commands: Commands) {
+    let mut main_menu = commands.spawn((
+        Name::new("MainMenu"),
+        NodeBundle {
+            style: Style {
+                width: Val::Percent(100.),
+                height: Val::Percent(100.),
+                display: Display::Flex,
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                position_type: PositionType::Absolute,
+                ..default()
+            },
+            ..default()
+        },
+    ));
+
+    main_menu.with_children(|m| {
+        let mut canvas = m.spawn((
+            Name::new("canvas"),
+            NodeBundle {
+                style: Style {
+                    display: Display::Flex,
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    ..default()
+                },
+                ..default()
+            },
+        ));
+
+        canvas.with_children(|c| {
+            c.spawn(NodeBundle {
+                style: Style {
+                    align_items: AlignItems::Center,
+                    flex_direction: FlexDirection::Column,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                ..default()
+            })
+            .with_children(|menu| {
+                menu.spawn((
+                    Menu,
+                    TextBundle::from_section(
+                        "Press G for start",
+                        TextStyle {
+                            font_size: MENU_TEXT_SIZE,
+                            color: Color::GOLD,
+                            ..default()
+                        },
+                    )
+                    .with_text_alignment(TextAlignment::Center)
+                    .with_background_color(Color::BLACK),
+                ));
+            })
+            .with_children(|menu| {
+                menu.spawn((
+                    Menu,
+                    TextBundle::from_section(
+                        "X for Exit",
+                        TextStyle {
+                            font_size: MENU_TEXT_SIZE,
+                            color: Color::GOLD,
+                            ..default()
+                        },
+                    )
+                    .with_text_alignment(TextAlignment::Center)
+                    .with_background_color(Color::BLACK),
+                ));
+            });
+        });
+    });
+}
+
+pub fn sys_change_visibility(
+    mut menu: Query<&mut Visibility, With<Menu>>,
+    game_state: Res<State<GameState>>,
+) {
+    if !game_state.is_changed() {
+        return;
+    }
+    for mut m in &mut menu {
+        let game_state = game_state.get();
+        if *game_state == GameState::Playing {
+            *m = Visibility::Hidden;
+        } else {
+            *m = Visibility::Visible;
+        }
+    }
 }

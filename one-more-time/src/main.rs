@@ -3,10 +3,13 @@ mod common;
 mod components;
 mod constants;
 mod enums;
+mod plugins;
 mod resources;
 mod systems;
 
 use crate::constants::*;
+use crate::enums::GameState;
+use crate::plugins::*;
 use crate::resources::*;
 use crate::systems::*;
 use bevy::prelude::*;
@@ -28,12 +31,14 @@ fn main() {
                 })
                 .build(),
         )
-        .insert_resource(GameState {
+        .insert_resource(LiveParameters {
             balance: BALANCE_INIT_VALUE,
             cook_donut_count: 0,
             customers_inside: Vec::new(),
         })
-        .add_systems(Startup, sys_setup)
+        .add_state::<GameState>()
+        .add_plugins((GamePlugin, MenuPlugin))
+        .add_systems(Startup, (sys_setup).run_if(in_state(GameState::MainMenu)))
         .add_systems(
             Update,
             (
@@ -47,7 +52,8 @@ fn main() {
                 sys_return_customers,
                 sys_check_waiting_customers,
                 sys_claim_waiting_customers,
-            ),
+            )
+                .run_if(in_state(GameState::Playing)),
         )
         .run();
 }

@@ -6,3 +6,4 @@ pub const WINDOW_WIDTH: f32 = 640.;
 pub const WINDOW_HEIGHT: f32 = 480.;
 pub const DONUT_DISTANCE_FROM_COOK: f32 = 20.;
 pub const CUSTOMER_WAIT_TIME: f32 = 12.;
+pub const MENU_TEXT_SIZE: f32 = 36.;
