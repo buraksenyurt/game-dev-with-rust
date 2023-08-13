@@ -1,7 +1,11 @@
+mod global;
+mod menu;
 mod splash;
 mod utility;
+
 use splash::*;
 
+use crate::global::*;
 use bevy::prelude::*;
 
 fn main() {
@@ -11,16 +15,4 @@ fn main() {
         .add_systems(Startup, setup_system)
         .add_plugins(SplashPlugin)
         .run();
-}
-
-#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
-enum GameState {
-    #[default]
-    Splash,
-    Menu,
-    Play,
-}
-
-fn setup_system(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
 }
