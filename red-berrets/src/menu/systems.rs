@@ -1,5 +1,8 @@
-use crate::global::GameState;
-use crate::menu::{MenuButtonAction, MenuState, OnMainMenuScreen, SelectedOption};
+use crate::global::{Difficulty, GameState, Level};
+use crate::menu::{
+    MenuButtonAction, MenuState, OnMainMenuScreen, OnSettingsDifficultyMenuScreen,
+    OnSettingsMenuScreen, SelectedOption,
+};
 use bevy::app::AppExit;
 use bevy::prelude::*;
 
@@ -9,15 +12,15 @@ pub fn menu_setup_system(mut menu_state: ResMut<NextState<MenuState>>) {
 
 pub fn main_menu_setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let button_style = Style {
-        width: Val::Px(250.0),
-        height: Val::Px(65.0),
-        margin: UiRect::all(Val::Px(20.0)),
+        width: Val::Px(250.),
+        height: Val::Px(65.),
+        margin: UiRect::all(Val::Px(20.)),
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
         ..default()
     };
     let button_text_style = TextStyle {
-        font_size: 32.0,
+        font_size: 32.,
         ..default()
     };
 
@@ -25,7 +28,7 @@ pub fn main_menu_setup_system(mut commands: Commands, asset_server: Res<AssetSer
         .spawn((
             NodeBundle {
                 style: Style {
-                    width: Val::Percent(100.0),
+                    width: Val::Percent(100.),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     ..default()
@@ -154,4 +157,146 @@ pub fn button_interaction_system(
             (Interaction::None, None) => BackgroundColor(Color::RED),
         }
     }
+}
+
+pub fn settings_menu_setup_system(mut commands: Commands) {
+    let button_style = Style {
+        width: Val::Px(200.),
+        height: Val::Px(65.),
+        margin: UiRect::all(Val::Px(20.)),
+        justify_content: JustifyContent::Center,
+        align_items: AlignItems::Center,
+        ..default()
+    };
+
+    let button_text_style = TextStyle {
+        font_size: 32.,
+        ..default()
+    };
+
+    commands
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    width: Val::Percent(100.),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                ..default()
+            },
+            OnSettingsMenuScreen,
+        ))
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        flex_direction: FlexDirection::Column,
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    background_color: Color::CRIMSON.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    for (action, text) in [
+                        (MenuButtonAction::SettingsControls, "Controls"),
+                        (MenuButtonAction::SettingsDifficulty, "Difficulty"),
+                        (MenuButtonAction::BackToMainMenu, "Back"),
+                    ] {
+                        parent
+                            .spawn((
+                                ButtonBundle {
+                                    style: button_style.clone(),
+                                    background_color: BackgroundColor(Color::RED),
+                                    ..default()
+                                },
+                                action,
+                            ))
+                            .with_children(|parent| {
+                                parent.spawn(TextBundle::from_section(
+                                    text,
+                                    button_text_style.clone(),
+                                ));
+                            });
+                    }
+                });
+        });
+}
+
+pub fn difficulty_settings_menu_setup_system(mut commands: Commands, difficulty: Res<Difficulty>) {
+    let button_style = Style {
+        width: Val::Px(200.),
+        height: Val::Px(65.),
+        margin: UiRect::all(Val::Px(20.)),
+        justify_content: JustifyContent::Center,
+        align_items: AlignItems::Center,
+        ..default()
+    };
+    let button_text_style = TextStyle {
+        font_size: 32.,
+        ..default()
+    };
+
+    commands
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    width: Val::Percent(100.),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                ..default()
+            },
+            OnSettingsDifficultyMenuScreen,
+        ))
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        flex_direction: FlexDirection::Column,
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    background_color: Color::CRIMSON.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    for (level, text) in [
+                        (Level::Training, "Training"),
+                        (Level::Normal, "Normal"),
+                        (Level::Brutal, "Brutal"),
+                    ] {
+                        parent
+                            .spawn((
+                                ButtonBundle {
+                                    style: button_style.clone(),
+                                    background_color: BackgroundColor(Color::RED),
+                                    ..default()
+                                },
+                                Difficulty(level),
+                            ))
+                            .with_children(|parent| {
+                                parent.spawn(TextBundle::from_section(
+                                    text,
+                                    button_text_style.clone(),
+                                ));
+                            });
+                    }
+
+                    parent
+                        .spawn((
+                            ButtonBundle {
+                                style: button_style,
+                                background_color: BackgroundColor(Color::RED),
+                                ..default()
+                            },
+                            MenuButtonAction::BackToSettings,
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn(TextBundle::from_section("Back", button_text_style));
+                        });
+                });
+        });
 }

@@ -13,6 +13,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_state::<GameState>()
+        .insert_resource(Difficulty(Level::Normal))
         .add_systems(Startup, setup_system)
         .add_plugins((SplashPlugin, MenuPlugin))
         .run();
