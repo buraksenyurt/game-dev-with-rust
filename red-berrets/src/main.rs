@@ -1,3 +1,7 @@
+mod splash;
+mod utility;
+use splash::*;
+
 use bevy::prelude::*;
 
 fn main() {
@@ -5,6 +9,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_state::<GameState>()
         .add_systems(Startup, setup_system)
+        .add_plugins(SplashPlugin)
         .run();
 }
 
