@@ -12,8 +12,12 @@ struct ActorPlugin;
 
 impl Plugin for ActorPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_system)
-            .add_systems(Update, (commando_hello_system, enemy_hello_system));
+        app.insert_resource(CheckPointTimer(Timer::from_seconds(
+            3.,
+            TimerMode::Repeating,
+        )))
+        .add_systems(Startup, setup_system)
+        .add_systems(Update, (commando_hello_system, enemy_hello_system));
     }
 }
 
@@ -25,15 +29,30 @@ fn setup_system(mut commands: Commands) {
     commands.spawn((Bunker, Name("North Shield".to_string()), Capacity(4)));
 }
 
-fn commando_hello_system(query: Query<&Name, With<Commando>>) {
-    for n in &query {
-        info!("{} sahada", n.0);
+#[derive(Resource)]
+struct CheckPointTimer(Timer);
+
+fn commando_hello_system(
+    time: Res<Time>,
+    mut timer: ResMut<CheckPointTimer>,
+    query: Query<&Name, With<Commando>>,
+) {
+    if timer.0.tick(time.delta()).just_finished() {
+        for n in &query {
+            info!("{} sahada", n.0);
+        }
     }
 }
 
-fn enemy_hello_system(query: Query<&Name, With<Enemy>>) {
-    for n in &query {
-        info!("Düşman kuvvetlerden {} sahada", n.0);
+fn enemy_hello_system(
+    time: Res<Time>,
+    mut timer: ResMut<CheckPointTimer>,
+    query: Query<&Name, With<Enemy>>,
+) {
+    if timer.0.tick(time.delta()).just_finished() {
+        for n in &query {
+            info!("Düşman kuvvetlerden {} sahada", n.0);
+        }
     }
 }
 
