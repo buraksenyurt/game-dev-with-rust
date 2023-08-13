@@ -2,10 +2,19 @@ use bevy::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_systems(Startup, setup_system)
-        .add_systems(Update, (commando_hello_system, enemy_hello_system))
+        .add_plugins((DefaultPlugins, ActorPlugin))
+        // .add_systems(Startup, setup_system)
+        // .add_systems(Update, (commando_hello_system, enemy_hello_system))
         .run();
+}
+
+struct ActorPlugin;
+
+impl Plugin for ActorPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_system)
+            .add_systems(Update, (commando_hello_system, enemy_hello_system));
+    }
 }
 
 fn setup_system(mut commands: Commands) {
