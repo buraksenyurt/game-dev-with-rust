@@ -10,7 +10,7 @@ pub fn menu_setup_system(mut menu_state: ResMut<NextState<MenuState>>) {
     menu_state.set(MenuState::Main);
 }
 
-pub fn main_menu_setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn main_menu_setup_system(mut commands: Commands) {
     let button_style = Style {
         width: Val::Px(250.),
         height: Val::Px(65.),
@@ -224,7 +224,7 @@ pub fn settings_menu_setup_system(mut commands: Commands) {
         });
 }
 
-pub fn difficulty_settings_menu_setup_system(mut commands: Commands, difficulty: Res<Difficulty>) {
+pub fn difficulty_settings_menu_setup_system(mut commands: Commands) {
     let button_style = Style {
         width: Val::Px(200.),
         height: Val::Px(65.),

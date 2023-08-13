@@ -36,14 +36,13 @@ impl Plugin for MenuPlugin {
 }
 
 fn setting_button(
-    interaction_query: Query<
-        (&Interaction, &Difficulty, Entity),
-        (Changed<Interaction>, With<Button>),
-    >,
+    interaction_query: Query<(&Interaction, &Difficulty), (Changed<Interaction>, With<Button>)>,
+    mut difficulty: ResMut<Difficulty>,
 ) {
-    for (interaction, diff, entity) in &interaction_query {
+    for (interaction, diff) in &interaction_query {
         if *interaction == Interaction::Pressed {
-            info!("{:?}", diff);
+            info!("Zorluk seviyesi {:?} olarak değiştiriliyor.", diff);
+            difficulty.0 = diff.0;
         }
     }
 }
