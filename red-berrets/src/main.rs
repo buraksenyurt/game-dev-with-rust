@@ -6,6 +6,7 @@ mod utility;
 use splash::*;
 
 use crate::global::*;
+use crate::menu::*;
 use bevy::prelude::*;
 
 fn main() {
@@ -13,6 +14,6 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_state::<GameState>()
         .add_systems(Startup, setup_system)
-        .add_plugins(SplashPlugin)
+        .add_plugins((SplashPlugin, MenuPlugin))
         .run();
 }
