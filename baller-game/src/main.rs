@@ -26,6 +26,7 @@ fn main() {
                 check_player_movement_system,
                 enemy_movement_system,
                 enemy_bounces_system,
+                check_enemy_movement_system,
             ),
         )
         .run();
@@ -120,6 +121,34 @@ pub fn enemy_bounces_system(
         if translation.y < y_min || translation.y > y_max {
             enemy.direction.y *= -1.;
         }
+    }
+}
+
+pub fn check_enemy_movement_system(
+    mut enemy_query: Query<&mut Transform, With<Enemy>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+    let x_min = ENEMY_SIZE / 2.;
+    let x_max = window.width() - ENEMY_SIZE / 2.;
+    let y_min = ENEMY_SIZE / 2.;
+    let y_max = window.height() - ENEMY_SIZE / 2.;
+
+    for mut transform in enemy_query.iter_mut() {
+        let mut translation = transform.translation;
+
+        if translation.x < x_min {
+            translation.x = x_min;
+        } else if translation.x > x_max {
+            translation.x = x_max;
+        }
+
+        if translation.y < y_min {
+            translation.y = y_min;
+        } else if translation.y > y_max {
+            translation.y = y_max;
+        }
+        transform.translation = translation;
     }
 }
 
