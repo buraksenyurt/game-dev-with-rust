@@ -1,9 +1,14 @@
 use bevy::prelude::*;
 
 fn main() {
-    App::new()
-        .add_systems(Startup, setup_system)
-        .add_systems(
+    App::new().add_plugins((DefaultPlugins, ActorPlugin)).run()
+}
+
+pub struct ActorPlugin;
+
+impl Plugin for ActorPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_system).add_systems(
             Update,
             (
                 count_actors_system,
@@ -11,9 +16,10 @@ fn main() {
                 count_not_soldiers,
                 count_soldiers,
             ),
-        )
-        .run()
+        );
+    }
 }
+
 pub fn setup_system(mut commands: Commands) {
     // Commands nesnesini entity oluşturmak, yok etmek
     // entity'lere component eklemek ve çıkarmak için kullanırız.
