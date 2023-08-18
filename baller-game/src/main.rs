@@ -1,22 +1,43 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+use rand::random;
 
 pub const PLAYER_SIZE: f32 = 64.;
 pub const PLAYER_SPEED: f32 = 500.;
+pub const ENEMY_SIZE: f32 = 64.;
+pub const ENEMEY_SPEED: f32 = 200.;
+pub const NUMBER_OF_ENEMIES: usize = 8;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, (spawn_camera_system, spawn_player_system))
+        .add_systems(
+            Startup,
+            (
+                spawn_camera_system,
+                spawn_player_system,
+                spawn_enemies_system,
+            ),
+        )
         .add_systems(
             Update,
-            (player_movement_system, check_player_movement_system),
+            (
+                player_movement_system,
+                check_player_movement_system,
+                enemy_movement_system,
+                enemy_bounces_system,
+            ),
         )
         .run();
 }
 
 #[derive(Component)]
 pub struct Player {}
+
+#[derive(Component)]
+pub struct Enemy {
+    direction: Vec2, // Kırmızı topların anlık konumlarını saklamak için eklendi
+}
 
 // AssetServer bir Resource'dur.
 pub fn spawn_player_system(
@@ -38,6 +59,68 @@ pub fn spawn_player_system(
         },
         Player {},
     ));
+}
+
+// Enemy olarak adledilen kırmızı topların üretildiği sistem
+pub fn spawn_enemies_system(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    // Bu sefer rastgele x,y konumlarında 8 adet düşman nesnesi örneklenmekte
+    for _ in 0..NUMBER_OF_ENEMIES {
+        let x = random::<f32>() * window.width();
+        let y = random::<f32>() * window.height();
+
+        // Kırmızı top üretilirken rastgele bir konuma konur ve ayrıca,
+        // rastgele x,y değerlerini baz olan bir yöne gidecek şekilde ayarlanır.
+        // Direction değerini işaret eden vektörün birim vektöre dönüştürüldüğüne dikkat.
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(x, y, 0.),
+                texture: asset_server.load("sprites/ball_red_large.png"),
+                ..default()
+            },
+            Enemy {
+                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+            },
+        ));
+    }
+}
+
+// Kırmızı topları(enemy) hareket ettiren sistem.
+// Bu sefer Enemy olan bileşenlerin transform özelliklerini değiştirmemiz gerekiyor.
+pub fn enemy_movement_system(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Res<Time>) {
+    // Ortamdaki enemy, transform bileşen eşleri mutable olarak dolaşılır
+    for (mut transform, enemy) in enemy_query.iter_mut() {
+        // Enemy spawn'lanırken bir direction verilmişti. Buna göre 3 boyutlu vektör örneklenir
+        let direction = Vec3::new(enemy.direction.x, enemy.direction.y, 0.);
+        // translation bilgisi ENEMY_SPEED ve delta time değerleri kullanılarak değiştirilir.
+        transform.translation += direction * ENEMEY_SPEED * time.delta_seconds();
+    }
+}
+
+pub fn enemy_bounces_system(
+    mut enemy_query: Query<(&Transform, &mut Enemy)>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    // Kırmızı topun sınır x,y değerleri bulunur
+    let window = window_query.get_single().unwrap();
+    let (x_min, x_max) = (ENEMY_SIZE / 2., window.width() - ENEMY_SIZE / 2.);
+    let (y_min, y_max) = (ENEMY_SIZE / 2., window.height() - ENEMY_SIZE / 2.);
+    for (transform, mut enemy) in enemy_query.iter_mut() {
+        let translation = transform.translation;
+        // X ekseninde sınırlara gelindiyse enemy bileşeninin x yönü tersine çevrilir
+        if translation.x < x_min || translation.x > x_max {
+            enemy.direction.x *= -1.;
+        }
+        // y ekseninde sınırlara gelindiyse enemy bileşeninin y yönü tersine çevrilir
+        if translation.y < y_min || translation.y > y_max {
+            enemy.direction.y *= -1.;
+        }
+    }
 }
 
 pub fn spawn_camera_system(
