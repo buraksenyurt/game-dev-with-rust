@@ -10,12 +10,14 @@ pub const STAR_SIZE: f32 = 30.;
 pub const NUMBER_OF_ENEMIES: usize = 6;
 pub const NUMBER_OF_STARS: usize = 8;
 pub const STAR_SPAWN_TIME: f32 = 1.;
+pub const ENEMY_SPAWN_TIME: f32 = 2.5;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<Score>()
         .init_resource::<StarSpawnTimer>()
+        .init_resource::<EnemySpawnTimer>()
         .add_systems(
             Startup,
             (
@@ -38,7 +40,8 @@ fn main() {
                 player_hits_star_system,
                 update_score_system,
                 tick_star_spawn_timer_system,
-                spawn_star_after_time_finished_system
+                enemy_spawn_timer_system,
+                spawn_enemy_after_time_finished_system,
             ),
         )
         .run();
@@ -64,6 +67,19 @@ impl Default for StarSpawnTimer {
     fn default() -> Self {
         Self {
             timer: Timer::from_seconds(STAR_SPAWN_TIME, TimerMode::Repeating),
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct EnemySpawnTimer {
+    pub timer: Timer,
+}
+
+impl Default for EnemySpawnTimer {
+    fn default() -> Self {
+        Self {
+            timer: Timer::from_seconds(ENEMY_SPAWN_TIME, TimerMode::Repeating),
         }
     }
 }
@@ -116,25 +132,27 @@ fn spawn_enemies(
 
     // Bu sefer rastgele x,y konumlarında 6 adet düşman nesnesi örneklenmekte
     for _ in 0..NUMBER_OF_ENEMIES {
-        let x = random::<f32>() * window.width();
-        let y = random::<f32>() * window.height();
-
-        let direction=Vec2::new(random::<f32>(), random::<f32>()).normalize();
-        info!("Direction {:?}",direction);
-        // Kırmızı top üretilirken rastgele bir konuma konur ve ayrıca,
-        // rastgele x,y değerlerini baz olan bir yöne gidecek şekilde ayarlanır.
-        // Direction değerini işaret eden vektörün birim vektöre dönüştürüldüğüne dikkat.
-        commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(x, y, 0.),
-                texture: asset_server.load("sprites/ball_red_large.png"),
-                ..default()
-            },
-            Enemy {
-                direction,
-            },
-        ));
+        spawn_enemy(commands, asset_server, window);
     }
+}
+
+fn spawn_enemy(commands: &mut Commands, asset_server: &Res<AssetServer>, window: &Window) {
+    let x = random::<f32>() * window.width();
+    let y = random::<f32>() * window.height();
+
+    let direction = Vec2::new(random::<f32>(), random::<f32>()).normalize();
+    info!("Direction {:?}", direction);
+    // Kırmızı top üretilirken rastgele bir konuma konur ve ayrıca,
+    // rastgele x,y değerlerini baz olan bir yöne gidecek şekilde ayarlanır.
+    // Direction değerini işaret eden vektörün birim vektöre dönüştürüldüğüne dikkat.
+    commands.spawn((
+        SpriteBundle {
+            transform: Transform::from_xyz(x, y, 0.),
+            texture: asset_server.load("sprites/ball_red_large.png"),
+            ..default()
+        },
+        Enemy { direction },
+    ));
 }
 
 // Kırmızı topları(enemy) hareket ettiren sistem.
@@ -418,5 +436,23 @@ pub fn spawn_star_after_time_finished_system(
     if star_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
         spawn_star(&mut commands, &asset_server, window);
+    }
+}
+
+// Sistemdeki kırmızı toplar için bir timer nesnesi uygulanıyor
+pub fn enemy_spawn_timer_system(mut star_timer: ResMut<EnemySpawnTimer>, time: Res<Time>) {
+    star_timer.timer.tick(time.delta());
+}
+
+pub fn spawn_enemy_after_time_finished_system(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+    enemy_timer: Res<EnemySpawnTimer>,
+) {
+    // enemy için belirlenen süre geçmişse
+    if enemy_timer.timer.finished() {
+        let window = window_query.get_single().unwrap();
+        spawn_enemy(&mut commands, &asset_server, window);
     }
 }
