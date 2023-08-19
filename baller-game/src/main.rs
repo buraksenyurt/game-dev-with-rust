@@ -6,7 +6,9 @@ pub const PLAYER_SIZE: f32 = 64.;
 pub const PLAYER_SPEED: f32 = 500.;
 pub const ENEMY_SIZE: f32 = 64.;
 pub const ENEMEY_SPEED: f32 = 200.;
-pub const NUMBER_OF_ENEMIES: usize = 8;
+pub const STAR_SIZE: f32 = 30.;
+pub const NUMBER_OF_ENEMIES: usize = 6;
+pub const NUMBER_OF_STARS: usize = 8;
 
 fn main() {
     App::new()
@@ -17,6 +19,7 @@ fn main() {
                 spawn_camera_system,
                 spawn_player_system,
                 spawn_enemies_system,
+                spawn_stars_system,
             ),
         )
         .add_systems(
@@ -29,6 +32,7 @@ fn main() {
                 check_enemy_movement_system,
                 enemy_hit_player_system,
                 refresh_enemies_system,
+                player_hits_star_system,
             ),
         )
         .run();
@@ -69,6 +73,14 @@ pub fn spawn_enemies_system(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
+) {
+    spawn_enemies(&mut commands, &window_query, &asset_server);
+}
+
+fn spawn_enemies(
+    commands: &mut Commands,
+    window_query: &Query<&Window, With<PrimaryWindow>>,
+    asset_server: &Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -262,6 +274,7 @@ pub fn refresh_enemies_system(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     mut enemies_query: Query<Entity, With<Enemy>>,
+    mut stars_query: Query<Entity, With<Star>>,
     player_query: Query<Entity, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
@@ -269,6 +282,9 @@ pub fn refresh_enemies_system(
     if keyboard_input.pressed(KeyCode::F5) {
         for enemy in enemies_query.iter_mut() {
             commands.entity(enemy).despawn();
+        }
+        for star in stars_query.iter_mut() {
+            commands.entity(star).despawn();
         }
         if let Ok(player) = player_query.get_single() {
             commands.entity(player).despawn();
@@ -282,6 +298,58 @@ pub fn refresh_enemies_system(
             },
             Player {},
         ));
-        spawn_enemies_system(commands, window_query, asset_server);
+        spawn_enemies(&mut commands, &window_query, &asset_server);
+        spawn_stars(&mut commands, &window_query, &asset_server);
+    }
+}
+
+#[derive(Component)]
+pub struct Star {}
+
+pub fn spawn_stars_system(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    spawn_stars(&mut commands, &window_query, &asset_server);
+}
+
+fn spawn_stars(
+    commands: &mut Commands,
+    window_query: &Query<&Window, With<PrimaryWindow>>,
+    asset_server: &Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+    for _ in 0..NUMBER_OF_STARS {
+        let x = random::<f32>() * window.width();
+        let y = random::<f32>() * window.height();
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(x, y, 0.),
+                texture: asset_server.load("sprites/star.png"),
+                ..default()
+            },
+            Star {},
+        ));
+    }
+}
+
+pub fn player_hits_star_system(
+    mut commands: Commands,
+    player_query: Query<&Transform, With<Player>>,
+    star_query: Query<(Entity, &Transform), With<Star>>,
+) {
+    if let Ok(player_transform) = player_query.get_single() {
+        for (star_entity, star_transformation) in star_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(star_transformation.translation);
+            let player_radius = PLAYER_SIZE / 2.;
+            let star_radius = STAR_SIZE / 2.;
+            if distance < player_radius + star_radius {
+                info!("Player catch a start!");
+                commands.entity(star_entity).despawn();
+            }
+        }
     }
 }
