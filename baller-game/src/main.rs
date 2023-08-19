@@ -9,10 +9,13 @@ pub const ENEMEY_SPEED: f32 = 200.;
 pub const STAR_SIZE: f32 = 30.;
 pub const NUMBER_OF_ENEMIES: usize = 6;
 pub const NUMBER_OF_STARS: usize = 8;
+pub const STAR_SPAWN_TIME: f32 = 1.;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .init_resource::<Score>()
+        .init_resource::<StarSpawnTimer>()
         .add_systems(
             Startup,
             (
@@ -33,9 +36,36 @@ fn main() {
                 enemy_hit_player_system,
                 refresh_enemies_system,
                 player_hits_star_system,
+                update_score_system,
+                tick_star_spawn_timer_system,
+                spawn_star_after_time_finished_system
             ),
         )
         .run();
+}
+
+#[derive(Resource, Debug)]
+pub struct Score {
+    pub value: u32,
+}
+
+impl Default for Score {
+    fn default() -> Self {
+        Self { value: 0 }
+    }
+}
+
+#[derive(Resource)]
+pub struct StarSpawnTimer {
+    pub timer: Timer,
+}
+
+impl Default for StarSpawnTimer {
+    fn default() -> Self {
+        Self {
+            timer: Timer::from_seconds(STAR_SPAWN_TIME, TimerMode::Repeating),
+        }
+    }
 }
 
 #[derive(Component)]
@@ -84,11 +114,13 @@ fn spawn_enemies(
 ) {
     let window = window_query.get_single().unwrap();
 
-    // Bu sefer rastgele x,y konumlarında 8 adet düşman nesnesi örneklenmekte
+    // Bu sefer rastgele x,y konumlarında 6 adet düşman nesnesi örneklenmekte
     for _ in 0..NUMBER_OF_ENEMIES {
         let x = random::<f32>() * window.width();
         let y = random::<f32>() * window.height();
 
+        let direction=Vec2::new(random::<f32>(), random::<f32>()).normalize();
+        info!("Direction {:?}",direction);
         // Kırmızı top üretilirken rastgele bir konuma konur ve ayrıca,
         // rastgele x,y değerlerini baz olan bir yöne gidecek şekilde ayarlanır.
         // Direction değerini işaret eden vektörün birim vektöre dönüştürüldüğüne dikkat.
@@ -99,7 +131,7 @@ fn spawn_enemies(
                 ..default()
             },
             Enemy {
-                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+                direction,
             },
         ));
     }
@@ -278,8 +310,10 @@ pub fn refresh_enemies_system(
     player_query: Query<Entity, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
+    mut score: ResMut<Score>,
 ) {
     if keyboard_input.pressed(KeyCode::F5) {
+        score.value = 0;
         for enemy in enemies_query.iter_mut() {
             commands.entity(enemy).despawn();
         }
@@ -321,23 +355,28 @@ fn spawn_stars(
 ) {
     let window = window_query.get_single().unwrap();
     for _ in 0..NUMBER_OF_STARS {
-        let x = random::<f32>() * window.width();
-        let y = random::<f32>() * window.height();
-        commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(x, y, 0.),
-                texture: asset_server.load("sprites/star.png"),
-                ..default()
-            },
-            Star {},
-        ));
+        spawn_star(commands, asset_server, window);
     }
+}
+
+fn spawn_star(commands: &mut Commands, asset_server: &Res<AssetServer>, window: &Window) {
+    let x = random::<f32>() * window.width();
+    let y = random::<f32>() * window.height();
+    commands.spawn((
+        SpriteBundle {
+            transform: Transform::from_xyz(x, y, 0.),
+            texture: asset_server.load("sprites/star.png"),
+            ..default()
+        },
+        Star {},
+    ));
 }
 
 pub fn player_hits_star_system(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
     star_query: Query<(Entity, &Transform), With<Star>>,
+    mut score: ResMut<Score>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
         for (star_entity, star_transformation) in star_query.iter() {
@@ -347,9 +386,37 @@ pub fn player_hits_star_system(
             let player_radius = PLAYER_SIZE / 2.;
             let star_radius = STAR_SIZE / 2.;
             if distance < player_radius + star_radius {
-                info!("Player catch a start!");
+                score.value += 10;
+                // info!(
+                //     "Player catch a start! Current Score {}",
+                //     score.value.to_string()
+                // );
                 commands.entity(star_entity).despawn();
             }
         }
+    }
+}
+
+pub fn update_score_system(score: Res<Score>) {
+    if score.is_changed() {
+        info!("Current score {}", score.value.to_string());
+    }
+}
+
+// Sistemdeki yıldızlar için bir timer nesnesi uygulanıyor
+pub fn tick_star_spawn_timer_system(mut star_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
+    star_timer.timer.tick(time.delta());
+}
+
+pub fn spawn_star_after_time_finished_system(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+    star_timer: Res<StarSpawnTimer>,
+) {
+    // star saati için belirlenen süre geçmişse
+    if star_timer.timer.finished() {
+        let window = window_query.get_single().unwrap();
+        spawn_star(&mut commands, &asset_server, window);
     }
 }
