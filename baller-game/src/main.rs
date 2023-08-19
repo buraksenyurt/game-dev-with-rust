@@ -1,3 +1,4 @@
+use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::random;
@@ -16,8 +17,10 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<Score>()
+        .init_resource::<HighScores>()
         .init_resource::<StarSpawnTimer>()
         .init_resource::<EnemySpawnTimer>()
+        .add_event::<GameOver>()
         .add_systems(
             Startup,
             (
@@ -42,6 +45,10 @@ fn main() {
                 tick_star_spawn_timer_system,
                 enemy_spawn_timer_system,
                 spawn_enemy_after_time_finished_system,
+                exit_game_system,
+                handle_game_over_system,
+                update_high_score_system,
+                high_scores_updated_system,
             ),
         )
         .run();
@@ -84,12 +91,32 @@ impl Default for EnemySpawnTimer {
     }
 }
 
+#[derive(Resource, Debug)]
+pub struct HighScores {
+    pub scores: Vec<(String, u32)>,
+}
+
+impl Default for HighScores {
+    fn default() -> Self {
+        Self { scores: Vec::new() }
+    }
+}
+
 #[derive(Component)]
 pub struct Player {}
 
 #[derive(Component)]
 pub struct Enemy {
     direction: Vec2, // Kırmızı topların anlık konumlarını saklamak için eklendi
+}
+
+// Sistemler arası taşınabilecek bir event veri yapısıdır
+// Örneğin oyuncu kırmız toplardan birisine yakalanınca
+// hit sistem'den game over sisteme bu veri yapısı ile data taşınabilir.
+// game over sistemde de son skor bilgisi elde edilebilir.
+#[derive(Event)]
+pub struct GameOver {
+    pub final_score: u32,
 }
 
 // AssetServer bir Resource'dur.
@@ -298,6 +325,8 @@ pub fn enemy_hit_player_system(
     mut commands: Commands,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
+    mut game_over_event_writer: EventWriter<GameOver>,
+    score: Res<Score>,
 ) {
     // Sahadaki oyuncuyu transform bileşeni ile birlikte ele alıyoruz
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
@@ -315,6 +344,14 @@ pub fn enemy_hit_player_system(
                 info!("Game over!Catched with red ball");
                 // Oyuncunun entity nesnesi sistemden kaldırılıyor
                 commands.entity(player_entity).despawn();
+                // Oyuncu kırmız toplardan birisine yakalnırsa
+                // bu sistemden GameOver isimli bir event fırlatıyoruz.
+                // Bunu handle_game_over_system isimli sistem dinliyor olacak.
+                // Ayrıca event ile birlikte güncel skor değerini de taşımaktayız.
+                // Böylece bu değeri Reader event içinden okuyabiliriz
+                game_over_event_writer.send(GameOver {
+                    final_score: score.value,
+                });
             }
         }
     }
@@ -454,5 +491,46 @@ pub fn spawn_enemy_after_time_finished_system(
     if enemy_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
         spawn_enemy(&mut commands, &asset_server, window);
+    }
+}
+
+// ESC tuşuna basıldığında oyundan çıkılması için kullanılan sistemdir.
+// EventWriter ile başka bir sisteme event bildirimi yapabiliriz.
+// Buna benzer şekilde EventReader ile de sisteme gelen event'leri yakalayabiliriz.
+// Bevy tarafında event'ler sistemler arasında veri taşımak için kullanılır.
+// Böylece bir sistemde meydana gelen bir aksiyon karşılığında bir event verisi oluşturup
+// bunu kullanacak başka bir sisteme yollayabiliriz. Cool!
+pub fn exit_game_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut event_writer: EventWriter<AppExit>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        event_writer.send(AppExit);
+    }
+}
+
+// GameOver isimli bir event oluştuğunda ele alınan sistem
+pub fn handle_game_over_system(mut game_over_event_reader: EventReader<GameOver>) {
+    for event in game_over_event_reader.iter() {
+        info!("Player's final score is {}", event.final_score.to_string());
+    }
+}
+
+// Bu sistem de GameOver event'lerini dinler.
+// Dolayısıyla bir event birden fazla sistem tarafından okunabilir.
+pub fn update_high_score_system(
+    mut game_over_event_reader: EventReader<GameOver>,
+    mut high_scores: ResMut<HighScores>,
+) {
+    for event in game_over_event_reader.iter() {
+        high_scores
+            .scores
+            .push(("Player".to_string(), event.final_score));
+    }
+}
+
+pub fn high_scores_updated_system(high_scores: Res<HighScores>) {
+    if high_scores.is_changed() {
+        info!("High scores changed to {:?}", high_scores);
     }
 }
