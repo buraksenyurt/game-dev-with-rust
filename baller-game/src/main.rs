@@ -27,6 +27,8 @@ fn main() {
                 enemy_movement_system,
                 enemy_bounces_system,
                 check_enemy_movement_system,
+                enemy_hit_player_system,
+                refresh_enemies_system,
             ),
         )
         .run();
@@ -225,5 +227,61 @@ pub fn check_player_movement_system(
         }
 
         player_transform.translation = translation;
+    }
+}
+
+// Mavi topun kırmızı toplara çarptığı durumları ele alan sistem.
+// Oyuncuyu temsil eden mavi topun bir kırmızı topa çarpması oyunun bitmesi anlamına da geliyor.
+pub fn enemy_hit_player_system(
+    mut commands: Commands,
+    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    enemy_query: Query<&Transform, With<Enemy>>,
+) {
+    // Sahadaki oyuncuyu transform bileşeni ile birlikte ele alıyoruz
+    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+        // tüm kırmızı toplar için bir iterasyon var ve transform bileşenlerini ele alıyoruz
+        for enemy_transform in enemy_query.iter() {
+            // çarpışma kontrolü yapılıyor.
+            // toplar birer daire olduğundan aralarındaki mesafenin yarıçapları toplamı ile olan
+            // mukayesesi sayesinde çarpışma olup olmadığını anlayabiliriz.
+            let distance = player_transform
+                .translation
+                .distance(enemy_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.;
+            let enemy_radius = ENEMY_SIZE / 2.;
+            if distance < player_radius + enemy_radius {
+                info!("Game over!Catched with red ball");
+                // Oyuncunun entity nesnesi sistemden kaldırılıyor
+                commands.entity(player_entity).despawn();
+            }
+        }
+    }
+}
+
+pub fn refresh_enemies_system(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    mut enemies_query: Query<Entity, With<Enemy>>,
+    player_query: Query<Entity, With<Player>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    if keyboard_input.pressed(KeyCode::F5) {
+        for enemy in enemies_query.iter_mut() {
+            commands.entity(enemy).despawn();
+        }
+        if let Ok(player) = player_query.get_single() {
+            commands.entity(player).despawn();
+        }
+        let window = window_query.get_single().unwrap();
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
+                texture: asset_server.load("sprites/ball_blue_large.png"),
+                ..default()
+            },
+            Player {},
+        ));
+        spawn_enemies_system(commands, window_query, asset_server);
     }
 }
