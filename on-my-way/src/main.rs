@@ -3,11 +3,16 @@ use bevy::window::PrimaryWindow;
 
 pub const SPACESHIP_001_WIDTH: f32 = 80.;
 pub const SPACESHIP_001_HEIGHT: f32 = 106.;
+pub const SPACESHIP_001_SPEED: f32 = 500.;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, (spawn_camera_system, spawn_spaceship_system))
+        .add_systems(
+            Update,
+            (spaceship_movement_system, spaceship_border_check_system),
+        )
         .run();
 }
 
@@ -34,10 +39,56 @@ pub fn spawn_spaceship_system(
     let window = window_query.get_single().unwrap();
     commands.spawn((
         SpriteBundle {
-            transform: Transform::from_xyz(10. + SPACESHIP_001_WIDTH / 2., window.height() / 2., 0.),
+            transform: Transform::from_xyz(
+                10. + SPACESHIP_001_WIDTH / 2.,
+                window.height() / 2.,
+                0.,
+            ),
             texture: asset_server.load("sprites/spaceShips_001.png"),
             ..default()
         },
         Spaceship {},
     ));
+}
+
+pub fn spaceship_movement_system(
+    mut query: Query<&mut Transform, With<Spaceship>>,
+    keyboard_input: Res<Input<KeyCode>>,
+    time: Res<Time>,
+) {
+    if let Ok(mut transform) = query.get_single_mut() {
+        let mut direction = Vec3::ZERO;
+        if keyboard_input.pressed(KeyCode::Up) {
+            direction += Vec3::new(0., 1., 0.);
+        }
+        if keyboard_input.pressed(KeyCode::Down) {
+            direction += Vec3::new(0., -1., 0.);
+        }
+        if direction.length() > 0. {
+            direction = direction.normalize();
+        }
+        transform.translation += direction * SPACESHIP_001_SPEED * time.delta_seconds();
+    }
+}
+
+pub fn spaceship_border_check_system(
+    mut query: Query<&mut Transform, With<Spaceship>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    if let Ok(mut spaceship_transform) = query.get_single_mut() {
+        let window = window_query.get_single().unwrap();
+        let (y_min, y_max) = (
+            SPACESHIP_001_HEIGHT / 2.,
+            window.height() - SPACESHIP_001_HEIGHT / 2.,
+        );
+        let mut translation = spaceship_transform.translation;
+
+        if translation.y < y_min {
+            translation.y = y_min;
+        } else if translation.y > y_max {
+            translation.y = y_max;
+        }
+
+        spaceship_transform.translation = translation;
+    }
 }
