@@ -368,7 +368,7 @@ pub fn refresh_enemies_system(
     mut score: ResMut<Score>,
 ) {
     if keyboard_input.pressed(KeyCode::F5) {
-        score.value = 0;
+        score.value = 0u32;
         for enemy in enemies_query.iter_mut() {
             commands.entity(enemy).despawn();
         }
