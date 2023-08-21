@@ -5,7 +5,6 @@ use rand::{random, Rng};
 pub const SPACESHIP_001_WIDTH: f32 = 80.;
 pub const SPACESHIP_001_HEIGHT: f32 = 106.;
 pub const SPACESHIP_001_SPEED: f32 = 500.;
-pub const STANDARD_METEOR_SPEED: f32 = 150.;
 pub const METEOR_SPAWN_TIME: f32 = 5.;
 
 fn main() {
@@ -40,6 +39,7 @@ pub struct Spaceship {}
 #[derive(Component)]
 pub struct Meteor {
     pub direction: Vec2,
+    pub speed: f32,
 }
 
 #[derive(Resource)]
@@ -152,6 +152,8 @@ pub fn spawn_meteor_system(
 }
 
 fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
+    let speeds = vec![50., 100., 150., 200., 250.];
+    let idx = rand::thread_rng().gen_range(0..speeds.len());
     commands.spawn((
         SpriteBundle {
             transform: Transform::from_xyz(x, y, 0.),
@@ -160,6 +162,7 @@ fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32,
         },
         Meteor {
             direction: Vec2::new(-1., 0.),
+            speed: speeds[idx],
         },
     ));
 }
@@ -167,7 +170,7 @@ fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32,
 pub fn meteor_movement_system(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>) {
     for (mut transform, meteor) in query.iter_mut() {
         let direction = Vec3::new(meteor.direction.x, meteor.direction.y, 0.);
-        transform.translation += direction * STANDARD_METEOR_SPEED * time.delta_seconds();
+        transform.translation += direction * meteor.speed * time.delta_seconds();
     }
 }
 
