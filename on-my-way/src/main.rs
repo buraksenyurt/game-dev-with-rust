@@ -31,6 +31,7 @@ fn main() {
                 meteor_outside_of_the_bounds_system,
                 meteor_spawn_tick_counter_system,
                 meteor_spawn_after_timer_system,
+                meteors_spaceship_collision_detection_system,
             ),
         )
         .run();
@@ -43,6 +44,7 @@ pub struct Spaceship {}
 pub struct Meteor {
     pub direction: Vec2,
     pub speed: f32,
+    pub width: f32,
 }
 
 #[derive(Resource)]
@@ -81,6 +83,7 @@ pub fn spawn_spaceship_system(
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
+
     commands.spawn((
         SpriteBundle {
             transform: Transform::from_xyz(
@@ -173,6 +176,7 @@ fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32,
         Meteor {
             direction: Vec2::new(-1., 0.),
             speed: speeds[idx],
+            width: 40.,
         },
     ));
 }
@@ -219,5 +223,23 @@ pub fn meteor_spawn_after_timer_system(
         let x = window.width() + random::<f32>() * window.width();
         spawn_meteor(&mut commands, asset_server, y, x);
         level_units.current_meteor_count += 1;
+    }
+}
+
+pub fn meteors_spaceship_collision_detection_system(
+    mut commands: Commands,
+    spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
+    meteors_query: Query<(&Transform, &Meteor), With<Meteor>>,
+) {
+    if let Ok((spaceship, spaceship_transform)) = spaceship_query.get_single() {
+        for (meteor_transform, meteor) in meteors_query.iter() {
+            let distance = spaceship_transform
+                .translation
+                .distance(meteor_transform.translation);
+            if distance < SPACESHIP_001_WIDTH / 2. + meteor.width / 2. {
+                commands.entity(spaceship).despawn();
+                info!("Game Over!");
+            }
+        }
     }
 }
