@@ -6,11 +6,14 @@ pub const SPACESHIP_001_WIDTH: f32 = 80.;
 pub const SPACESHIP_001_HEIGHT: f32 = 106.;
 pub const SPACESHIP_001_SPEED: f32 = 500.;
 pub const METEOR_SPAWN_TIME: f32 = 5.;
+pub const MAX_METEOR_COUNT: u8 = 5;
+pub const METEOR_ROTATE_DEGREE: f32 = 30.;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<MeteorSpawnTimer>()
+        .init_resource::<LevelUnits>()
         .add_systems(
             Startup,
             (
@@ -45,6 +48,11 @@ pub struct Meteor {
 #[derive(Resource)]
 pub struct MeteorSpawnTimer {
     pub timer: Timer,
+}
+
+#[derive(Resource, Default)]
+pub struct LevelUnits {
+    pub current_meteor_count: u8,
 }
 
 impl Default for MeteorSpawnTimer {
@@ -144,11 +152,13 @@ pub fn spawn_meteor_system(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
+    mut level_units: ResMut<LevelUnits>,
 ) {
     let window = window_query.get_single().unwrap();
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
     spawn_meteor(&mut commands, asset_server, y, x);
+    level_units.current_meteor_count += 1;
 }
 
 fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
@@ -171,16 +181,19 @@ pub fn meteor_movement_system(mut query: Query<(&mut Transform, &Meteor)>, time:
     for (mut transform, meteor) in query.iter_mut() {
         let direction = Vec3::new(meteor.direction.x, meteor.direction.y, 0.);
         transform.translation += direction * meteor.speed * time.delta_seconds();
+        transform.rotate_z(f32::to_radians(METEOR_ROTATE_DEGREE) * time.delta_seconds());
     }
 }
 
 pub fn meteor_outside_of_the_bounds_system(
     mut commands: Commands,
     mut query: Query<(Entity, &Transform), With<Meteor>>,
+    mut level_units: ResMut<LevelUnits>,
 ) {
     for (entity, transform) in query.iter_mut() {
         if transform.translation.x < -50. {
             commands.entity(entity).despawn();
+            level_units.current_meteor_count -= 1;
             info!("Meteor sınır dışına çıktı.");
         }
     }
@@ -198,11 +211,13 @@ pub fn meteor_spawn_after_timer_system(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     meteor_timer: Res<MeteorSpawnTimer>,
+    mut level_units: ResMut<LevelUnits>,
 ) {
-    if meteor_timer.timer.finished() {
+    if meteor_timer.timer.finished() && level_units.current_meteor_count <= MAX_METEOR_COUNT {
         let window = window_query.get_single().unwrap();
         let y = random::<f32>() * window.height();
         let x = window.width() + random::<f32>() * window.width();
         spawn_meteor(&mut commands, asset_server, y, x);
+        level_units.current_meteor_count += 1;
     }
 }
