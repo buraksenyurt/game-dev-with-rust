@@ -1,11 +1,16 @@
-mod components;
+mod common;
+pub mod enemy;
 mod events;
-mod resources;
+mod player;
+mod score;
+mod star;
 mod systems;
 
+use crate::enemy::resources::*;
+use crate::score::resources::*;
+use crate::star::resources::*;
 use bevy::prelude::*;
 use events::*;
-use resources::*;
 use systems::*;
 
 fn main() {
@@ -39,7 +44,7 @@ fn main() {
                 handle_game_over,
                 update_high_score,
                 handle_high_scores_updated,
-                spawn_star_after_time_finished
+                spawn_star_after_time_finished,
             ),
         )
         .run();
