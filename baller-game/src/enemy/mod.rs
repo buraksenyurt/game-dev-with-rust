@@ -1,6 +1,30 @@
+use crate::enemy::resources::EnemySpawnTimer;
+use crate::enemy::systems::*;
+use bevy::app::App;
+use bevy::prelude::*;
+
 pub mod components;
 pub mod resources;
 mod systems;
 pub const ENEMY_SIZE: f32 = 64.;
 pub const ENEMEY_SPEED: f32 = 200.;
 pub const NUMBER_OF_ENEMIES: usize = 6;
+
+pub struct EnemyPlugin;
+
+impl Plugin for EnemyPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<EnemySpawnTimer>()
+            .add_systems(Startup, spawn_enemies)
+            .add_systems(
+                Update,
+                (
+                    enemy_movement,
+                    enemy_out_of_bound_check,
+                    check_enemy_movement,
+                    enemy_spawn_timer,
+                    spawn_enemy_after_time_finished,
+                ),
+            );
+    }
+}

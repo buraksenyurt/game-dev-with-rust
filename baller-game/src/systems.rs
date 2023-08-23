@@ -1,3 +1,4 @@
+use crate::common::{spawn_enemies_full, spawn_stars_full};
 use crate::enemy::components::Enemy;
 use crate::events::*;
 use crate::player::components::Player;

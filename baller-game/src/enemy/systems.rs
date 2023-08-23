@@ -4,7 +4,6 @@ use super::{ENEMEY_SPEED, ENEMY_SIZE};
 use crate::common::{spawn_enemies_full, spawn_enemy};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use rand::random;
 
 // Enemy olarak adledilen kırmızı topların üretildiği sistem
 pub fn spawn_enemies(
