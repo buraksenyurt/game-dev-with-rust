@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::sprite::MaterialMesh2dBundle;
 use bevy::window::PrimaryWindow;
 use rand::{random, Rng};
 
@@ -8,6 +9,7 @@ pub const SPACESHIP_001_SPEED: f32 = 500.;
 pub const METEOR_SPAWN_TIME: f32 = 5.;
 pub const MAX_METEOR_COUNT: u8 = 5;
 pub const METEOR_ROTATE_DEGREE: f32 = 30.;
+pub const STARS_COUNT: u8 = 200;
 
 fn main() {
     App::new()
@@ -18,6 +20,7 @@ fn main() {
             Startup,
             (
                 spawn_camera_system,
+                spawn_stars_system,
                 spawn_spaceship_system,
                 spawn_meteor_system,
             ),
@@ -75,6 +78,32 @@ pub fn spawn_camera_system(
         transform: Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
         ..default()
     });
+}
+
+pub fn spawn_stars_system(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    let window = window_query.get_single().unwrap();
+    let star_sizes = vec![0.25, 1., 1.25, 1.5, 1.75, 2.];
+    for _ in 0..STARS_COUNT {
+        let idx = rand::thread_rng().gen_range(0..star_sizes.len());
+
+        let (x, y) = (
+            rand::thread_rng().gen_range(0.0..window.width()),
+            rand::thread_rng().gen_range(0.0..window.height()),
+        );
+        commands.spawn(MaterialMesh2dBundle {
+            mesh: meshes
+                .add(shape::Circle::new(star_sizes[idx]).into())
+                .into(),
+            material: materials.add(ColorMaterial::from(Color::ANTIQUE_WHITE)),
+            transform: Transform::from_translation(Vec3::new(x, y, 0.)),
+            ..default()
+        });
+    }
 }
 
 pub fn spawn_spaceship_system(
