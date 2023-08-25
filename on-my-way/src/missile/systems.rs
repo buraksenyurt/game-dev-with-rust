@@ -1,3 +1,5 @@
+use crate::game::resources::GameState;
+use crate::meteor::components::Meteor;
 use crate::missile::components::Missile;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -19,6 +21,26 @@ pub fn check_outside_of_the_bounds(
         if transform.translation.x > window.width() + 51. {
             commands.entity(entity).despawn();
             info!("Füze sınır dışına çıktı.");
+        }
+    }
+}
+
+pub fn detect_collision_with_meteors(
+    mut commands: Commands,
+    meteors_query: Query<(Entity, &Transform), With<Meteor>>,
+    missiles_query: Query<(Entity, &Transform), With<Missile>>,
+    mut game_state: ResMut<GameState>,
+) {
+    for (missile, missile_transform) in missiles_query.iter() {
+        for (meteor, meteor_transform) in meteors_query.iter() {
+            let distance = missile_transform
+                .translation
+                .distance(meteor_transform.translation);
+            if distance < 25. {
+                commands.entity(missile).despawn();
+                commands.entity(meteor).despawn();
+                game_state.current_meteor_count -= 1;
+            }
         }
     }
 }

@@ -5,7 +5,15 @@ use crate::game::resources::GameState;
 use bevy::window::PrimaryWindow;
 use rand::{random, Rng};
 
-pub fn get_random_meteor() -> String {
+pub struct MeteorValue {
+    pub x: f32,
+    pub y: f32,
+    pub asset_file: String,
+    pub speed: f32,
+    pub width: f32,
+    pub required_hit_count: u8,
+}
+pub fn get_random_meteor(window_query: Query<&Window, With<PrimaryWindow>>) -> MeteorValue {
     let meteors = vec![
         "sprites/spaceMeteors_001.png",
         "sprites/spaceMeteors_002.png",
@@ -14,7 +22,28 @@ pub fn get_random_meteor() -> String {
     ];
     let idx = rand::thread_rng().gen_range(0..meteors.len());
     info!("{idx} - {} kullanılacak", meteors[idx]);
-    meteors[idx].to_string()
+    let asset_file = meteors[idx].to_string();
+
+    let window = window_query.get_single().unwrap();
+    let y = random::<f32>() * window.height();
+    let x = window.width() + random::<f32>() * window.width();
+
+    let speeds = vec![50., 100., 150., 200., 250.];
+    let idx = rand::thread_rng().gen_range(0..speeds.len());
+    let speed = speeds[idx];
+
+    let required_hit_counts = vec![1, 2, 3];
+    let idx = rand::thread_rng().gen_range(0..required_hit_counts.len());
+    let required_hit_count = required_hit_counts[idx];
+
+    MeteorValue {
+        x,
+        y,
+        asset_file,
+        speed,
+        width: 40.,
+        required_hit_count,
+    }
 }
 pub fn spawn_meteors(
     mut commands: Commands,
@@ -22,26 +51,28 @@ pub fn spawn_meteors(
     asset_server: Res<AssetServer>,
     mut game_state: ResMut<GameState>,
 ) {
-    let window = window_query.get_single().unwrap();
-    let y = random::<f32>() * window.height();
-    let x = window.width() + random::<f32>() * window.width();
-    spawn_one_meteor(&mut commands, asset_server, y, x);
+    spawn_one_meteor(&mut commands, window_query, asset_server);
     game_state.current_meteor_count += 1;
 }
 
-fn spawn_one_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
-    let speeds = vec![50., 100., 150., 200., 250.];
-    let idx = rand::thread_rng().gen_range(0..speeds.len());
+fn spawn_one_meteor(
+    commands: &mut Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let meteor = get_random_meteor(window_query);
     commands.spawn((
         SpriteBundle {
-            transform: Transform::from_xyz(x, y, 0.),
-            texture: asset_server.load(get_random_meteor()),
+            transform: Transform::from_xyz(meteor.x, meteor.y, 0.),
+            texture: asset_server.load(meteor.asset_file),
             ..default()
         },
         Meteor {
             direction: Vec2::new(-1., 0.),
-            speed: speeds[idx],
-            width: 40.,
+            speed: meteor.speed,
+            width: meteor.width,
+            req_hit_count: meteor.required_hit_count,
+            current_hit_count: 0,
         },
     ));
 }
@@ -80,10 +111,7 @@ pub fn spawn_after_time_finished(
     mut game_state: ResMut<GameState>,
 ) {
     if meteor_timer.timer.finished() && game_state.current_meteor_count <= MAX_METEOR_COUNT {
-        let window = window_query.get_single().unwrap();
-        let y = random::<f32>() * window.height();
-        let x = window.width() + random::<f32>() * window.width();
-        spawn_one_meteor(&mut commands, asset_server, y, x);
+        spawn_one_meteor(&mut commands, window_query, asset_server);
         game_state.current_meteor_count += 1;
     }
 }

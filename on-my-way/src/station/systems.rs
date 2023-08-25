@@ -26,7 +26,7 @@ pub fn get_random_fuel_station(
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
 
-    let fuel_amounts = vec![0.25, 0.50, 1.];
+    let fuel_amounts = vec![0.50, 0.75, 1.25];
     let fuel_idx = rand::thread_rng().gen_range(0..fuel_amounts.len());
     let fuel_amount = fuel_amounts[fuel_idx];
 

@@ -7,6 +7,13 @@ pub struct MissilePlugin;
 
 impl Plugin for MissilePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_missile, check_outside_of_the_bounds));
+        app.add_systems(
+            Update,
+            (
+                move_missile,
+                check_outside_of_the_bounds,
+                detect_collision_with_meteors,
+            ),
+        );
     }
 }

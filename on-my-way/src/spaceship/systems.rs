@@ -54,11 +54,17 @@ pub fn fire_missile(
     keyboard_input: Res<Input<KeyCode>>,
     asset_server: Res<AssetServer>,
     launch_timer: Res<MissileLaunchCheckTimer>,
+    mut game_state: ResMut<GameState>,
 ) {
     if keyboard_input.pressed(KeyCode::S) {
         if launch_timer.timer.finished() {
             if let Ok(transform) = query.get_single_mut() {
-                info!("Ateş etme tuşuna basıldı");
+                let missile = Missile {
+                    direction: Vec2::new(1., 0.),
+                    speed: MISSILE_003_SPEED,
+                    width: 51.,
+                    fuel_cost: 1.5,
+                };
                 commands.spawn((
                     SpriteBundle {
                         transform: Transform::from_xyz(
@@ -69,12 +75,9 @@ pub fn fire_missile(
                         texture: asset_server.load("sprites/spaceMissiles_003.png"),
                         ..default()
                     },
-                    Missile {
-                        direction: Vec2::new(1., 0.),
-                        speed: MISSILE_003_SPEED,
-                        width: 51.,
-                    },
+                    missile.clone(),
                 ));
+                game_state.spaceship_fuel_level -= missile.fuel_cost;
             }
         }
     }
