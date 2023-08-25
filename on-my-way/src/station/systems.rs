@@ -1,45 +1,63 @@
-use crate::game::resources::GameState;
 use crate::station::components::FuelStation;
 use crate::station::resources::FuelStationSpawnTimer;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::{random, Rng};
 
-pub fn get_random_fuel_station() -> String {
+pub struct FuelStationValue {
+    pub x: f32,
+    pub y: f32,
+    pub speed: f32,
+    pub fuel_amount: f32,
+    pub asset_file: String,
+}
+pub fn get_random_fuel_station(
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) -> FuelStationValue {
     let stations = vec![
         "sprites/spaceStation_018.png",
         "sprites/spaceStation_019.png",
         "sprites/spaceStation_022.png",
     ];
     let idx = rand::thread_rng().gen_range(0..stations.len());
-    info!("{idx} - {} kullanılacak", stations[idx]);
-    stations[idx].to_string()
+    let asset_file = stations[idx].to_string();
+
+    let window = window_query.get_single().unwrap();
+    let y = random::<f32>() * window.height();
+    let x = window.width() + random::<f32>() * window.width();
+
+    let fuel_amounts = vec![0.25, 0.50, 1.];
+    let fuel_idx = rand::thread_rng().gen_range(0..fuel_amounts.len());
+    let fuel_amount = fuel_amounts[fuel_idx];
+
+    let speeds = vec![100., 125., 150.];
+    let speed_idx = rand::thread_rng().gen_range(0..speeds.len());
+    let speed = speeds[speed_idx];
+
+    FuelStationValue {
+        x,
+        y,
+        speed,
+        fuel_amount,
+        asset_file,
+    }
 }
 pub fn spawn_fuel_station(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
 ) {
-    let window = window_query.get_single().unwrap();
-    let y = random::<f32>() * window.height();
-    let x = window.width() + random::<f32>() * window.width();
-
-    let fuel_amounts = vec![50, 100, 150];
-    let fuel_idx = rand::thread_rng().gen_range(0..fuel_amounts.len());
-
-    let speeds = vec![100., 125., 150.];
-    let speed_idx = rand::thread_rng().gen_range(0..speeds.len());
-
+    let station = get_random_fuel_station(window_query);
     commands.spawn((
         SpriteBundle {
-            transform: Transform::from_xyz(x, y, 0.),
-            texture: asset_server.load(get_random_fuel_station()),
+            transform: Transform::from_xyz(station.x, station.y, 0.),
+            texture: asset_server.load(station.asset_file),
             ..default()
         },
         FuelStation {
             direction: Vec2::new(-1., 0.),
-            speed: speeds[speed_idx],
-            fuel_amount: fuel_amounts[fuel_idx],
+            speed: station.speed,
+            fuel_amount: station.fuel_amount,
         },
     ));
 }
@@ -70,36 +88,12 @@ pub fn count_fuel_station_spawn_tick(
 }
 
 pub fn spawn_after_time_finished(
-    mut commands: Commands,
+    commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     fuel_station_timer: Res<FuelStationSpawnTimer>,
-    mut game_state: ResMut<GameState>,
 ) {
     if fuel_station_timer.timer.finished() {
-        let window = window_query.get_single().unwrap();
-        let y = random::<f32>() * window.height();
-        let x = window.width() + random::<f32>() * window.width();
-
-        let fuel_amounts = vec![50, 100, 150];
-        let fuel_idx = rand::thread_rng().gen_range(0..fuel_amounts.len());
-
-        let speeds = vec![50., 75., 125.];
-        let speed_idx = rand::thread_rng().gen_range(0..speeds.len());
-
-        commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(x, y, 0.),
-                texture: asset_server.load(get_random_fuel_station()),
-                ..default()
-            },
-            FuelStation {
-                direction: Vec2::new(-1., 0.),
-                speed: speeds[speed_idx],
-                fuel_amount: fuel_amounts[fuel_idx],
-            },
-        ));
-
-        game_state.spaceship_fuel_level += fuel_amounts[fuel_idx];
+        spawn_fuel_station(commands, window_query, asset_server);
     }
 }

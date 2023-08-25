@@ -6,7 +6,7 @@ use bevy::prelude::*;
 pub mod components;
 pub mod resources;
 mod systems;
-pub const FUEL_STATION_SPAWN_TIME: f32 = 100.;
+pub const FUEL_STATION_SPAWN_TIME: f32 = 30.;
 pub struct FuelStationPlugin;
 impl Plugin for FuelStationPlugin {
     fn build(&self, app: &mut App) {

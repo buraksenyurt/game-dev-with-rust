@@ -3,7 +3,7 @@ use bevy::prelude::*;
 #[derive(Resource)]
 pub struct GameState {
     pub current_meteor_count: u8,
-    pub spaceship_fuel_level: u32,
+    pub spaceship_fuel_level: f32,
 }
 impl Default for GameState {
     fn default() -> Self {

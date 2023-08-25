@@ -3,6 +3,7 @@ use super::*;
 use crate::events::GameOverEvent;
 use crate::game::resources::GameState;
 use crate::meteor::components::Meteor;
+use crate::station::components::FuelStation;
 use bevy::window::PrimaryWindow;
 
 pub fn spawn_spaceship(
@@ -98,18 +99,36 @@ pub fn decrease_spaceship_fuel(
     spaceship_query: Query<Entity, With<Spaceship>>,
 ) {
     if fuel_timer.timer.finished() {
-        if game_state.spaceship_fuel_level < 10 {
+        if game_state.spaceship_fuel_level < 10. {
             info!("Yakıt bitti. Oyun sona ermeli.");
             game_over_event_writer.send(GameOverEvent { current_score: 1 });
             if let Ok(spaceship) = spaceship_query.get_single() {
                 commands.entity(spaceship).despawn();
             }
         } else {
-            game_state.spaceship_fuel_level -= 10;
+            game_state.spaceship_fuel_level -= 10.;
             info!(
                 "Güncel yakıt seviyesi...{} galon.",
                 game_state.spaceship_fuel_level
             );
+        }
+    }
+}
+
+pub fn detect_connected_with_fuel_station(
+    fuel_station_query: Query<(&Transform, &FuelStation), With<FuelStation>>,
+    spaceship_query: Query<&Transform, With<Spaceship>>,
+    mut game_state: ResMut<GameState>,
+) {
+    if let Ok(spaceship_transform) = spaceship_query.get_single() {
+        for (station_transform, station) in fuel_station_query.iter() {
+            let distance = spaceship_transform
+                .translation
+                .distance(station_transform.translation);
+            if distance <= SPACESHIP_001_WIDTH / 2. {
+                info!("İstasyondan {} galon yakıt ekleniyor.", station.fuel_amount);
+                game_state.spaceship_fuel_level += station.fuel_amount;
+            }
         }
     }
 }

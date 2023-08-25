@@ -20,11 +20,12 @@ impl Plugin for SpaceshipPlugin {
             .add_systems(
                 Update,
                 (
-                    move_spaceship,
                     check_outside_of_the_bounds,
                     count_fuel_tick,
                     detect_collision_with_meteors,
                     decrease_spaceship_fuel,
+                    detect_connected_with_fuel_station,
+                    move_spaceship,
                 ),
             );
     }
