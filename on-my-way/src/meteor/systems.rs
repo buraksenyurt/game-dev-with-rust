@@ -20,13 +20,13 @@ pub fn spawn_meteors(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
-    mut level_units: ResMut<GameState>,
+    mut game_state: ResMut<GameState>,
 ) {
     let window = window_query.get_single().unwrap();
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
     spawn_one_meteor(&mut commands, asset_server, y, x);
-    level_units.current_meteor_count += 1;
+    game_state.current_meteor_count += 1;
 }
 
 fn spawn_one_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
@@ -57,12 +57,12 @@ pub fn move_meteors(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>
 pub fn check_outside_of_the_bounds(
     mut commands: Commands,
     mut query: Query<(Entity, &Transform), With<Meteor>>,
-    mut level_units: ResMut<GameState>,
+    mut game_state: ResMut<GameState>,
 ) {
     for (entity, transform) in query.iter_mut() {
         if transform.translation.x < -50. {
             commands.entity(entity).despawn();
-            level_units.current_meteor_count -= 1;
+            game_state.current_meteor_count -= 1;
             info!("Meteor sınır dışına çıktı.");
         }
     }
@@ -77,13 +77,13 @@ pub fn spawn_after_time_finished(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     meteor_timer: Res<MeteorSpawnTimer>,
-    mut level_units: ResMut<GameState>,
+    mut game_state: ResMut<GameState>,
 ) {
-    if meteor_timer.timer.finished() && level_units.current_meteor_count <= MAX_METEOR_COUNT {
+    if meteor_timer.timer.finished() && game_state.current_meteor_count <= MAX_METEOR_COUNT {
         let window = window_query.get_single().unwrap();
         let y = random::<f32>() * window.height();
         let x = window.width() + random::<f32>() * window.width();
         spawn_one_meteor(&mut commands, asset_server, y, x);
-        level_units.current_meteor_count += 1;
+        game_state.current_meteor_count += 1;
     }
 }

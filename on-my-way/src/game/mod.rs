@@ -3,7 +3,7 @@ use bevy::app::App;
 use bevy::prelude::Plugin;
 
 pub mod resources;
-pub const DEFAULT_FUEL_LEVEL: u16 = 200;
+pub const DEFAULT_FUEL_LEVEL: u32 = 200;
 
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
