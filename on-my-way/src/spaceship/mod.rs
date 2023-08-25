@@ -10,6 +10,7 @@ pub const SPACESHIP_001_WIDTH: f32 = 80.;
 pub const SPACESHIP_001_HEIGHT: f32 = 106.;
 pub const SPACESHIP_001_SPEED: f32 = 500.;
 pub const FUEL_DECREASE_PERIOD: f32 = 5.;
+pub const MISSILE_003_SPEED: f32 = 350.;
 
 pub struct SpaceshipPlugin;
 
@@ -25,6 +26,7 @@ impl Plugin for SpaceshipPlugin {
                     detect_collision_with_meteors,
                     decrease_spaceship_fuel,
                     detect_connected_with_fuel_station,
+                    fire_missile,
                     move_spaceship,
                 ),
             );

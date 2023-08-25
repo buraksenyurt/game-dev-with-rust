@@ -3,6 +3,7 @@ use super::*;
 use crate::events::GameOverEvent;
 use crate::game::resources::GameState;
 use crate::meteor::components::Meteor;
+use crate::missile::components::Missile;
 use crate::station::components::FuelStation;
 use bevy::window::PrimaryWindow;
 
@@ -44,6 +45,34 @@ pub fn move_spaceship(
             direction = direction.normalize();
         }
         transform.translation += direction * SPACESHIP_001_SPEED * time.delta_seconds();
+    }
+}
+
+pub fn fire_missile(
+    mut commands: Commands,
+    mut query: Query<&mut Transform, With<Spaceship>>,
+    keyboard_input: Res<Input<KeyCode>>,
+    asset_server: Res<AssetServer>,
+) {
+    if let Ok(transform) = query.get_single_mut() {
+        if keyboard_input.pressed(KeyCode::Space) {
+            commands.spawn((
+                SpriteBundle {
+                    transform: Transform::from_xyz(
+                        transform.translation.x,
+                        transform.translation.y,
+                        0.,
+                    ),
+                    texture: asset_server.load("sprites/spaceMissiles_003.png"),
+                    ..default()
+                },
+                Missile {
+                    direction: Vec2::new(1., 0.),
+                    speed: MISSILE_003_SPEED,
+                    width: 51.,
+                },
+            ));
+        }
     }
 }
 
