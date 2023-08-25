@@ -1,13 +1,11 @@
+use crate::events::GameOverEvent;
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::window::PrimaryWindow;
 use rand::Rng;
 
 pub const STARS_COUNT: u8 = 200;
-pub fn spawn_camera_system(
-    mut commands: Commands,
-    window_query: Query<&Window, With<PrimaryWindow>>,
-) {
+pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     let window = window_query.get_single().unwrap();
 
     commands.spawn(Camera2dBundle {
@@ -15,8 +13,13 @@ pub fn spawn_camera_system(
         ..default()
     });
 }
+pub fn handle_game_over(mut event_reader: EventReader<GameOverEvent>) {
+    for event in event_reader.iter() {
+        info!("Oyun sonlandı...Oyuncunun skoru {}", event.current_score);
+    }
+}
 
-pub fn spawn_stars_system(
+pub fn spawn_stars(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut meshes: ResMut<Assets<Mesh>>,

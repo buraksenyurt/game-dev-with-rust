@@ -13,14 +13,14 @@ pub struct MeteorPlugin;
 impl Plugin for MeteorPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MeteorSpawnTimer>()
-            .add_systems(Startup, spawn_meteor_system)
+            .add_systems(Startup, spawn_meteors)
             .add_systems(
                 Update,
                 (
-                    meteor_movement_system,
-                    meteor_outside_of_the_bounds_system,
-                    meteor_spawn_tick_counter_system,
-                    meteor_spawn_after_timer_system,
+                    move_meteors,
+                    check_outside_of_the_bounds,
+                    count_meteor_spawn_tick,
+                    spawn_after_time_finished,
                 ),
             );
     }

@@ -16,7 +16,7 @@ pub fn get_random_meteor() -> String {
     info!("{idx} - {} kullanılacak", meteors[idx]);
     meteors[idx].to_string()
 }
-pub fn spawn_meteor_system(
+pub fn spawn_meteors(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
@@ -25,11 +25,11 @@ pub fn spawn_meteor_system(
     let window = window_query.get_single().unwrap();
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
-    spawn_meteor(&mut commands, asset_server, y, x);
+    spawn_one_meteor(&mut commands, asset_server, y, x);
     level_units.current_meteor_count += 1;
 }
 
-fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
+fn spawn_one_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32, x: f32) {
     let speeds = vec![50., 100., 150., 200., 250.];
     let idx = rand::thread_rng().gen_range(0..speeds.len());
     commands.spawn((
@@ -46,7 +46,7 @@ fn spawn_meteor(commands: &mut Commands, asset_server: Res<AssetServer>, y: f32,
     ));
 }
 
-pub fn meteor_movement_system(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>) {
+pub fn move_meteors(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>) {
     for (mut transform, meteor) in query.iter_mut() {
         let direction = Vec3::new(meteor.direction.x, meteor.direction.y, 0.);
         transform.translation += direction * meteor.speed * time.delta_seconds();
@@ -54,7 +54,7 @@ pub fn meteor_movement_system(mut query: Query<(&mut Transform, &Meteor)>, time:
     }
 }
 
-pub fn meteor_outside_of_the_bounds_system(
+pub fn check_outside_of_the_bounds(
     mut commands: Commands,
     mut query: Query<(Entity, &Transform), With<Meteor>>,
     mut level_units: ResMut<GameState>,
@@ -68,14 +68,11 @@ pub fn meteor_outside_of_the_bounds_system(
     }
 }
 
-pub fn meteor_spawn_tick_counter_system(
-    mut meteor_timer: ResMut<MeteorSpawnTimer>,
-    time: Res<Time>,
-) {
+pub fn count_meteor_spawn_tick(mut meteor_timer: ResMut<MeteorSpawnTimer>, time: Res<Time>) {
     meteor_timer.timer.tick(time.delta());
 }
 
-pub fn meteor_spawn_after_timer_system(
+pub fn spawn_after_time_finished(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
@@ -86,7 +83,7 @@ pub fn meteor_spawn_after_timer_system(
         let window = window_query.get_single().unwrap();
         let y = random::<f32>() * window.height();
         let x = window.width() + random::<f32>() * window.width();
-        spawn_meteor(&mut commands, asset_server, y, x);
+        spawn_one_meteor(&mut commands, asset_server, y, x);
         level_units.current_meteor_count += 1;
     }
 }

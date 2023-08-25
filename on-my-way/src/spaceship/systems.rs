@@ -1,10 +1,11 @@
 use super::components::Spaceship;
 use super::*;
+use crate::events::GameOverEvent;
 use crate::game::resources::GameState;
 use crate::meteor::components::Meteor;
 use bevy::window::PrimaryWindow;
 
-pub fn spawn_spaceship_system(
+pub fn spawn_spaceship(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
@@ -25,7 +26,7 @@ pub fn spawn_spaceship_system(
     ));
 }
 
-pub fn spaceship_movement_system(
+pub fn move_spaceship(
     mut query: Query<&mut Transform, With<Spaceship>>,
     keyboard_input: Res<Input<KeyCode>>,
     time: Res<Time>,
@@ -45,7 +46,7 @@ pub fn spaceship_movement_system(
     }
 }
 
-pub fn spaceship_border_check_system(
+pub fn check_outside_of_the_bounds(
     mut query: Query<&mut Transform, With<Spaceship>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
@@ -67,10 +68,11 @@ pub fn spaceship_border_check_system(
     }
 }
 
-pub fn meteors_spaceship_collision_detection_system(
+pub fn detect_collision_with_meteors(
     mut commands: Commands,
-    spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
+    mut game_over_event_writer: EventWriter<GameOverEvent>,
     meteors_query: Query<(&Transform, &Meteor), With<Meteor>>,
+    spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
 ) {
     if let Ok((spaceship, spaceship_transform)) = spaceship_query.get_single() {
         for (meteor_transform, meteor) in meteors_query.iter() {
@@ -79,26 +81,35 @@ pub fn meteors_spaceship_collision_detection_system(
                 .distance(meteor_transform.translation);
             if distance < SPACESHIP_001_WIDTH / 2. + meteor.width / 2. {
                 commands.entity(spaceship).despawn();
+                game_over_event_writer.send(GameOverEvent { current_score: 1 });
                 info!("Game Over!");
             }
         }
     }
 }
-pub fn fuel_tick_counter_system(mut fuel_timer: ResMut<FuelCheckTimer>, time: Res<Time>) {
+pub fn count_fuel_tick(mut fuel_timer: ResMut<FuelCheckTimer>, time: Res<Time>) {
     fuel_timer.timer.tick(time.delta());
 }
-pub fn decrease_spaceship_fuel_system(
+pub fn decrease_spaceship_fuel(
+    mut commands: Commands,
     fuel_timer: Res<FuelCheckTimer>,
     mut game_state: ResMut<GameState>,
+    mut game_over_event_writer: EventWriter<GameOverEvent>,
+    spaceship_query: Query<Entity, With<Spaceship>>,
 ) {
     if fuel_timer.timer.finished() {
         if game_state.spaceship_fuel_level < 10 {
-            info!("Yakıt bitti. Oyun sona ermeli.")
+            info!("Yakıt bitti. Oyun sona ermeli.");
+            game_over_event_writer.send(GameOverEvent { current_score: 1 });
+            if let Ok(spaceship) = spaceship_query.get_single() {
+                commands.entity(spaceship).despawn();
+            }
+        } else {
+            game_state.spaceship_fuel_level -= 10;
+            info!(
+                "Güncel yakıt seviyesi...{} galon.",
+                game_state.spaceship_fuel_level
+            );
         }
-        game_state.spaceship_fuel_level -= 10;
-        info!(
-            "Güncel yakıt seviyesi...{} galon.",
-            game_state.spaceship_fuel_level
-        );
     }
 }

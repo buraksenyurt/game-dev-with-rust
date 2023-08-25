@@ -16,15 +16,15 @@ pub struct SpaceshipPlugin;
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<FuelCheckTimer>()
-            .add_systems(Startup, spawn_spaceship_system)
+            .add_systems(Startup, spawn_spaceship)
             .add_systems(
                 Update,
                 (
-                    spaceship_movement_system,
-                    spaceship_border_check_system,
-                    fuel_tick_counter_system,
-                    meteors_spaceship_collision_detection_system,
-                    decrease_spaceship_fuel_system,
+                    move_spaceship,
+                    check_outside_of_the_bounds,
+                    count_fuel_tick,
+                    detect_collision_with_meteors,
+                    decrease_spaceship_fuel,
                 ),
             );
     }
