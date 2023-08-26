@@ -1,5 +1,5 @@
 use crate::common::{spawn_star, spawn_stars_full};
-use crate::star::resources::StarSpawnTimer;
+use crate::game::star::resources::StarSpawnTimer;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 

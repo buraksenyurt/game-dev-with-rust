@@ -1,9 +1,10 @@
 use crate::common::{spawn_enemies_full, spawn_stars_full};
-use crate::enemy::components::Enemy;
 use crate::events::*;
-use crate::player::components::Player;
-use crate::score::resources::Score;
-use crate::star::components::Star;
+use crate::game::enemy::components::Enemy;
+use crate::game::player::components::Player;
+use crate::game::score::resources::Score;
+use crate::game::star::components::Star;
+use crate::AppState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -70,5 +71,31 @@ pub fn exit_game(keyboard_input: Res<Input<KeyCode>>, mut event_writer: EventWri
 pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
     for event in game_over_event_reader.iter() {
         info!("Player's final score is {}", event.final_score.to_string());
+    }
+}
+
+pub fn change_to_game_state(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    app_state: Res<State<AppState>>,
+) {
+    if keyboard_input.just_pressed(KeyCode::G) {
+        if **app_state != AppState::Game {
+            commands.insert_resource(NextState(Some(AppState::Game)));
+            info!("Now in 'Game' state");
+        }
+    }
+}
+
+pub fn change_to_main_menu(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    app_state: Res<State<AppState>>,
+) {
+    if keyboard_input.just_pressed(KeyCode::M) {
+        if **app_state != AppState::MainMenu {
+            commands.insert_resource(NextState(Some(AppState::MainMenu)));
+            info!("Now in 'Main Menu' state");
+        }
     }
 }

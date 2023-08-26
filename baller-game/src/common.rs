@@ -1,7 +1,7 @@
-use crate::enemy::components::Enemy;
-use crate::enemy::NUMBER_OF_ENEMIES;
-use crate::star::components::Star;
-use crate::star::NUMBER_OF_STARS;
+use crate::game::enemy::components::Enemy;
+use crate::game::enemy::NUMBER_OF_ENEMIES;
+use crate::game::star::components::Star;
+use crate::game::star::NUMBER_OF_STARS;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::random;

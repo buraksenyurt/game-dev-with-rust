@@ -1,5 +1,5 @@
 use crate::events::GameOver;
-use crate::score::resources::*;
+use crate::game::score::resources::*;
 use bevy::prelude::*;
 
 // Bu sistem de GameOver event'lerini dinler.

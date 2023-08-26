@@ -1,5 +1,5 @@
-use crate::star::resources::*;
-use crate::star::systems::*;
+use crate::game::star::resources::*;
+use crate::game::star::systems::*;
 use bevy::prelude::*;
 
 pub mod components;

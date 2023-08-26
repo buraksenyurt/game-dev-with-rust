@@ -112,6 +112,7 @@ pub fn claim_hitted(
         if meteor.current_hit_count == 0 {
             commands.entity(entity).despawn();
             game_state.current_meteor_count -= 1;
+            game_state.exploded_meteors_count += 1;
             commands.spawn(AudioBundle {
                 source: asset_server.load("audio/explosionCrunch_004.ogg"),
                 ..default()

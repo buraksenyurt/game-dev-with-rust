@@ -1,4 +1,4 @@
-use crate::player::systems::*;
+use crate::game::player::systems::*;
 use bevy::prelude::*;
 
 pub mod components;
@@ -14,7 +14,7 @@ impl Plugin for PlayerPlugin {
             (
                 check_enemy_hit_player,
                 control_player_movement,
-                check_player_movement,
+                check_player_movement.after(control_player_movement),
                 check_player_hits_star,
             ),
         );

@@ -1,5 +1,5 @@
-use crate::score::resources::*;
-use crate::score::systems::*;
+use crate::game::score::resources::*;
+use crate::game::score::systems::*;
 use bevy::prelude::*;
 
 pub mod resources;

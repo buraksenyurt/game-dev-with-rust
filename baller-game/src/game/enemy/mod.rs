@@ -1,5 +1,5 @@
-use crate::enemy::resources::EnemySpawnTimer;
-use crate::enemy::systems::*;
+use crate::game::enemy::resources::EnemySpawnTimer;
+use crate::game::enemy::systems::*;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -20,7 +20,7 @@ impl Plugin for EnemyPlugin {
                 Update,
                 (
                     enemy_movement,
-                    enemy_out_of_bound_check,
+                    enemy_out_of_bound_check.after(enemy_movement),
                     check_enemy_movement,
                     enemy_spawn_timer,
                     spawn_enemy_after_time_finished,
