@@ -106,11 +106,16 @@ pub fn claim_hitted(
     mut commands: Commands,
     mut query: Query<(Entity, &Meteor)>,
     mut game_state: ResMut<GameState>,
+    asset_server: Res<AssetServer>,
 ) {
     for (entity, meteor) in query.iter_mut() {
         if meteor.current_hit_count == 0 {
             commands.entity(entity).despawn();
             game_state.current_meteor_count -= 1;
+            commands.spawn(AudioBundle {
+                source: asset_server.load("audio/explosionCrunch_004.ogg"),
+                ..default()
+            });
         }
     }
 }

@@ -111,6 +111,7 @@ pub fn detect_collision_with_meteors(
     mut game_over_event_writer: EventWriter<GameOverEvent>,
     meteors_query: Query<(&Transform, &Meteor), With<Meteor>>,
     spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
+    asset_server: Res<AssetServer>,
 ) {
     if let Ok((spaceship, spaceship_transform)) = spaceship_query.get_single() {
         for (meteor_transform, meteor) in meteors_query.iter() {
@@ -118,6 +119,11 @@ pub fn detect_collision_with_meteors(
                 .translation
                 .distance(meteor_transform.translation);
             if distance < SPACESHIP_001_WIDTH / 2. + meteor.width / 2. {
+                commands.spawn(AudioBundle {
+                    source: asset_server.load("audio/explosionCrunch_000.ogg"),
+                    ..default()
+                });
+
                 commands.entity(spaceship).despawn();
                 game_over_event_writer.send(GameOverEvent { current_score: 1 });
                 info!("Game Over!");

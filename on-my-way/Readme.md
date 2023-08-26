@@ -14,7 +14,7 @@ Oyuna ait ilk ekran görüntülerinden birisi,
 
 ## Mücadele Noktaları
 
-- Missile ve Meteor entity'lerinin arasındaki mesafeye göre çalışan sistemlerde bir problemim var. Örneğin meteorun gücü 3ncü seviye ise en az 3 füze atılarak vurulabilir. Ancak ilgili sistem metodum frame başına çalıştığından tek füze ile meteor patlayabiliyor. Burayı bir şekilde çözmem lazım.
+- Missile ve Meteor entity'lerinin arasındaki mesafeye göre çalışan sistemlerde bir problemim var. Örneğin meteorun gücü 3ncü seviye ise en az 3 füze atılarak vurulabilir. Ancak ilgili sistem metodum frame başına çalıştığından tek füze ile meteor patlayabiliyor. Burayı bir şekilde çözmem lazım. **(Çözüldü: Missile bileşenlerine disposable isimli bir alan ekledim. Missile ve Meteor çarpışmanlarını tespit eden sistem metodunda bu alan true'ya çekiliyor. Başka bir sistem true değeri almış Missile entity'lerini despawn ediyor. Böylece gücü 3 olan bir meteor için 3 füze isabet ettirmek gerekiyor. Hem de merkezden :D )**
 - Uzay gemisi bir istasyondan geçerken rastgele bir değere göre belli süre boyunca(aradaki mesafe değerine göre) yakıt alabiliyor. Buradaki yakıt yüklenme durumunu ekranda transparan bir skala ile göstermek istiyorum. (Progress Bar tarzı bir şey)
 - Oyundaki güncel ölçümleri ekranda göstermek istiyorum. Anlık yakıt miktarı, füze sayısı, ekrandaki meteor sayısı, vurulan/kaçırılan meteor sayıları gibi.
 - Oyuna bir menü eklemek istiyorum.

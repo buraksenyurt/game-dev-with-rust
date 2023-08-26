@@ -11,8 +11,9 @@ impl Plugin for MissilePlugin {
             Update,
             (
                 move_missile,
-                check_outside_of_the_bounds,
                 detect_collision_with_meteors,
+                claim_hitted,
+                check_outside_of_the_bounds,
             ),
         );
     }

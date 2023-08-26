@@ -43,3 +43,11 @@ pub fn detect_collision_with_meteors(
         }
     }
 }
+
+pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>) {
+    for (entity, missile) in query.iter_mut() {
+        if missile.disposable {
+            commands.entity(entity).despawn();
+        }
+    }
+}
