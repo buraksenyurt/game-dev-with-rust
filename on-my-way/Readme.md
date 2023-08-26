@@ -1,0 +1,21 @@
+# On My Way
+
+Bevy oyun motoru kullanılarak yazılan bu terminal oyununda uzayda ilerleyen yalnız bir geminin göktaşları ile mücadelesine tanık oluyoruz. Aracın yakıtı belli ancak aralarda bazı istasyonlar var ve üstünden geçince yakıt belli değerlerde tekrardan yüklenebiliyor. Gemi sahip olduğu füzeleri ile meteorları vurup engellerin üstesinden gelebilir. Ancak her füzenin bir fırlatma maliyeti var ve bu yakıtta azalma anlamına gelir. Füzeleri 1.5 saniyede bir ateşleyebiliriz.
+
+Oyuna ait ilk ekran görüntülerinden birisi,
+
+![../assets/on_my_way_ss_01.png](../assets/on_may_way_ss_01.png)
+
+## Öğrenme Noktaları
+
+- Entity Component System sorgularının kullanımı pekiştirildi.
+- Proje yapısının entity bazında daha düzgün oluşturulabilmesi sağlandı.
+- Plugin kullanımı öğrenildi.
+
+## Mücadele Noktaları
+
+- Missile ve Meteor entity'lerinin arasındaki mesafeye göre çalışan sistemlerde bir problemim var. Örneğin meteorun gücü 3ncü seviye ise en az 3 füze atılarak vurulabilir. Ancak ilgili sistem metodum frame başına çalıştığından tek füze ile meteor patlayabiliyor. Burayı bir şekilde çözmem lazım.
+- Uzay gemisi bir istasyondan geçerken rastgele bir değere göre belli süre boyunca(aradaki mesafe değerine göre) yakıt alabiliyor. Buradaki yakıt yüklenme durumunu ekranda transparan bir skala ile göstermek istiyorum. (Progress Bar tarzı bir şey)
+- Oyundaki güncel ölçümleri ekranda göstermek istiyorum. Anlık yakıt miktarı, füze sayısı, ekrandaki meteor sayısı, vurulan/kaçırılan meteor sayıları gibi.
+- Oyuna bir menü eklemek istiyorum.
+- İlerleyen zamanlarda belki birer seviye eklemeye çalışabilirim. Seviye atladıkça oyun zorlaşır. Meteor sayısı artabilir, füze maliyetleri yükseltilebilir.
