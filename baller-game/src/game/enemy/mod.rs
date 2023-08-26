@@ -1,5 +1,7 @@
 use crate::game::enemy::resources::EnemySpawnTimer;
 use crate::game::enemy::systems::*;
+use crate::game::PlayGroundState;
+use crate::AppState;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -15,7 +17,7 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<EnemySpawnTimer>()
-            .add_systems(Startup, spawn_enemies)
+            .add_systems(OnEnter(AppState::Game), spawn_enemies)
             .add_systems(
                 Update,
                 (
@@ -24,7 +26,10 @@ impl Plugin for EnemyPlugin {
                     check_enemy_movement,
                     enemy_spawn_timer,
                     spawn_enemy_after_time_finished,
-                ),
-            );
+                )
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(PlayGroundState::Running)),
+            )
+            .add_systems(OnExit(AppState::Game), despawn_enemies);
     }
 }

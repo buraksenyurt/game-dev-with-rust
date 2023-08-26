@@ -1,4 +1,5 @@
 use crate::common::{spawn_star, spawn_stars_full};
+use crate::game::star::components::Star;
 use crate::game::star::resources::StarSpawnTimer;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -9,6 +10,12 @@ pub fn spawn_stars(
     asset_server: Res<AssetServer>,
 ) {
     spawn_stars_full(&mut commands, &window_query, &asset_server);
+}
+
+pub fn despawn_stars(mut commands: Commands, stars_query: Query<Entity, With<Star>>) {
+    for entity in stars_query.iter() {
+        commands.entity(entity).despawn();
+    }
 }
 
 // Sistemdeki yıldızlar için bir timer nesnesi uygulanıyor

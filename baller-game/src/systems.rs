@@ -4,6 +4,7 @@ use crate::game::enemy::components::Enemy;
 use crate::game::player::components::Player;
 use crate::game::score::resources::Score;
 use crate::game::star::components::Star;
+use crate::game::PlayGroundState;
 use crate::AppState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
@@ -68,9 +69,10 @@ pub fn exit_game(keyboard_input: Res<Input<KeyCode>>, mut event_writer: EventWri
 }
 
 // GameOver isimli bir event oluştuğunda ele alınan sistem
-pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
+pub fn handle_game_over(mut commands: Commands, mut game_over_event_reader: EventReader<GameOver>) {
     for event in game_over_event_reader.iter() {
         info!("Player's final score is {}", event.final_score.to_string());
+        commands.insert_resource(NextState(Some(AppState::GameOver)));
     }
 }
 
@@ -95,6 +97,7 @@ pub fn change_to_main_menu(
     if keyboard_input.just_pressed(KeyCode::M) {
         if **app_state != AppState::MainMenu {
             commands.insert_resource(NextState(Some(AppState::MainMenu)));
+            commands.insert_resource(NextState(Some(PlayGroundState::Paused)));
             info!("Now in 'Main Menu' state");
         }
     }

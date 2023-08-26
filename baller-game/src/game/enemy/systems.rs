@@ -14,6 +14,12 @@ pub fn spawn_enemies(
     spawn_enemies_full(&mut commands, &window_query, &asset_server);
 }
 
+pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
+    for entity in enemy_query.iter() {
+        commands.entity(entity).despawn();
+    }
+}
+
 // Kırmızı topları(enemy) hareket ettiren sistem.
 // Bu sefer Enemy olan bileşenlerin transform özelliklerini değiştirmemiz gerekiyor.
 pub fn enemy_movement(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Res<Time>) {

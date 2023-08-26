@@ -15,6 +15,14 @@ pub fn update_high_score(
     }
 }
 
+pub fn insert_score(mut commands: Commands) {
+    commands.insert_resource(Score::default());
+}
+
+pub fn remove_score(mut commands: Commands) {
+    commands.remove_resource::<Score>();
+}
+
 pub fn handle_high_scores_updated(high_scores: Res<HighScores>) {
     if high_scores.is_changed() {
         info!("High scores changed to {:?}", high_scores);

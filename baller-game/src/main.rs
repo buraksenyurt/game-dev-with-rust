@@ -6,7 +6,7 @@ mod systems;
 
 use bevy::prelude::*;
 
-use crate::game::GamePlugin;
+use crate::game::{GamePlugin, PlayGroundState};
 use crate::main_menu::MainMenuPlugin;
 use systems::*;
 
@@ -23,12 +23,17 @@ fn main() {
         .add_systems(
             Update,
             (
-                refresh_everything,
                 exit_game,
                 handle_game_over,
                 change_to_game_state,
                 change_to_main_menu,
             ),
+        )
+        .add_systems(
+            Update,
+            refresh_everything
+                .run_if(in_state(AppState::Game))
+                .run_if(in_state(PlayGroundState::Running)),
         )
         .run();
 }

@@ -30,6 +30,12 @@ pub fn spawn_player(
     ));
 }
 
+pub fn despawn_player(mut commands: Commands, query: Query<Entity, With<Player>>) {
+    if let Ok(entity) = query.get_single() {
+        commands.entity(entity).despawn();
+    }
+}
+
 // Oyuncunun hareket ettirildiği sistem
 // Klavye yön tuşlarına göre hareket edeceğinden Input<KeyCode> bir Resource olarak alınır
 // Hareket hesaplamasında delta time kullanılacağından Time verisi de Resource olarak alınır.
