@@ -4,6 +4,5 @@ pub struct Meteor {
     pub direction: Vec2,
     pub speed: f32,
     pub width: f32,
-    pub req_hit_count: u8,
     pub current_hit_count: u8,
 }

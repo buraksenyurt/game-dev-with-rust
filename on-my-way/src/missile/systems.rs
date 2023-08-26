@@ -1,4 +1,3 @@
-use crate::game::resources::GameState;
 use crate::meteor::components::Meteor;
 use crate::missile::components::Missile;
 use bevy::prelude::*;
@@ -26,20 +25,20 @@ pub fn check_outside_of_the_bounds(
 }
 
 pub fn detect_collision_with_meteors(
-    mut commands: Commands,
-    meteors_query: Query<(Entity, &Transform), With<Meteor>>,
-    missiles_query: Query<(Entity, &Transform), With<Missile>>,
-    mut game_state: ResMut<GameState>,
+    mut meteors_query: Query<(&Transform, &mut Meteor)>,
+    mut missiles_query: Query<(&Transform, &mut Missile)>,
 ) {
-    for (missile, missile_transform) in missiles_query.iter() {
-        for (meteor, meteor_transform) in meteors_query.iter() {
+    for (missile_transform, mut missile) in missiles_query.iter_mut() {
+        for (meteor_transform, mut meteor) in meteors_query.iter_mut() {
             let distance = missile_transform
                 .translation
                 .distance(meteor_transform.translation);
-            if distance < 25. {
-                commands.entity(missile).despawn();
-                commands.entity(meteor).despawn();
-                game_state.current_meteor_count -= 1;
+            if distance <= 25. {
+                info!("Meteorun gücü {}", meteor.current_hit_count);
+                missile.disposable = true;
+                if meteor.current_hit_count > 0 {
+                    meteor.current_hit_count -= 1;
+                }
             }
         }
     }

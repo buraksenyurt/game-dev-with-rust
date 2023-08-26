@@ -71,8 +71,7 @@ fn spawn_one_meteor(
             direction: Vec2::new(-1., 0.),
             speed: meteor.speed,
             width: meteor.width,
-            req_hit_count: meteor.required_hit_count,
-            current_hit_count: 0,
+            current_hit_count: meteor.required_hit_count,
         },
     ));
 }
@@ -94,7 +93,24 @@ pub fn check_outside_of_the_bounds(
         if transform.translation.x < -50. {
             commands.entity(entity).despawn();
             game_state.current_meteor_count -= 1;
-            info!("Meteor sınır dışına çıktı.");
+            game_state.missing_meteors_count += 1;
+            info!(
+                "Vurulamayan meteor sayısı {}",
+                game_state.missing_meteors_count
+            );
+        }
+    }
+}
+
+pub fn claim_hitted(
+    mut commands: Commands,
+    mut query: Query<(Entity, &Meteor)>,
+    mut game_state: ResMut<GameState>,
+) {
+    for (entity, meteor) in query.iter_mut() {
+        if meteor.current_hit_count == 0 {
+            commands.entity(entity).despawn();
+            game_state.current_meteor_count -= 1;
         }
     }
 }

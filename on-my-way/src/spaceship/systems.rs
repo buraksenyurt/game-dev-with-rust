@@ -64,6 +64,7 @@ pub fn fire_missile(
                     speed: MISSILE_003_SPEED,
                     width: 51.,
                     fuel_cost: 1.5,
+                    disposable: false,
                 };
                 commands.spawn((
                     SpriteBundle {

@@ -21,6 +21,7 @@ impl Plugin for MeteorPlugin {
                     check_outside_of_the_bounds,
                     count_meteor_spawn_tick,
                     spawn_after_time_finished,
+                    claim_hitted,
                 ),
             );
     }

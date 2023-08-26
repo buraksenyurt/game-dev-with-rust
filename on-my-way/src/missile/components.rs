@@ -5,4 +5,5 @@ pub struct Missile {
     pub speed: f32,
     pub width: f32,
     pub fuel_cost: f32,
+    pub disposable: bool,
 }
