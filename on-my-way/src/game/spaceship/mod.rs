@@ -1,5 +1,5 @@
-use crate::spaceship::resources::*;
-use crate::spaceship::systems::*;
+use crate::game::spaceship::resources::*;
+use crate::game::spaceship::systems::*;
 use bevy::prelude::*;
 
 pub mod components;
@@ -23,13 +23,13 @@ impl Plugin for SpaceshipPlugin {
             .add_systems(
                 Update,
                 (
+                    move_spaceship,
                     check_outside_of_the_bounds,
                     count_fuel_tick,
                     detect_collision_with_meteors,
                     decrease_spaceship_fuel,
                     detect_connected_with_fuel_station,
                     fire_missile,
-                    move_spaceship,
                     count_launch_time,
                 ),
             );

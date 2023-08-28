@@ -1,5 +1,5 @@
-use crate::meteor::resources::MeteorSpawnTimer;
-use crate::meteor::systems::*;
+use crate::game::meteor::resources::MeteorSpawnTimer;
+use crate::game::meteor::systems::*;
 use bevy::app::App;
 use bevy::prelude::*;
 

@@ -1,4 +1,4 @@
-use crate::missile::systems::*;
+use crate::game::missile::systems::*;
 use bevy::prelude::*;
 
 pub mod components;

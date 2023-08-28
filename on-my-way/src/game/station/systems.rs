@@ -1,5 +1,5 @@
-use crate::station::components::FuelStation;
-use crate::station::resources::FuelStationSpawnTimer;
+use crate::game::station::components::FuelStation;
+use crate::game::station::resources::FuelStationSpawnTimer;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::{random, Rng};

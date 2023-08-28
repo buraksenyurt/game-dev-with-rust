@@ -1,4 +1,4 @@
-use crate::station::FUEL_STATION_SPAWN_TIME;
+use crate::game::station::FUEL_STATION_SPAWN_TIME;
 use bevy::prelude::*;
 
 #[derive(Resource)]

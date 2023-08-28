@@ -1,10 +1,10 @@
 use super::components::Spaceship;
 use super::*;
 use crate::events::GameOverEvent;
-use crate::game::resources::GameState;
-use crate::meteor::components::Meteor;
-use crate::missile::components::Missile;
-use crate::station::components::FuelStation;
+use crate::game::live_data::resources::LiveData;
+use crate::game::meteor::components::Meteor;
+use crate::game::missile::components::Missile;
+use crate::game::station::components::FuelStation;
 use bevy::window::PrimaryWindow;
 
 pub fn spawn_spaceship(
@@ -54,7 +54,7 @@ pub fn fire_missile(
     keyboard_input: Res<Input<KeyCode>>,
     asset_server: Res<AssetServer>,
     launch_timer: Res<MissileLaunchCheckTimer>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
 ) {
     if keyboard_input.pressed(KeyCode::S) {
         if launch_timer.timer.finished() {
@@ -137,7 +137,7 @@ pub fn count_fuel_tick(mut fuel_timer: ResMut<FuelCheckTimer>, time: Res<Time>) 
 pub fn decrease_spaceship_fuel(
     mut commands: Commands,
     fuel_timer: Res<FuelCheckTimer>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
     mut game_over_event_writer: EventWriter<GameOverEvent>,
     spaceship_query: Query<Entity, With<Spaceship>>,
 ) {
@@ -161,7 +161,7 @@ pub fn decrease_spaceship_fuel(
 pub fn detect_connected_with_fuel_station(
     fuel_station_query: Query<(&Transform, &FuelStation), With<FuelStation>>,
     spaceship_query: Query<&Transform, With<Spaceship>>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
 ) {
     if let Ok(spaceship_transform) = spaceship_query.get_single() {
         for (station_transform, station) in fuel_station_query.iter() {

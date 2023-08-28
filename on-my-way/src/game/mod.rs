@@ -1,13 +1,26 @@
-use crate::game::resources::GameState;
-use bevy::app::App;
-use bevy::prelude::Plugin;
+use crate::game::live_data::LiveDataPlugin;
+use crate::game::meteor::MeteorPlugin;
+use crate::game::missile::MissilePlugin;
+use crate::game::spaceship::SpaceshipPlugin;
+use crate::game::station::FuelStationPlugin;
+use bevy::prelude::*;
 
-pub mod resources;
-pub const DEFAULT_FUEL_LEVEL: f32 = 200.;
+pub mod live_data;
+pub mod meteor;
+pub mod missile;
+pub mod spaceship;
+pub mod station;
 
 pub struct GamePlugin;
+
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<GameState>();
+        app.add_plugins((
+            SpaceshipPlugin,
+            LiveDataPlugin,
+            MeteorPlugin,
+            FuelStationPlugin,
+            MissilePlugin,
+        ));
     }
 }

@@ -1,5 +1,5 @@
-use crate::meteor::components::Meteor;
-use crate::missile::components::Missile;
+use crate::game::meteor::components::Meteor;
+use crate::game::missile::components::Missile;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 

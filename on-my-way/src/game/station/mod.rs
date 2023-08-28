@@ -1,5 +1,5 @@
-use crate::station::resources::*;
-use crate::station::systems::*;
+use crate::game::station::resources::*;
+use crate::game::station::systems::*;
 use bevy::app::App;
 use bevy::prelude::*;
 

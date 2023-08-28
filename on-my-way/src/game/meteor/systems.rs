@@ -1,7 +1,7 @@
 use super::components::*;
 use super::resources::*;
 use super::*;
-use crate::game::resources::GameState;
+use crate::game::live_data::resources::LiveData;
 use bevy::window::PrimaryWindow;
 use rand::{random, Rng};
 
@@ -49,7 +49,7 @@ pub fn spawn_meteors(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
 ) {
     spawn_one_meteor(&mut commands, window_query, asset_server);
     game_state.current_meteor_count += 1;
@@ -87,7 +87,7 @@ pub fn move_meteors(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>
 pub fn check_outside_of_the_bounds(
     mut commands: Commands,
     mut query: Query<(Entity, &Transform), With<Meteor>>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
 ) {
     for (entity, transform) in query.iter_mut() {
         if transform.translation.x < -50. {
@@ -105,7 +105,7 @@ pub fn check_outside_of_the_bounds(
 pub fn claim_hitted(
     mut commands: Commands,
     mut query: Query<(Entity, &Meteor)>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
     asset_server: Res<AssetServer>,
 ) {
     for (entity, meteor) in query.iter_mut() {
@@ -130,7 +130,7 @@ pub fn spawn_after_time_finished(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     meteor_timer: Res<MeteorSpawnTimer>,
-    mut game_state: ResMut<GameState>,
+    mut game_state: ResMut<LiveData>,
 ) {
     if meteor_timer.timer.finished() && game_state.current_meteor_count <= MAX_METEOR_COUNT {
         spawn_one_meteor(&mut commands, window_query, asset_server);

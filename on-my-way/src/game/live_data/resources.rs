@@ -1,13 +1,13 @@
 use super::*;
 use bevy::prelude::*;
 #[derive(Resource)]
-pub struct GameState {
+pub struct LiveData {
     pub current_meteor_count: u8,
     pub spaceship_fuel_level: f32,
     pub missing_meteors_count: u32,
     pub exploded_meteors_count: u32,
 }
-impl Default for GameState {
+impl Default for LiveData {
     fn default() -> Self {
         Self {
             current_meteor_count: 0,
