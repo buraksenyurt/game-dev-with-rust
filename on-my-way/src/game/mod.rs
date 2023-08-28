@@ -1,3 +1,4 @@
+use crate::events::GameOverEvent;
 use crate::game::live_data::LiveDataPlugin;
 use crate::game::meteor::MeteorPlugin;
 use crate::game::missile::MissilePlugin;
@@ -15,7 +16,7 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((
+        app.add_event::<GameOverEvent>().add_plugins((
             SpaceshipPlugin,
             LiveDataPlugin,
             MeteorPlugin,

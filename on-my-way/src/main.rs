@@ -3,7 +3,6 @@ mod game;
 mod main_menu;
 mod systems;
 
-use crate::events::GameOverEvent;
 use crate::game::GamePlugin;
 use crate::main_menu::MainMenuPlugin;
 use crate::systems::*;
@@ -14,7 +13,6 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins((GamePlugin, MainMenuPlugin))
         .add_state::<AppState>()
-        .add_event::<GameOverEvent>()
         .add_systems(Startup, (spawn_camera, spawn_stars))
         .add_systems(
             Update,

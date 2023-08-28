@@ -49,10 +49,8 @@ pub fn spawn_meteors(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
-    mut live_data: ResMut<LiveData>,
 ) {
     spawn_one_meteor(&mut commands, window_query, asset_server);
-    live_data.current_meteor_count += 1;
 }
 
 pub fn despawn_meteors(mut commands: Commands, query: Query<Entity, With<Meteor>>) {

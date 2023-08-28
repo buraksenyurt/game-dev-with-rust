@@ -1,3 +1,4 @@
+use crate::game::live_data::resources::LiveData;
 use crate::game::meteor::components::Meteor;
 use crate::game::missile::components::Missile;
 use bevy::prelude::*;
@@ -44,10 +45,15 @@ pub fn detect_collision_with_meteors(
     }
 }
 
-pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>) {
+pub fn claim_hitted(
+    mut commands: Commands,
+    mut query: Query<(Entity, &Missile)>,
+    mut live_data: ResMut<LiveData>,
+) {
     for (entity, missile) in query.iter_mut() {
         if missile.disposable {
             commands.entity(entity).despawn();
+            live_data.exploded_meteors_count += 1;
         }
     }
 }

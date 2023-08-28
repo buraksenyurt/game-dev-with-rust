@@ -118,6 +118,7 @@ pub fn detect_collision_with_meteors(
     meteors_query: Query<(&Transform, &Meteor), With<Meteor>>,
     spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
     asset_server: Res<AssetServer>,
+    live_data: Res<LiveData>,
 ) {
     if let Ok((spaceship, spaceship_transform)) = spaceship_query.get_single() {
         for (meteor_transform, meteor) in meteors_query.iter() {
@@ -131,7 +132,9 @@ pub fn detect_collision_with_meteors(
                 });
 
                 commands.entity(spaceship).despawn();
-                game_over_event_writer.send(GameOverEvent { current_score: 1 });
+                game_over_event_writer.send(GameOverEvent {
+                    current_score: live_data.exploded_meteors_count,
+                });
                 info!("Game Over!");
             }
         }
@@ -158,7 +161,7 @@ pub fn decrease_spaceship_fuel(
             live_data.spaceship_fuel_level -= 10.;
             info!(
                 "Güncel yakıt seviyesi...{} galon.",
-                game_state.spaceship_fuel_level
+                live_data.spaceship_fuel_level
             );
         }
     }
