@@ -1,5 +1,4 @@
 use super::*;
-use bevy::prelude::*;
 #[derive(Resource)]
 pub struct LiveData {
     pub current_meteor_count: u8,

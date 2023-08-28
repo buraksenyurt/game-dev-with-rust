@@ -51,3 +51,9 @@ pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>
         }
     }
 }
+
+pub fn despawn_missiles(mut commands: Commands, query: Query<Entity, With<Missile>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
+}

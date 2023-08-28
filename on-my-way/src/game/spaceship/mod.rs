@@ -1,5 +1,6 @@
 use crate::game::spaceship::resources::*;
 use crate::game::spaceship::systems::*;
+use crate::AppState;
 use bevy::prelude::*;
 
 pub mod components;
@@ -19,7 +20,7 @@ impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<FuelCheckTimer>()
             .init_resource::<MissileLaunchCheckTimer>()
-            .add_systems(Startup, spawn_spaceship)
+            .add_systems(OnEnter(AppState::Game), spawn_spaceship)
             .add_systems(
                 Update,
                 (
@@ -31,7 +32,9 @@ impl Plugin for SpaceshipPlugin {
                     detect_connected_with_fuel_station,
                     fire_missile,
                     count_launch_time,
-                ),
-            );
+                )
+                    .run_if(in_state(AppState::Game)),
+            )
+            .add_systems(OnExit(AppState::Game), despawn_spaceship);
     }
 }

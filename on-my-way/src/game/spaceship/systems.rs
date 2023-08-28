@@ -28,6 +28,12 @@ pub fn spawn_spaceship(
     ));
 }
 
+pub fn despawn_spaceship(mut commands: Commands, query: Query<Entity, With<Spaceship>>) {
+    if let Ok(entity) = query.get_single() {
+        commands.entity(entity).despawn();
+    }
+}
+
 pub fn move_spaceship(
     mut query: Query<&mut Transform, With<Spaceship>>,
     keyboard_input: Res<Input<KeyCode>>,
@@ -54,7 +60,7 @@ pub fn fire_missile(
     keyboard_input: Res<Input<KeyCode>>,
     asset_server: Res<AssetServer>,
     launch_timer: Res<MissileLaunchCheckTimer>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
 ) {
     if keyboard_input.pressed(KeyCode::S) {
         if launch_timer.timer.finished() {
@@ -78,7 +84,7 @@ pub fn fire_missile(
                     },
                     missile.clone(),
                 ));
-                game_state.spaceship_fuel_level -= missile.fuel_cost;
+                live_data.spaceship_fuel_level -= missile.fuel_cost;
             }
         }
     }
@@ -137,19 +143,19 @@ pub fn count_fuel_tick(mut fuel_timer: ResMut<FuelCheckTimer>, time: Res<Time>) 
 pub fn decrease_spaceship_fuel(
     mut commands: Commands,
     fuel_timer: Res<FuelCheckTimer>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
     mut game_over_event_writer: EventWriter<GameOverEvent>,
     spaceship_query: Query<Entity, With<Spaceship>>,
 ) {
     if fuel_timer.timer.finished() {
-        if game_state.spaceship_fuel_level < 10. {
+        if live_data.spaceship_fuel_level < 10. {
             info!("Yakıt bitti. Oyun sona ermeli.");
             game_over_event_writer.send(GameOverEvent { current_score: 1 });
             if let Ok(spaceship) = spaceship_query.get_single() {
                 commands.entity(spaceship).despawn();
             }
         } else {
-            game_state.spaceship_fuel_level -= 10.;
+            live_data.spaceship_fuel_level -= 10.;
             info!(
                 "Güncel yakıt seviyesi...{} galon.",
                 game_state.spaceship_fuel_level
@@ -161,7 +167,7 @@ pub fn decrease_spaceship_fuel(
 pub fn detect_connected_with_fuel_station(
     fuel_station_query: Query<(&Transform, &FuelStation), With<FuelStation>>,
     spaceship_query: Query<&Transform, With<Spaceship>>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
 ) {
     if let Ok(spaceship_transform) = spaceship_query.get_single() {
         for (station_transform, station) in fuel_station_query.iter() {
@@ -170,7 +176,7 @@ pub fn detect_connected_with_fuel_station(
                 .distance(station_transform.translation);
             if distance <= SPACESHIP_001_WIDTH / 2. {
                 info!("İstasyondan {} galon yakıt ekleniyor.", station.fuel_amount);
-                game_state.spaceship_fuel_level += station.fuel_amount;
+                live_data.spaceship_fuel_level += station.fuel_amount;
             }
         }
     }

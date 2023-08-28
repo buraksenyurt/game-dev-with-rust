@@ -1,5 +1,6 @@
 use crate::game::meteor::resources::MeteorSpawnTimer;
 use crate::game::meteor::systems::*;
+use crate::AppState;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -13,7 +14,7 @@ pub struct MeteorPlugin;
 impl Plugin for MeteorPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MeteorSpawnTimer>()
-            .add_systems(Startup, spawn_meteors)
+            .add_systems(OnEnter(AppState::Game), spawn_meteors)
             .add_systems(
                 Update,
                 (
@@ -22,7 +23,9 @@ impl Plugin for MeteorPlugin {
                     count_meteor_spawn_tick,
                     spawn_after_time_finished,
                     claim_hitted,
-                ),
-            );
+                )
+                    .run_if(in_state(AppState::Game)),
+            )
+            .add_systems(OnExit(AppState::Game), despawn_meteors);
     }
 }

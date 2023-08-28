@@ -1,5 +1,6 @@
 use crate::game::station::resources::*;
 use crate::game::station::systems::*;
+use crate::AppState;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -11,7 +12,7 @@ pub struct FuelStationPlugin;
 impl Plugin for FuelStationPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<FuelStationSpawnTimer>()
-            .add_systems(Startup, spawn_fuel_station)
+            .add_systems(OnEnter(AppState::Game), spawn_fuel_station)
             .add_systems(
                 Update,
                 (
@@ -19,7 +20,9 @@ impl Plugin for FuelStationPlugin {
                     check_outside_of_the_bounds,
                     count_fuel_station_spawn_tick,
                     spawn_after_time_finished,
-                ),
-            );
+                )
+                    .run_if(in_state(AppState::Game)),
+            )
+            .add_systems(OnExit(AppState::Game), despawn_fuel_stations);
     }
 }

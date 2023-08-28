@@ -1,4 +1,5 @@
 use crate::game::missile::systems::*;
+use crate::AppState;
 use bevy::prelude::*;
 
 pub mod components;
@@ -14,7 +15,9 @@ impl Plugin for MissilePlugin {
                 detect_collision_with_meteors,
                 claim_hitted,
                 check_outside_of_the_bounds,
-            ),
-        );
+            )
+                .run_if(in_state(AppState::Game)),
+        )
+        .add_systems(OnExit(AppState::Game), despawn_missiles);
     }
 }

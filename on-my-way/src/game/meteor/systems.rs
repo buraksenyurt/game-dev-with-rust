@@ -49,10 +49,16 @@ pub fn spawn_meteors(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
 ) {
     spawn_one_meteor(&mut commands, window_query, asset_server);
-    game_state.current_meteor_count += 1;
+    live_data.current_meteor_count += 1;
+}
+
+pub fn despawn_meteors(mut commands: Commands, query: Query<Entity, With<Meteor>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
 }
 
 fn spawn_one_meteor(
@@ -87,16 +93,16 @@ pub fn move_meteors(mut query: Query<(&mut Transform, &Meteor)>, time: Res<Time>
 pub fn check_outside_of_the_bounds(
     mut commands: Commands,
     mut query: Query<(Entity, &Transform), With<Meteor>>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
 ) {
     for (entity, transform) in query.iter_mut() {
         if transform.translation.x < -50. {
             commands.entity(entity).despawn();
-            game_state.current_meteor_count -= 1;
-            game_state.missing_meteors_count += 1;
+            live_data.current_meteor_count -= 1;
+            live_data.missing_meteors_count += 1;
             info!(
                 "Vurulamayan meteor sayısı {}",
-                game_state.missing_meteors_count
+                live_data.missing_meteors_count
             );
         }
     }
@@ -105,14 +111,14 @@ pub fn check_outside_of_the_bounds(
 pub fn claim_hitted(
     mut commands: Commands,
     mut query: Query<(Entity, &Meteor)>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
     asset_server: Res<AssetServer>,
 ) {
     for (entity, meteor) in query.iter_mut() {
         if meteor.current_hit_count == 0 {
             commands.entity(entity).despawn();
-            game_state.current_meteor_count -= 1;
-            game_state.exploded_meteors_count += 1;
+            live_data.current_meteor_count -= 1;
+            live_data.exploded_meteors_count += 1;
             commands.spawn(AudioBundle {
                 source: asset_server.load("audio/explosionCrunch_004.ogg"),
                 ..default()
@@ -130,10 +136,10 @@ pub fn spawn_after_time_finished(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     meteor_timer: Res<MeteorSpawnTimer>,
-    mut game_state: ResMut<LiveData>,
+    mut live_data: ResMut<LiveData>,
 ) {
-    if meteor_timer.timer.finished() && game_state.current_meteor_count <= MAX_METEOR_COUNT {
+    if meteor_timer.timer.finished() && live_data.current_meteor_count <= MAX_METEOR_COUNT {
         spawn_one_meteor(&mut commands, window_query, asset_server);
-        game_state.current_meteor_count += 1;
+        live_data.current_meteor_count += 1;
     }
 }

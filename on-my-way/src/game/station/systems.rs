@@ -62,6 +62,12 @@ pub fn spawn_fuel_station(
     ));
 }
 
+pub fn despawn_fuel_stations(mut commands: Commands, query: Query<Entity, With<FuelStation>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
+}
+
 pub fn move_fuel_station(mut query: Query<(&mut Transform, &FuelStation)>, time: Res<Time>) {
     for (mut transform, meteor) in query.iter_mut() {
         let direction = Vec3::new(meteor.direction.x, meteor.direction.y, 0.);

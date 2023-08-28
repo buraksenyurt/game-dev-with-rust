@@ -1,4 +1,5 @@
 use crate::events::GameOverEvent;
+use crate::AppState;
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::window::PrimaryWindow;
@@ -13,9 +14,36 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
         ..default()
     });
 }
-pub fn handle_game_over(mut event_reader: EventReader<GameOverEvent>) {
+pub fn handle_game_over(mut commands: Commands, mut event_reader: EventReader<GameOverEvent>) {
     for event in event_reader.iter() {
         info!("Oyun sonlandı...Oyuncunun skoru {}", event.current_score);
+        commands.insert_resource(NextState(Some(AppState::GameOver)));
+    }
+}
+
+pub fn change_to_game_state(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    app_state: Res<State<AppState>>,
+) {
+    if keyboard_input.just_pressed(KeyCode::F5) {
+        if **app_state != AppState::Game {
+            commands.insert_resource(NextState(Some(AppState::Game)));
+            info!("'Game' modunda geçildi...");
+        }
+    }
+}
+
+pub fn change_to_main_menu(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    app_state: Res<State<AppState>>,
+) {
+    if keyboard_input.just_pressed(KeyCode::F2) {
+        if **app_state != AppState::MainMenu {
+            commands.insert_resource(NextState(Some(AppState::MainMenu)));
+            info!("'Main Menu' moduna geçildi...");
+        }
     }
 }
 
