@@ -8,7 +8,7 @@ mod systems;
 use crate::events::GameOver;
 use crate::game::player::PlayerPlugin;
 use crate::game::score::ScorePlugin;
-use crate::game::systems::toggle_playground;
+use crate::game::systems::{pause_game, resume_game, toggle_playground};
 use crate::AppState;
 use enemy::EnemyPlugin;
 use star::StarPlugin;
@@ -22,7 +22,9 @@ impl Plugin for GamePlugin {
             .add_event::<GameOver>()
             // Plugins
             .add_plugins((PlayerPlugin, EnemyPlugin, ScorePlugin, StarPlugin))
-            .add_systems(Update, toggle_playground.run_if(in_state(AppState::Game)));
+            .add_systems(OnEnter(AppState::Game), pause_game)
+            .add_systems(Update, toggle_playground.run_if(in_state(AppState::Game)))
+            .add_systems(OnExit(AppState::Game), resume_game);
     }
 }
 
