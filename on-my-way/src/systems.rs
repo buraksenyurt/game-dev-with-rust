@@ -1,5 +1,6 @@
 use crate::events::GameOverEvent;
 use crate::AppState;
+use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::window::PrimaryWindow;
@@ -70,5 +71,11 @@ pub fn spawn_stars(
             transform: Transform::from_translation(Vec3::new(x, y, 0.)),
             ..default()
         });
+    }
+}
+
+pub fn exit_game(keyboard_input: Res<Input<KeyCode>>, mut event_writer: EventWriter<AppExit>) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        event_writer.send(AppExit);
     }
 }

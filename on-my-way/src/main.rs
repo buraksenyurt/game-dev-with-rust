@@ -16,7 +16,12 @@ fn main() {
         .add_systems(Startup, (spawn_camera, spawn_stars))
         .add_systems(
             Update,
-            (change_to_game_state, change_to_main_menu, handle_game_over),
+            (
+                change_to_game_state,
+                change_to_main_menu,
+                handle_game_over,
+                exit_game,
+            ),
         )
         .run();
 }
