@@ -1,2 +1,2 @@
-mod interactions;
+pub mod interactions;
 pub mod layout;

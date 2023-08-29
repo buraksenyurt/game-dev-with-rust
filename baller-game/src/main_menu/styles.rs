@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
 pub const DEFAULT_BUTTON_COLOR: Color = Color::rgb(0.15, 0.35, 0.65);
+pub const PRESSED_BUTTON_COLOR: Color = Color::rgb(0.65, 0.35, 0.15);
+pub const HOVERED_BUTTON_COLOR: Color = Color::rgb(0.35, 0.35, 0.35);
 pub const BUTTON_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.width = Val::Px(400.);

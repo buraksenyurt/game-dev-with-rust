@@ -47,7 +47,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         },
                         ..default()
                     });
-                    // Image 2
+
                     parent.spawn(ImageBundle {
                         style: IMAGE_STYLE,
                         image: asset_server.load("sprites/ball_blue_large.png").into(),
@@ -62,7 +62,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: BackgroundColor::from(DEFAULT_BUTTON_COLOR),
                         ..default()
                     },
-                    QuitButton {},
+                    PlayButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
@@ -86,7 +86,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: BackgroundColor::from(DEFAULT_BUTTON_COLOR),
                         ..default()
                     },
-                    PlayButton {},
+                    QuitButton {},
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
