@@ -17,16 +17,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
     let main_menu_entity = commands
         .spawn((
             NodeBundle {
-                style: Style {
-                    width: Val::Percent(100.),
-                    height: Val::Percent(100.),
-                    flex_direction: FlexDirection::Column,
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    row_gap: Val::Px(10.),
-                    column_gap: Val::Px(10.),
-                    ..default()
-                },
+                style: MAIN_MENU_STYLE,
                 background_color: Color::ORANGE_RED.into(),
                 ..default()
             },
@@ -35,24 +26,12 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
-                    style: Style {
-                        flex_direction: FlexDirection::Row,
-                        justify_content: JustifyContent::Center,
-                        align_items: AlignItems::Center,
-                        width: Val::Px(600.),
-                        height: Val::Px(120.),
-                        ..default()
-                    },
+                    style: TITLE_STYLE,
                     ..default()
                 })
                 .with_children(|parent| {
                     parent.spawn(ImageBundle {
-                        style: Style {
-                            width: Val::Px(64.),
-                            height: Val::Px(64.),
-                            margin: UiRect::new(Val::Px(8.), Val::Px(8.), Val::Px(8.), Val::Px(8.)),
-                            ..default()
-                        },
+                        style: IMAGE_STYLE,
                         image: asset_server.load("sprites/ball_red_large.png").into(),
                         ..default()
                     });
@@ -61,11 +40,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Baller Game",
-                                TextStyle {
-                                    font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                                    font_size: 64.,
-                                    color: Color::WHITE,
-                                },
+                                get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -74,12 +49,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                     });
                     // Image 2
                     parent.spawn(ImageBundle {
-                        style: Style {
-                            width: Val::Px(64.),
-                            height: Val::Px(64.),
-                            margin: UiRect::new(Val::Px(8.), Val::Px(8.), Val::Px(8.), Val::Px(8.)),
-                            ..default()
-                        },
+                        style: IMAGE_STYLE,
                         image: asset_server.load("sprites/ball_blue_large.png").into(),
                         ..default()
                     });
@@ -99,11 +69,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Play (Press G)",
-                                TextStyle {
-                                    font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                                    font_size: 32.,
-                                    color: Color::WHITE,
-                                },
+                                get_button_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -127,11 +93,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Quit Game (Press Esc)",
-                                TextStyle {
-                                    font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                                    font_size: 32.,
-                                    color: Color::WHITE,
-                                },
+                                get_button_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
