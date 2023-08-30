@@ -45,6 +45,36 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                         ScoreText {},
                     ));
                 });
+
+            parent
+                .spawn(NodeBundle {
+                    style: CHS_STYLE,
+                    background_color: BACKGROUND_COLOR.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent.spawn(ImageBundle {
+                        style: IMAGE_STYLE,
+                        image: asset_server.load("sprites/spaceMeteors_002.png").into(),
+                        ..default()
+                    });
+                    parent.spawn((
+                        TextBundle {
+                            style: Style { ..default() },
+                            text: Text {
+                                sections: vec![TextSection::new(
+                                    "0",
+                                    get_text_style(&asset_server),
+                                )],
+                                alignment: TextAlignment::Center,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        MeteorInfoText {},
+                    ));
+                });
+
             parent
                 .spawn(NodeBundle {
                     style: RHS_STYLE,
@@ -73,8 +103,6 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                         },
                         FuelText {},
                     ));
-
-
                 });
         })
         .id();

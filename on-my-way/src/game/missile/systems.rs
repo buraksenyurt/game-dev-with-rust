@@ -28,6 +28,7 @@ pub fn check_outside_of_the_bounds(
 pub fn detect_collision_with_meteors(
     mut meteors_query: Query<(&Transform, &mut Meteor)>,
     mut missiles_query: Query<(&Transform, &mut Missile)>,
+    mut live_data: ResMut<LiveData>,
 ) {
     for (missile_transform, mut missile) in missiles_query.iter_mut() {
         for (meteor_transform, mut meteor) in meteors_query.iter_mut() {
@@ -35,6 +36,7 @@ pub fn detect_collision_with_meteors(
                 .translation
                 .distance(meteor_transform.translation);
             if distance <= 25. {
+                live_data.last_meteor_strength = meteor.strength;
                 info!("Meteorun gücü {}", meteor.current_hit_count);
                 missile.disposable = true;
                 if meteor.current_hit_count > 0 {

@@ -5,4 +5,5 @@ pub struct Meteor {
     pub speed: f32,
     pub width: f32,
     pub current_hit_count: u8,
+    pub strength: u8,
 }

@@ -10,6 +10,7 @@ pub const HUD_STYLE: Style = {
     style.height = Val::Px(100.);
     style
 };
+// Left Side
 pub const LHS_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
@@ -17,10 +18,25 @@ pub const LHS_STYLE: Style = {
     style.justify_content = JustifyContent::Center;
     style.align_items = AlignItems::Center;
     style.width = Val::Px(200.);
-    style.height = Val::Percent(80.);
+    style.height = Val::Percent(60.);
     style.margin = UiRect::new(Val::Px(32.), Val::Px(0.), Val::Px(0.), Val::Px(0.));
     style
 };
+
+// Center Side
+pub const CHS_STYLE: Style = {
+    let mut style = Style::DEFAULT;
+    style.display = Display::Flex;
+    style.flex_direction = FlexDirection::Row;
+    style.justify_content = JustifyContent::Center;
+    style.align_items = AlignItems::Center;
+    style.width = Val::Px(300.);
+    style.height = Val::Percent(60.);
+    style.margin = UiRect::new(Val::Px(32.), Val::Px(32.), Val::Px(0.), Val::Px(0.));
+    style
+};
+
+// Right Side
 pub const RHS_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
@@ -28,7 +44,7 @@ pub const RHS_STYLE: Style = {
     style.justify_content = JustifyContent::Center;
     style.align_items = AlignItems::Center;
     style.width = Val::Px(200.);
-    style.height = Val::Percent(80.);
+    style.height = Val::Percent(60.);
     style.margin = UiRect::new(Val::Px(0.), Val::Px(32.), Val::Px(0.), Val::Px(0.));
     style
 };

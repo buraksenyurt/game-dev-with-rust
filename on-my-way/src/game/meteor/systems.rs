@@ -76,6 +76,7 @@ fn spawn_one_meteor(
             speed: meteor.speed,
             width: meteor.width,
             current_hit_count: meteor.required_hit_count,
+            strength: meteor.required_hit_count,
         },
     ));
 }
