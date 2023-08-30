@@ -15,34 +15,35 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
         ..default()
     });
 }
-pub fn handle_game_over(mut commands: Commands, mut event_reader: EventReader<GameOverEvent>) {
+pub fn handle_game_over(
+    mut event_reader: EventReader<GameOverEvent>,
+    mut app_state: ResMut<NextState<AppState>>,
+) {
     for event in event_reader.iter() {
         info!("Oyun sonlandı...Oyuncunun skoru {}", event.current_score);
-        commands.insert_resource(NextState(Some(AppState::GameOver)));
+        app_state.set(AppState::GameOver);
     }
 }
 
 pub fn change_to_game_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
-    app_state: Res<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::F5) {
-        if **app_state != AppState::Game {
-            commands.insert_resource(NextState(Some(AppState::Game)));
+        if app_state.0 != Option::from(AppState::Game) {
+            app_state.set(AppState::Game);
             info!("'Game' modunda geçildi...");
         }
     }
 }
 
 pub fn change_to_main_menu(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
-    app_state: Res<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::F2) {
-        if **app_state != AppState::MainMenu {
-            commands.insert_resource(NextState(Some(AppState::MainMenu)));
+        if app_state.0 != Option::from(AppState::MainMenu) {
+            app_state.set(AppState::MainMenu);
             info!("'Main Menu' moduna geçildi...");
         }
     }
