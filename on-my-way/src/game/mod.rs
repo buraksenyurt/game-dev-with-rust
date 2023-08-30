@@ -4,6 +4,7 @@ use crate::game::meteor::MeteorPlugin;
 use crate::game::missile::MissilePlugin;
 use crate::game::spaceship::SpaceshipPlugin;
 use crate::game::station::FuelStationPlugin;
+use crate::game::ui::GameUserInterfacePlugin;
 use bevy::prelude::*;
 
 pub mod live_data;
@@ -11,6 +12,7 @@ pub mod meteor;
 pub mod missile;
 pub mod spaceship;
 pub mod station;
+mod ui;
 
 pub struct GamePlugin;
 
@@ -22,6 +24,7 @@ impl Plugin for GamePlugin {
             MeteorPlugin,
             FuelStationPlugin,
             MissilePlugin,
+            GameUserInterfacePlugin,
         ));
     }
 }
