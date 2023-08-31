@@ -6,4 +6,13 @@ pub struct Missile {
     pub width: f32,
     pub fuel_cost: f32,
     pub disposable: bool,
+    pub location: Vec3,
 }
+#[derive(Component)]
+pub struct ExplosionAnimation {
+    pub first: usize,
+    pub last: usize,
+    pub disposable: bool,
+}
+#[derive(Component, Deref, DerefMut)]
+pub struct ExplosionAnimationTimer(pub Timer);

@@ -15,6 +15,8 @@ impl Plugin for MissilePlugin {
                 detect_collision_with_meteors,
                 claim_hitted,
                 check_outside_of_the_bounds,
+                animate_explosion_sprites,
+                despawn_explosions,
             )
                 .run_if(in_state(AppState::Game)),
         )

@@ -70,6 +70,7 @@ pub fn fire_missile(
                 width: 51.,
                 fuel_cost: 1.5,
                 disposable: false,
+                location: transform.translation,
             };
             commands.spawn((
                 SpriteBundle {

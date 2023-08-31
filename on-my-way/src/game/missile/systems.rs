@@ -1,6 +1,6 @@
 use crate::game::live_data::resources::LiveData;
 use crate::game::meteor::components::Meteor;
-use crate::game::missile::components::Missile;
+use crate::game::missile::components::*;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
@@ -39,6 +39,7 @@ pub fn detect_collision_with_meteors(
                 live_data.last_meteor_strength = meteor.strength;
                 info!("Meteorun gücü {}", meteor.current_hit_count);
                 missile.disposable = true;
+                missile.location = missile_transform.translation;
                 match meteor.current_hit_count {
                     0 => {
                         live_data.exploded_meteors_count += 1;
@@ -52,10 +53,35 @@ pub fn detect_collision_with_meteors(
     }
 }
 
-pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>) {
+pub fn claim_hitted(
+    mut commands: Commands,
+    mut query: Query<(Entity, &Missile)>,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
     for (entity, missile) in query.iter_mut() {
         if missile.disposable {
             commands.entity(entity).despawn();
+
+            let texture_handle = asset_server.load("sprites/explosion.png");
+            let texture_atlas =
+                TextureAtlas::from_grid(texture_handle, Vec2::new(60., 52.), 8, 1, None, None);
+            let texture_atlas_handle = texture_atlases.add(texture_atlas);
+            let animation_indices = ExplosionAnimation {
+                first: 0,
+                last: 7,
+                disposable: false,
+            };
+            commands.spawn((
+                SpriteSheetBundle {
+                    texture_atlas: texture_atlas_handle,
+                    sprite: TextureAtlasSprite::new(animation_indices.first),
+                    transform: Transform::from_translation(missile.location),
+                    ..default()
+                },
+                animation_indices,
+                ExplosionAnimationTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
+            ));
         }
     }
 }
@@ -63,5 +89,36 @@ pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>
 pub fn despawn_missiles(mut commands: Commands, query: Query<Entity, With<Missile>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
+    }
+}
+
+pub fn animate_explosion_sprites(
+    time: Res<Time>,
+    mut query: Query<(
+        &mut ExplosionAnimation,
+        &mut ExplosionAnimationTimer,
+        &mut TextureAtlasSprite,
+    )>,
+) {
+    for (mut indices, mut timer, mut sprite) in &mut query {
+        timer.tick(time.delta());
+        if timer.just_finished() {
+            if sprite.index < indices.last {
+                sprite.index += 1;
+            } else {
+                indices.disposable = true;
+            }
+        }
+    }
+}
+
+pub fn despawn_explosions(
+    mut commands: Commands,
+    query: Query<(Entity, &ExplosionAnimation)>,
+) {
+    for (entity, component) in query.iter() {
+        if component.disposable {
+            commands.entity(entity).despawn();
+        }
     }
 }
