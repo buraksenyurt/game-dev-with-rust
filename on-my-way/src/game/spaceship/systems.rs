@@ -85,6 +85,7 @@ pub fn fire_missile(
                     missile.clone(),
                 ));
                 live_data.spaceship_fuel_level -= missile.fuel_cost;
+                live_data.used_missile_count += 1;
             }
         }
     }

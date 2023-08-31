@@ -6,6 +6,7 @@ pub struct LiveData {
     pub missing_meteors_count: u32,
     pub exploded_meteors_count: u32,
     pub last_meteor_strength: u8,
+    pub used_missile_count: u8,
 }
 impl Default for LiveData {
     fn default() -> Self {
@@ -15,6 +16,7 @@ impl Default for LiveData {
             missing_meteors_count: 0,
             exploded_meteors_count: 0,
             last_meteor_strength: 0,
+            used_missile_count: 0,
         }
     }
 }

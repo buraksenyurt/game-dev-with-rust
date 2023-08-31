@@ -41,21 +41,18 @@ pub fn detect_collision_with_meteors(
                 missile.disposable = true;
                 if meteor.current_hit_count > 0 {
                     meteor.current_hit_count -= 1;
+                } else if meteor.current_hit_count == 0 {
+                    live_data.exploded_meteors_count += 1;
                 }
             }
         }
     }
 }
 
-pub fn claim_hitted(
-    mut commands: Commands,
-    mut query: Query<(Entity, &Missile)>,
-    mut live_data: ResMut<LiveData>,
-) {
+pub fn claim_hitted(mut commands: Commands, mut query: Query<(Entity, &Missile)>) {
     for (entity, missile) in query.iter_mut() {
         if missile.disposable {
             commands.entity(entity).despawn();
-            live_data.exploded_meteors_count += 1;
         }
     }
 }
