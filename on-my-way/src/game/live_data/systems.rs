@@ -5,12 +5,13 @@ pub fn prepare_live_data(mut commands: Commands) {
     commands.insert_resource(LiveData::default());
 }
 
+#[allow(dead_code)]
 pub fn remove_live_data(mut commands: Commands) {
     commands.remove_resource::<LiveData>();
 }
 
 pub fn update_live_data(live_data: ResMut<LiveData>) {
     if live_data.is_changed() {
-        info!("Ortam verileri değişti");
+        info!("{:?}", live_data);
     }
 }

@@ -43,7 +43,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         TextBundle {
                             text: Text {
                                 sections: vec![TextSection::new(
-                                    "Your Score was :",
+                                    "Your Score :",
                                     get_final_score_text_style(&asset_server),
                                 )],
                                 alignment: TextAlignment::Center,

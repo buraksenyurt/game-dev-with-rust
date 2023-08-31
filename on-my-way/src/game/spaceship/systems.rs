@@ -153,16 +153,14 @@ pub fn decrease_spaceship_fuel(
     if fuel_timer.timer.finished() {
         if live_data.spaceship_fuel_level < 10. {
             info!("Yakıt bitti. Oyun sona ermeli.");
-            game_over_event_writer.send(GameOverEvent { current_score: 1 });
+            game_over_event_writer.send(GameOverEvent {
+                current_score: live_data.exploded_meteors_count,
+            });
             if let Ok(spaceship) = spaceship_query.get_single() {
                 commands.entity(spaceship).despawn();
             }
         } else {
             live_data.spaceship_fuel_level -= 10.;
-            info!(
-                "Güncel yakıt seviyesi...{} galon.",
-                live_data.spaceship_fuel_level
-            );
         }
     }
 }

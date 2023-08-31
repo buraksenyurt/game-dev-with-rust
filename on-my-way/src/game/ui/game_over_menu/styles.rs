@@ -45,7 +45,7 @@ pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
 pub fn get_final_score_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     TextStyle {
         font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-        font_size: 48.,
+        font_size: 42.,
         color: Color::hex(DEFAULT_TEXT_COLOR).unwrap(),
     }
 }

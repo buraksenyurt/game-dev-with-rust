@@ -99,10 +99,6 @@ pub fn check_outside_of_the_bounds(
             commands.entity(entity).despawn();
             live_data.current_meteor_count -= 1;
             live_data.missing_meteors_count += 1;
-            info!(
-                "Vurulamayan meteor sayısı {}",
-                live_data.missing_meteors_count
-            );
         }
     }
 }

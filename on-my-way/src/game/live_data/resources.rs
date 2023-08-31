@@ -1,5 +1,5 @@
 use super::*;
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct LiveData {
     pub current_meteor_count: u8,
     pub spaceship_fuel_level: f32,

@@ -1,10 +1,11 @@
-use crate::events::GameOverEvent;
 use crate::game::live_data::LiveDataPlugin;
 use crate::game::meteor::MeteorPlugin;
 use crate::game::missile::MissilePlugin;
 use crate::game::spaceship::SpaceshipPlugin;
 use crate::game::station::FuelStationPlugin;
 use crate::game::ui::GameUserInterfacePlugin;
+use crate::systems::spawn_stars;
+use crate::AppState;
 use bevy::prelude::*;
 
 pub mod live_data;
@@ -18,13 +19,14 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<GameOverEvent>().add_plugins((
-            SpaceshipPlugin,
-            LiveDataPlugin,
-            MeteorPlugin,
-            FuelStationPlugin,
-            MissilePlugin,
-            GameUserInterfacePlugin,
-        ));
+        app.add_systems(OnEnter(AppState::Game), spawn_stars)
+            .add_plugins((
+                SpaceshipPlugin,
+                LiveDataPlugin,
+                MeteorPlugin,
+                FuelStationPlugin,
+                MissilePlugin,
+                GameUserInterfacePlugin,
+            ));
     }
 }

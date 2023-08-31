@@ -1,5 +1,5 @@
 use crate::game::live_data::resources::LiveData;
-use crate::game::live_data::systems::{prepare_live_data, remove_live_data, update_live_data};
+use crate::game::live_data::systems::*;
 use crate::AppState;
 use bevy::app::App;
 use bevy::prelude::*;
@@ -15,6 +15,7 @@ impl Plugin for LiveDataPlugin {
         app.init_resource::<LiveData>()
             .add_systems(OnEnter(AppState::Game), prepare_live_data)
             .add_systems(Update, update_live_data.run_if(in_state(AppState::Game)))
-            .add_systems(OnExit(AppState::Game), remove_live_data);
+            //.add_systems(OnExit(AppState::Game), remove_live_data)
+        ;
     }
 }
