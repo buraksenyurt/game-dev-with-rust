@@ -17,25 +17,19 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
         .spawn((
             NodeBundle {
                 style: MAIN_MENU_STYLE,
-                background_color: BackgroundColor::from(
-                    Color::hex(DEFAULT_BACKGROUND_COLOR).unwrap(),
-                ),
+                z_index: ZIndex::Local(2),
                 ..default()
             },
             MainMenu {},
         ))
         .with_children(|parent| {
             parent
-                .spawn(NodeBundle {
-                    style: TITLE_STYLE,
+                .spawn(ImageBundle {
+                    style: MAIN_MENU_CONTAINER_STYLE,
+                    image: asset_server.load("sprites/main_background.png").into(),
                     ..default()
                 })
                 .with_children(|parent| {
-                    parent.spawn(ImageBundle {
-                        style: IMAGE_STYLE,
-                        image: asset_server.load("sprites/spaceShips_001.png").into(),
-                        ..default()
-                    });
 
                     parent.spawn(TextBundle {
                         text: Text {
@@ -49,62 +43,55 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         ..default()
                     });
 
-                    parent.spawn(ImageBundle {
-                        style: IMAGE_STYLE,
-                        image: asset_server.load("sprites/spaceMeteors_002.png").into(),
-                        ..default()
-                    });
-                });
+                    parent
+                        .spawn((
+                            ButtonBundle {
+                                style: BUTTON_STYLE,
+                                background_color: BackgroundColor::from(
+                                    Color::hex(DEFAULT_BUTTON_COLOR).unwrap(),
+                                ),
+                                ..default()
+                            },
+                            PlayButton {},
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn(TextBundle {
+                                text: Text {
+                                    sections: vec![TextSection::new(
+                                        "Play (Press F5)",
+                                        get_button_text_style(asset_server),
+                                    )],
+                                    alignment: TextAlignment::Center,
+                                    ..default()
+                                },
+                                ..default()
+                            });
+                        });
 
-            parent
-                .spawn((
-                    ButtonBundle {
-                        style: BUTTON_STYLE,
-                        background_color: BackgroundColor::from(
-                            Color::hex(DEFAULT_BUTTON_COLOR).unwrap(),
-                        ),
-                        ..default()
-                    },
-                    PlayButton {},
-                ))
-                .with_children(|parent| {
-                    parent.spawn(TextBundle {
-                        text: Text {
-                            sections: vec![TextSection::new(
-                                "Play (Press F5)",
-                                get_button_text_style(asset_server),
-                            )],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
-                });
-        })
-        .with_children(|parent| {
-            parent
-                .spawn((
-                    ButtonBundle {
-                        style: BUTTON_STYLE,
-                        background_color: BackgroundColor::from(
-                            Color::hex(DEFAULT_BUTTON_COLOR).unwrap(),
-                        ),
-                        ..default()
-                    },
-                    QuitButton {},
-                ))
-                .with_children(|parent| {
-                    parent.spawn(TextBundle {
-                        text: Text {
-                            sections: vec![TextSection::new(
-                                "Quit Game (Press Esc)",
-                                get_button_text_style(asset_server),
-                            )],
-                            alignment: TextAlignment::Center,
-                            ..default()
-                        },
-                        ..default()
-                    });
+                    parent
+                        .spawn((
+                            ButtonBundle {
+                                style: BUTTON_STYLE,
+                                background_color: BackgroundColor::from(
+                                    Color::hex(DEFAULT_BUTTON_COLOR).unwrap(),
+                                ),
+                                ..default()
+                            },
+                            QuitButton {},
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn(TextBundle {
+                                text: Text {
+                                    sections: vec![TextSection::new(
+                                        "Quit Game (Press Esc)",
+                                        get_button_text_style(asset_server),
+                                    )],
+                                    alignment: TextAlignment::Center,
+                                    ..default()
+                                },
+                                ..default()
+                            });
+                        });
                 });
         })
         .id();

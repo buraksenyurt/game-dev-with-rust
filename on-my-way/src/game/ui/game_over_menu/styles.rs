@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-pub const DEFAULT_BUTTON_COLOR: &str = "#ff3322";
-pub const DEFAULT_BACKGROUND_COLOR: &str = "#38761d";
+pub const DEFAULT_BUTTON_COLOR: &str = "#b93c28";
+pub const DEFAULT_BACKGROUND_COLOR: &str = "#f0824d";
 pub const DEFAULT_TEXT_COLOR: &str = "#f4cccc";
 pub const GAME_OVER_MENU_STYLE: Style = {
     let mut style = Style::DEFAULT;
