@@ -38,7 +38,6 @@ pub fn get_button_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
         font: asset_server.load("fonts/FiraMono-Medium.ttf"),
         font_size: 32.,
         color: Color::hex(DEFAULT_TEXT_COLOR).unwrap(),
-        ..default()
     }
 }
 
@@ -47,6 +46,5 @@ pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
         font: asset_server.load("fonts/FiraMono-Medium.ttf"),
         font_size: 64.,
         color: Color::hex(DEFAULT_TEXT_COLOR).unwrap(),
-        ..default()
     }
 }

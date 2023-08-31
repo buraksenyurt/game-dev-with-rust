@@ -29,11 +29,9 @@ pub fn change_to_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     mut app_state: ResMut<NextState<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::F5) {
-        if app_state.0 != Option::from(AppState::Game) {
-            app_state.set(AppState::Game);
-            info!("'Game' modunda geçildi...");
-        }
+    if keyboard_input.just_pressed(KeyCode::F5) && app_state.0 != Option::from(AppState::Game) {
+        app_state.set(AppState::Game);
+        info!("'Game' modunda geçildi...");
     }
 }
 
@@ -41,11 +39,9 @@ pub fn change_to_main_menu(
     keyboard_input: Res<Input<KeyCode>>,
     mut app_state: ResMut<NextState<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::F2) {
-        if app_state.0 != Option::from(AppState::MainMenu) {
-            app_state.set(AppState::MainMenu);
-            info!("'Main Menu' moduna geçildi...");
-        }
+    if keyboard_input.just_pressed(KeyCode::F2) && app_state.0 != Option::from(AppState::MainMenu) {
+        app_state.set(AppState::MainMenu);
+        info!("'Main Menu' moduna geçildi...");
     }
 }
 

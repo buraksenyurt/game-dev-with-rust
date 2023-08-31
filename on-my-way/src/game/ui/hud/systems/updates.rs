@@ -10,8 +10,7 @@ pub fn update_score_text(
         for mut text in text_query.iter_mut() {
             text.sections[0].value = format!(
                 "{}/{}",
-                live_data.exploded_meteors_count.to_string(),
-                live_data.missing_meteors_count.to_string()
+                live_data.exploded_meteors_count, live_data.missing_meteors_count
             );
         }
     }
@@ -22,8 +21,7 @@ pub fn update_last_meteor_strength_text(
 ) {
     if live_data.is_changed() {
         for mut text in text_query.iter_mut() {
-            text.sections[0].value =
-                format!("Strength : {}", live_data.last_meteor_strength.to_string());
+            text.sections[0].value = format!("Strength : {}", live_data.last_meteor_strength);
         }
     }
 }
@@ -34,7 +32,7 @@ pub fn update_fuel_level_text(
 ) {
     if live_data.is_changed() {
         for mut text in text_query.iter_mut() {
-            text.sections[0].value = format!("{}", live_data.spaceship_fuel_level.to_string());
+            text.sections[0].value = live_data.spaceship_fuel_level.to_string();
         }
     }
 }

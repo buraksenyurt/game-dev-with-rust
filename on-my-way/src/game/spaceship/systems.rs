@@ -62,31 +62,29 @@ pub fn fire_missile(
     launch_timer: Res<MissileLaunchCheckTimer>,
     mut live_data: ResMut<LiveData>,
 ) {
-    if keyboard_input.pressed(KeyCode::S) {
-        if launch_timer.timer.finished() {
-            if let Ok(transform) = query.get_single_mut() {
-                let missile = Missile {
-                    direction: Vec2::new(1., 0.),
-                    speed: MISSILE_003_SPEED,
-                    width: 51.,
-                    fuel_cost: 1.5,
-                    disposable: false,
-                };
-                commands.spawn((
-                    SpriteBundle {
-                        transform: Transform::from_xyz(
-                            transform.translation.x,
-                            transform.translation.y,
-                            0.,
-                        ),
-                        texture: asset_server.load("sprites/spaceMissiles_003.png"),
-                        ..default()
-                    },
-                    missile.clone(),
-                ));
-                live_data.spaceship_fuel_level -= missile.fuel_cost;
-                live_data.used_missile_count += 1;
-            }
+    if keyboard_input.pressed(KeyCode::S) && launch_timer.timer.finished() {
+        if let Ok(transform) = query.get_single_mut() {
+            let missile = Missile {
+                direction: Vec2::new(1., 0.),
+                speed: MISSILE_003_SPEED,
+                width: 51.,
+                fuel_cost: 1.5,
+                disposable: false,
+            };
+            commands.spawn((
+                SpriteBundle {
+                    transform: Transform::from_xyz(
+                        transform.translation.x,
+                        transform.translation.y,
+                        0.,
+                    ),
+                    texture: asset_server.load("sprites/spaceMissiles_003.png"),
+                    ..default()
+                },
+                missile.clone(),
+            ));
+            live_data.spaceship_fuel_level -= missile.fuel_cost;
+            live_data.used_missile_count += 1;
         }
     }
 }

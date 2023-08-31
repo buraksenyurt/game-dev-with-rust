@@ -33,10 +33,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                         TextBundle {
                             style: Style { ..default() },
                             text: Text {
-                                sections: vec![TextSection::new(
-                                    "0",
-                                    get_text_style(&asset_server),
-                                )],
+                                sections: vec![TextSection::new("0", get_text_style(asset_server))],
                                 alignment: TextAlignment::Center,
                                 ..default()
                             },
@@ -62,10 +59,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                         TextBundle {
                             style: Style { ..default() },
                             text: Text {
-                                sections: vec![TextSection::new(
-                                    "0",
-                                    get_text_style(&asset_server),
-                                )],
+                                sections: vec![TextSection::new("0", get_text_style(asset_server))],
                                 alignment: TextAlignment::Center,
                                 ..default()
                             },
@@ -92,10 +86,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                         TextBundle {
                             style: Style { ..default() },
                             text: Text {
-                                sections: vec![TextSection::new(
-                                    "0",
-                                    get_text_style(&asset_server),
-                                )],
+                                sections: vec![TextSection::new("0", get_text_style(asset_server))],
                                 alignment: TextAlignment::Center,
                                 ..default()
                             },

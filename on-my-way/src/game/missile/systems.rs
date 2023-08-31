@@ -39,10 +39,13 @@ pub fn detect_collision_with_meteors(
                 live_data.last_meteor_strength = meteor.strength;
                 info!("Meteorun gücü {}", meteor.current_hit_count);
                 missile.disposable = true;
-                if meteor.current_hit_count > 0 {
-                    meteor.current_hit_count -= 1;
-                } else if meteor.current_hit_count == 0 {
-                    live_data.exploded_meteors_count += 1;
+                match meteor.current_hit_count {
+                    0 => {
+                        live_data.exploded_meteors_count += 1;
+                    }
+                    _ => {
+                        meteor.current_hit_count -= 1;
+                    }
                 }
             }
         }

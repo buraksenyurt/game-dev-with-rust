@@ -29,7 +29,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Game Over",
-                                get_title_text_style(&asset_server),
+                                get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -41,7 +41,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         text: Text {
                             sections: vec![TextSection::new(
                                 "",
-                                get_title_text_style(&asset_server),
+                                get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -53,7 +53,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         text: Text {
                             sections: vec![TextSection::new(
                                 "",
-                                get_title_text_style(&asset_server),
+                                get_title_text_style(asset_server),
                             )],
                             alignment: TextAlignment::Center,
                             ..default()
@@ -66,7 +66,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                             text: Text {
                                 sections: vec![TextSection::new(
                                     "Your Score :",
-                                    get_final_score_text_style(&asset_server),
+                                    get_final_score_text_style(asset_server),
                                 )],
                                 alignment: TextAlignment::Center,
                                 ..default()
@@ -93,7 +93,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Restart (F5)",
-                                        get_button_text_style(&asset_server),
+                                        get_button_text_style(asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
@@ -119,7 +119,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Main Menu (F2)",
-                                        get_button_text_style(&asset_server),
+                                        get_button_text_style(asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
@@ -145,7 +145,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                                 text: Text {
                                     sections: vec![TextSection::new(
                                         "Quit (ESC)",
-                                        get_button_text_style(&asset_server),
+                                        get_button_text_style(asset_server),
                                     )],
                                     alignment: TextAlignment::Center,
                                     ..default()
