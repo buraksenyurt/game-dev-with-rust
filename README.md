@@ -4,7 +4,7 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 
 Not! Tamamlayamadığım projeleri kendime ibretlik olsun diye garbage isimli klasöre bıraktım.
 
-- [ ] **[27 - on-my-way](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/on-my-way)** Bevy oyun motorunu kullanarak yazmaya çalıştığım bir uzay savaş oyunu. Kendi yolunda uzayı keşfe çıkmış kahraman pilotumuz karşısına çıkan meteorları yok etmeye çalışıyor. Füzeleri pahalı ve yakıttan yiyor ve yakıt sürekli azalıyor. Lakin yol boyunca insanlığın gezegenler arasına koyduğu otonomo yakıt istasyonları ile de karşılaşıyor. Onların üstünden geçerken belli süreliğine yakıtını tekrarda yenileyebiliyor. Ve macera bu şekilde gayet anlamsızca devam ediyor :D Maksat Rust kodlamak, Bevy ve ECS ile haşırneşir olmak.
+- [x] **[27 - on-my-way](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/on-my-way)** Bevy oyun motorunu kullanarak yazmaya çalıştığım bir uzay savaş oyunu. Kendi yolunda uzayı keşfe çıkmış kahraman pilotumuz karşısına çıkan meteorları yok etmeye çalışıyor. Füzeleri pahalı ve yakıttan yiyor ve yakıt sürekli azalıyor. Lakin yol boyunca insanlığın gezegenler arasına koyduğu otonomo yakıt istasyonları ile de karşılaşıyor. Onların üstünden geçerken belli süreliğine yakıtını tekrarda yenileyebiliyor. Ve macera bu şekilde gayet anlamsızca devam ediyor :D Maksat Rust kodlamak, Bevy ve ECS ile haşırneşir olmak.
 - [x] **[26 - baller-game](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/baller-game)** Bu çalışmada Fredericj Joubert'in Bevy ECS sistemini örnek bir oyun yazarak anlattığı [video serisini](https://www.youtube.com/playlist?list=PLVnntJRoP85JHGX7rGDu6LaF3fmDDbqyd) uyguluyorum.
 - [x] **[25 - learning-bevy-ecs](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/learning-bevy-ecs)** Bevy ECS sistemindeki query kullanımını denediğim basit örnek.
 - [x] **[24 - mini-quiz](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/mini-quiz)** Bu basit terminal oyununda kullanıcıya bir test havuzundan karışık sorular sorulmakta. Esasında Rust ile programlamaya giriş konusunda tasarladığım örneklerden birisi. Hem eğlenceli hem de bir şeyler öğretir türden.
@@ -35,6 +35,10 @@ Not! Tamamlayamadığım projeleri kendime ibretlik olsun diye garbage isimli kl
   - [ ] **[18 - mazes:](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/garbage/mazes)** Jamis Buck'ın [Mazes for Programmers](http://www.mazesforprogrammers.com/) isimli kitabının ilk bölümünde başlayan Binary Tree algoritmasına göre labirent oluşturma ve çözüm için Dijkstra algoritmasının uygulanmasını ele aldığım örnek. Kitap konuyu Ruby ile ele almış ben Rust'a evirmeye çalışıyorum.
 
 ## Örnek Çalışma Zamanları
+
+Bevy ile yazdığım On My Way isimli oyuna ait bir ekran görüntüsü. Oyunda Mars'a ulaşmak isteyen kahraman uzay gemimiz yoluna çıkan göktaşlarını yok etmeye uğraşıyor.
+
+![assets/on-my-way.gif](assets/on-my-way.gif)
 
 racer-ferris olarak adlandırdığım ama esasında boşluktaki bataryaları toplayan bir robotun yer aldığı örneğin çalışma zamanı. Wagner ile birlikte :D
 
