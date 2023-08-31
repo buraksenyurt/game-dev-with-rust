@@ -19,11 +19,9 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
         ))
         .with_children(|parent| {
             parent
-                .spawn(NodeBundle {
+                .spawn(ImageBundle {
                     style: GAME_OVER_MENU_CONTAINER_STYLE,
-                    background_color: BackgroundColor::from(
-                        Color::hex(DEFAULT_BACKGROUND_COLOR).unwrap(),
-                    ),
+                    image: asset_server.load("sprites/game_over_background.png").into(),
                     ..default()
                 })
                 .with_children(|parent| {
@@ -31,6 +29,30 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                         text: Text {
                             sections: vec![TextSection::new(
                                 "Game Over",
+                                get_title_text_style(&asset_server),
+                            )],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+
+                    parent.spawn(TextBundle {
+                        text: Text {
+                            sections: vec![TextSection::new(
+                                "",
+                                get_title_text_style(&asset_server),
+                            )],
+                            alignment: TextAlignment::Center,
+                            ..default()
+                        },
+                        ..default()
+                    });
+
+                    parent.spawn(TextBundle {
+                        text: Text {
+                            sections: vec![TextSection::new(
+                                "",
                                 get_title_text_style(&asset_server),
                             )],
                             alignment: TextAlignment::Center,

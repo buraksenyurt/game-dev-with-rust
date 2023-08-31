@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 pub const DEFAULT_BUTTON_COLOR: &str = "#b93c28";
-pub const DEFAULT_BACKGROUND_COLOR: &str = "#f0824d";
 pub const DEFAULT_TEXT_COLOR: &str = "#f4cccc";
 pub const GAME_OVER_MENU_STYLE: Style = {
     let mut style = Style::DEFAULT;
@@ -20,15 +19,15 @@ pub const GAME_OVER_MENU_CONTAINER_STYLE: Style = {
     style.align_items = AlignItems::Center;
     style.width = Val::Px(600.);
     style.height = Val::Px(600.);
-    style.row_gap = Val::Px(8.);
-    style.column_gap = Val::Px(8.);
+    style.row_gap = Val::Px(24.);
+    style.column_gap = Val::Px(24.);
     style
 };
 
 pub const BUTTON_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.width = Val::Px(400.);
-    style.height = Val::Px(80.);
+    style.height = Val::Px(60.);
     style.justify_content = JustifyContent::Center;
     style.align_items = AlignItems::Center;
     style
