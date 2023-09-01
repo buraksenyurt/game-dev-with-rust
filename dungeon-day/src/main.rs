@@ -1,11 +1,14 @@
 use crate::asset::AssetPlugin;
+use crate::board::BoardPlugin;
 use crate::globals::{WIN_HEIGHT, WIN_WIDTH};
 use crate::states::AppState;
 use bevy::prelude::*;
 
 mod asset;
+mod board;
 mod globals;
 mod states;
+mod utility;
 
 fn main() {
     App::new()
@@ -22,6 +25,6 @@ fn main() {
         )
         .insert_resource(Msaa::Off)
         .add_state::<AppState>()
-        .add_plugins(AssetPlugin)
+        .add_plugins((AssetPlugin, BoardPlugin))
         .run()
 }
