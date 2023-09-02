@@ -3,8 +3,8 @@ use crate::board::systems::spawn_board_map;
 use crate::states::AppState;
 use bevy::prelude::*;
 
-mod components;
-mod resources;
+pub mod components;
+pub mod resources;
 mod systems;
 
 pub struct BoardPlugin;
