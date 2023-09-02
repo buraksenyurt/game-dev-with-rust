@@ -2,6 +2,7 @@ use crate::asset::AssetPlugin;
 use crate::board::BoardPlugin;
 use crate::globals::*;
 use crate::graphics::GraphicsPlugin;
+use crate::player::PlayerPlugin;
 use crate::states::AppState;
 use crate::systems::*;
 use bevy::prelude::*;
@@ -10,6 +11,8 @@ mod asset;
 mod board;
 mod globals;
 mod graphics;
+mod parts;
+mod player;
 mod states;
 mod systems;
 mod utility;
@@ -29,7 +32,7 @@ fn main() {
         )
         .insert_resource(Msaa::Off)
         .add_state::<AppState>()
-        .add_plugins((AssetPlugin, BoardPlugin, GraphicsPlugin))
+        .add_plugins((AssetPlugin, BoardPlugin, GraphicsPlugin, PlayerPlugin))
         .add_systems(Startup, setup_camera)
         .run()
 }

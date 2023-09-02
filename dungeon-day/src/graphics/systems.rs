@@ -1,6 +1,8 @@
 use crate::asset::resources::*;
 use crate::board::components::*;
 use crate::graphics::resources::*;
+use crate::parts::components::Part;
+use crate::utility::get_world_position;
 use bevy::prelude::*;
 
 pub fn load_assets(
@@ -25,11 +27,31 @@ pub fn spawn_tiles(
         let mut sprite = TextureAtlasSprite::new(80);
         sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
         //sprite.color = Color::rgb_u8(61, 133, 198);
-        let v = Vec3::new(
-            TILE_SIZE * position.value.x as f32,
-            TILE_SIZE * position.value.y as f32,
-            0.,
-        );
+        let v = get_world_position(&position, TILE_Z);
+        commands.entity(entity).insert(SpriteSheetBundle {
+            sprite,
+            texture_atlas: assets.texture.clone(),
+            transform: Transform::from_translation(v),
+            ..Default::default()
+        });
+    }
+}
+
+pub fn spawn_part(
+    mut commands: Commands,
+    query: Query<(Entity, &Position, &Part), Added<Part>>,
+    assets: Res<GraphicsAssets>,
+) {
+    for (entity, position, part) in query.iter() {
+        info!("Index alınacak");
+        let sprite_idx = match part.kind.as_str() {
+            "Prince of Persia" => 72,
+            _ => 1,
+        };
+        info!("Sprite index {}", sprite_idx);
+        let mut sprite = TextureAtlasSprite::new(sprite_idx);
+        sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
+        let v = get_world_position(&position, PART_Z);
         commands.entity(entity).insert(SpriteSheetBundle {
             sprite,
             texture_atlas: assets.texture.clone(),
