@@ -1,6 +1,7 @@
 use crate::board::components::Position;
 use crate::graphics::resources::TILE_SIZE;
 use bevy::prelude::Vec3;
+use std::ops::{Add, AddAssign};
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug, Default)]
 pub struct Location {
@@ -14,6 +15,22 @@ impl Location {
     pub const RIGHT: Location = Location { x: 1, y: 0 };
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
+    }
+}
+
+impl Add for Location {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        return Location::new(self.x + other.x, self.y + other.y);
+    }
+}
+
+impl AddAssign for Location {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        };
     }
 }
 

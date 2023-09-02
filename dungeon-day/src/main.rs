@@ -2,6 +2,7 @@ use crate::asset::AssetPlugin;
 use crate::board::BoardPlugin;
 use crate::globals::*;
 use crate::graphics::GraphicsPlugin;
+use crate::input::InputPlugin;
 use crate::player::PlayerPlugin;
 use crate::states::AppState;
 use crate::systems::*;
@@ -11,6 +12,7 @@ mod asset;
 mod board;
 mod globals;
 mod graphics;
+mod input;
 mod parts;
 mod player;
 mod states;
@@ -32,7 +34,13 @@ fn main() {
         )
         .insert_resource(Msaa::Off)
         .add_state::<AppState>()
-        .add_plugins((AssetPlugin, BoardPlugin, GraphicsPlugin, PlayerPlugin))
+        .add_plugins((
+            AssetPlugin,
+            BoardPlugin,
+            GraphicsPlugin,
+            PlayerPlugin,
+            InputPlugin,
+        ))
         .add_systems(Startup, setup_camera)
         .run()
 }

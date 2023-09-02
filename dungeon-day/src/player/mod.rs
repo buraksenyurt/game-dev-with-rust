@@ -2,7 +2,7 @@ use crate::player::systems::spawn_player;
 use crate::states::AppState;
 use bevy::prelude::*;
 
-mod components;
+pub mod components;
 mod systems;
 
 pub struct PlayerPlugin;

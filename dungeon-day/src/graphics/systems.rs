@@ -43,12 +43,11 @@ pub fn spawn_part(
     assets: Res<GraphicsAssets>,
 ) {
     for (entity, position, part) in query.iter() {
-        info!("Index alınacak");
         let sprite_idx = match part.kind.as_str() {
             "Prince of Persia" => 72,
             _ => 1,
         };
-        info!("Sprite index {}", sprite_idx);
+        //info!("Sprite index {}", sprite_idx);
         let mut sprite = TextureAtlasSprite::new(sprite_idx);
         sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
         let v = get_world_position(&position, PART_Z);
@@ -58,5 +57,22 @@ pub fn spawn_part(
             transform: Transform::from_translation(v),
             ..Default::default()
         });
+    }
+}
+
+pub fn update_part_position(
+    mut query: Query<(&Position, &mut Transform), With<Part>>,
+    time: Res<Time>,
+) {
+    for (position, mut transform) in query.iter_mut() {
+        let target = get_world_position(&position, PART_Z);
+        let distance = (target - transform.translation).length();
+        if distance > POSITION_TOLERANCE {
+            transform.translation = transform
+                .translation
+                .lerp(target, PART_SPEED * time.delta_seconds());
+        } else {
+            transform.translation = target;
+        }
     }
 }

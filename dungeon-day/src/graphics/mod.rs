@@ -9,6 +9,6 @@ pub struct GraphicsPlugin;
 impl Plugin for GraphicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, load_assets)
-            .add_systems(Update, (spawn_part, spawn_tiles));
+            .add_systems(Update, (spawn_part, spawn_tiles, update_part_position));
     }
 }
