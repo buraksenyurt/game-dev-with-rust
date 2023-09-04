@@ -1,3 +1,4 @@
+use crate::action::ActionsPlugin;
 use crate::asset::AssetPlugin;
 use crate::board::BoardPlugin;
 use crate::globals::*;
@@ -8,6 +9,7 @@ use crate::states::AppState;
 use crate::systems::*;
 use bevy::prelude::*;
 
+mod action;
 mod asset;
 mod board;
 mod globals;
@@ -40,6 +42,7 @@ fn main() {
             GraphicsPlugin,
             PlayerPlugin,
             InputPlugin,
+            ActionsPlugin,
         ))
         .add_systems(Startup, setup_camera)
         .run()
