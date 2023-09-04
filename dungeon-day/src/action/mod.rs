@@ -1,5 +1,5 @@
-mod events;
-mod models;
+pub mod events;
+pub mod models;
 mod systems;
 
 use crate::action::events::*;

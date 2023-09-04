@@ -4,8 +4,9 @@ use crate::board::BoardPlugin;
 use crate::globals::*;
 use crate::graphics::GraphicsPlugin;
 use crate::input::InputPlugin;
+use crate::manager::ManagerPlugin;
 use crate::player::PlayerPlugin;
-use crate::states::AppState;
+use crate::states::{AppState, GameState};
 use crate::systems::*;
 use bevy::prelude::*;
 
@@ -15,6 +16,7 @@ mod board;
 mod globals;
 mod graphics;
 mod input;
+mod manager;
 mod parts;
 mod player;
 mod states;
@@ -36,6 +38,7 @@ fn main() {
         )
         .insert_resource(Msaa::Off)
         .add_state::<AppState>()
+        .add_state::<GameState>()
         .add_plugins((
             AssetPlugin,
             BoardPlugin,
@@ -43,6 +46,7 @@ fn main() {
             PlayerPlugin,
             InputPlugin,
             ActionsPlugin,
+            ManagerPlugin,
         ))
         .add_systems(Startup, setup_camera)
         .run()

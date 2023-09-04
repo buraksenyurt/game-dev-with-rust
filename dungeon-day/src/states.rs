@@ -6,3 +6,11 @@ pub enum AppState {
     LoadAssets,
     Game,
 }
+
+#[derive(Clone, Debug, Default, Hash, Eq, States, PartialEq, SystemSet)]
+pub enum GameState {
+    #[default]
+    None,
+    PlayerInput,
+    TurnUpdate,
+}

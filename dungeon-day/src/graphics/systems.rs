@@ -45,6 +45,8 @@ pub fn spawn_part(
     for (entity, position, part) in query.iter() {
         let sprite_idx = match part.kind.as_str() {
             "Prince of Persia" => 72,
+            // "Wall" => 80,
+            // "Grass" => 82,
             _ => 1,
         };
         //info!("Sprite index {}", sprite_idx);
@@ -63,7 +65,9 @@ pub fn spawn_part(
 pub fn update_part_position(
     mut query: Query<(&Position, &mut Transform), With<Part>>,
     time: Res<Time>,
+    mut ev_wait: EventWriter<super::GraphicsWaitEvent>,
 ) {
+    let mut animating = false;
     for (position, mut transform) in query.iter_mut() {
         let target = get_world_position(&position, PART_Z);
         let distance = (target - transform.translation).length();
@@ -74,5 +78,8 @@ pub fn update_part_position(
         } else {
             transform.translation = target;
         }
+    }
+    if animating {
+        ev_wait.send(super::GraphicsWaitEvent);
     }
 }
