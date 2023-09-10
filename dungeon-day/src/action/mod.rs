@@ -3,7 +3,8 @@ pub mod models;
 mod systems;
 
 use crate::action::events::*;
-use crate::action::systems::execute_actions;
+use crate::action::systems::{execute_actions, populate_actor_queue, prepare_walk};
+use crate::states::GameState;
 use bevy::prelude::*;
 use std::collections::VecDeque;
 
@@ -23,6 +24,13 @@ impl Plugin for ActionsPlugin {
             .add_event::<NextActorEvent>()
             .add_event::<ActionsCompleteEvent>()
             .add_event::<InvalidPlayerActionEvent>()
-            .add_systems(Update, execute_actions.run_if(on_event::<TickEvent>()));
+            .add_systems(
+                Update,
+                (
+                    execute_actions.run_if(on_event::<TickEvent>()),
+                    prepare_walk.run_if(on_event::<NextActorEvent>()),
+                ),
+            )
+            .add_systems(OnExit(GameState::PlayerInput), populate_actor_queue);
     }
 }

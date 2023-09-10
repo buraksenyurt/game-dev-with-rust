@@ -1,6 +1,6 @@
 use crate::board::components::{Position, Tile};
 use crate::board::resources::ActiveBoard;
-use crate::parts::components::Part;
+//use crate::parts::components::Part;
 use crate::utility::Location;
 use bevy::prelude::*;
 use std::collections::HashMap;

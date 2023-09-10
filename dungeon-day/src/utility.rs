@@ -41,3 +41,10 @@ pub fn get_world_position(position: &Position, z: f32) -> Vec3 {
         z,
     )
 }
+
+pub const ORTHO_DIRECTIONS: [Location; 4] = [
+    Location::UP,
+    Location::DOWN,
+    Location::LEFT,
+    Location::RIGHT,
+];

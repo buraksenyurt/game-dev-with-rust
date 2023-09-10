@@ -5,6 +5,7 @@ use crate::globals::*;
 use crate::graphics::GraphicsPlugin;
 use crate::input::InputPlugin;
 use crate::manager::ManagerPlugin;
+use crate::parts::PartsPlugin;
 use crate::player::PlayerPlugin;
 use crate::states::{AppState, GameState};
 use crate::systems::*;
@@ -47,6 +48,7 @@ fn main() {
             InputPlugin,
             ActionsPlugin,
             ManagerPlugin,
+            PartsPlugin,
         ))
         .add_systems(Startup, setup_camera)
         .run()

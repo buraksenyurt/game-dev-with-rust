@@ -8,3 +8,6 @@ pub struct Part {
 
 #[derive(Component, Default)]
 pub struct Actor(pub Option<Box<dyn Action>>);
+
+#[derive(Component)]
+pub struct Walk;

@@ -45,6 +45,7 @@ pub fn spawn_part(
     for (entity, position, part) in query.iter() {
         let sprite_idx = match part.kind.as_str() {
             "Prince of Persia" => 72,
+            "NPC" => 68,
             // "Wall" => 80,
             // "Grass" => 82,
             _ => 1,
