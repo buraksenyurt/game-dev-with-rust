@@ -1,0 +1,9 @@
+[package]
+name = "boxes"
+version = "0.1.0"
+edition = "2021"
+description = "Bevy ile oyun geliştirme denemesi"
+authors = ["BSŞ"]
+
+[dependencies]
+bevy = "0.11.3"
