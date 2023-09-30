@@ -1,10 +1,12 @@
 mod board;
 mod components;
 mod globals;
+mod player;
 mod systems;
 
 use crate::board::BoardPlugin;
 use crate::globals::{WIN_HEIGHT, WIN_WIDTH};
+use crate::player::PlayerPlugin;
 use crate::systems::setup_camera;
 use bevy::prelude::*;
 
@@ -23,7 +25,7 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
-        .add_plugins(BoardPlugin)
+        .add_plugins((BoardPlugin, PlayerPlugin))
         .add_systems(Startup, setup_camera)
         .run();
 }
