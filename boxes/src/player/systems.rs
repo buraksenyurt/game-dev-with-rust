@@ -18,7 +18,6 @@ pub fn spawn_player(mut commands: Commands) {
 }
 
 pub fn move_player(
-    mut commands: Commands,
     keys: ResMut<Input<KeyCode>>,
     mut player_query: Query<(Entity, &mut Position), With<Player>>,
     board: Res<ActiveBoard>,

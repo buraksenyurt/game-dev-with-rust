@@ -29,7 +29,7 @@ pub fn get_world_position(position: &Position, z: f32) -> Vec3 {
 impl Add for Vector {
     type Output = Self;
     fn add(self, other: Self) -> Self {
-        return Vector::new(self.x + other.x, self.y + other.y);
+        Vector::new(self.x + other.x, self.y + other.y)
     }
 }
 

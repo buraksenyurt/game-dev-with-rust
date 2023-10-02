@@ -3,6 +3,7 @@ use crate::board::resources::*;
 use crate::components::{get_world_position, Vector};
 use crate::globals::*;
 use bevy::prelude::*;
+use bevy::reflect::Array;
 use std::collections::HashMap;
 
 pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
@@ -26,7 +27,7 @@ pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
     ];
 
     board.tiles = HashMap::new();
-    for row in 0..16 {
+    for (row, _column) in map.iter().enumerate() {
         for column in 0..16 {
             let tile_kind = match map[row][column] {
                 0 => TileKind::Grass,
@@ -73,7 +74,7 @@ pub fn spawn_parts(
         //info!("Sprite index {}", sprite_idx);
         let mut sprite = TextureAtlasSprite::new(sprite_idx);
         sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
-        let v = get_world_position(&position, PART_Z);
+        let v = get_world_position(position, TILE_Z);
         commands.entity(entity).insert(SpriteSheetBundle {
             sprite,
             texture_atlas: assets.texture.clone(),
@@ -88,7 +89,7 @@ pub fn update_part_position(
     time: Res<Time>,
 ) {
     for (position, mut transform) in query.iter_mut() {
-        let target = get_world_position(&position, PART_Z);
+        let target = get_world_position(position, TILE_Z);
         let d = (target - transform.translation).length();
         if d > POSITION_TOLERANCE {
             transform.translation = transform

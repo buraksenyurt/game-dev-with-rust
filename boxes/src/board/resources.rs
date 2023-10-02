@@ -1,4 +1,4 @@
-use crate::board::components::{Part, TileKind};
+use crate::board::components::*;
 use crate::components::Vector;
 use bevy::prelude::*;
 use std::collections::HashMap;
