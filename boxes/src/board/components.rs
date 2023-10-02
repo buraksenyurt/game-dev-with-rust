@@ -10,5 +10,14 @@ pub struct Tile;
 
 #[derive(Component)]
 pub struct Part {
-    pub kind: String,
+    pub kind: TileKind,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum TileKind {
+    Box,
+    Grass,
+    Player,
+    Wall,
+    Unknown,
 }

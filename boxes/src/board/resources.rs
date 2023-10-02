@@ -1,9 +1,11 @@
+use crate::board::components::{Part, TileKind};
 use crate::components::Vector;
 use bevy::prelude::*;
 use std::collections::HashMap;
+
 #[derive(Default, Resource)]
 pub struct ActiveBoard {
-    pub tiles: HashMap<Vector, Entity>,
+    pub tiles: HashMap<Vector, (Entity, TileKind)>,
 }
 
 #[derive(Resource)]

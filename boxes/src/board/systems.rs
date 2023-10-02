@@ -1,4 +1,4 @@
-use crate::board::components::{Part, Position, Tile};
+use crate::board::components::{Part, Position, Tile, TileKind};
 use crate::board::resources::*;
 use crate::components::{get_world_position, Vector};
 use crate::globals::*;
@@ -29,23 +29,17 @@ pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
     for row in 0..16 {
         for column in 0..16 {
             let tile_kind = match map[row][column] {
-                0 => "Grass",
-                1 => "Wall",
-                2 => "Box",
-                _ => "",
+                0 => TileKind::Grass,
+                1 => TileKind::Wall,
+                2 => TileKind::Box,
+                _ => TileKind::Unknown,
             };
 
             let value = Vector::new(row as i32, column as i32);
             let tile = commands
-                .spawn((
-                    Position { value },
-                    Part {
-                        kind: tile_kind.to_string(),
-                    },
-                    Tile,
-                ))
+                .spawn((Position { value }, Part { kind: tile_kind }, Tile))
                 .id();
-            board.tiles.insert(value, tile);
+            board.tiles.insert(value, (tile, tile_kind));
         }
     }
 }
@@ -69,11 +63,11 @@ pub fn spawn_parts(
     assets: Res<GraphicsAssets>,
 ) {
     for (entity, position, part) in query.iter() {
-        let sprite_idx = match part.kind.as_str() {
-            "Prince of Persia" => 72,
-            "Wall" => 80,
-            "Grass" => 82,
-            "Box" => 1,
+        let sprite_idx = match part.kind {
+            TileKind::Player => 72,
+            TileKind::Wall => 80,
+            TileKind::Grass => 82,
+            TileKind::Box => 1,
             _ => 0,
         };
         //info!("Sprite index {}", sprite_idx);
