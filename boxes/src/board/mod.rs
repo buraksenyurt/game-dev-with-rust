@@ -13,6 +13,6 @@ impl Plugin for BoardPlugin {
         app.init_resource::<AssetList>()
             .init_resource::<ActiveBoard>()
             .add_systems(Startup, (load_assets, load_board))
-            .add_systems(Update, spawn_parts);
+            .add_systems(Update, (spawn_parts, update_part_position));
     }
 }
