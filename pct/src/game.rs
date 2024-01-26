@@ -1,6 +1,7 @@
 use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ghost::Ghost;
 use crate::pacman::Pacman;
+use std::cmp::Ordering;
 use std::process::Command;
 
 pub struct Game;
@@ -34,19 +35,29 @@ impl Game {
     }
 
     pub fn move_to_player(pacman: &mut Pacman, ghost: &mut Ghost) {
-        ghost.x = if ghost.x > pacman.x {
-            ghost.x - 1
-        } else if ghost.x < pacman.x {
-            ghost.x + 1
+        let x_diff = if pacman.x > ghost.x {
+            pacman.x - ghost.x
         } else {
-            ghost.x
+            ghost.x - pacman.x
         };
-        ghost.y = if ghost.y > pacman.y {
-            ghost.y - 1
-        } else if ghost.y < pacman.y {
-            ghost.y + 1
+        let y_diff = if pacman.y > ghost.y {
+            pacman.y - ghost.y
         } else {
-            ghost.y
+            ghost.y - pacman.y
         };
+
+        if x_diff > y_diff {
+            if pacman.x > ghost.x {
+                ghost.x += 1;
+            } else if pacman.x < ghost.x {
+                ghost.x -= 1;
+            }
+        } else {
+            if pacman.y > ghost.y {
+                ghost.y += 1;
+            } else if pacman.y < ghost.y {
+                ghost.y -= 1;
+            }
+        }
     }
 }
