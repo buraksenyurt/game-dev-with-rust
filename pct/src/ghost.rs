@@ -1,5 +1,5 @@
 #[derive(Clone, Copy)]
-pub struct Pacman {
+pub struct Ghost {
     pub x: usize,
     pub y: usize,
 }

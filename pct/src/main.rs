@@ -1,13 +1,13 @@
 mod constants;
 mod game;
+mod ghost;
 mod pacman;
 
 use crate::constants::*;
 use crate::game::Game;
+use crate::ghost::Ghost;
 use crate::pacman::Pacman;
 use std::io::{self};
-use std::thread;
-use std::time::Duration;
 
 fn main() {
     let mut board = vec![vec!['.'; SCREEN_WIDTH]; SCREEN_HEIGHT];
@@ -15,12 +15,15 @@ fn main() {
         x: SCREEN_WIDTH / 2,
         y: SCREEN_HEIGHT / 2,
     };
-    board[pacman.y][pacman.x] = 'P'; //'\u{1F980}';
+    let mut ghost = Ghost {
+        x: SCREEN_WIDTH / 4,
+        y: SCREEN_HEIGHT / 4,
+    };
 
     loop {
-        Game::print_board(&board);
+        Game::print_board(&board, pacman, ghost);
 
-        println!("Hareket etmek için WASD: ");
+        println!("WASD: ");
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
         let input = input.trim().to_uppercase();
@@ -41,11 +44,12 @@ fn main() {
             _ => {}
         }
 
+        Game::move_to_player(&mut pacman, &mut ghost);
+
+        if Game::check_game_over(&mut pacman, &mut ghost) {
+            break;
+        }
+
         Game::clear_screen();
-
-        board = vec![vec!['.'; SCREEN_WIDTH]; SCREEN_HEIGHT];
-        board[pacman.y][pacman.x] = 'P'; //'\u{1F980}';
-
-        thread::sleep(Duration::from_millis(100));
     }
 }
