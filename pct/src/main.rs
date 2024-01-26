@@ -10,7 +10,7 @@ use crate::pacman::Pacman;
 use std::io::{self};
 
 fn main() {
-    let mut board = vec![vec!['.'; SCREEN_WIDTH]; SCREEN_HEIGHT];
+    let board = vec![vec!['.'; SCREEN_WIDTH]; SCREEN_HEIGHT];
     let mut pacman = Pacman {
         x: SCREEN_WIDTH / 2,
         y: SCREEN_HEIGHT / 2,

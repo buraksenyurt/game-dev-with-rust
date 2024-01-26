@@ -1,14 +1,13 @@
 use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::ghost::Ghost;
 use crate::pacman::Pacman;
-use std::cmp::Ordering;
 use std::process::Command;
 
 pub struct Game;
 
 impl Game {
-    pub fn print_board(board: &Vec<Vec<char>>, pacman: Pacman, ghost: Ghost) {
-        for y in 0..SCREEN_HEIGHT {
+    pub fn print_board(board: &[Vec<char>], pacman: Pacman, ghost: Ghost) {
+        for (y, _) in board.iter().enumerate().take(SCREEN_HEIGHT) {
             for x in 0..SCREEN_WIDTH {
                 if x == pacman.x && y == pacman.y {
                     print!("P");
@@ -52,12 +51,10 @@ impl Game {
             } else if pacman.x < ghost.x {
                 ghost.x -= 1;
             }
-        } else {
-            if pacman.y > ghost.y {
-                ghost.y += 1;
-            } else if pacman.y < ghost.y {
-                ghost.y -= 1;
-            }
+        } else if pacman.y > ghost.y {
+            ghost.y += 1;
+        } else if pacman.y < ghost.y {
+            ghost.y -= 1;
         }
     }
 }
