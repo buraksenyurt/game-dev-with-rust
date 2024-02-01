@@ -1,3 +1,4 @@
-pub mod team;
-mod player;
+mod manager;
+mod market;
 mod r#match;
+pub mod team;

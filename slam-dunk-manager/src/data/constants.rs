@@ -1,0 +1,4 @@
+pub const MAX_PLAYER_COUNT: usize = 5;
+pub const DEFAULT_PLAYER_ENERGY_LEVEL: f32 = 7.5;
+pub const DEFAULT_TEAM_ATTACK_POWER: f32 = 50.0;
+pub const DEFAULT_TEAM_DEFENSE_POWER: f32 = 50.0;
