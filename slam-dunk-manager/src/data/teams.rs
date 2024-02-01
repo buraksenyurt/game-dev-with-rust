@@ -1,23 +1,28 @@
-use crate::data::constants::{
-    DEFAULT_TEAM_ATTACK_POWER, DEFAULT_TEAM_DEFENSE_POWER, MAX_PLAYER_COUNT,
-};
+use crate::data::constants::*;
 use crate::data::model::*;
-use crate::data::players::*;
-
-pub fn create_teams() -> Vec<Team> {
-    let mut all_players = generate_players();
+use rand::{Rng, thread_rng};
+pub fn create_teams(players: &mut Vec<Player>) -> Vec<Team> {
+    let mut rng = thread_rng();
     let mut teams = Vec::new();
 
-    let team_names = [
-        "Eagles", "Wolves", "Sharks", "Dragons", "Lions", "Bears", "Hawks", "Panthers",
-    ];
+    let team_names = vec!["Eagles", "Wolves", "Sharks", "Dragons", "Lions", "Bears", "Hawks"];
 
     for name in team_names.iter() {
-        if all_players.len() < MAX_PLAYER_COUNT {
-            break;
+        let positions_required = vec![Position::Guard, Position::PowerForward, Position::Center];
+        let mut team_players = Vec::new();
+
+        for &position in &positions_required {
+            if let Some(index) = players.iter().position(|p| p.position == position) {
+                team_players.push(players.remove(index));
+            } else {
+                return teams;
+            }
         }
 
-        let team_players = all_players.drain(0..MAX_PLAYER_COUNT).collect();
+        while team_players.len() < MAX_PLAYER_COUNT {
+            let index = rng.gen_range(0..players.len());
+            team_players.push(players.remove(index));
+        }
 
         teams.push(Team {
             name: name.to_string(),

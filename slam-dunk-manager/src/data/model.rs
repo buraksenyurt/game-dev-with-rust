@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Player {
     pub full_name: String,
     pub position: Position,
@@ -7,6 +8,7 @@ pub struct Player {
     pub transfer_fee: f32,
 }
 
+#[derive(Debug)]
 pub struct AverageStat {
     pub points_avg: f32,
     pub rebounds_avg: f32,
@@ -16,6 +18,7 @@ pub struct AverageStat {
     pub turnovers_avg: f32,
 }
 
+#[derive(Debug,Copy,Clone,PartialEq)]
 pub enum Position {
     Center,
     ComboGuard,
@@ -25,9 +28,19 @@ pub enum Position {
     SmallForward,
 }
 
+#[derive(Debug)]
 pub struct Team {
     pub name: String,
     pub players: Vec<Player>,
     pub attack_power: f32,
     pub defensive_power: f32,
+}
+
+#[derive(Debug)]
+pub struct Coach {
+    pub nick_name: String,
+    pub budget: f32,
+    pub team: Team,
+    pub total_wins: u16,
+    pub total_loss: u16,
 }
