@@ -1,11 +1,15 @@
 use crate::data::constants::*;
 use crate::data::model::*;
-use rand::{Rng, thread_rng};
-pub fn create_teams(players: &mut Vec<Player>) -> Vec<Team> {
+use crate::data::players::load_players;
+use rand::{thread_rng, Rng};
+
+pub fn generate_teams() -> (Vec<Team>, Vec<Player>) {
     let mut rng = thread_rng();
     let mut teams = Vec::new();
-
-    let team_names = vec!["Eagles", "Wolves", "Sharks", "Dragons", "Lions", "Bears", "Hawks"];
+    let mut players = load_players();
+    let team_names = vec![
+        "Eagles", "Wolves", "Sharks", "Dragons", "Lions", "Bears", "Hawks",
+    ];
 
     for name in team_names.iter() {
         let positions_required = vec![Position::Guard, Position::PowerForward, Position::Center];
@@ -15,7 +19,7 @@ pub fn create_teams(players: &mut Vec<Player>) -> Vec<Team> {
             if let Some(index) = players.iter().position(|p| p.position == position) {
                 team_players.push(players.remove(index));
             } else {
-                return teams;
+                return (teams, players);
             }
         }
 
@@ -32,5 +36,5 @@ pub fn create_teams(players: &mut Vec<Player>) -> Vec<Team> {
         });
     }
 
-    teams
+    (teams, players)
 }

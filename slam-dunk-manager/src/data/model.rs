@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 #[derive(Debug)]
 pub struct Player {
     pub full_name: String,
@@ -18,7 +20,7 @@ pub struct AverageStat {
     pub turnovers_avg: f32,
 }
 
-#[derive(Debug,Copy,Clone,PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Position {
     Center,
     ComboGuard,
@@ -43,4 +45,18 @@ pub struct Coach {
     pub team: Team,
     pub total_wins: u16,
     pub total_loss: u16,
+}
+
+#[derive(Debug)]
+pub struct TransferMarket {
+    pub players: Vec<Player>,
+    pub total_value: f32,
+}
+
+#[derive(Debug)]
+pub struct League {
+    pub name: String,
+    pub start_date: DateTime<Utc>,
+    pub teams: Vec<Team>,
+    pub transfer_market: TransferMarket,
 }

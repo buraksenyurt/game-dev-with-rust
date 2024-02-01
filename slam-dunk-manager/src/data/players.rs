@@ -1,7 +1,7 @@
 use crate::data::constants::DEFAULT_PLAYER_ENERGY_LEVEL;
 use crate::data::model::*;
 
-pub fn generate_players() -> Vec<Player> {
+pub fn load_players() -> Vec<Player> {
     vec![
         Player {
             full_name: "Jordan Thomas".to_string(),
