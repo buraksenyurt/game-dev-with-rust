@@ -4,9 +4,31 @@ Terminalden çalışan bir basketbol menejerlik oyunu yazmaya çalışacağım.
 
 ## Proje Yapısı
 
+Projenin genel yapısı ile ilgili bilgiler burada yer alabilir. Örneğin modül ve klasör yapıları ile oyun mekanikleri, veri yapıları ve kullanıcı arayüzünü bu kısımda detaylandırıp anlatabiliriz.
+
+```text
+src/
+|--- main.rs
+|--- lib.rs     (Projenin ana yapı taşlarını ait tanımlamalar)
+|--- game/      (Oyun mekanikleri ve mantığını içeren modüller)
+|       |--- mod.rs 
+|       |--- team.rs
+|       |--- player.rs
+|       |--- match.rs
+|--- ui/        (Kullanıcı arayüzü ile ilgili işlevsellikler)
+|       |--- mod.rs
+|       |--- terminal.rs
+|--- util/      (Yardımcı fonksiyonlar ve genel amaçlı modüller)
+|       |--- mod.rs
+|       |--- random.rs
+|--- data/      (Serileştirilebilir veri yapıları, veri yükleme ve kaydetme operasyonları)
+        |--- mod.rs
+        |--- model.rs
+```
+
 ### Oyun Mekanikleri
 
-Oyunun nasıl işleyeceğii hangi özellikleri içereceği ve kullanıcı etkileşiminin nasıl yapılacağı ile ilgili bilgileri buraya ekleyebiliriz.
+Oyunun nasıl işleyeceği, hangi özellikleri içereceği ve kullanıcı etkileşiminin nasıl yapılacağı ile ilgili bilgileri buraya ekleyebiliriz.
 
 - Takım Seçimi :
 - Maç Simülasyonu :
