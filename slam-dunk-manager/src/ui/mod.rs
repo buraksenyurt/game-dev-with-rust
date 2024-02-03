@@ -1,1 +1,1 @@
-mod terminal;
+pub mod terminal;

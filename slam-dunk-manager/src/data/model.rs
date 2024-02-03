@@ -16,7 +16,7 @@ impl Display for Player {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "# {:<3} - {:<24} {:<16} {:<6.2} {:<6.2}$ #",
+            "# {:<02}-{:<24} {:<14} {:<6.2}cm {:<5.2}$",
             self.id, self.full_name, self.position, self.height, self.transfer_fee
         )
     }
@@ -35,12 +35,12 @@ impl Display for AverageStat {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(
             f,
-            "# {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} #",
+            "\t{:<8} {:<8} {:<8} {:<8} {:<8} {:<8}",
             "Pnt", "Reb", "Ass", "Blc", "Ste", "Trn"
         )?;
         write!(
             f,
-            "# {:<8.2} {:<8.2} {:<8.2} {:<8.2} {:<8.2} {:<8.2} #",
+            "\t{:<8.2} {:<8.2} {:<8.2} {:<8.2} {:<8.2} {:<8.2}",
             self.points_avg,
             self.rebounds_avg,
             self.assist_avg,
