@@ -17,3 +17,13 @@ pub fn create_league(name: String) -> League {
         is_active: false,
     }
 }
+
+pub fn add_player_team(name: String, league: &mut League) {
+    let player_team = Team {
+        name,
+        players: vec![],
+        attack_power: 0.0,
+        defensive_power: 0.0,
+    };
+    league.teams.push(player_team)
+}

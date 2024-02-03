@@ -23,7 +23,7 @@ mod tests {
         };
         let actual = player.to_string();
         let expected =
-            "# 1 -Jordan Thomas             Power Forward  218.49cm  7.57 $  #".to_string();
+            "# 01-Jordan Thomas            Power Forward 218.49cm 7.57 $".to_string();
         assert_eq!(actual, expected);
     }
     #[test]
@@ -45,7 +45,7 @@ mod tests {
             transfer_fee: 7.57,
         };
         let actual = player.stats.to_string();
-        let expected = "# Pnt      Reb      Ass      Blc      Ste      Trn      #\n# 25.85    9.05     1.15     1.92     0.40     0.30     #".to_string();
+        let expected = "\tPnt      Reb      Ass      Blc      Ste      Trn     \n\t25.85    9.05     1.15     1.92     0.40     0.30    ".to_string();
         assert_eq!(actual, expected);
     }
 }
