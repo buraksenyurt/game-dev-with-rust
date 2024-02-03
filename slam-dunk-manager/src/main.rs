@@ -1,6 +1,6 @@
-use slam_dunk_manager::game::league::{add_player_team, create_league};
-use slam_dunk_manager::prelude::r#match::simulate_match_day;
-use slam_dunk_manager::prelude::terminal::{print_table, print_transfer_market};
+use slam_dunk_manager::game::league::*;
+use slam_dunk_manager::prelude::r#match::*;
+use slam_dunk_manager::prelude::terminal::*;
 
 fn main() {
     let mut league = create_league("NC2A Pre Session".to_string());

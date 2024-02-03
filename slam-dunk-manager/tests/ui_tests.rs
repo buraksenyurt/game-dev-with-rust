@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use slam_dunk_manager::game::league::create_league;
     use slam_dunk_manager::prelude::constants::*;
     use slam_dunk_manager::prelude::model::*;
 

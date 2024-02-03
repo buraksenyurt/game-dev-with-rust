@@ -1,6 +1,7 @@
 use crate::prelude::model::*;
 use rand::seq::SliceRandom;
 use rand::{thread_rng, Rng};
+use std::cmp::Ordering;
 
 pub fn simulate_match_day(league: &mut League) {
     let mut rng = thread_rng();
@@ -24,12 +25,16 @@ pub fn simulate_match_day(league: &mut League) {
             home.stats.diff = home.stats.points_plus - home.stats.points_minus;
             away.stats.diff = away.stats.points_plus - away.stats.points_minus;
 
-            if home_team_score > away_team_score {
-                home.stats.win += 1;
-                away.stats.loss += 1;
-            } else if away_team_score > home_team_score {
-                away.stats.win += 1;
-                home.stats.loss += 1;
+            match home_team_score.cmp(&away_team_score) {
+                Ordering::Greater => {
+                    home.stats.win += 1;
+                    away.stats.loss += 1;
+                }
+                Ordering::Less => {
+                    away.stats.win += 1;
+                    home.stats.loss += 1;
+                }
+                Ordering::Equal => {}
             }
         }
     }

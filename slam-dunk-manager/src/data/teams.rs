@@ -7,7 +7,7 @@ pub fn generate_teams() -> (Vec<Team>, Vec<Player>) {
     let mut rng = thread_rng();
     let mut teams = Vec::new();
     let mut players = load_players();
-    let team_names = vec![
+    let team_names = [
         "Eagles", "Wolves", "Sharks", "Dragons", "Lions", "Bears", "Hawks",
     ];
 
