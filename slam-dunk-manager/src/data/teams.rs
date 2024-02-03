@@ -29,8 +29,9 @@ pub fn generate_teams() -> (Vec<Team>, Vec<Player>) {
         teams.push(Team {
             name: name.to_string(),
             players: team_players,
-            attack_power: DEFAULT_TEAM_ATTACK_POWER,
-            defensive_power: DEFAULT_TEAM_DEFENSE_POWER,
+            attack_power: rng.gen_range(5.0..10.0),
+            defensive_power: rng.gen_range(5.0..10.0),
+            stats: Default::default(),
         });
     }
 

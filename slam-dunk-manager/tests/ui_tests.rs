@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use slam_dunk_manager::game::league::create_league;
     use slam_dunk_manager::prelude::constants::*;
     use slam_dunk_manager::prelude::model::*;
 
@@ -22,8 +23,7 @@ mod tests {
             transfer_fee: 7.57,
         };
         let actual = player.to_string();
-        let expected =
-            "# 01-Jordan Thomas            Power Forward 218.49cm 7.57 $".to_string();
+        let expected = "# 01-Jordan Thomas            Power Forward 218.49cm 7.57 $".to_string();
         assert_eq!(actual, expected);
     }
     #[test]

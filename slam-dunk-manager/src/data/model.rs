@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Player {
     pub id: u16,
     pub full_name: String,
@@ -22,7 +22,7 @@ impl Display for Player {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AverageStat {
     pub points_avg: f32,
     pub rebounds_avg: f32,
@@ -75,12 +75,23 @@ impl Display for Position {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Team {
     pub name: String,
     pub players: Vec<Player>,
     pub attack_power: f32,
     pub defensive_power: f32,
+    pub stats: TeamStats,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct TeamStats {
+    pub game_played: u16,
+    pub win: u16,
+    pub loss: u16,
+    pub points_plus: i16,
+    pub points_minus: i16,
+    pub diff: i16,
 }
 
 #[derive(Debug)]

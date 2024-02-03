@@ -1,5 +1,6 @@
 use crate::data::teams::generate_teams;
 use crate::prelude::model::*;
+use rand::{thread_rng, Rng};
 use std::time::SystemTime;
 
 pub fn create_league(name: String) -> League {
@@ -19,11 +20,13 @@ pub fn create_league(name: String) -> League {
 }
 
 pub fn add_player_team(name: String, league: &mut League) {
+    let mut rng = thread_rng();
     let player_team = Team {
         name,
         players: vec![],
-        attack_power: 0.0,
-        defensive_power: 0.0,
+        attack_power: rng.gen_range(5.0..10.0),
+        defensive_power: rng.gen_range(5.0..10.0),
+        stats: Default::default(),
     };
     league.teams.push(player_team)
 }
