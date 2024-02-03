@@ -4,6 +4,7 @@ use crate::data::model::*;
 pub fn load_players() -> Vec<Player> {
     vec![
         Player {
+            id: 1,
             full_name: "Jordan Thomas".to_string(),
             position: Position::PowerForward,
             height: 218.49,
@@ -19,6 +20,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 7.57,
         },
         Player {
+            id: 2,
             full_name: "Taylor Hernandez".to_string(),
             position: Position::PowerForward,
             height: 208.21,
@@ -34,6 +36,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 8.03,
         },
         Player {
+            id: 3,
             full_name: "Riley Williams".to_string(),
             position: Position::ComboGuard,
             height: 199.06,
@@ -49,6 +52,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.24,
         },
         Player {
+            id: 4,
             full_name: "Quinn Taylor".to_string(),
             position: Position::Center,
             height: 191.88,
@@ -64,6 +68,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.3,
         },
         Player {
+            id: 5,
             full_name: "Jordan Wilson".to_string(),
             position: Position::PowerForward,
             height: 213.83,
@@ -79,6 +84,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.37,
         },
         Player {
+            id: 6,
             full_name: "Devin Jones".to_string(),
             position: Position::PowerForward,
             height: 185.27,
@@ -94,6 +100,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 7.98,
         },
         Player {
+            id: 7,
             full_name: "Riley Garcia".to_string(),
             position: Position::Guard,
             height: 192.14,
@@ -109,6 +116,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 9.37,
         },
         Player {
+            id: 8,
             full_name: "Alex Wilson".to_string(),
             position: Position::ShootingGuard,
             height: 207.63,
@@ -124,6 +132,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.24,
         },
         Player {
+            id: 9,
             full_name: "Morgan Martinez".to_string(),
             position: Position::ComboGuard,
             height: 218.9,
@@ -139,6 +148,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.24,
         },
         Player {
+            id: 10,
             full_name: "Quinn Brown".to_string(),
             position: Position::Guard,
             height: 188.04,
@@ -154,6 +164,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.79,
         },
         Player {
+            id: 11,
             full_name: "Cameron Thomas".to_string(),
             position: Position::SmallForward,
             height: 189.94,
@@ -169,6 +180,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.11,
         },
         Player {
+            id: 12,
             full_name: "Quinn Williams".to_string(),
             position: Position::Center,
             height: 191.32,
@@ -184,6 +196,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 8.61,
         },
         Player {
+            id: 13,
             full_name: "Emerson Brown".to_string(),
             position: Position::PowerForward,
             height: 193.03,
@@ -199,6 +212,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.41,
         },
         Player {
+            id: 14,
             full_name: "Quinn Anderson".to_string(),
             position: Position::PowerForward,
             height: 197.66,
@@ -214,6 +228,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.53,
         },
         Player {
+            id: 15,
             full_name: "Skyler Johnson".to_string(),
             position: Position::SmallForward,
             height: 192.51,
@@ -229,6 +244,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.63,
         },
         Player {
+            id: 16,
             full_name: "Emerson Smith".to_string(),
             position: Position::Guard,
             height: 215.22,
@@ -244,6 +260,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.4,
         },
         Player {
+            id: 17,
             full_name: "Jamie Anderson".to_string(),
             position: Position::SmallForward,
             height: 186.42,
@@ -259,6 +276,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.51,
         },
         Player {
+            id: 18,
             full_name: "Cameron Wilson".to_string(),
             position: Position::Center,
             height: 200.18,
@@ -274,6 +292,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.08,
         },
         Player {
+            id: 19,
             full_name: "Chris Williams".to_string(),
             position: Position::Center,
             height: 213.06,
@@ -289,6 +308,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.46,
         },
         Player {
+            id: 20,
             full_name: "Riley Brown".to_string(),
             position: Position::SmallForward,
             height: 216.72,
@@ -304,6 +324,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.54,
         },
         Player {
+            id: 21,
             full_name: "Alex Miller".to_string(),
             position: Position::SmallForward,
             height: 193.7,
@@ -319,6 +340,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.61,
         },
         Player {
+            id: 22,
             full_name: "Chris Hernandez".to_string(),
             position: Position::ShootingGuard,
             height: 198.37,
@@ -334,6 +356,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 2.11,
         },
         Player {
+            id: 23,
             full_name: "Riley Rodriguez".to_string(),
             position: Position::ShootingGuard,
             height: 204.41,
@@ -349,6 +372,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 1.63,
         },
         Player {
+            id: 24,
             full_name: "Jordan Jones".to_string(),
             position: Position::ShootingGuard,
             height: 189.4,
@@ -364,6 +388,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 8.64,
         },
         Player {
+            id: 25,
             full_name: "Devin Johnson".to_string(),
             position: Position::Center,
             height: 188.18,
@@ -379,6 +404,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.6,
         },
         Player {
+            id: 26,
             full_name: "Casey Williams".to_string(),
             position: Position::ShootingGuard,
             height: 212.15,
@@ -394,6 +420,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 2.19,
         },
         Player {
+            id: 27,
             full_name: "Taylor Wilson".to_string(),
             position: Position::ShootingGuard,
             height: 183.24,
@@ -409,6 +436,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 1.44,
         },
         Player {
+            id: 28,
             full_name: "Casey Thomas".to_string(),
             position: Position::Guard,
             height: 209.59,
@@ -424,6 +452,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 2.04,
         },
         Player {
+            id: 29,
             full_name: "Riley Johnson".to_string(),
             position: Position::SmallForward,
             height: 194.39,
@@ -439,6 +468,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 2.72,
         },
         Player {
+            id: 30,
             full_name: "Riley Garcia".to_string(),
             position: Position::Guard,
             height: 183.3,
@@ -454,6 +484,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 7.88,
         },
         Player {
+            id: 31,
             full_name: "Emerson Hernandez".to_string(),
             position: Position::Center,
             height: 204.94,
@@ -469,6 +500,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 8.74,
         },
         Player {
+            id: 32,
             full_name: "Reese Brown".to_string(),
             position: Position::PowerForward,
             height: 192.63,
@@ -484,6 +516,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.64,
         },
         Player {
+            id: 33,
             full_name: "Chris Smith".to_string(),
             position: Position::SmallForward,
             height: 207.58,
@@ -499,6 +532,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.48,
         },
         Player {
+            id: 34,
             full_name: "Reese Miller".to_string(),
             position: Position::Guard,
             height: 212.11,
@@ -514,6 +548,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 7.87,
         },
         Player {
+            id: 35,
             full_name: "Jordan Smith".to_string(),
             position: Position::ComboGuard,
             height: 218.28,
@@ -529,6 +564,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.75,
         },
         Player {
+            id: 36,
             full_name: "Jordan Garcia".to_string(),
             position: Position::Center,
             height: 211.18,
@@ -544,6 +580,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.9,
         },
         Player {
+            id: 37,
             full_name: "Jordan Wilson".to_string(),
             position: Position::SmallForward,
             height: 207.99,
@@ -559,6 +596,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 9.39,
         },
         Player {
+            id: 38,
             full_name: "Chris Garcia".to_string(),
             position: Position::Center,
             height: 190.41,
@@ -574,6 +612,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 9.57,
         },
         Player {
+            id: 39,
             full_name: "Alex Williams".to_string(),
             position: Position::ComboGuard,
             height: 219.21,
@@ -589,6 +628,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.98,
         },
         Player {
+            id: 40,
             full_name: "Quinn Jones".to_string(),
             position: Position::SmallForward,
             height: 216.98,
@@ -604,6 +644,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 2.79,
         },
         Player {
+            id: 41,
             full_name: "Taylor Taylor".to_string(),
             position: Position::ShootingGuard,
             height: 199.36,
@@ -619,6 +660,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.2,
         },
         Player {
+            id: 42,
             full_name: "Jamie Miller".to_string(),
             position: Position::ShootingGuard,
             height: 210.97,
@@ -634,6 +676,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 4.23,
         },
         Player {
+            id: 43,
             full_name: "Riley Anderson".to_string(),
             position: Position::PowerForward,
             height: 187.65,
@@ -649,6 +692,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 8.36,
         },
         Player {
+            id: 44,
             full_name: "Jordan Brown".to_string(),
             position: Position::ComboGuard,
             height: 205.27,
@@ -664,6 +708,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.02,
         },
         Player {
+            id: 45,
             full_name: "Casey Johnson".to_string(),
             position: Position::PowerForward,
             height: 218.48,
@@ -679,6 +724,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 3.36,
         },
         Player {
+            id: 46,
             full_name: "Jamie Wilson".to_string(),
             position: Position::ShootingGuard,
             height: 186.28,
@@ -694,6 +740,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.61,
         },
         Player {
+            id: 47,
             full_name: "Chris Martinez".to_string(),
             position: Position::ShootingGuard,
             height: 217.58,
@@ -709,6 +756,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 6.59,
         },
         Player {
+            id: 48,
             full_name: "Emerson Wilson".to_string(),
             position: Position::PowerForward,
             height: 209.53,
@@ -724,6 +772,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 5.83,
         },
         Player {
+            id: 49,
             full_name: "Taylor Taylor".to_string(),
             position: Position::Guard,
             height: 193.95,
@@ -739,6 +788,7 @@ pub fn load_players() -> Vec<Player> {
             transfer_fee: 1.47,
         },
         Player {
+            id: 50,
             full_name: "Jamie Martinez".to_string(),
             position: Position::PowerForward,
             height: 182.37,
