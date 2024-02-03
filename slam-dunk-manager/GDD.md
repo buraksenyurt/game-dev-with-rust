@@ -68,14 +68,39 @@ Fiktür hazırlandıktan sonra ilk maç gününe geçilir, karşılaşmalar gös
 
 ### Güncel Puan Durumu Ekranı
 
+Yeni bir sezon başlatıldığında puan tablosu aşağıdaki gibi görünür.
+
 ```text
-------------------------------------
-- Team Name         W   L   P   A  -
-------------------------------------
-1 - Eagles          4   3   11  +10
-2 - Wolves          3   4   10  +8
-3 - Sharks          3   4   10  +6
-4 - 
+----------------------------------------------------------------
+--------------------NC2A Pre Session        --------------------
+----------------------------------------------------------------
+      Team Name            GP  W   L   Points+  Points-  Diff     
+ 1  - Eagles               0   0   0   0        0        0        
+ 2  - Wolves               0   0   0   0        0        0        
+ 3  - Sharks               0   0   0   0        0        0        
+ 4  - Dragons              0   0   0   0        0        0        
+ 5  - Lions                0   0   0   0        0        0        
+ 6  - Bears                0   0   0   0        0        0        
+ 7  - Hawks                0   0   0   0        0        0        
+----------------------------------------------------------------
+```
+
+Maçlar oynandıkça puan tablosundaki sıralama değişir. Örneğin 3ncü maç gününden sonra durum aşağıdaki tablodakine benzer olmalıdır.
+
+```text
+----------------------------------------------------------------
+--------------------NC2A Pre Session        --------------------
+----------------------------------------------------------------
+      Team Name            GP  W   L   Points+  Points-  Diff     
+ 1  - Lions                3   3   0   45       9        36       
+ 2  - Academy Ist          3   2   1   47       17       30       
+ 3  - Dragons              3   2   0   29       23       6        
+ 4  - Bears                3   1   1   67       9        58       
+ 5  - Wolves               3   1   2   50       0        50       
+ 6  - Eagles               3   1   2   39       4        35       
+ 7  - Hawks                3   1   2   50       26       24       
+ 8  - Sharks               3   0   3   33       32       1        
+----------------------------------------------------------------
 ```
 
 ### Fikstür Ekranı
