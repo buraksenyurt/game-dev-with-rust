@@ -59,4 +59,5 @@ pub struct League {
     pub start_date: DateTime<Utc>,
     pub teams: Vec<Team>,
     pub transfer_market: TransferMarket,
+    pub is_active: bool,
 }

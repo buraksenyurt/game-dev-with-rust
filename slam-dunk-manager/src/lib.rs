@@ -1,5 +1,5 @@
 mod data;
-mod game;
+pub mod game;
 mod ui;
 mod util;
 

@@ -18,8 +18,6 @@ pub fn generate_teams() -> (Vec<Team>, Vec<Player>) {
         for &position in &positions_required {
             if let Some(index) = players.iter().position(|p| p.position == position) {
                 team_players.push(players.remove(index));
-            } else {
-                return (teams, players);
             }
         }
 

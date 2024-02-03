@@ -14,5 +14,6 @@ pub fn create_league(name: String) -> League {
         teams,
         start_date: SystemTime::now().into(),
         transfer_market,
+        is_active: false,
     }
 }
