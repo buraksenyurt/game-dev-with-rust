@@ -1,5 +1,7 @@
 # Slam Dunk Manager
 
+**Not:** Oyuna ait tasarım dokümanı [GDG](GDG.md) dosyasında yer almaktadır.
+
 Terminalden çalışan bir basketbol menejerlik oyunu yazmaya çalışacağım.
 
 ## Proje Yapısı
