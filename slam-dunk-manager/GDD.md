@@ -42,13 +42,43 @@
 
 ## Kullanıcı Arayüzü ve Deneyimi
 
-- Menü ve Ekran Tasarımları :
+Menü ve ekranlara ait tasarımları aşağıdaki gibi planlayabiliriz. Çok basit anlamda oyundaki menüler arası akış ve ana işlemler için aşağıdaki diagramdan yararlanmayı düşünüyorum.
 
-### Başlangıç Menüsü
+![GameFlowchart.png](GameFlowchart.png)
+
+Oyunun ana menüsünde New Session, Load Session, Transfer Market seçenekleri olabilir. New Session ile yeni bir lig sezonu başlatılır ancak önceden devam etmekte olan bir session varsa bu sezon silinsin mi yoksa oradan devam edilsin mi diye sorulur.
+
+Yeni bir lig sezonu başlatılırsa önce takımlar oyuncu havuzundan rastgele oyuncularla oluşturulur, oyuncudan takımına bir isim vermesi istenir ve transfer markete durumuna geçilir. Burada takım için oyuncular seçilir ve sonrasında fikstürün belirlendiği adım başlatılır. 
+
+Fiktür hazırlandıktan sonra ilk maç gününe geçilir, karşılaşmalar gösterilir. Play Match Day kendi içinde daha kapsamlı bir yapıya sahiptir. Maçları oynatmak, durdurmak, oyuncu değişikliği yapmak, eş zamanlı maç izlenmesi gibi detaylı işlevleri vardır.
+
+### Oyun Ana Menüsü
+
+```text
+--------------------------------
+----- (N)ew Session ------------
+----- (L)oad Session------------
+----- (T)ransfer Market --------
+--------------------------------
+```
+
+### New Session Menüsü
 
 ### Maç Simülasyon Ekranı
 
-### Güncel Fixtür Ekranı
+### Güncel Puan Durumu Ekranı
+
+```text
+------------------------------------
+- Team Name         W   L   P   A  -
+------------------------------------
+1 - Eagles          4   3   11  +10
+2 - Wolves          3   4   10  +8
+3 - Sharks          3   4   10  +6
+4 - 
+```
+
+### Fikstür Ekranı
 
 ### Transfer Market Ekranı
 
@@ -70,39 +100,6 @@ Transfer market ekranında transfer edilebilecek oyuncuların listesi yer alır.
 # 11-Cameron Thomas           Small Forward 189.94cm 3.11 $
 	Pnt      Reb      Ass      Blc      Ste      Trn     
 	7.99     6.11     4.26     1.96     0.06     1.74    
-# 15-Skyler Johnson           Small Forward 192.51cm 4.63 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	19.13    0.25     0.10     0.58     2.22     0.43    
-# 20-Riley Brown              Small Forward 216.72cm 6.54 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	14.66    4.54     9.71     2.01     0.79     4.41    
-# 21-Alex Miller              Small Forward 193.70cm 3.61 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	28.28    6.20     7.89     0.30     0.13     0.20    
-# 26-Casey Williams           Shooting Guard 212.15cm 2.19 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	25.05    10.42    6.45     0.59     0.77     3.70    
-# 29-Riley Johnson            Small Forward 194.39cm 2.72 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	6.93     6.88     7.32     2.18     1.49     4.25    
-# 35-Jordan Smith             Combo Guard 218.28cm 5.75 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	18.65    3.69     5.31     2.01     1.20     2.82    
-# 37-Jordan Wilson            Small Forward 207.99cm 9.39 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	22.97    5.60     6.22     1.78     2.95     3.40    
-# 40-Quinn Jones              Small Forward 216.98cm 2.79 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	12.44    6.90     6.88     1.17     2.47     0.91    
-# 44-Jordan Brown             Combo Guard 205.27cm 5.02 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	27.26    11.74    9.94     1.53     2.84     2.85    
-# 46-Jamie Wilson             Shooting Guard 186.28cm 6.61 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	16.75    3.15     5.71     2.16     2.17     1.19    
-# 48-Emerson Wilson           Power Forward 209.53cm 5.83 $
-	Pnt      Reb      Ass      Blc      Ste      Trn     
-	28.91    2.11     4.56     0.28     2.69     3.56    
 ----------------------------------------------------------------
 ```
 
