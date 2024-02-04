@@ -1,6 +1,6 @@
 # Slam Dunk Manager
 
-**Not:** Oyuna ait tasarım dokümanı [GDD](GDD) dosyasında yer almaktadır.
+**Not:** Oyuna ait tasarım dokümanı [GDD](GDD.md) dosyasında yer almaktadır.
 
 Terminalden çalışan bir basketbol menejerlik oyunu yazmaya çalışacağım.
 
