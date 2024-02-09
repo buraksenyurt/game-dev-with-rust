@@ -37,9 +37,9 @@ Döküman Versiyonu 1.0
 
 ## Karakterler
 
-**- Takım Koçu :** Koç takımın yöneticisidir. Oyun başlarken kendisini tanıtır, lig başlarken takım adını belirler, transfer marketi kullanarak oyuncular seçer, lig boyunca oyuncu satışı veya transferi gerçekleştirebilir. 
-**- Takım Oyuncusu :** Oyuncular guard, shooter guard, short forward, power forward, pivot gibi pozisyonlara sahiptir. Enerji seviyeleri ve bazı temel istatistik ortalamaları mevcuttur.
-**- Takımlar ve Özellikleri :** Ligde 7 + oyuncunun takımı olmak üzere 8 takım vardır. Takımlar 5er kişilik kadrolardan oluşur. Maçlara 5 kişi olarak çıkılır ve maçı 3 kişi yapar. Her takımın hücum ve savunma güçleri vardır. Bunlar ligin ilerleyişine göre belirli koşullar altında azabilir veya artabilir.
+- **Takım Koçu :** Koç takımın yöneticisidir. Oyun başlarken kendisini tanıtır, lig başlarken takım adını belirler, transfer marketi kullanarak oyuncular seçer, lig boyunca oyuncu satışı veya transferi gerçekleştirebilir.
+- **Takım Oyuncusu :** Oyuncular guard, shooter guard, short forward, power forward, pivot gibi pozisyonlara sahiptir. Enerji seviyeleri ve bazı temel istatistik ortalamaları mevcuttur.
+- **Takımlar ve Özellikleri :** Ligde 7 + oyuncunun takımı olmak üzere 8 takım vardır. Takımlar 5er kişilik kadrolardan oluşur. Maçlara 5 kişi olarak çıkılır ve maçı 3 kişi yapar. Her takımın hücum ve savunma güçleri vardır. Bunlar ligin ilerleyişine göre belirli koşullar altında azabilir veya artabilir.
 
 ## Görsel ve Ses Tasarımı
 
@@ -66,7 +66,9 @@ Oyunun ana menüsünde New Season, Load Season, Transfer Market seçenekleri bul
 
 ### New Session Menüsü
 
-### Maç Simülasyon Ekranı
+### Maç Simülasyon Ekranı (Otomatik Maç Günü)
+
+### Maç Simülasyon Ekranı (Canlı Maç Seyri)
 
 ### Güncel Puan Durumu Ekranı
 
@@ -134,8 +136,8 @@ Transfer market ekranında transfer edilebilecek oyuncuların listesi yer alır.
 
 ## Geliştirme Takvimi
 
-**- Geliştirme süreci aşamaları :** _Bu döküman için eklenmeyecek._
-**- Milestones ve hedef tarihler :** _Bu döküman için eklenmeyecek._
+- **Geliştirme süreci aşamaları :** _Bu döküman için eklenmeyecek._
+- **Milestones ve hedef tarihler :** _Bu döküman için eklenmeyecek._
 
 ## Teknik Detay
 
