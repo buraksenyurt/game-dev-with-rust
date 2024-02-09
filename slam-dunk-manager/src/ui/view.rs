@@ -53,4 +53,31 @@ pub fn print_table(league: &mut League) {
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
 }
 
-pub fn print_main_menu() {}
+pub fn print_main_menu() {
+    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_bright_yellow}{} {color_cyan}(N)ew Game {color_bright_yellow}{}{color_reset}",
+        "-".repeat(24),
+        "-".repeat(28)
+    );
+    println!(
+        "{color_bright_yellow}{} {color_cyan}(L)oad Season {color_bright_yellow}{}{color_reset}",
+        "-".repeat(24),
+        "-".repeat(25)
+    );
+    println!(
+        "{color_bright_yellow}{} {color_cyan}(T)ransfer Market {color_bright_yellow}{}{color_reset}",
+        "-".repeat(24),
+        "-".repeat(21)
+    );
+    println!(
+        "{color_bright_yellow}{} {color_cyan}e(X)it Game {color_bright_yellow}{}{color_reset}",
+        "-".repeat(24),
+        "-".repeat(27)
+    );
+    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_magenta}Press N,L,T,X etc to Continue{}{color_reset}",
+        " ".repeat(35)
+    );
+}
