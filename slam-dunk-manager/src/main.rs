@@ -1,4 +1,4 @@
-use inline_colorization::{color_cyan, color_magenta, color_red, color_reset};
+use inline_colorization::{color_cyan, color_green, color_magenta, color_red, color_reset};
 use slam_dunk_manager::game::game::*;
 use slam_dunk_manager::game::league::*;
 use slam_dunk_manager::game::market::*;
@@ -35,13 +35,17 @@ fn main() {
                         println!("Please choose your team members.{color_reset}");
                         game.current_state = GameState::TransferMarket;
                         print_transfer_market(&league.transfer_market);
-                        let player_count = 0;
+                        let mut player_count = 0;
                         while player_count <= 4 {
                             println!("{color_magenta}Please enter player's number. Be careful!{color_reset}");
                             if let Ok(n) = get_input().parse::<u16>() {
-                                println!("{n}");
-                                if let Some(p) = get_player(n, &league.transfer_market) {
-                                    player_team.players.push(p.clone());
+                                if let Some(p) = get_player(n, &league.transfer_market.players) {
+                                    println!(
+                                        "{color_green}{} has been added your team.{color_reset}",
+                                        &p.full_name
+                                    );
+                                    player_team.players.push(p);
+                                    player_count += 1;
                                 } else {
                                     println!(
                                         "{color_red}Player not found in transfer market!{color_reset}"
@@ -54,6 +58,7 @@ fn main() {
                             }
                         }
                         print_coach_team(&player_team);
+                        break;
                     }
                 }
                 MainMenu::LoadGame => {}

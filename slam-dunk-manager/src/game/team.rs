@@ -1,3 +1,3 @@
 pub fn check_team_name(input: &str) -> bool {
-    input.len() > 5 || input.len() < 10
+    input.len() > 5 || input.len() < 15
 }
