@@ -1,34 +1,36 @@
 # Slam Dunk Manager Game Design Document
 
+Döküman Versiyonu 1.0
+
 ## Oyun Tanımı
 
-- Adı  : Slam Dunk Manager
-- Türü : Basketbol Menajerlik
-- Platform : Cross Platform Terminal
+- **Adı  :** Slam Dunk Manager
+- **Türü :** Basketbol Menajerlik
+- **Platform :** Terminal(Cross Platform)
 
 ## Oyunun Amacı
 
-- Ana Hedef : Oyunun ana amacı oyuncunun yönettiği basketbol takımını lig veya turnuva şampiyonu yapmasıdır.
-- Oynanış Mekanikleri : Oyuncu sıfırdan takım kurar, oyuncu pazarından takımı için oyuncu transfer eder ve bu işlemleri takiben lig başlar. Maçlar simülasyon ile oynanır.
+- **Ana Hedef :** Oyunun ana amacı takım koçunun, yönettiği basketbol takımını lig veya turnuva şampiyonu yapması veya olabildiğince iyi bir sıralamada bitirmesidir.
+- **Oynanış Mekanikleri :** Oyuncu sıfırdan takım kurar, oyuncu pazarından takımı için oyuncu transfer eder ve bu işlemleri tamamlamasını takiben lig başlar. Maçlar simülasyon algoritması ile oynanır.
 
 ## Oyun Dünyası
 
-- Mekan : Oyun günümüz dünyasında hayali takım ve oyuncu isimlerinden oluşan 8 takımlı bir lig olarak kurgulanır.
-- Kurallar : Oyunun temel kuralları aşağıdaki gibidir.
+- **Mekan :** Oyun günümüz dünyasında, hayali takım ve oyuncu isimlerinden oluşan 8 takımlı bir lig olarak kurgulanmıştır.
+- **Kurallar :** Oyunun temel kuralları aşağıdaki gibidir.
   - Lig 3X3 turnavalar içerecek şekilde tasarlanır. 
-  - Her takımın en fazla 5 oyuncusu olabilir.
-  - Takımların herbirinin lig başlangıcındaki savunma ve hücum güçleri eşittir. Lig oynandıkça skor ve başka parametrelere göre bu değerler düşer veya artar.
-  - Oyuncu oyuna başladığında lig sonlanana ya da ligi sıfırlayana kadar sadece tek bir takım oluşturabilir.
-  - Oyuncunun takımı kurması için başlangıçta belli bir bütçesi vardır. Ligler tamamlandıkça ve oyun sıfırlanmadığı sürece bütçe azalıp çoğalabilir.
-  - Oyun transferleri transfer marketten yapılır.
-  - Oyuncu takımını kurguladığında maksimum 5 oyuncu transfer edebilir.
+  - Her takımın en fazla 5 oyuncusu olabilir. Sahada 3 oyuncu ve yedekte 2 oyuncu.
+  - Takımlar lig başlangıcındaki savunma ve hücum güçleri algoritma tarafından belirli kıstaslara göre otomatik olarak belirlenir. Lig oynandıkça skor ve başka parametrelere göre bu değerler düşer veya artar.
+  - Oyuncu oyuna başladığında lig sonlanana ya da ligi bilinçli olarak sıfırlayana kadar sadece tek bir takım kurabilir.
+  - Oyuncunun takımını kurması için başlangıçta belli bir bütçesi bulunur. Ligler tamamlandıkça ve oyun sıfırlanmadığı sürece bu bütçe yapılan harcamalara veya oyuncu satışlarına göre değişiklik gösterebilir.
+  - Oyuncu transferleri transfer marketten yapılır.
+  - Oyuncu, takımını kurarken maksimum 5 oyuncu transfer edebilir.
   - Transfer serbestliği lig boyunca vardır. Ligin herhangi bir zamanında oyuncu satılabilir veya alınabilir.
 
 ## Oyun Mekanikleri
 
-- Takım Yönetimi : 8 takımlı bir lig başlatıldığında 7 takım rastgele oyunculara sahip olaraktan otomatikman oluşturulur. 8nci takım koçun vereceği isme bağlı olarak transfer marketten bütçeye göre alınan oyunculardan oluşturulur.
-- Bütçe Yönetme : Koçun lig başlangıcında kullanabileceği belli bir bütçe vardır. Lig başlarken oyuncu havuzundan rastgele oyuncular rastgele 7 takıma dağılır. Kalan oyuncular transfer markete alınır. Takım koçu bu oyuncu havuzundan bütçesine göre transfer yapar ve kendi takımını kurar. Lig boyunca takım bütçesi ve transfer marketteki havuza göre oyuncu transferleri yapılabilir.
-- Maç simülasyonu : Maçlar terminal ekranında 1 dakika içinde oynanacak şekilde simüle edilir. Maç başlarken oyuncu ilk 3 oyuncusunu seçebilir veya bu atamayı programa bırakabilir. Maç oynanırken skor bilgisi ile ilgili bilgilendirme yapılır. Tek pota 3X3 turnuvalar olduğundan 1 dakika gerçek hayattaki 8 dakikaymış gibi kurgulanır. Oyun sırasında sakatlık olması halinde veya takım oyuncusunun enerjisi belli bir değerin altına indiğinde oyuncuya değişiklik isteyip istemediği sorulur ve oyuncu değişitirme hakkı da tanınır. 
+- **Takım Yönetimi :** 8 takımlı bir lig başlatıldığında 7 takım rastgele oyunculara sahip olaraktan otomatikman oluşturulur. 8nci takım koçun vereceği isme bağlı olarak transfer marketten bütçeye göre alınan oyunculardan oluşturulur.
+- **Bütçe Yönetme :** Koçun lig başlangıcında kullanabileceği belli bir bütçe vardır. Lig başlarken oyuncu havuzundan rastgele oyuncular rastgele 7 takıma dağılır. Kalan oyuncular transfer markette kalır. Takım koçu bu oyuncu havuzundan bütçesine göre transfer yapar ve kendi takımını kurar. Lig boyunca takım bütçesi ve transfer marketteki havuza göre oyuncu transferleri yapılabilir ama 5 oyuncusu varsa ancak elindeki kadrodan oyuncu satışı yaptığı takdirde yeni bir oyuncu alabilir.
+- **Maç simülasyonu :** Maçların simülasyonu iki şekilde yapılabilir. Maç günü otomatik olarak oynanır veya her maç sanki gerçek zamanlı oynanıyormuş gibi terminal ekranında 1 dakikalık süre içerisinde oynanır. Maç günü başlarken koç isterse ilk 3 oyuncusunu seçebilir veya bu atamayı algoritmaya bırakabilir. Eğer 1 dakikalık canlı simülasyon modu seçilmişse maç oynanırken skor bilgisi ile ilgili bilgilendirmeler de yapılır. Tek pota 3X3 turnuvalar olduğundan 1 dakika gerçek hayattaki 8 dakikaymış gibi kurgulanır.
 
 ## Karakterler
 
