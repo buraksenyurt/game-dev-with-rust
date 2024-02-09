@@ -1,0 +1,56 @@
+use crate::data::model::*;
+use inline_colorization::*;
+use std::cmp::Ordering::Equal;
+
+pub fn print_transfer_market(market: &TransferMarket) {
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_bright_yellow}{} {color_bright_blue}{} ({:.2}) Million ${color_bright_yellow}{}{color_reset}",
+        "-".repeat(15),
+        "TRANSFER MARKET",
+        market.total_value,
+        "-".repeat(15)
+    );
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    for p in market.players.iter() {
+        println!("{color_cyan}{}{color_reset}", p.to_string());
+        println!("{color_bright_magenta}{}{color_reset}", p.stats.to_string());
+    }
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+}
+
+pub fn print_table(league: &mut League) {
+    league.teams.sort_by(|a, b| {
+        let win_cmp = b.stats.win.cmp(&a.stats.win);
+        if win_cmp == Equal {
+            b.stats.diff.cmp(&a.stats.diff)
+        } else {
+            win_cmp
+        }
+    });
+    println!("{color_bright_yellow}{}", "-".repeat(64));
+    println!("{:<24}", league.name);
+    println!("{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_bright_blue} {:<2}   {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
+        " ", "Team Name", "GP", "W", "L", "Points+", "Points-", "Diff"
+    );
+    let mut i = 1;
+    for team in league.teams.iter() {
+        println!(
+            "{color_bright_cyan} {:<2} - {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
+            i,
+            team.name,
+            team.stats.game_played,
+            team.stats.win,
+            team.stats.loss,
+            team.stats.points_plus,
+            team.stats.points_minus,
+            team.stats.diff
+        );
+        i += 1;
+    }
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+}
+
+pub fn print_main_menu() {}
