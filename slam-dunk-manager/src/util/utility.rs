@@ -1,9 +1,8 @@
 use std::io::stdin;
-pub fn get_input() -> String {
+pub fn get_input() -> Option<String> {
     let mut input = String::new();
-    match stdin().read_line(&mut input) {
-        Ok(_) => {}
-        Err(_) => {}
+    if stdin().read_line(&mut input).is_ok() {
+        return Some(input.trim().to_string());
     }
-    input.trim().to_string()
+    None
 }

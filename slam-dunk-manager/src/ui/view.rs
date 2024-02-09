@@ -5,16 +5,15 @@ use std::cmp::Ordering::Equal;
 pub fn print_transfer_market(market: &TransferMarket) {
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}{} ({:.2}) Million ${color_bright_yellow}{}{color_reset}",
+        "{color_bright_yellow}{} {color_bright_blue}TRANSFER MARKET ({:.2}) Million ${color_bright_yellow}{}{color_reset}",
         "-".repeat(15),
-        "TRANSFER MARKET",
         market.total_value,
         "-".repeat(15)
     );
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
     for p in market.players.iter() {
-        println!("{color_cyan}{}{color_reset}", p.to_string());
-        println!("{color_bright_magenta}{}{color_reset}", p.stats.to_string());
+        println!("{color_cyan}{}{color_reset}", p);
+        println!("{color_bright_magenta}{}{color_reset}", p.stats);
     }
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
 }
@@ -99,8 +98,8 @@ pub fn print_coach_team(team: &Team) {
     );
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
     for p in team.players.iter() {
-        println!("{color_cyan}{}{color_reset}", p.to_string());
-        println!("{color_bright_magenta}{}{color_reset}", p.stats.to_string());
+        println!("{color_cyan}{}{color_reset}", p);
+        println!("{color_bright_magenta}{}{color_reset}", p.stats);
     }
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
 }

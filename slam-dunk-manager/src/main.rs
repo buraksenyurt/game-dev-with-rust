@@ -14,7 +14,7 @@ fn main() {
     };
     loop {
         print_main_menu();
-        let input = get_input();
+        let input = get_input().unwrap();
         let choose = MainMenu::from_str(&input);
         match choose {
             Ok(cmd) => match cmd {
@@ -25,7 +25,7 @@ fn main() {
                     loop {
                         game.current_state = GameState::TeamChoose;
                         println!("Please enter your team name...");
-                        let team_name = get_input();
+                        let team_name = get_input().unwrap();
                         if !check_team_name(&team_name) {
                             continue;
                         }
@@ -38,7 +38,7 @@ fn main() {
                         let mut player_count = 0;
                         while player_count <= 4 {
                             println!("{color_magenta}Please enter player's number. Be careful!{color_reset}");
-                            if let Ok(n) = get_input().parse::<u16>() {
+                            if let Ok(n) = get_input().unwrap().parse::<u16>() {
                                 if let Some(p) = get_player(n, &league.transfer_market.players) {
                                     println!(
                                         "{color_green}{} has been added your team.{color_reset}",
@@ -73,9 +73,4 @@ fn main() {
             }
         }
     }
-
-    // simulate_match_day(&mut league);
-    // simulate_match_day(&mut league);
-    // simulate_match_day(&mut league);
-    // print_table(&mut league);
 }
