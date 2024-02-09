@@ -19,7 +19,7 @@ pub fn create_league(name: String) -> League {
     }
 }
 
-pub fn add_player_team(name: String, league: &mut League) {
+pub fn add_player_team(name: String, league: &mut League) -> Team {
     let mut rng = thread_rng();
     let player_team = Team {
         name,
@@ -28,5 +28,6 @@ pub fn add_player_team(name: String, league: &mut League) {
         defensive_power: rng.gen_range(5.0..10.0),
         stats: Default::default(),
     };
-    league.teams.push(player_team)
+    league.teams.push(player_team.clone());
+    player_team.clone()
 }

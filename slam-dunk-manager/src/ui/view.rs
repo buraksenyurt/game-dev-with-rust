@@ -81,3 +81,26 @@ pub fn print_main_menu() {
         " ".repeat(35)
     );
 }
+
+pub fn print_coach_team(team: &Team) {
+    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_bright_yellow}{} {color_bright_blue}{:<24}{color_bright_yellow}{}{color_reset}",
+        "-".repeat(20),
+        team.name,
+        "-".repeat(20)
+    );
+    println!(
+        "{color_bright_yellow}{} {color_bright_blue}Attack Power{:<6} Defense Power{:<6}{color_bright_yellow}{}{color_reset}",
+        "-".repeat(20),
+        team.attack_power,
+        team.defensive_power,
+        "-".repeat(20)
+    );
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    for p in team.players.iter() {
+        println!("{color_cyan}{}{color_reset}", p.to_string());
+        println!("{color_bright_magenta}{}{color_reset}", p.stats.to_string());
+    }
+    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+}

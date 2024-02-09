@@ -1,6 +1,7 @@
 mod coach;
 pub mod contest;
+pub mod game;
 pub mod league;
-mod market;
+pub mod market;
 pub mod menus;
 pub mod team;
