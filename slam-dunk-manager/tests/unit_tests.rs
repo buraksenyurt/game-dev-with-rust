@@ -5,8 +5,7 @@ mod tests {
 
     #[test]
     pub fn test_get_player() {
-        let name = "NC2A Pre Session".to_string();
-        let league = create_league(name.clone());
+        let league = create_league();
         let actual = take_player(11, &league.transfer_market.players);
         assert!(actual.is_some());
     }
