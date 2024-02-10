@@ -87,14 +87,14 @@ pub fn print_coach_team(team: &Team) {
         "{color_bright_yellow}{} {color_bright_blue}{:<24}{color_bright_yellow}{}{color_reset}",
         "-".repeat(20),
         team.name,
-        "-".repeat(20)
+        "-".repeat(19)
     );
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}Attack Power{:<6} Defense Power{:<6}{color_bright_yellow}{}{color_reset}",
-        "-".repeat(20),
+        "{color_bright_yellow}{} {color_bright_blue}Attack Power {:.2} Defense Power {:.2}{color_bright_yellow}{}{color_reset}",
+        "-".repeat(12),
         team.attack_power,
         team.defensive_power,
-        "-".repeat(20)
+        "-".repeat(15)
     );
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
     for p in team.players.iter() {

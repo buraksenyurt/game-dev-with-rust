@@ -1,13 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use slam_dunk_manager::game::league::create_league;
-    use slam_dunk_manager::prelude::market::get_player;
+    use slam_dunk_manager::game_mngr::league::create_league;
+    use slam_dunk_manager::prelude::market::take_player;
 
     #[test]
     pub fn test_get_player() {
         let name = "NC2A Pre Session".to_string();
         let league = create_league(name.clone());
-        let actual = get_player(11, &league.transfer_market.players);
+        let actual = take_player(11, &league.transfer_market.players);
         assert!(actual.is_some());
     }
 }

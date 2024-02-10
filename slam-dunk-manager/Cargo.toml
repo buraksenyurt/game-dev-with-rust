@@ -2,10 +2,12 @@
 name = "slam-dunk-manager"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "It's simple terminal game about 3X3 basketball league managmenet"
+authors=["Burak Selim Senyurt"]
 
 [dependencies]
 chrono = "0.4.33"
+clearscreen = "2.0.1"
 inline_colorization = "0.1.6"
+press-btn-continue = "0.2.0"
 rand = "0.8.5"
