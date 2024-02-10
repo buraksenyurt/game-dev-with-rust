@@ -117,3 +117,17 @@ pub struct League {
     pub transfer_market: TransferMarket,
     pub is_active: bool,
 }
+
+#[derive(Debug)]
+pub struct Competition {
+    pub code: String,
+    pub date: DateTime<Utc>,
+    pub home: Team,
+    pub visitor: Team,
+}
+
+#[derive(Debug)]
+pub struct MatchDay {
+    pub id: u16,
+    pub competitions: Vec<Competition>,
+}

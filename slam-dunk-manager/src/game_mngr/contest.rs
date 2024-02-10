@@ -1,4 +1,5 @@
 use crate::prelude::model::*;
+use chrono::{DateTime, Duration, Utc};
 use rand::seq::SliceRandom;
 use rand::{thread_rng, Rng};
 use std::cmp::Ordering;
@@ -44,4 +45,46 @@ pub fn simulate_match_day(league: &mut League) {
             *team = updated_team.clone();
         }
     });
+}
+
+pub fn create_schedule(teams: &[Team], start_date: DateTime<Utc>) -> Vec<MatchDay> {
+    let teams_count = teams.len();
+    let mut schedule = Vec::new();
+
+    for round in 0..teams_count - 1 {
+        let mut match_day = MatchDay {
+            id: (round + 1) as u16,
+            competitions: Vec::new(),
+        };
+
+        for (idx, team) in teams.iter().enumerate() {
+            let opponent_idx = (round + idx) % (teams_count - 1);
+            if opponent_idx == idx {
+                continue;
+            }
+
+            let home = if idx % 2 == 0 {
+                team
+            } else {
+                &teams[opponent_idx]
+            };
+            let visitor = if idx % 2 == 0 {
+                &teams[opponent_idx]
+            } else {
+                team
+            };
+
+            let competition = Competition {
+                code: format!("COMP{}-{}", round + 1, idx),
+                date: start_date + Duration::weeks(round as i64),
+                home: home.clone(),
+                visitor: visitor.clone(),
+            };
+            match_day.competitions.push(competition);
+        }
+
+        schedule.push(match_day);
+    }
+
+    schedule
 }

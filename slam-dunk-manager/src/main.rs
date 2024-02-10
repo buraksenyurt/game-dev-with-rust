@@ -1,8 +1,10 @@
+use chrono::Utc;
 use clearscreen::clear;
 use inline_colorization::*;
 use slam_dunk_manager::game_mngr::game::*;
 use slam_dunk_manager::game_mngr::league::*;
 use slam_dunk_manager::game_mngr::menus::*;
+use slam_dunk_manager::prelude::contest::create_schedule;
 use slam_dunk_manager::prelude::utility::*;
 use slam_dunk_manager::prelude::view::*;
 use std::str::FromStr;
@@ -39,7 +41,9 @@ fn main() {
                         print_transfer_market(&league.transfer_market);
                         add_players_to_team(&mut league, &mut player_team);
                         print_coach_team(&player_team);
-                        pause();
+                        pause("Press any key to start creating schedule.");
+                        let _fixture = create_schedule(&league.teams, Utc::now());
+                        pause("Schedule created. Press any key to show");
                         break;
                     }
                 }
@@ -55,8 +59,4 @@ fn main() {
             }
         }
     }
-}
-
-fn check_team_name(input: &str) -> bool {
-    input.len() > 5 || input.len() < 15
 }
