@@ -43,7 +43,7 @@ Döküman Versiyonu 1.0
 
 ## Görsel ve Ses Tasarımı
 
-- **Arayüz Tasarımları :** Kullanıcı Arayüzü kısmında değinilmektedir.
+- **Arayüz Tasarımları :** Kullanıcı Arayüzü kısmında değinilmektedir. Terminal ANSI renk kodları için [bu](https://talyian.github.io/ansicolors/) adresten yararlanılır.
 - **Ses ve Müzik :** Slam Dunk Manager terminalden çalışan bir oyundur ve bu nedenle sadece metinsel ifadelerin renklendirilmesi geçerlidir. Oyunda herhangi bir müzik veya ses efekti şu an için planlanmış değildir. 
 
 ## Kullanıcı Arayüzü ve Deneyimi

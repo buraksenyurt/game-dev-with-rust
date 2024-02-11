@@ -1,8 +1,8 @@
 use crate::data::teams::generate_teams;
 use crate::game_mngr::market::take_player;
+use crate::prelude::colors::*;
 use crate::prelude::model::*;
 use crate::prelude::utility::get_input;
-use inline_colorization::*;
 use rand::{thread_rng, Rng};
 use std::time::SystemTime;
 

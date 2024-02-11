@@ -8,6 +8,5 @@ authors=["Burak Selim Senyurt"]
 [dependencies]
 chrono = "0.4.33"
 clearscreen = "2.0.1"
-inline_colorization = "0.1.6"
 press-btn-continue = "0.2.0"
 rand = "0.8.5"

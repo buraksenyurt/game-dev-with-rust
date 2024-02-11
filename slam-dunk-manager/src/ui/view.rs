@@ -1,23 +1,23 @@
 use crate::data::model::*;
+use crate::prelude::colors::*;
 use crate::prelude::utility::pause;
 use clearscreen::clear;
-use inline_colorization::*;
 use std::cmp::Ordering::Equal;
 
 pub fn print_transfer_market(market: &TransferMarket) {
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}TRANSFER MARKET ({:.2}) Million ${color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_blue}TRANSFER MARKET ({:.2}) Million ${light_yellow}{}{color_reset}",
         "-".repeat(15),
         market.total_value,
         "-".repeat(15)
     );
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     for p in market.players.iter() {
         println!("{color_cyan}{}{color_reset}", p);
-        println!("{color_bright_magenta}{}{color_reset}", p.stats);
+        println!("{color_magenta}{}{color_reset}", p.stats);
     }
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
 }
 
 pub fn print_table(league: &mut League) {
@@ -29,17 +29,17 @@ pub fn print_table(league: &mut League) {
             win_cmp
         }
     });
-    println!("{color_bright_yellow}{}", "-".repeat(64));
+    println!("{light_yellow}{}", "-".repeat(64));
     println!("{:<24}", league.name);
     println!("{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_blue} {:<2}   {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
+        "{color_blue} {:<2}   {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
         " ", "Team Name", "GP", "W", "L", "Points+", "Points-", "Diff"
     );
     let mut i = 1;
     for team in league.teams.iter() {
         println!(
-            "{color_bright_cyan} {:<2} - {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
+            "{color_cyan} {:<2} - {:<20} {:<3} {:<3} {:<3} {:<8} {:<8} {:<9}{color_reset}",
             i,
             team.name,
             team.stats.game_played,
@@ -51,32 +51,32 @@ pub fn print_table(league: &mut League) {
         );
         i += 1;
     }
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
 }
 
 pub fn print_main_menu() {
-    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_yellow}{} {color_cyan}(N)ew Game {color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_cyan}(N)ew Game {light_yellow}{}{color_reset}",
         "-".repeat(24),
         "-".repeat(28)
     );
     println!(
-        "{color_bright_yellow}{} {color_cyan}(L)oad Season {color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_cyan}(L)oad Season {light_yellow}{}{color_reset}",
         "-".repeat(24),
         "-".repeat(25)
     );
     println!(
-        "{color_bright_yellow}{} {color_cyan}(T)ransfer Market {color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_cyan}(T)ransfer Market {light_yellow}{}{color_reset}",
         "-".repeat(24),
         "-".repeat(21)
     );
     println!(
-        "{color_bright_yellow}{} {color_cyan}e(X)it Game {color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_cyan}e(X)it Game {light_yellow}{}{color_reset}",
         "-".repeat(24),
         "-".repeat(27)
     );
-    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     println!(
         "{color_magenta}Press N,L,T,X etc to Continue{}{color_reset}",
         " ".repeat(35)
@@ -84,26 +84,26 @@ pub fn print_main_menu() {
 }
 
 pub fn print_coach_team(team: &Team) {
-    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}{:<24}{color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_blue}{:<24}{light_yellow}{}{color_reset}",
         "-".repeat(20),
         team.name,
         "-".repeat(19)
     );
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}Attack Power {:.2} Defense Power {:.2}{color_bright_yellow}{}{color_reset}",
+        "{light_yellow}{} {color_blue}Attack Power {:.2} Defense Power {:.2}{light_yellow}{}{color_reset}",
         "-".repeat(12),
         team.attack_power,
         team.defensive_power,
         "-".repeat(15)
     );
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     for p in team.players.iter() {
         println!("{color_cyan}{}{color_reset}", p);
-        println!("{color_bright_magenta}{}{color_reset}", p.stats);
+        println!("{color_magenta}{}{color_reset}", p.stats);
     }
-    println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
 }
 
 pub fn print_fixture_by_paging(match_days: &[MatchDay]) {
@@ -122,19 +122,19 @@ pub fn print_fixture(match_days: &[MatchDay]) {
 }
 
 fn print_match_day(idx: usize, md: &MatchDay) {
-    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!("{light_yellow}{}{color_reset}", "-".repeat(64));
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}League Fixture{color_bright_yellow} {}{color_reset}",
+        "{light_yellow}{} {color_blue}League Fixture{light_yellow} {}{color_reset}",
         "-".repeat(24),
         "-".repeat(24)
     );
     println!(
-        "{color_bright_yellow}{} {color_bright_blue}Match Day - {}{color_bright_yellow} {}{color_reset}",
+        "{light_yellow}{} {color_blue}Match Day - {}{light_yellow} {}{color_reset}",
         "-".repeat(24),
         idx + 1,
-        "-".repeat(24)
+        "-".repeat(25)
     );
     for m in md.competitions.iter() {
-        println!("\t{color_bright_magenta}{}{color_reset}", m);
+        println!("\t{color_magenta}{}{color_reset}", m);
     }
 }

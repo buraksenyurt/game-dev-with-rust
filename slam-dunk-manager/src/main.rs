@@ -1,9 +1,9 @@
 use chrono::Utc;
 use clearscreen::clear;
-use inline_colorization::*;
 use slam_dunk_manager::game_mngr::game::*;
 use slam_dunk_manager::game_mngr::league::*;
 use slam_dunk_manager::game_mngr::menus::*;
+use slam_dunk_manager::prelude::colors::*;
 use slam_dunk_manager::prelude::contest::create_schedule;
 use slam_dunk_manager::prelude::utility::*;
 use slam_dunk_manager::prelude::view::*;
@@ -56,7 +56,7 @@ fn main() {
                 println!("{color_cyan}League has been created.");
                 loop {
                     game.current_state = GameState::TeamChoose;
-                    println!("{color_bright_yellow}Please enter your team name...{color_reset}");
+                    println!("{light_yellow}Please enter your team name...{color_reset}");
                     let team_name = get_input().unwrap();
                     if !check_team_name(&team_name) {
                         continue;
