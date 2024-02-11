@@ -1,4 +1,6 @@
 use crate::data::model::*;
+use crate::prelude::utility::pause;
+use clearscreen::clear;
 use inline_colorization::*;
 use std::cmp::Ordering::Equal;
 
@@ -102,4 +104,26 @@ pub fn print_coach_team(team: &Team) {
         println!("{color_bright_magenta}{}{color_reset}", p.stats);
     }
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
+}
+
+pub fn print_fixture(match_days: &[MatchDay]) {
+    for (idx, md) in match_days.iter().enumerate() {
+        println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+        println!(
+            "{color_bright_yellow}{} {color_bright_blue}League Fixture{color_bright_yellow} {}{color_reset}",
+            "-".repeat(24),
+            "-".repeat(20)
+        );
+        println!(
+            "{color_bright_yellow}{} {color_bright_blue}Match Day - {}{color_bright_yellow} {}{color_reset}",
+            "-".repeat(24),
+            idx,
+            "-".repeat(20)
+        );
+        for m in md.competitions.iter() {
+            println!("\t{color_bright_magenta}{}{color_reset}", m);
+        }
+        pause("For the next match day press any key to show.");
+        clear().unwrap();
+    }
 }

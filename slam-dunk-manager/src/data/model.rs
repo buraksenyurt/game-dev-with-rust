@@ -126,6 +126,16 @@ pub struct Competition {
     pub visitor: Team,
 }
 
+impl Display for Competition {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} - {} vs {} @ {}",
+            self.code, self.home.name, self.visitor.name, self.date
+        )
+    }
+}
+
 #[derive(Debug)]
 pub struct MatchDay {
     pub id: u16,
