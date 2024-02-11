@@ -8,4 +8,7 @@ pub enum GameState {
     TransferMarket,
     NewGame,
     TeamChoose,
+    ReadyToLaunch,
+    Load,
+    Exit,
 }
