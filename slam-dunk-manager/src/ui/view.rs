@@ -106,24 +106,35 @@ pub fn print_coach_team(team: &Team) {
     println!("{color_bright_yellow}{}{color_reset}", "-".repeat(64));
 }
 
-pub fn print_fixture(match_days: &[MatchDay]) {
+pub fn print_fixture_by_paging(match_days: &[MatchDay]) {
     for (idx, md) in match_days.iter().enumerate() {
-        println!("{color_yellow}{}{color_reset}", "-".repeat(64));
-        println!(
-            "{color_bright_yellow}{} {color_bright_blue}League Fixture{color_bright_yellow} {}{color_reset}",
-            "-".repeat(24),
-            "-".repeat(24)
-        );
-        println!(
-            "{color_bright_yellow}{} {color_bright_blue}Match Day - {}{color_bright_yellow} {}{color_reset}",
-            "-".repeat(24),
-            idx,
-            "-".repeat(24)
-        );
-        for m in md.competitions.iter() {
-            println!("\t{color_bright_magenta}{}{color_reset}", m);
-        }
-        pause("For the next match day press any key to show.");
         clear().unwrap();
+        print_match_day(idx, md);
+        pause("For the next match day press any key to show.");
+    }
+}
+
+pub fn print_fixture(match_days: &[MatchDay]) {
+    clear().unwrap();
+    for (idx, md) in match_days.iter().enumerate() {
+        print_match_day(idx, md);
+    }
+}
+
+fn print_match_day(idx: usize, md: &MatchDay) {
+    println!("{color_yellow}{}{color_reset}", "-".repeat(64));
+    println!(
+        "{color_bright_yellow}{} {color_bright_blue}League Fixture{color_bright_yellow} {}{color_reset}",
+        "-".repeat(24),
+        "-".repeat(24)
+    );
+    println!(
+        "{color_bright_yellow}{} {color_bright_blue}Match Day - {}{color_bright_yellow} {}{color_reset}",
+        "-".repeat(24),
+        idx + 1,
+        "-".repeat(24)
+    );
+    for m in md.competitions.iter() {
+        println!("\t{color_bright_magenta}{}{color_reset}", m);
     }
 }

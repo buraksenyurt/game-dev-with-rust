@@ -48,42 +48,36 @@ pub fn simulate_match_day(league: &mut League) {
 }
 
 pub fn create_schedule(teams: &[Team], start_date: DateTime<Utc>) -> Vec<MatchDay> {
-    let teams_count = teams.len();
+    let mut rng = thread_rng();
+    let mut shuffled = teams.to_vec();
+    shuffled.shuffle(&mut rng);
+
+    let teams_count = shuffled.len();
     let mut schedule = Vec::new();
 
     for round in 0..teams_count - 1 {
-        let mut match_day = MatchDay {
-            id: (round + 1) as u16,
-            competitions: Vec::new(),
-        };
+        let mut competitions = Vec::new();
 
-        for (idx, team) in teams.iter().enumerate() {
-            let opponent_idx = (round + idx) % (teams_count - 1);
-            if opponent_idx == idx {
-                continue;
-            }
-
-            let home = if idx % 2 == 0 {
-                team
-            } else {
-                &teams[opponent_idx]
-            };
-            let visitor = if idx % 2 == 0 {
-                &teams[opponent_idx]
-            } else {
-                team
-            };
+        for idx in 0..teams_count / 2 {
+            let home_team = &shuffled[idx];
+            let visitor_team = &shuffled[teams_count - 1 - idx];
 
             let competition = Competition {
-                code: format!("COMP{}-{}", round + 1, idx),
+                code: format!("COMP{}-{}", round + 1, idx + 1),
                 date: start_date + Duration::weeks(round as i64),
-                home: home.clone(),
-                visitor: visitor.clone(),
+                home: home_team.clone(),
+                visitor: visitor_team.clone(),
             };
-            match_day.competitions.push(competition);
+            competitions.push(competition);
         }
 
+        let match_day = MatchDay {
+            id: (round + 1) as u16,
+            competitions,
+        };
+
         schedule.push(match_day);
+        shuffled.rotate_left(1);
     }
 
     schedule

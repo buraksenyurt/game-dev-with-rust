@@ -71,7 +71,7 @@ fn main() {
                     pause("Press any key to start creating schedule.");
                     let fixture = create_schedule(&league.teams, Utc::now());
                     pause("Schedule created. Press any key to show.");
-                    print_fixture(&fixture);
+                    print_fixture_by_paging(&fixture);
                     pause("End of schedule. Press any key to go menu.");
                     game.current_state = GameState::ReadyToLaunch;
                     continue 'main_loop;

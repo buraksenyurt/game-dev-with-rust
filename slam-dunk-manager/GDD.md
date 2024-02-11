@@ -213,17 +213,12 @@ Fikstür ekranı aşağıdakina benzer şekilde oluşur.
 ```text
 ----------------------------------------------------------------
 ------------------------ League Fixture ------------------------
------------------------- Match Day - 4 ------------------------
-	COMP5-0 - Eagles vs Lions @ 10/03/2024 16:00
-	COMP5-1 - Bears vs Wolves @ 10/03/2024 16:00
-	COMP5-2 - Sharks vs Hawks @ 10/03/2024 16:00
-	COMP5-3 - Eagles vs Dragons @ 10/03/2024 16:00
-	COMP5-4 - Lions vs Wolves @ 10/03/2024 16:00
-	COMP5-5 - Sharks vs Bears @ 10/03/2024 16:00
-	COMP5-6 - Hawks vs Dragons @ 10/03/2024 16:00
-	COMP5-7 - Lions vs Dream Team @ 10/03/2024 16:00
+------------------------ Match Day - 0 ------------------------
+	COMP1-1 - Hawks vs Eagles @ 11/02/2024 16:14
+	COMP1-2 - Wolves vs Sharks @ 11/02/2024 16:14
+	COMP1-3 - Dream Team vs Bears @ 11/02/2024 16:14
+	COMP1-4 - Dragons vs Lions @ 11/02/2024 16:14
 For the next match day press any key to show.
-
 ```
 
 ### Transfer Market Ekranı
