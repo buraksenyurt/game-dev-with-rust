@@ -112,13 +112,13 @@ pub fn print_fixture(match_days: &[MatchDay]) {
         println!(
             "{color_bright_yellow}{} {color_bright_blue}League Fixture{color_bright_yellow} {}{color_reset}",
             "-".repeat(24),
-            "-".repeat(20)
+            "-".repeat(24)
         );
         println!(
             "{color_bright_yellow}{} {color_bright_blue}Match Day - {}{color_bright_yellow} {}{color_reset}",
             "-".repeat(24),
             idx,
-            "-".repeat(20)
+            "-".repeat(24)
         );
         for m in md.competitions.iter() {
             println!("\t{color_bright_magenta}{}{color_reset}", m);

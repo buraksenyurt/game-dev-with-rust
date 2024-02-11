@@ -131,7 +131,10 @@ impl Display for Competition {
         write!(
             f,
             "{} - {} vs {} @ {}",
-            self.code, self.home.name, self.visitor.name, self.date
+            self.code,
+            self.home.name,
+            self.visitor.name,
+            self.date.format("%d/%m/%Y %H:%M")
         )
     }
 }

@@ -22,7 +22,7 @@ fn main() {
         match choose {
             Ok(cmd) => match cmd {
                 MainMenu::NewGame => {
-                    game.current_state = GameState::MainMenu;
+                    game.current_state = GameState::NewGame;
                     break 'menu_loop;
                 }
                 MainMenu::LoadGame => {
@@ -80,9 +80,14 @@ fn main() {
             GameState::TeamChoose => {}
             GameState::ReadyToLaunch => {
                 println!("The game is ready to launch");
+                break 'main_loop;
             }
-            GameState::Load => {}
+            GameState::Load => {
+                println!("Load last saved game!");
+                break 'main_loop;
+            }
             GameState::Exit => {
+                println!("Closing...");
                 break 'main_loop;
             }
         }
