@@ -54,17 +54,116 @@ Menü ve ekranlara ait tasarımları aşağıdaki gibidir. Çok basit anlamda oy
 
 Oyunun ana menüsünde New Season, Load Season, Transfer Market seçenekleri bulunur. New Season ile yeni bir lig sezonu başlatılır ancak önceden devam etmekte olan bir sezon varsa bu sezon silinsin mi yoksa oradan devam edilsin mi diye koça sorulur. Yeni bir lig sezonu başlatılırsa önce takımlar oyuncu havuzundan rastgele oyuncularla eşleştirilerek algoritma tarafından belirlenir. Oyuncudan takımına bir isim vermesi istenir ve transfer market durumuna geçilir. Burada takım için oyuncular seçilir ve sonrasında fikstürün belirlendiği adım başlatılır. Fiktür algoritma tarafından otomatik olarak hazırlandıktan sonra ilk maç gününe geçilir, karşılaşmalar gösterilir. Play Match Day kendi içinde daha kapsamlı bir yapıya sahiptir. Maçları oynatmak, durdurmak, oyuncu değişikliği yapmak, eş zamanlı maç izlenmesi gibi detaylı işlevleri vardır.
 
-### Oyun Ana Menüsü
+### Oyun Menü ve Alt Ekran Tasarımları
 
 ```text
 --------------------------------
------ (N)ew Session ------------
------ (L)oad Session------------
+----- (N)ew Season ------------
+----- (L)oad Season------------
 ----- (T)ransfer Market --------
 --------------------------------
 ```
 
-### New Session Menüsü
+Yeni bir sezon açılışı yapıldığında takımlar ve oyuncuları otomatik oluşturulur ve devamında koçtan takım adını girmesi ve transfer marketten oyuncu seçimi yapması isternir. Buradaki terminal akışı aşağıdaki gibidir.
+
+```text
+League has been created.
+Please enter your team name...
+Dream Team
+Dream Team has been added to league.
+Please choose your team members.
+----------------------------------------------------------------
+--------------- TRANSFER MARKET (78.39) Million $---------------
+----------------------------------------------------------------
+# 03-Riley Williams           Combo Guard 199.06cm 4.24 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	13.26    6.14     7.76     1.21     2.43     0.20    
+# 09-Morgan Martinez          Combo Guard 218.90cm 5.24 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	29.92    3.51     7.18     2.66     0.02     0.50    
+# 15-Skyler Johnson           Small Forward 192.51cm 4.63 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	19.13    0.25     0.10     0.58     2.22     0.43    
+# 17-Jamie Anderson           Small Forward 186.42cm 5.51 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	21.85    3.26     2.87     2.14     0.27     0.89    
+# 20-Riley Brown              Small Forward 216.72cm 6.54 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	14.66    4.54     9.71     2.01     0.79     4.41    
+# 21-Alex Miller              Small Forward 193.70cm 3.61 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	28.28    6.20     7.89     0.30     0.13     0.20    
+# 24-Jordan Jones             Shooting Guard 189.40cm 8.64 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	12.73    1.12     6.69     0.95     2.18     1.43    
+# 26-Casey Williams           Shooting Guard 212.15cm 2.19 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	25.05    10.42    6.45     0.59     0.77     3.70    
+# 29-Riley Johnson            Small Forward 194.39cm 2.72 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	6.93     6.88     7.32     2.18     1.49     4.25    
+# 33-Chris Smith              Small Forward 207.58cm 3.48 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	15.57    10.18    6.76     0.15     2.95     0.01    
+# 37-Jordan Wilson            Small Forward 207.99cm 9.39 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	22.97    5.60     6.22     1.78     2.95     3.40    
+# 39-Alex Williams            Combo Guard 219.21cm 3.98 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	21.39    9.92     0.86     2.75     1.63     1.76    
+# 44-Jordan Brown             Combo Guard 205.27cm 5.02 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	27.26    11.74    9.94     1.53     2.84     2.85    
+# 46-Jamie Wilson             Shooting Guard 186.28cm 6.61 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	16.75    3.15     5.71     2.16     2.17     1.19    
+# 47-Chris Martinez           Shooting Guard 217.58cm 6.59 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	10.84    1.35     4.55     1.98     0.13     3.35    
+----------------------------------------------------------------
+Please enter player's number. Be careful!
+3
+Riley Williams has been added your team.
+Please enter player's number. Be careful!
+9
+Morgan Martinez has been added your team.
+Please enter player's number. Be careful!
+26
+Casey Williams has been added your team.
+Please enter player's number. Be careful!
+37
+Jordan Wilson has been added your team.
+Please enter player's number. Be careful!
+44
+Jordan Brown has been added your team.
+```
+
+### Oyuncu Takımı
+
+Koçun oyuncu seçimleri sonrası özet olarak çıkan veya koçun herhangi bir zamanda görüntüleyebileceği takım tablosu aşağıdaki gibidir.
+
+```text
+----------------------------------------------------------------
+-------------------- Dream Team              -------------------
+------------ Attack Power 8.66 Defense Power 9.78---------------
+----------------------------------------------------------------
+# 03-Riley Williams           Combo Guard 199.06cm 4.24 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	13.26    6.14     7.76     1.21     2.43     0.20    
+# 09-Morgan Martinez          Combo Guard 218.90cm 5.24 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	29.92    3.51     7.18     2.66     0.02     0.50    
+# 26-Casey Williams           Shooting Guard 212.15cm 2.19 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	25.05    10.42    6.45     0.59     0.77     3.70    
+# 37-Jordan Wilson            Small Forward 207.99cm 9.39 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	22.97    5.60     6.22     1.78     2.95     3.40    
+# 44-Jordan Brown             Combo Guard 205.27cm 5.02 $
+	Pnt      Reb      Ass      Blc      Ste      Trn     
+	27.26    11.74    9.94     1.53     2.84     2.85    
+----------------------------------------------------------------
+```
 
 ### Maç Simülasyon Ekranı (Otomatik Maç Günü)
 
@@ -108,6 +207,24 @@ Maçlar oynandıkça puan tablosundaki sıralama değişir. Örneğin 3ncü maç
 ```
 
 ### Fikstür Ekranı
+
+Fikstür ekranı aşağıdakina benzer şekilde oluşur.
+
+```text
+----------------------------------------------------------------
+------------------------ League Fixture ------------------------
+------------------------ Match Day - 4 ------------------------
+	COMP5-0 - Eagles vs Lions @ 10/03/2024 16:00
+	COMP5-1 - Bears vs Wolves @ 10/03/2024 16:00
+	COMP5-2 - Sharks vs Hawks @ 10/03/2024 16:00
+	COMP5-3 - Eagles vs Dragons @ 10/03/2024 16:00
+	COMP5-4 - Lions vs Wolves @ 10/03/2024 16:00
+	COMP5-5 - Sharks vs Bears @ 10/03/2024 16:00
+	COMP5-6 - Hawks vs Dragons @ 10/03/2024 16:00
+	COMP5-7 - Lions vs Dream Team @ 10/03/2024 16:00
+For the next match day press any key to show.
+
+```
 
 ### Transfer Market Ekranı
 
