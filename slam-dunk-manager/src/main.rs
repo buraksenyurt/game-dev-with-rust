@@ -9,14 +9,17 @@ use slam_dunk_manager::prelude::utility::*;
 use slam_dunk_manager::prelude::view::*;
 use std::str::FromStr;
 
-fn main() {
-    let mut game = Game {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut game = Game::load("game_state.bin").await.unwrap_or_else(|_| Game {
         current_state: GameState::Initial,
-    };
+        fixture: vec![],
+    });
+
     'menu_loop: loop {
-        clear().unwrap();
+        clear()?;
         print_main_menu();
-        let input = get_input().unwrap();
+        let input = get_input().ok_or("Input cannot be empty")?;
         let choose = MainMenu::from_str(&input);
 
         match choose {
@@ -51,13 +54,13 @@ fn main() {
             GameState::MainMenu => {}
             GameState::TransferMarket => {}
             GameState::NewGame => {
-                clear().unwrap();
+                clear()?;
                 let mut league = create_league();
                 println!("{color_cyan}League has been created.");
                 loop {
                     game.current_state = GameState::TeamChoose;
                     println!("{light_yellow}Please enter your team name...{color_reset}");
-                    let team_name = get_input().unwrap();
+                    let team_name = get_input().ok_or("Input cannot be empty")?;
                     if !check_team_name(&team_name) {
                         continue;
                     }
@@ -80,6 +83,7 @@ fn main() {
             GameState::TeamChoose => {}
             GameState::ReadyToLaunch => {
                 println!("The game is ready to launch");
+                game.save("game_state.bin").await?;
                 break 'main_loop;
             }
             GameState::Load => {
@@ -87,9 +91,12 @@ fn main() {
                 break 'main_loop;
             }
             GameState::Exit => {
+                game.save("game_state.bin").await?;
                 println!("Closing...");
                 break 'main_loop;
             }
         }
     }
+
+    Ok(())
 }
