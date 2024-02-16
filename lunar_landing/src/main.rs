@@ -2,9 +2,10 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::{Canvas, WindowCanvas};
+use sdl2::render::{Canvas, TextureQuery, WindowCanvas};
 use sdl2::video::Window;
 use std::time::Duration;
+use sdl2::ttf;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
@@ -12,12 +13,13 @@ const HEIGHT: i32 = 600;
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
+    let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let mut velocity = Vector::new(0., 0.);
     let mut shuttle = Shuttle::new(Point::new(200, 80), 100);
 
     let window = video_subsystem
         .window(
-            format!("Lunar Landing. Fuel {}", shuttle.fuel_level).as_str(),
+            "Lunar Landing 2049",
             WIDTH as u32,
             HEIGHT as u32,
         )
@@ -68,6 +70,17 @@ fn main() -> Result<(), String> {
         draw_mountain(&mut canvas)?;
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), velocity.to_point())?;
         velocity.y += 0.05;
+
+        draw_text(
+            &mut canvas,
+            &ttf_context,
+            &format!("Fuel: {}", shuttle.fuel_level),
+            "fonts/OpenSans-Bold.ttf",
+            14,
+            Color::RGBA(255, 255, 255, 255),
+            WIDTH - 100,
+            10,
+        )?;
 
         canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
@@ -135,6 +148,41 @@ impl Shuttle {
         Ok(())
     }
 }
+pub struct Vector {
+    pub x: f32,
+    pub y: f32,
+}
+impl Vector {
+    pub fn new(x: f32, y: f32) -> Self {
+        Self { x, y }
+    }
+    pub fn to_point(&self) -> Point {
+        Point::new(self.x as i32, self.y as i32)
+    }
+}
+
+fn draw_text(
+    canvas: &mut Canvas<Window>,
+    ttf_context: &ttf::Sdl2TtfContext,
+    text: &str,
+    font_path: &str,
+    font_size: u16,
+    color: Color,
+    x: i32,
+    y: i32,
+) -> Result<(), String> {
+    let font = ttf_context.load_font(font_path, font_size)?;
+    let surface = font.render(text)
+        .blended(color)
+        .map_err(|e| e.to_string())?;
+    let texture_creator = canvas.texture_creator();
+    let texture = texture_creator.create_texture_from_surface(&surface)
+        .map_err(|e| e.to_string())?;
+
+    let TextureQuery { width, height, .. } = texture.query();
+    canvas.copy(&texture, None, Some(Rect::new(x, y, width, height)))?;
+    Ok(())
+}
 
 pub fn draw_strong_line(
     canvas: &mut Canvas<Window>,
@@ -152,17 +200,4 @@ pub fn draw_strong_line(
         )?;
     }
     Ok(())
-}
-
-pub struct Vector {
-    pub x: f32,
-    pub y: f32,
-}
-impl Vector {
-    pub fn new(x: f32, y: f32) -> Self {
-        Self { x, y }
-    }
-    pub fn to_point(&self) -> Point {
-        Point::new(self.x as i32, self.y as i32)
-    }
 }

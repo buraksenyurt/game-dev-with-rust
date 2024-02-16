@@ -6,4 +6,4 @@ description = "A tiny lunar landing clone written by SDL2"
 authors = ["Burak Selim Senyurt"]
 
 [dependencies]
-sdl2 = "0.36.0"
+sdl2 = { version = "0.36.0", features = ["ttf","image"] }
