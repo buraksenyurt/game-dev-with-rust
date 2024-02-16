@@ -45,7 +45,8 @@ pub fn add_players_to_team(league: &mut League, player_team: &mut Team) {
                 println!("{color_red}This player has already been added your team.{color_reset}",);
                 continue;
             }
-            if let Some(p) = take_player(n, &league.transfer_market.players) {
+            if let Some(mut p) = take_player(n, &league.transfer_market.players) {
+                p.is_free = false;
                 println!(
                     "{color_green}{} has been added your team.{color_reset}",
                     &p.full_name

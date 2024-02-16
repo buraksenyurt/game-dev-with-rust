@@ -11,54 +11,49 @@ use std::str::FromStr;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut game = Game::load("game_state.bin").await.unwrap_or_else(|_| Game {
-        current_state: GameState::Initial,
+    let mut program_state = ProgramState::MainMenu;
+
+    let game = Game::load("game_state.bin").await.unwrap_or_else(|_| Game {
+        program_state: ProgramState::None,
         fixture: vec![],
     });
 
-    'menu_loop: loop {
-        clear()?;
-        print_main_menu();
-        let input = get_input().ok_or("Input cannot be empty")?;
-        let choose = MainMenu::from_str(&input);
-
-        match choose {
-            Ok(cmd) => match cmd {
-                MainMenu::NewGame => {
-                    game.current_state = GameState::NewGame;
-                    break 'menu_loop;
+    'game_loop: loop {
+        match program_state {
+            ProgramState::MainMenu => {
+                clear()?;
+                print_main_menu();
+                let input = get_input().ok_or("Input cannot be empty")?;
+                let choose = MainMenu::from_str(&input);
+                match choose {
+                    Ok(cmd) => match cmd {
+                        MainMenu::NewGame => {
+                            program_state = ProgramState::InitNewGame;
+                            continue 'game_loop;
+                        }
+                        MainMenu::LoadGame => {
+                            continue 'game_loop;
+                        }
+                        MainMenu::TransferMarket => {
+                            program_state = ProgramState::ShowTransferMarket;
+                            continue 'game_loop;
+                        }
+                        MainMenu::ExitGame => {
+                            program_state = ProgramState::Exit;
+                            continue 'game_loop;
+                        }
+                    },
+                    Err(reason) => {
+                        println!("{color_red}{reason}{color_reset}");
+                        continue;
+                    }
                 }
-                MainMenu::LoadGame => {
-                    game.current_state = GameState::Load;
-                    break 'menu_loop;
-                }
-                MainMenu::TransferMarket => {
-                    game.current_state = GameState::TransferMarket;
-                    break 'menu_loop;
-                }
-                MainMenu::ExitGame => {
-                    game.current_state = GameState::Exit;
-                    break 'menu_loop;
-                }
-            },
-            Err(reason) => {
-                println!("{color_red}{reason}{color_reset}");
-                continue 'menu_loop;
             }
-        }
-    }
-
-    'main_loop: loop {
-        match game.current_state {
-            GameState::Initial => {}
-            GameState::MainMenu => {}
-            GameState::TransferMarket => {}
-            GameState::NewGame => {
+            ProgramState::InitNewGame => {
                 clear()?;
                 let mut league = create_league();
                 println!("{color_cyan}League has been created.");
                 loop {
-                    game.current_state = GameState::TeamChoose;
                     println!("{light_yellow}Please enter your team name...{color_reset}");
                     let team_name = get_input().ok_or("Input cannot be empty")?;
                     if !check_team_name(&team_name) {
@@ -67,7 +62,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let mut player_team = add_player_team(&team_name, &mut league);
                     println!("{team_name} has been added to league.");
                     println!("Please choose your team members.{color_reset}");
-                    game.current_state = GameState::TransferMarket;
                     print_transfer_market(&league.transfer_market);
                     add_players_to_team(&mut league, &mut player_team);
                     print_coach_team(&player_team);
@@ -76,25 +70,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     pause("Schedule created. Press any key to show.");
                     print_fixture_by_paging(&fixture);
                     pause("End of schedule. Press any key to go menu.");
-                    game.current_state = GameState::ReadyToLaunch;
-                    continue 'main_loop;
+                    println!("The game is ready to launch");
+                    game.save("game_state.bin").await?;
+                    program_state = ProgramState::MainMenu;
+                    break;
                 }
             }
-            GameState::TeamChoose => {}
-            GameState::ReadyToLaunch => {
-                println!("The game is ready to launch");
-                game.save("game_state.bin").await?;
-                break 'main_loop;
-            }
-            GameState::Load => {
-                println!("Load last saved game!");
-                break 'main_loop;
-            }
-            GameState::Exit => {
+            ProgramState::Exit => {
                 game.save("game_state.bin").await?;
                 println!("Closing...");
-                break 'main_loop;
+                break 'game_loop;
             }
+            ProgramState::ShowTransferMarket => {
+                pause("Press any key to show current transfer market.");
+                continue 'game_loop;
+                //print_transfer_market(&league.transfer_market);
+            }
+            ProgramState::None => {}
         }
     }
 

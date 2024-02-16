@@ -11,6 +11,7 @@ pub struct Player {
     pub stats: AverageStat,
     pub energy: f32,
     pub transfer_fee: f32,
+    pub is_free: bool,
 }
 
 impl Display for Player {

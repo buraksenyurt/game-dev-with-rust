@@ -18,6 +18,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.3,
             },
             transfer_fee: 7.57,
+            is_free: false,
         },
         Player {
             id: 2,
@@ -34,6 +35,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 4.56,
             },
             transfer_fee: 8.03,
+            is_free: false,
         },
         Player {
             id: 3,
@@ -50,6 +52,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.2,
             },
             transfer_fee: 4.24,
+            is_free: false,
         },
         Player {
             id: 4,
@@ -66,6 +69,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.88,
             },
             transfer_fee: 4.3,
+            is_free: false,
         },
         Player {
             id: 5,
@@ -82,6 +86,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.31,
             },
             transfer_fee: 4.37,
+            is_free: false,
         },
         Player {
             id: 6,
@@ -98,6 +103,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.3,
             },
             transfer_fee: 7.98,
+            is_free: false,
         },
         Player {
             id: 7,
@@ -114,6 +120,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.51,
             },
             transfer_fee: 9.37,
+            is_free: false,
         },
         Player {
             id: 8,
@@ -130,6 +137,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.7,
             },
             transfer_fee: 6.24,
+            is_free: false,
         },
         Player {
             id: 9,
@@ -146,6 +154,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.5,
             },
             transfer_fee: 5.24,
+            is_free: false,
         },
         Player {
             id: 10,
@@ -162,6 +171,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.43,
             },
             transfer_fee: 5.79,
+            is_free: false,
         },
         Player {
             id: 11,
@@ -178,6 +188,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.74,
             },
             transfer_fee: 3.11,
+            is_free: false,
         },
         Player {
             id: 12,
@@ -194,6 +205,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.73,
             },
             transfer_fee: 8.61,
+            is_free: false,
         },
         Player {
             id: 13,
@@ -210,6 +222,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.03,
             },
             transfer_fee: 3.41,
+            is_free: false,
         },
         Player {
             id: 14,
@@ -226,6 +239,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.5,
             },
             transfer_fee: 6.53,
+            is_free: false,
         },
         Player {
             id: 15,
@@ -242,6 +256,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.43,
             },
             transfer_fee: 4.63,
+            is_free: false,
         },
         Player {
             id: 16,
@@ -258,6 +273,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.33,
             },
             transfer_fee: 4.4,
+            is_free: false,
         },
         Player {
             id: 17,
@@ -274,6 +290,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.89,
             },
             transfer_fee: 5.51,
+            is_free: false,
         },
         Player {
             id: 18,
@@ -290,6 +307,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.26,
             },
             transfer_fee: 6.08,
+            is_free: false,
         },
         Player {
             id: 19,
@@ -306,6 +324,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.83,
             },
             transfer_fee: 5.46,
+            is_free: false,
         },
         Player {
             id: 20,
@@ -322,6 +341,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 4.41,
             },
             transfer_fee: 6.54,
+            is_free: false,
         },
         Player {
             id: 21,
@@ -338,6 +358,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.2,
             },
             transfer_fee: 3.61,
+            is_free: false,
         },
         Player {
             id: 22,
@@ -354,6 +375,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.79,
             },
             transfer_fee: 2.11,
+            is_free: false,
         },
         Player {
             id: 23,
@@ -370,6 +392,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.72,
             },
             transfer_fee: 1.63,
+            is_free: false,
         },
         Player {
             id: 24,
@@ -386,6 +409,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.43,
             },
             transfer_fee: 8.64,
+            is_free: false,
         },
         Player {
             id: 25,
@@ -402,6 +426,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.59,
             },
             transfer_fee: 5.6,
+            is_free: false,
         },
         Player {
             id: 26,
@@ -418,6 +443,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.7,
             },
             transfer_fee: 2.19,
+            is_free: false,
         },
         Player {
             id: 27,
@@ -434,6 +460,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.22,
             },
             transfer_fee: 1.44,
+            is_free: false,
         },
         Player {
             id: 28,
@@ -450,6 +477,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.43,
             },
             transfer_fee: 2.04,
+            is_free: false,
         },
         Player {
             id: 29,
@@ -466,6 +494,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 4.25,
             },
             transfer_fee: 2.72,
+            is_free: false,
         },
         Player {
             id: 30,
@@ -482,6 +511,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.92,
             },
             transfer_fee: 7.88,
+            is_free: false,
         },
         Player {
             id: 31,
@@ -498,6 +528,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.9,
             },
             transfer_fee: 8.74,
+            is_free: false,
         },
         Player {
             id: 32,
@@ -514,6 +545,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.98,
             },
             transfer_fee: 5.64,
+            is_free: false,
         },
         Player {
             id: 33,
@@ -530,6 +562,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.01,
             },
             transfer_fee: 3.48,
+            is_free: false,
         },
         Player {
             id: 34,
@@ -546,6 +579,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.4,
             },
             transfer_fee: 7.87,
+            is_free: false,
         },
         Player {
             id: 35,
@@ -562,6 +596,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.82,
             },
             transfer_fee: 5.75,
+            is_free: false,
         },
         Player {
             id: 36,
@@ -578,6 +613,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.18,
             },
             transfer_fee: 4.9,
+            is_free: false,
         },
         Player {
             id: 37,
@@ -594,6 +630,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.4,
             },
             transfer_fee: 9.39,
+            is_free: false,
         },
         Player {
             id: 38,
@@ -610,6 +647,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 4.4,
             },
             transfer_fee: 9.57,
+            is_free: false,
         },
         Player {
             id: 39,
@@ -626,6 +664,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.76,
             },
             transfer_fee: 3.98,
+            is_free: false,
         },
         Player {
             id: 40,
@@ -642,6 +681,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 0.91,
             },
             transfer_fee: 2.79,
+            is_free: false,
         },
         Player {
             id: 41,
@@ -658,6 +698,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.97,
             },
             transfer_fee: 5.2,
+            is_free: false,
         },
         Player {
             id: 42,
@@ -674,6 +715,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 4.44,
             },
             transfer_fee: 4.23,
+            is_free: false,
         },
         Player {
             id: 43,
@@ -690,6 +732,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.34,
             },
             transfer_fee: 8.36,
+            is_free: false,
         },
         Player {
             id: 44,
@@ -706,6 +749,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.85,
             },
             transfer_fee: 5.02,
+            is_free: false,
         },
         Player {
             id: 45,
@@ -722,6 +766,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.93,
             },
             transfer_fee: 3.36,
+            is_free: false,
         },
         Player {
             id: 46,
@@ -738,6 +783,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.19,
             },
             transfer_fee: 6.61,
+            is_free: false,
         },
         Player {
             id: 47,
@@ -754,6 +800,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.35,
             },
             transfer_fee: 6.59,
+            is_free: false,
         },
         Player {
             id: 48,
@@ -770,6 +817,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 3.56,
             },
             transfer_fee: 5.83,
+            is_free: false,
         },
         Player {
             id: 49,
@@ -786,6 +834,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 2.74,
             },
             transfer_fee: 1.47,
+            is_free: false,
         },
         Player {
             id: 50,
@@ -802,6 +851,7 @@ pub fn load_players() -> Vec<Player> {
                 turnovers_avg: 1.62,
             },
             transfer_fee: 4.16,
+            is_free: false,
         },
     ]
 }

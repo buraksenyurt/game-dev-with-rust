@@ -39,13 +39,13 @@ mod tests {
         let fixture = create_schedule(&league.teams, Utc::now());
         assert_eq!(fixture.len(), 7);
         let game = Game {
-            current_state: GameState::Initial,
+            program_state: GameState::Initial,
             fixture,
         };
         assert!(game.save("GamesData.bin").await.is_ok());
 
         let game = Game::load("GamesData.bin").await;
         assert!(game.is_ok());
-        assert_eq!(game.unwrap().fixture.len(),7);
+        assert_eq!(game.unwrap().fixture.len(), 7);
     }
 }

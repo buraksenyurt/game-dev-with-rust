@@ -4,23 +4,20 @@ use serde::{Deserialize, Serialize};
 use tokio::fs::File;
 use tokio::io::{self, AsyncReadExt, AsyncWriteExt};
 
-#[derive(Serialize, Deserialize)]
-pub struct Game {
-    pub current_state: GameState,
-    pub fixture: Vec<MatchDay>,
-    //pub league:League
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum ProgramState {
+    MainMenu,
+    InitNewGame,
+    Exit,
+    None,
+    ShowTransferMarket,
 }
 
 #[derive(Serialize, Deserialize)]
-pub enum GameState {
-    Initial,
-    MainMenu,
-    TransferMarket,
-    NewGame,
-    TeamChoose,
-    ReadyToLaunch,
-    Load,
-    Exit,
+pub struct Game {
+    pub program_state: ProgramState,
+    pub fixture: Vec<MatchDay>,
+    //pub league:League
 }
 
 impl Game {
