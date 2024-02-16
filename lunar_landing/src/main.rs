@@ -3,9 +3,9 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, TextureQuery, WindowCanvas};
+use sdl2::ttf;
 use sdl2::video::Window;
 use std::time::Duration;
-use sdl2::ttf;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
@@ -15,14 +15,10 @@ fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video()?;
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let mut velocity = Vector::new(0., 0.);
-    let mut shuttle = Shuttle::new(Point::new(200, 80), 100);
+    let mut shuttle = Shuttle::new(Point::new(200, 80), 10000);
 
     let window = video_subsystem
-        .window(
-            "Lunar Landing 2049",
-            WIDTH as u32,
-            HEIGHT as u32,
-        )
+        .window("Lunar Landing 2049", WIDTH as u32, HEIGHT as u32)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
@@ -47,29 +43,37 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
-                    velocity.x -= 0.25;
+                    velocity.x -= 0.50;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
-                    velocity.x += 0.25;
+                    velocity.x += 0.50;
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Down),
+                    ..
+                } => {
+                    velocity.y += 1.50;
+                    shuttle.fuel_level -= 2;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Space),
                     ..
                 } => {
                     velocity.y -= 1.;
-                    shuttle.fuel_level -= 1;
+                    shuttle.fuel_level -= 10;
                 }
                 _ => {}
             }
         }
-
+        draw_landing_area(&mut canvas)?;
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         draw_mountain(&mut canvas)?;
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), velocity.to_point())?;
         velocity.y += 0.05;
+        shuttle.fuel_level -= 1;
 
         draw_text(
             &mut canvas,
@@ -81,6 +85,16 @@ fn main() -> Result<(), String> {
             WIDTH - 100,
             10,
         )?;
+        // draw_text(
+        //     &mut canvas,
+        //     &ttf_context,
+        //     &format!("({}:{})", shuttle.position.x, shuttle.position.y),
+        //     "fonts/OpenSans-Bold.ttf",
+        //     14,
+        //     Color::RGBA(255, 255, 255, 255),
+        //     WIDTH - 100,
+        //     30,
+        // )?;
 
         canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
@@ -108,15 +122,31 @@ fn draw_mountain(canvas: &mut WindowCanvas) -> Result<(), String> {
     Ok(())
 }
 
+fn draw_landing_area(canvas: &mut WindowCanvas) -> Result<(), String> {
+    canvas.set_draw_color(Color::RGB(255, 0, 0));
+    let start_point = Point::new(0, HEIGHT - 15);
+    let end_point = Point::new(100, HEIGHT - 15);
+    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
+
+    let start_point = Point::new(200, 395);
+    let end_point = Point::new(300, 395);
+    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
+
+    let start_point = Point::new(700, 395);
+    let end_point = Point::new(800, 395);
+    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
+    Ok(())
+}
+
 pub struct Shuttle {
-    pub top_left: Point,
+    pub position: Point,
     pub fuel_level: i32,
 }
 
 impl Shuttle {
-    pub fn new(top_left: Point, fuel_level: i32) -> Self {
+    pub fn new(position: Point, fuel_level: i32) -> Self {
         Self {
-            top_left,
+            position,
             fuel_level,
         }
     }
@@ -127,7 +157,7 @@ impl Shuttle {
         color: Color,
         velocity: Point,
     ) -> Result<(), String> {
-        let point = self.top_left;
+        let point = self.position;
 
         canvas.set_draw_color(color);
         canvas.draw_rect(Rect::new(
@@ -172,11 +202,13 @@ fn draw_text(
     y: i32,
 ) -> Result<(), String> {
     let font = ttf_context.load_font(font_path, font_size)?;
-    let surface = font.render(text)
+    let surface = font
+        .render(text)
         .blended(color)
         .map_err(|e| e.to_string())?;
     let texture_creator = canvas.texture_creator();
-    let texture = texture_creator.create_texture_from_surface(&surface)
+    let texture = texture_creator
+        .create_texture_from_surface(&surface)
         .map_err(|e| e.to_string())?;
 
     let TextureQuery { width, height, .. } = texture.query();
