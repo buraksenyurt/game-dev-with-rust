@@ -13,7 +13,7 @@ pub const color_green: &str = "\x1B[32m";
 #[allow(non_upper_case_globals)]
 pub const color_yellow: &str = "\x1B[33m";
 #[allow(non_upper_case_globals)]
-pub const light_yellow:&str="\x1b[38;5;190m";
+pub const light_yellow: &str = "\x1b[38;5;190m";
 #[allow(non_upper_case_globals)]
 pub const color_blue: &str = "\x1B[34m";
 #[allow(non_upper_case_globals)]

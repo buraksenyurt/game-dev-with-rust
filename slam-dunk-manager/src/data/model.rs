@@ -1,7 +1,8 @@
 use chrono::{DateTime, Utc};
+use serde_derive::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub id: u16,
     pub full_name: String,
@@ -22,7 +23,7 @@ impl Display for Player {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AverageStat {
     pub points_avg: f32,
     pub rebounds_avg: f32,
@@ -51,7 +52,7 @@ impl Display for AverageStat {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Position {
     Center,
     ComboGuard,
@@ -75,7 +76,7 @@ impl Display for Position {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Team {
     pub name: String,
     pub players: Vec<Player>,
@@ -84,7 +85,7 @@ pub struct Team {
     pub stats: TeamStats,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct TeamStats {
     pub game_played: u16,
     pub win: u16,
@@ -94,7 +95,7 @@ pub struct TeamStats {
     pub diff: i16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Coach {
     pub nick_name: String,
     pub budget: f32,
@@ -103,13 +104,13 @@ pub struct Coach {
     pub total_loss: u16,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TransferMarket {
     pub players: Vec<Player>,
     pub total_value: f32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct League {
     pub name: String,
     pub start_date: DateTime<Utc>,
@@ -118,12 +119,13 @@ pub struct League {
     pub is_active: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Competition {
     pub code: String,
     pub date: DateTime<Utc>,
     pub home: Team,
     pub visitor: Team,
+    pub score: MatchScore,
 }
 
 impl Display for Competition {
@@ -139,8 +141,24 @@ impl Display for Competition {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MatchDay {
     pub id: u16,
     pub competitions: Vec<Competition>,
+    pub is_played: bool,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct MatchScore {
+    pub home: u16,
+    pub visitor: u16,
+    pub winner: Winner,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub enum Winner {
+    Home,
+    Visitor,
+    #[default]
+    NotPlayed,
 }

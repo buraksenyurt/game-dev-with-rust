@@ -67,6 +67,7 @@ pub fn create_schedule(teams: &[Team], start_date: DateTime<Utc>) -> Vec<MatchDa
                 date: start_date + Duration::weeks(round as i64),
                 home: home_team.clone(),
                 visitor: visitor_team.clone(),
+                score: MatchScore::default(),
             };
             competitions.push(competition);
         }
@@ -74,6 +75,7 @@ pub fn create_schedule(teams: &[Team], start_date: DateTime<Utc>) -> Vec<MatchDa
         let match_day = MatchDay {
             id: (round + 1) as u16,
             competitions,
+            is_played: false,
         };
 
         schedule.push(match_day);
