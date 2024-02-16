@@ -1,0 +1,9 @@
+[package]
+name = "lunar_landing"
+version = "0.1.0"
+edition = "2021"
+description = "A tiny lunar landing clone written by SDL2"
+authors = ["Burak Selim Senyurt"]
+
+[dependencies]
+sdl2 = "0.36.0"
