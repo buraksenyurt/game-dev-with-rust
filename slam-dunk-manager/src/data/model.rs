@@ -97,7 +97,7 @@ pub struct TeamStats {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Coach {
+pub struct Manager {
     pub nick_name: String,
     pub budget: f32,
     pub team: Team,

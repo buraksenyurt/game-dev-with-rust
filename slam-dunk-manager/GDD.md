@@ -253,6 +253,21 @@ Transfer market ekranında transfer edilebilecek oyuncuların listesi yer alır.
 
 ## Teknik Detay
 
+- **Domain Kurgusu :** Oyunda kullanılan veri modelleri aşağıdaki gibidir.
+  - Player(Struct) : Genel oyuncu bilgileri.
+  - AverageStat(Struct) : İstatistiksel oyuncu verileri.
+  - Position(Enum) : Oyuncunun pozisyonu.
+  - Team(Struct) : Takım bilgileri.
+  - TeamStats(Struct) : Takım istatistik bilgileri.
+  - Manager(Struct) : Oyunu yöneticisi bilgileri.
+  - TransferMarket(Struct) : Transfer market verileri.
+  - League(Struct) : Lig bilgileri.
+  - Competition(Struct) : Müsabaka bilgileri.
+  - MatchScore(Struct) : Maç skoru bilgileri.
+  - Winner(Enum) : Maç kazanını.
+  - MatchDay(Struct) : Bir maç gününe ait müsabaka bilgileri.
+  - Game(Struct) : Oyunun snapshot verileri.
+  - ProgramState(Enum) : Oyun state machine değerleri.
 - **Teknoloji :** Oyun Rust programlama dili ve minimum seviyede üçüncü parti küfeler kullanılarak geliştirilmektedir. Tamamen terminalden çalışan metin tabanlı bir oyun olarak tasarlanmaktadır. Geliştirme ortamı olarak Rust Rover IDE'sinden yararlanılır. Oyun kodlaması Ubuntu 22.04 platformu üstünde yapılmaktadır.  
 - **Sistem Gereksinimleri :** Terminalden çalışan text tabanlı bir oyun olduğundan minimum sistem gereksinimiyle çalışabilecek şekilde tasarlanmaktadır. Minimum konfigurasyon gereksinimi aşağıdaki gibidir.
 
