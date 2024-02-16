@@ -2,7 +2,7 @@
 mod tests {
     use chrono::Utc;
     use slam_dunk_manager::game_mngr::contest::create_schedule;
-    use slam_dunk_manager::prelude::game::{Game, GameState};
+    use slam_dunk_manager::prelude::game::{Game, ProgramState};
     use slam_dunk_manager::prelude::league::{add_player_team, create_league};
 
     #[test]
@@ -39,7 +39,7 @@ mod tests {
         let fixture = create_schedule(&league.teams, Utc::now());
         assert_eq!(fixture.len(), 7);
         let game = Game {
-            program_state: GameState::Initial,
+            program_state: ProgramState::None,
             fixture,
         };
         assert!(game.save("GamesData.bin").await.is_ok());

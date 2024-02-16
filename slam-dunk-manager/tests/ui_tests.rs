@@ -20,6 +20,7 @@ mod tests {
                 turnovers_avg: 0.3,
             },
             transfer_fee: 7.57,
+            is_free: false,
         };
         let actual = player.to_string();
         let expected = "# 01-Jordan Thomas            Power Forward 218.49cm 7.57 $".to_string();
@@ -42,6 +43,7 @@ mod tests {
                 turnovers_avg: 0.3,
             },
             transfer_fee: 7.57,
+            is_free: false,
         };
         let actual = player.stats.to_string();
         let expected = "\tPnt      Reb      Ass      Blc      Ste      Trn     \n\t25.85    9.05     1.15     1.92     0.40     0.30    ".to_string();
