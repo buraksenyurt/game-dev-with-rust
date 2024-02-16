@@ -71,7 +71,8 @@ fn main() -> Result<(), String> {
         draw_landing_area(&mut canvas)?;
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         draw_mountain(&mut canvas)?;
-        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), velocity.to_point())?;
+        let v_point = velocity.to_point();
+        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), v_point)?;
         velocity.y += 0.05;
         shuttle.fuel_level -= 1;
 
@@ -85,16 +86,20 @@ fn main() -> Result<(), String> {
             WIDTH - 100,
             10,
         )?;
-        // draw_text(
-        //     &mut canvas,
-        //     &ttf_context,
-        //     &format!("({}:{})", shuttle.position.x, shuttle.position.y),
-        //     "fonts/OpenSans-Bold.ttf",
-        //     14,
-        //     Color::RGBA(255, 255, 255, 255),
-        //     WIDTH - 100,
-        //     30,
-        // )?;
+        draw_text(
+            &mut canvas,
+            &ttf_context,
+            &format!(
+                "({}:{})",
+                shuttle.position.x + v_point.x,
+                shuttle.position.y + v_point.y
+            ),
+            "fonts/OpenSans-Bold.ttf",
+            14,
+            Color::RGBA(255, 255, 255, 255),
+            WIDTH - 100,
+            30,
+        )?;
 
         canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
