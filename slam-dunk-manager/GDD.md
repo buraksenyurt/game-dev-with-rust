@@ -268,6 +268,9 @@ Transfer market ekranında transfer edilebilecek oyuncuların listesi yer alır.
   - MatchDay(Struct) : Bir maç gününe ait müsabaka bilgileri.
   - Game(Struct) : Oyunun snapshot verileri.
   - ProgramState(Enum) : Oyun state machine değerleri.
+  
+![Model Diagram](ModelDiagram.png)
+
 - **Teknoloji :** Oyun Rust programlama dili ve minimum seviyede üçüncü parti küfeler kullanılarak geliştirilmektedir. Tamamen terminalden çalışan metin tabanlı bir oyun olarak tasarlanmaktadır. Geliştirme ortamı olarak Rust Rover IDE'sinden yararlanılır. Oyun kodlaması Ubuntu 22.04 platformu üstünde yapılmaktadır.  
 - **Sistem Gereksinimleri :** Terminalden çalışan text tabanlı bir oyun olduğundan minimum sistem gereksinimiyle çalışabilecek şekilde tasarlanmaktadır. Minimum konfigurasyon gereksinimi aşağıdaki gibidir.
 
