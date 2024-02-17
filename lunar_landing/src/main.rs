@@ -1,3 +1,4 @@
+use rand::Rng;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -5,6 +6,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, TextureQuery, WindowCanvas};
 use sdl2::ttf;
 use sdl2::video::Window;
+use std::cmp;
 use std::time::Duration;
 
 const WIDTH: i32 = 800;
@@ -25,6 +27,8 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
     let mut event_pump = sdl_context.event_pump()?;
+
+    let game = init_game(WIDTH, HEIGHT);
 
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
@@ -68,9 +72,12 @@ fn main() -> Result<(), String> {
                 _ => {}
             }
         }
-        draw_landing_area(&mut canvas)?;
+
+        //draw_landing_area(&mut canvas)?;
         canvas.set_draw_color(Color::RGB(0, 0, 0));
-        draw_mountain(&mut canvas)?;
+        draw_game_area(&mut canvas, &game)?;
+        draw_landing_gear(&mut canvas, &game)?;
+        //draw_mountain(&mut canvas)?;
         let v_point = velocity.to_point();
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), v_point)?;
         velocity.y += 0.05;
@@ -80,7 +87,6 @@ fn main() -> Result<(), String> {
             &mut canvas,
             &ttf_context,
             &format!("Fuel: {}", shuttle.fuel_level),
-            "fonts/OpenSans-Bold.ttf",
             14,
             Color::RGBA(255, 255, 255, 255),
             WIDTH - 100,
@@ -94,7 +100,6 @@ fn main() -> Result<(), String> {
                 shuttle.position.x + v_point.x,
                 shuttle.position.y + v_point.y
             ),
-            "fonts/OpenSans-Bold.ttf",
             14,
             Color::RGBA(255, 255, 255, 255),
             WIDTH - 100,
@@ -108,38 +113,25 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn draw_mountain(canvas: &mut WindowCanvas) -> Result<(), String> {
-    let max_peak = 400;
-    let peaks = [
-        Point::new(0, HEIGHT - 10),
-        Point::new(100, HEIGHT - 10),
-        Point::new(200, max_peak),
-        Point::new(300, max_peak),
-        Point::new(450, 500),
-        Point::new(500, max_peak),
-        Point::new(620, HEIGHT / 2),
-        Point::new(700, max_peak),
-        Point::new(800, 400),
-    ];
-    for i in 0..peaks.len() - 1 {
-        draw_strong_line(canvas, peaks[i], peaks[i + 1], Color::RGB(255, 255, 255), 5)?;
+fn draw_game_area(canvas: &mut WindowCanvas, game: &Game) -> Result<(), String> {
+    for i in 0..game.mountain_points.len() - 1 {
+        let start = game.mountain_points[i];
+        let end = game.mountain_points[i + 1];
+        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas.draw_line(start, end)?;
     }
+
     Ok(())
 }
 
-fn draw_landing_area(canvas: &mut WindowCanvas) -> Result<(), String> {
-    canvas.set_draw_color(Color::RGB(255, 0, 0));
-    let start_point = Point::new(0, HEIGHT - 15);
-    let end_point = Point::new(100, HEIGHT - 15);
-    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
+fn draw_landing_gear(canvas: &mut WindowCanvas, game: &Game) -> Result<(), String> {
+    for &(platform_start, platform_end, leg_start, leg_end) in &game.landing_areas {
+        canvas.set_draw_color(Color::RGB(255, 0, 0));
+        canvas.draw_line(platform_start, platform_end)?;
+        canvas.draw_line(platform_start, leg_start)?;
+        canvas.draw_line(platform_end, leg_end)?;
+    }
 
-    let start_point = Point::new(200, 395);
-    let end_point = Point::new(300, 395);
-    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
-
-    let start_point = Point::new(700, 395);
-    let end_point = Point::new(800, 395);
-    draw_strong_line(canvas, start_point, end_point, canvas.draw_color(), 3)?;
     Ok(())
 }
 
@@ -200,13 +192,12 @@ fn draw_text(
     canvas: &mut Canvas<Window>,
     ttf_context: &ttf::Sdl2TtfContext,
     text: &str,
-    font_path: &str,
     font_size: u16,
     color: Color,
     x: i32,
     y: i32,
 ) -> Result<(), String> {
-    let font = ttf_context.load_font(font_path, font_size)?;
+    let font = ttf_context.load_font(   "fonts/OpenSans-Bold.ttf", font_size)?;
     let surface = font
         .render(text)
         .blended(color)
@@ -237,4 +228,77 @@ pub fn draw_strong_line(
         )?;
     }
     Ok(())
+}
+
+struct Game {
+    mountain_points: Vec<Point>,
+    landing_areas: Vec<(Point, Point, Point, Point)>,
+}
+
+fn init_game(width: i32, height: i32) -> Game {
+    let mut rng = rand::thread_rng();
+    let ground_level = height - 50;
+
+    let mut mountain_points = Vec::new();
+    let mut x = 0;
+    while x < width {
+        let peak_height = rng.gen_range(ground_level - 150..ground_level);
+        mountain_points.push(Point::new(x, peak_height));
+        x += rng.gen_range(80..120);
+    }
+    mountain_points.push(Point::new(
+        width,
+        rng.gen_range(ground_level - 150..ground_level),
+    ));
+
+    let mut landing_areas = Vec::new();
+    while landing_areas.len() < 2 {
+        let landing_start = rng.gen_range(0..width - 50);
+        let landing_end = cmp::min(landing_start + 60, width);
+        let platform_height = rng.gen_range(ground_level - 150..ground_level - 100);
+        let left_leg = find_ground_height(&mountain_points, landing_start);
+        let right_leg = find_ground_height(&mountain_points, landing_end);
+
+        landing_areas.push((
+            Point::new(landing_start, platform_height),
+            Point::new(landing_end, platform_height),
+            Point::new(landing_start, left_leg),
+            Point::new(landing_end, right_leg),
+        ));
+    }
+
+    Game {
+        mountain_points,
+        landing_areas,
+    }
+}
+
+fn find_ground_height(points: &[Point], x: i32) -> i32 {
+    for i in 0..points.len() - 1 {
+        let p1 = points[i];
+        let p2 = points[i + 1];
+        if x >= p1.x && x <= p2.x {
+            return interpolate_height(&[p1, p2], x);
+        }
+    }
+    0
+}
+
+fn interpolate_height(points: &[Point], x: i32) -> i32 {
+    if x <= points.first().unwrap().x {
+        return points.first().unwrap().y;
+    }
+    if x >= points.last().unwrap().x {
+        return points.last().unwrap().y;
+    }
+
+    for window in points.windows(2) {
+        let (p1, p2) = (window[0], window[1]);
+        if x >= p1.x && x <= p2.x {
+            let dx = p2.x - p1.x;
+            let dy = p2.y - p1.y;
+            return p1.y + (x - p1.x) * dy / dx;
+        }
+    }
+    points.first().unwrap().y
 }
