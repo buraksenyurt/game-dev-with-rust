@@ -237,7 +237,7 @@ struct Game {
 
 fn init_game(width: i32, height: i32) -> Game {
     let mut rng = rand::thread_rng();
-    let ground_level = height - 50;
+    let ground_level = height - 100;
 
     let mut mountain_points = Vec::new();
     let mut x = 0;
@@ -246,24 +246,27 @@ fn init_game(width: i32, height: i32) -> Game {
         mountain_points.push(Point::new(x, peak_height));
         x += rng.gen_range(80..120);
     }
-    mountain_points.push(Point::new(
-        width,
-        rng.gen_range(ground_level - 150..ground_level),
-    ));
+    mountain_points.push(Point::new(width, rng.gen_range(ground_level - 150..ground_level)));
 
     let mut landing_areas = Vec::new();
+    let mut used_x_positions = Vec::new();
     while landing_areas.len() < 2 {
-        let landing_start = rng.gen_range(0..width - 50);
-        let landing_end = cmp::min(landing_start + 60, width);
+        let mut landing_start = rng.gen_range(0..width - 50);
+        while used_x_positions.iter().any(|&pos| (landing_start..landing_start + 50).contains(&pos)) {
+            landing_start = rng.gen_range(0..width - 50);
+        }
+        let landing_end = cmp::min(landing_start + 65, width);
+        used_x_positions.extend(landing_start..landing_end);
+
         let platform_height = rng.gen_range(ground_level - 150..ground_level - 100);
-        let left_leg = find_ground_height(&mountain_points, landing_start);
-        let right_leg = find_ground_height(&mountain_points, landing_end);
+        let l_leg = find_ground_height(&mountain_points, landing_start);
+        let r_leg = find_ground_height(&mountain_points, landing_end);
 
         landing_areas.push((
             Point::new(landing_start, platform_height),
             Point::new(landing_end, platform_height),
-            Point::new(landing_start, left_leg),
-            Point::new(landing_end, right_leg),
+            Point::new(landing_start, l_leg),
+            Point::new(landing_end, r_leg),
         ));
     }
 
