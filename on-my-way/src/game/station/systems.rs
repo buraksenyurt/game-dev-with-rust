@@ -14,7 +14,7 @@ pub struct FuelStationValue {
 pub fn get_random_fuel_station(
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) -> FuelStationValue {
-    let stations = vec![
+    let stations = [
         "sprites/spaceStation_018.png",
         "sprites/spaceStation_019.png",
         "sprites/spaceStation_022.png",
@@ -26,11 +26,11 @@ pub fn get_random_fuel_station(
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
 
-    let fuel_amounts = vec![0.50, 0.75, 1.25];
+    let fuel_amounts = [0.50, 0.75, 1.25];
     let fuel_idx = rand::thread_rng().gen_range(0..fuel_amounts.len());
     let fuel_amount = fuel_amounts[fuel_idx];
 
-    let speeds = vec![100., 125., 150.];
+    let speeds = [100., 125., 150.];
     let speed_idx = rand::thread_rng().gen_range(0..speeds.len());
     let speed = speeds[speed_idx];
 

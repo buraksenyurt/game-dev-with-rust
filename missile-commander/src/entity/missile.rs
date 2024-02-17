@@ -50,7 +50,7 @@ impl Missile {
             velocity: Vec2::new(angle.cos(), angle.sin()),
             angle,
             is_alive: true,
-            lift_off_time: rand::gen_range(get_fps() as i32, get_fps() as i32 + MAX_LIFT_OFF_TIME),
+            lift_off_time: rand::gen_range(get_fps(), get_fps() + MAX_LIFT_OFF_TIME),
         }
     }
 

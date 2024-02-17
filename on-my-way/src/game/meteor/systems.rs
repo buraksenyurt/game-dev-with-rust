@@ -14,7 +14,7 @@ pub struct MeteorValue {
     pub required_hit_count: u8,
 }
 pub fn get_random_meteor(window_query: Query<&Window, With<PrimaryWindow>>) -> MeteorValue {
-    let meteors = vec![
+    let meteors = [
         "sprites/spaceMeteors_001.png",
         "sprites/spaceMeteors_002.png",
         "sprites/spaceMeteors_003.png",
@@ -28,11 +28,11 @@ pub fn get_random_meteor(window_query: Query<&Window, With<PrimaryWindow>>) -> M
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
 
-    let speeds = vec![50., 100., 150., 200., 250.];
+    let speeds = [50., 100., 150., 200., 250.];
     let idx = rand::thread_rng().gen_range(0..speeds.len());
     let speed = speeds[idx];
 
-    let required_hit_counts = vec![1, 2, 3];
+    let required_hit_counts = [1, 2, 3];
     let idx = rand::thread_rng().gen_range(0..required_hit_counts.len());
     let required_hit_count = required_hit_counts[idx];
 

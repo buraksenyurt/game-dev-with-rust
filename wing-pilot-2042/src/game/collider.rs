@@ -114,7 +114,7 @@ pub async fn fighter_vs_warship(game: &mut Game) {
                     game.enemy_warships
                         .bullets
                         .iter_mut()
-                        .for_each(|mut b| b.is_alive = false);
+                        .for_each(|b| b.is_alive = false);
                 }
             }
         }

@@ -70,7 +70,7 @@ impl Game {
                         self.enemy_warships
                             .bullets
                             .iter_mut()
-                            .for_each(|mut b| b.is_alive = false);
+                            .for_each(|b| b.is_alive = false);
                     }
                 }
                 _ => {

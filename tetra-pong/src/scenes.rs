@@ -130,7 +130,7 @@ impl GameScene {
         );
         let ball_velocity = Vec2::new(0., BALL_SPEED);
 
-        let game = GameScene {
+        GameScene {
             player1: Player {
                 core: Entity::new(paddle1_texture, paddle1_position),
             },
@@ -139,9 +139,7 @@ impl GameScene {
             },
             ball: Ball::new(Entity::new(ball_texture, ball_position), ball_velocity),
             //score_board: Scoreboard::default(),
-        };
-
-        game
+        }
     }
 
     // Oyuncuların raketleri ile topa vurup vurmadıklarını kontrol eden fonksiyon

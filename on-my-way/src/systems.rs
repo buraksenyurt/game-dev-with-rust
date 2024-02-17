@@ -52,7 +52,7 @@ pub fn spawn_stars(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let window = window_query.get_single().unwrap();
-    let star_sizes = vec![0.25, 1., 1.25, 1.5, 1.75, 2.];
+    let star_sizes = [0.25, 1., 1.25, 1.5, 1.75, 2.];
     for _ in 0..STARS_COUNT {
         let idx = rand::thread_rng().gen_range(0..star_sizes.len());
 
