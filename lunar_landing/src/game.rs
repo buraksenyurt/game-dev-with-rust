@@ -1,4 +1,5 @@
 use crate::constants::*;
+use crate::entity::LandingPlatform;
 use crate::utility::*;
 use rand::Rng;
 use sdl2::rect::Point;
@@ -6,7 +7,7 @@ use std::cmp;
 
 pub struct Game {
     pub mountain_points: Vec<Point>,
-    pub landing_areas: Vec<(Point, Point, Point, Point)>,
+    pub landing_platforms: Vec<LandingPlatform>,
 }
 
 impl Game {
@@ -26,9 +27,9 @@ impl Game {
             rng.gen_range(ground_level - 150..ground_level),
         ));
 
-        let mut landing_areas = Vec::new();
+        let mut platforms = Vec::new();
         let mut used_x_positions = Vec::new();
-        while landing_areas.len() < 2 {
+        while platforms.len() < 2 {
             let mut landing_start = rng.gen_range(0..WIDTH - 50);
             while used_x_positions
                 .iter()
@@ -43,7 +44,7 @@ impl Game {
             let l_leg = find_ground_height(&mountain_points, landing_start);
             let r_leg = find_ground_height(&mountain_points, landing_end);
 
-            landing_areas.push((
+            platforms.push(LandingPlatform::new(
                 Point::new(landing_start, platform_height),
                 Point::new(landing_end, platform_height),
                 Point::new(landing_start, l_leg),
@@ -53,7 +54,7 @@ impl Game {
 
         Self {
             mountain_points,
-            landing_areas,
+            landing_platforms: platforms,
         }
     }
 }

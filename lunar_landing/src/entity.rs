@@ -2,7 +2,7 @@ use crate::constants::*;
 use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::render::Canvas;
+use sdl2::render::{Canvas, WindowCanvas};
 use sdl2::video::Window;
 
 pub struct Shuttle {
@@ -57,6 +57,33 @@ impl Shuttle {
                 point.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y,
             ),
         )?;
+
+        Ok(())
+    }
+}
+
+pub struct LandingPlatform {
+    pub p1: Point,
+    pub p2: Point,
+    pub left_leg: Point,
+    pub right_leg: Point,
+}
+
+impl LandingPlatform {
+    pub fn new(p1: Point, p2: Point, left_leg: Point, right_leg: Point) -> Self {
+        Self {
+            p1,
+            p2,
+            left_leg,
+            right_leg,
+        }
+    }
+
+    pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        canvas.set_draw_color(Color::RGB(255, 0, 0));
+        canvas.draw_line(self.p1, self.p2)?;
+        canvas.draw_line(self.p1, self.left_leg)?;
+        canvas.draw_line(self.p2, self.right_leg)?;
 
         Ok(())
     }

@@ -1,15 +1,15 @@
 mod constants;
 mod draw;
+mod entity;
 mod game;
 mod math;
-mod entity;
 mod utility;
 
 use crate::constants::*;
 use crate::draw::*;
+use crate::entity::Shuttle;
 use crate::game::Game;
 use crate::math::Vector;
-use crate::entity::Shuttle;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;

@@ -17,11 +17,8 @@ pub fn draw_game_area(canvas: &mut WindowCanvas, game: &Game) -> Result<(), Stri
 }
 
 pub fn draw_landing_platforms(canvas: &mut WindowCanvas, game: &Game) -> Result<(), String> {
-    for &(platform_start, platform_end, leg_start, leg_end) in &game.landing_areas {
-        canvas.set_draw_color(Color::RGB(255, 0, 0));
-        canvas.draw_line(platform_start, platform_end)?;
-        canvas.draw_line(platform_start, leg_start)?;
-        canvas.draw_line(platform_end, leg_end)?;
+    for p in &game.landing_platforms {
+        p.draw(canvas)?;
     }
 
     Ok(())
