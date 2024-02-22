@@ -29,33 +29,41 @@ impl Shuttle {
         velocity: Point,
     ) -> Result<(), String> {
         let point = self.position;
+        let base_x = point.x + velocity.x;
+        let base_y = point.y + velocity.y;
+        let leg_y = point.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y;
 
         canvas.set_draw_color(color);
         canvas.draw_rect(Rect::new(
-            point.x + velocity.x,
-            point.y + velocity.y,
+            base_x,
+            base_y,
             SHUTTLE_HEAD_WIDTH as u32,
             SHUTTLE_HEAD_WIDTH as u32,
         ))?;
+
+        let half_width = SHUTTLE_HEAD_WIDTH / 2;
+        let quarter_width = SHUTTLE_HEAD_WIDTH / 4;
+
+        // Sol bacak
+        let left_leg_start = Point::new(base_x, base_y + SHUTTLE_HEAD_WIDTH);
+        let left_leg_end = Point::new(base_x - half_width, leg_y);
+        canvas.draw_line(left_leg_start, left_leg_end)?;
+
+        // Sol ayak
         canvas.draw_line(
-            Point::new(
-                point.x + velocity.x,
-                point.y + SHUTTLE_HEAD_WIDTH + velocity.y,
-            ),
-            Point::new(
-                point.x - SHUTTLE_HEAD_WIDTH / 2 + velocity.x,
-                point.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y,
-            ),
+            left_leg_end,
+            Point::new(left_leg_end.x - quarter_width, leg_y),
         )?;
+
+        // Sağ bacak
+        let right_leg_start = Point::new(base_x + SHUTTLE_HEAD_WIDTH, base_y + SHUTTLE_HEAD_WIDTH);
+        let right_leg_end = Point::new(base_x + SHUTTLE_HEAD_WIDTH + half_width, leg_y);
+        canvas.draw_line(right_leg_start, right_leg_end)?;
+
+        // Sağ ayak
         canvas.draw_line(
-            Point::new(
-                point.x + SHUTTLE_HEAD_WIDTH + velocity.x,
-                point.y + SHUTTLE_HEAD_WIDTH + velocity.y,
-            ),
-            Point::new(
-                point.x + SHUTTLE_HEAD_WIDTH + SHUTTLE_HEAD_WIDTH / 2 + velocity.x,
-                point.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y,
-            ),
+            right_leg_end,
+            Point::new(right_leg_end.x + quarter_width, leg_y),
         )?;
 
         Ok(())
