@@ -1,4 +1,5 @@
 use crate::constants::*;
+use crate::game::Game;
 use crate::math::Vector;
 use rand::Rng;
 use sdl2::pixels::Color;
@@ -85,6 +86,19 @@ impl Shuttle {
             (left_foot_start, left_foot_end),
             (right_foot_start, right_foot_end),
         )
+    }
+
+    pub fn is_landed(&self, game: &Game) -> bool {
+        let mut is_landed = false;
+        for lp in &game.landing_platforms {
+            // println!("{:?} {:?}", lp.p1, lp.p2);
+            if lp.check_collision(self) {
+                // println!("Congrats!!! Shuttle has been landed...");
+                is_landed = true;
+                break;
+            }
+        }
+        is_landed
     }
 }
 

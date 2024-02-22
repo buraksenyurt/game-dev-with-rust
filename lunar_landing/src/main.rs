@@ -1,6 +1,7 @@
 mod constants;
 mod draw;
 mod entity;
+mod ext_factors;
 mod game;
 mod math;
 mod utility;
@@ -8,6 +9,7 @@ mod utility;
 use crate::constants::*;
 use crate::draw::*;
 use crate::entity::Shuttle;
+use crate::ext_factors::ExternalFactors;
 use crate::game::Game;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -18,6 +20,7 @@ fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
+    let factors = ExternalFactors::new(2.0, 5.0);
     let mut shuttle = Shuttle::new();
 
     let window = video_subsystem
@@ -77,21 +80,15 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         draw_game_area(&mut canvas, &game)?;
         draw_landing_platforms(&mut canvas, &game)?;
-        let v_point = shuttle.velocity.to_point();
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
-        let mut is_landed = false;
-        for lp in &game.landing_platforms {
-            // println!("{:?} {:?}", lp.p1, lp.p2);
-            if lp.check_collision(&shuttle) {
-                // println!("Congrats!!! Shuttle has been landed...");
-                is_landed = true;
-            }
-        }
-        if !is_landed {
+
+        if !shuttle.is_landed(&game) {
+            factors.toss_randomly(&mut shuttle);
             shuttle.velocity.y += 0.05;
             shuttle.fuel_level -= 1;
         }
 
+        let v_point = shuttle.velocity.to_point();
         draw_text(
             &mut canvas,
             &ttf_context,
