@@ -1,4 +1,5 @@
 use crate::constants::*;
+use crate::math::Vector;
 use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -68,6 +69,19 @@ impl Shuttle {
 
         Ok(())
     }
+
+    pub fn calculate_foot_points(&self, velocity: &Vector) -> ((Point, Point), (Point, Point)) {
+        let foot_width = SHUTTLE_HEAD_WIDTH / 2;
+        let foot_y = self.position.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y as i32;
+        let left_foot_start = Point::new(self.position.x - foot_width + velocity.x as i32, foot_y);
+        let left_foot_end = Point::new(self.position.x + velocity.x as i32, foot_y);
+        let right_foot_start = Point::new(self.position.x + velocity.x as i32, foot_y);
+        let right_foot_end = Point::new(self.position.x + foot_width + velocity.x as i32, foot_y);
+        (
+            (left_foot_start, left_foot_end),
+            (right_foot_start, right_foot_end),
+        )
+    }
 }
 
 pub struct LandingPlatform {
@@ -94,5 +108,20 @@ impl LandingPlatform {
         canvas.draw_line(self.p2, self.right_leg)?;
 
         Ok(())
+    }
+    fn get_top_edge(&self) -> (Point, Point) {
+        (self.p1, self.p2)
+    }
+    pub fn check_collision(&self, shuttle: &Shuttle, velocity: &Vector) -> bool {
+        let ((shuttle_left_foot, _), (shuttle_right_foot, _)) =
+            shuttle.calculate_foot_points(velocity);
+        // println!("Shuttle:{:?}:{:?}", shuttle_left_foot, shuttle_right_foot);
+        let (platform_start, platform_end) = self.get_top_edge();
+        let feet_above_platform = shuttle_left_foot.y >= platform_start.y - 1
+            && shuttle_right_foot.y <= platform_start.y + 1;
+        let feet_within_platform =
+            shuttle_left_foot.x >= platform_start.x && shuttle_right_foot.x <= platform_end.x;
+
+        feet_above_platform && feet_within_platform
     }
 }

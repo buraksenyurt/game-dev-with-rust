@@ -76,15 +76,23 @@ fn main() -> Result<(), String> {
             }
         }
 
-        //draw_landing_area(&mut canvas)?;
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         draw_game_area(&mut canvas, &game)?;
         draw_landing_platforms(&mut canvas, &game)?;
-        //draw_mountain(&mut canvas)?;
         let v_point = velocity.to_point();
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), v_point)?;
-        velocity.y += 0.05;
-        shuttle.fuel_level -= 1;
+        let mut is_landed = false;
+        for lp in &game.landing_platforms {
+            // println!("{:?} {:?}", lp.p1, lp.p2);
+            if lp.check_collision(&shuttle, &velocity) {
+                println!("Congrats!!! Shuttle has been landed...");
+                is_landed = true;
+            }
+        }
+        if !is_landed {
+            velocity.y += 0.05;
+            shuttle.fuel_level -= 1;
+        }
 
         draw_text(
             &mut canvas,
