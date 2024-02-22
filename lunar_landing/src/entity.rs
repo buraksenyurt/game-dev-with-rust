@@ -9,6 +9,7 @@ use sdl2::video::Window;
 pub struct Shuttle {
     pub position: Point,
     pub fuel_level: i32,
+    pub velocity: Vector,
 }
 
 impl Shuttle {
@@ -20,16 +21,13 @@ impl Shuttle {
         Self {
             position,
             fuel_level: DEFAULT_FUEL_LEVEL,
+            velocity: Vector::default(),
         }
     }
 
-    pub fn draw(
-        &self,
-        canvas: &mut Canvas<Window>,
-        color: Color,
-        velocity: Point,
-    ) -> Result<(), String> {
+    pub fn draw(&self, canvas: &mut Canvas<Window>, color: Color) -> Result<(), String> {
         let point = self.position;
+        let velocity = self.velocity.to_point();
         let base_x = point.x + velocity.x;
         let base_y = point.y + velocity.y;
         let leg_y = point.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y;
@@ -70,13 +68,19 @@ impl Shuttle {
         Ok(())
     }
 
-    pub fn calculate_foot_points(&self, velocity: &Vector) -> ((Point, Point), (Point, Point)) {
+    pub fn calculate_foot_points(&self) -> ((Point, Point), (Point, Point)) {
         let foot_width = SHUTTLE_HEAD_WIDTH / 2;
-        let foot_y = self.position.y + SHUTTLE_HEAD_WIDTH * 2 + velocity.y as i32;
-        let left_foot_start = Point::new(self.position.x - foot_width + velocity.x as i32, foot_y);
-        let left_foot_end = Point::new(self.position.x + velocity.x as i32, foot_y);
-        let right_foot_start = Point::new(self.position.x + velocity.x as i32, foot_y);
-        let right_foot_end = Point::new(self.position.x + foot_width + velocity.x as i32, foot_y);
+        let foot_y = self.position.y + SHUTTLE_HEAD_WIDTH * 2 + self.velocity.y as i32;
+        let left_foot_start = Point::new(
+            self.position.x - foot_width + self.velocity.x as i32,
+            foot_y,
+        );
+        let left_foot_end = Point::new(self.position.x + self.velocity.x as i32, foot_y);
+        let right_foot_start = Point::new(self.position.x + self.velocity.x as i32, foot_y);
+        let right_foot_end = Point::new(
+            self.position.x + foot_width + self.velocity.x as i32,
+            foot_y,
+        );
         (
             (left_foot_start, left_foot_end),
             (right_foot_start, right_foot_end),
@@ -112,9 +116,8 @@ impl LandingPlatform {
     fn get_top_edge(&self) -> (Point, Point) {
         (self.p1, self.p2)
     }
-    pub fn check_collision(&self, shuttle: &Shuttle, velocity: &Vector) -> bool {
-        let ((shuttle_left_foot, _), (shuttle_right_foot, _)) =
-            shuttle.calculate_foot_points(velocity);
+    pub fn check_collision(&self, shuttle: &Shuttle) -> bool {
+        let ((shuttle_left_foot, _), (shuttle_right_foot, _)) = shuttle.calculate_foot_points();
         // println!("Shuttle:{:?}:{:?}", shuttle_left_foot, shuttle_right_foot);
         let (platform_start, platform_end) = self.get_top_edge();
         let feet_above_platform = shuttle_left_foot.y >= platform_start.y - 1

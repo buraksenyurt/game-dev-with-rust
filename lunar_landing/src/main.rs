@@ -9,7 +9,6 @@ use crate::constants::*;
 use crate::draw::*;
 use crate::entity::Shuttle;
 use crate::game::Game;
-use crate::math::Vector;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -19,7 +18,6 @@ fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
-    let mut velocity = Vector::default();
     let mut shuttle = Shuttle::new();
 
     let window = video_subsystem
@@ -50,26 +48,26 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
-                    velocity.x -= 0.50;
+                    shuttle.velocity.x -= 0.50;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
-                    velocity.x += 0.50;
+                    shuttle.velocity.x += 0.50;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Down),
                     ..
                 } => {
-                    velocity.y += 1.50;
+                    shuttle.velocity.y += 1.50;
                     shuttle.fuel_level -= 2;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Space),
                     ..
                 } => {
-                    velocity.y -= 1.;
+                    shuttle.velocity.y -= 1.;
                     shuttle.fuel_level -= 10;
                 }
                 _ => {}
@@ -79,18 +77,18 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         draw_game_area(&mut canvas, &game)?;
         draw_landing_platforms(&mut canvas, &game)?;
-        let v_point = velocity.to_point();
-        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0), v_point)?;
+        let v_point = shuttle.velocity.to_point();
+        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
         let mut is_landed = false;
         for lp in &game.landing_platforms {
             // println!("{:?} {:?}", lp.p1, lp.p2);
-            if lp.check_collision(&shuttle, &velocity) {
-                println!("Congrats!!! Shuttle has been landed...");
+            if lp.check_collision(&shuttle) {
+                // println!("Congrats!!! Shuttle has been landed...");
                 is_landed = true;
             }
         }
         if !is_landed {
-            velocity.y += 0.05;
+            shuttle.velocity.y += 0.05;
             shuttle.fuel_level -= 1;
         }
 
