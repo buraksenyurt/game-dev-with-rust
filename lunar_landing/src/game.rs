@@ -1,7 +1,7 @@
 use crate::constants::*;
-use crate::entity::LandingPlatform;
+use crate::entity::{LandingPlatform, Meteor};
 use crate::utility::*;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
@@ -10,6 +10,7 @@ use std::cmp;
 pub struct Game {
     pub mountain_points: Vec<Point>,
     pub landing_platforms: Vec<LandingPlatform>,
+    pub meteors: Vec<Meteor>,
 }
 
 impl Game {
@@ -53,10 +54,16 @@ impl Game {
                 Point::new(landing_end, r_leg),
             ));
         }
+        let mut meteors = Vec::new();
+        for _ in 1..MAX_METEOR_COUNT {
+            let m = Self::spawn_random_meteor();
+            meteors.push(m);
+        }
 
         Self {
             mountain_points,
             landing_platforms: platforms,
+            meteors,
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
@@ -68,5 +75,23 @@ impl Game {
         }
 
         Ok(())
+    }
+
+    pub fn move_meteors(&mut self) {
+        let mut rng = thread_rng();
+        for m in self.meteors.iter_mut() {
+            m.velocity.y +=rng.gen_range(0.25..0.50);
+            m.velocity.x += rng.gen_range(0.25..1.);
+        }
+    }
+
+    fn spawn_random_meteor() -> Meteor {
+        let mut rng = thread_rng();
+        let x = rng.gen_range(0..WIDTH - WIDTH / 4);
+        let y = rng.gen_range(-100..-10);
+        let side_count = rng.gen_range(6..10);
+        let radius = rng.gen_range(10..20);
+        let angle = rng.gen_range(10..30) as f64;
+        Meteor::new(Point::new(x, y), side_count, radius, angle)
     }
 }

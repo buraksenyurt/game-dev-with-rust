@@ -31,8 +31,7 @@ fn main() -> Result<(), String> {
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
     let mut event_pump = sdl_context.event_pump()?;
 
-    let game = Game::new();
-    let mut simple_meteor = factors.spawn_random_meteor();
+    let mut game = Game::new();
 
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
@@ -87,10 +86,8 @@ fn main() -> Result<(), String> {
             shuttle.velocity.y += 0.05;
             shuttle.fuel_level -= 1;
         }
-
-        simple_meteor.velocity.y += 0.50;
-        simple_meteor.velocity.x += 0.25;
-        simple_meteor.draw(&mut canvas)?;
+        game.move_meteors();
+        draw_meteors(&mut canvas, &game)?;
 
         canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));

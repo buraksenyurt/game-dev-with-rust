@@ -14,6 +14,15 @@ pub fn draw_landing_platforms(canvas: &mut WindowCanvas, game: &Game) -> Result<
 
     Ok(())
 }
+
+pub fn draw_meteors(canvas: &mut WindowCanvas, game: &Game) -> Result<(), String> {
+    for m in &game.meteors {
+        m.draw(canvas)?;
+    }
+
+    Ok(())
+}
+
 pub fn draw_hud(shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let v_point = shuttle.velocity.to_point();

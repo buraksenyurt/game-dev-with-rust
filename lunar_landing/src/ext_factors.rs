@@ -1,7 +1,5 @@
-use crate::constants::WIDTH;
-use crate::entity::{Meteor, Shuttle};
+use crate::entity::Shuttle;
 use rand::{thread_rng, Rng};
-use sdl2::rect::Point;
 
 pub struct ExternalFactors {
     pub min_x: f32,
@@ -21,15 +19,5 @@ impl ExternalFactors {
                 shuttle.velocity.x -= rng.gen_range(self.min_x..self.max_x);
             }
         }
-    }
-
-    pub fn spawn_random_meteor(&self) -> Meteor {
-        let mut rng = thread_rng();
-        let x = rng.gen_range(0..WIDTH - WIDTH / 4);
-        let y = rng.gen_range(-100..-10);
-        let side_count = rng.gen_range(6..10);
-        let radius = rng.gen_range(10..20);
-        let angle = rng.gen_range(10..30) as f64;
-        Meteor::new(Point::new(x, y), side_count, radius, angle)
     }
 }
