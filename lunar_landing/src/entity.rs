@@ -17,7 +17,7 @@ impl Shuttle {
     pub fn new() -> Self {
         let mut rng = rand::thread_rng();
         let x = rng.gen_range(50..WIDTH - 50);
-        let y = rng.gen_range(10..100);
+        let y = rng.gen_range(10..WIDTH / 8);
         let position = Point::new(x, y);
         Self {
             position,
@@ -68,7 +68,6 @@ impl Shuttle {
 
         Ok(())
     }
-
     pub fn calculate_foot_points(&self) -> ((Point, Point), (Point, Point)) {
         let foot_width = SHUTTLE_HEAD_WIDTH / 2;
         let foot_y = self.position.y + SHUTTLE_HEAD_WIDTH * 2 + self.velocity.y as i32;
@@ -87,7 +86,6 @@ impl Shuttle {
             (right_foot_start, right_foot_end),
         )
     }
-
     pub fn is_landed(&self, game: &Game) -> bool {
         let mut is_landed = false;
         for lp in &game.landing_platforms {
@@ -141,4 +139,8 @@ impl LandingPlatform {
 
         feet_above_platform && feet_within_platform
     }
+}
+
+pub struct Meteor{
+
 }

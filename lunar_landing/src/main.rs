@@ -19,7 +19,6 @@ use std::time::Duration;
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let factors = ExternalFactors::new(2.0, 5.0);
     let mut shuttle = Shuttle::new();
 
@@ -78,39 +77,15 @@ fn main() -> Result<(), String> {
         }
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
-        draw_game_area(&mut canvas, &game)?;
+        game.draw(&mut canvas)?;
         draw_landing_platforms(&mut canvas, &game)?;
         shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
-
+        draw_hud(&shuttle, &mut canvas)?;
         if !shuttle.is_landed(&game) {
             factors.toss_randomly(&mut shuttle);
             shuttle.velocity.y += 0.05;
             shuttle.fuel_level -= 1;
         }
-
-        let v_point = shuttle.velocity.to_point();
-        draw_text(
-            &mut canvas,
-            &ttf_context,
-            &format!("Fuel: {}", shuttle.fuel_level),
-            14,
-            Color::RGBA(255, 255, 255, 255),
-            WIDTH - 100,
-            10,
-        )?;
-        draw_text(
-            &mut canvas,
-            &ttf_context,
-            &format!(
-                "({}:{})",
-                shuttle.position.x + v_point.x,
-                shuttle.position.y + v_point.y
-            ),
-            14,
-            Color::RGBA(255, 255, 255, 255),
-            WIDTH - 100,
-            30,
-        )?;
 
         canvas.present();
         std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));

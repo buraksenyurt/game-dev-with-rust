@@ -2,7 +2,9 @@ use crate::constants::*;
 use crate::entity::LandingPlatform;
 use crate::utility::*;
 use rand::Rng;
+use sdl2::pixels::Color;
 use sdl2::rect::Point;
+use sdl2::render::WindowCanvas;
 use std::cmp;
 
 pub struct Game {
@@ -56,5 +58,15 @@ impl Game {
             mountain_points,
             landing_platforms: platforms,
         }
+    }
+    pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        for i in 0..self.mountain_points.len() - 1 {
+            let start = self.mountain_points[i];
+            let end = self.mountain_points[i + 1];
+            canvas.set_draw_color(Color::RGB(255, 255, 255));
+            canvas.draw_line(start, end)?;
+        }
+
+        Ok(())
     }
 }
