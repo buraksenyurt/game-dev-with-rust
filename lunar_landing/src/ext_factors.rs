@@ -1,22 +1,17 @@
 use crate::entity::Shuttle;
+use crate::math::Vector;
 use rand::{thread_rng, Rng};
 
-pub struct ExternalFactors {
-    pub min_x: f32,
-    pub max_x: f32,
-}
+pub struct ExternalFactors {}
 
 impl ExternalFactors {
-    pub fn new(min_x: f32, max_x: f32) -> Self {
-        Self { min_x, max_x }
-    }
-    pub fn toss_randomly(&self, shuttle: &mut Shuttle) {
+    pub fn toss_randomly(&self, shuttle: &mut Shuttle, x_limits: Vector, delta_time: f32) {
         let mut rng = thread_rng();
         if rng.gen_range(0..100) < 2 {
             if rng.gen_bool(0.5) {
-                shuttle.velocity.x += rng.gen_range(self.min_x..self.max_x);
+                shuttle.velocity.x += rng.gen_range(x_limits.x..x_limits.y) * delta_time;
             } else {
-                shuttle.velocity.x -= rng.gen_range(self.min_x..self.max_x);
+                shuttle.velocity.x -= rng.gen_range(x_limits.x..x_limits.y) * delta_time;
             }
         }
     }

@@ -77,11 +77,11 @@ impl Game {
         Ok(())
     }
 
-    pub fn move_meteors(&mut self) {
+    pub fn move_meteors(&mut self, delta_time: f32) {
         let mut rng = thread_rng();
         for m in self.meteors.iter_mut() {
-            m.velocity.y +=rng.gen_range(0.25..0.50);
-            m.velocity.x += rng.gen_range(0.25..1.);
+            m.velocity.y += rng.gen_range(10.0..15.) * delta_time;
+            m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
         }
     }
 
