@@ -74,6 +74,14 @@ impl Game {
             canvas.draw_line(start, end)?;
         }
 
+        for p in &self.landing_platforms {
+            p.draw(canvas)?;
+        }
+
+        for m in &self.meteors {
+            m.draw(canvas)?;
+        }
+
         Ok(())
     }
 

@@ -1,6 +1,7 @@
 use crate::constants::*;
 use crate::game::Game;
 use crate::math::Vector;
+use crate::utility::draw_text;
 use rand::Rng;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -182,6 +183,39 @@ impl Meteor {
 
             canvas.draw_line(Point::new(x1, y1), Point::new(x2, y2))?;
         }
+
+        Ok(())
+    }
+}
+
+pub struct Hud {}
+
+impl Hud {
+    pub fn draw(&self, shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
+        let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
+        let v_point = shuttle.velocity.to_point();
+        draw_text(
+            canvas,
+            &ttf_context,
+            &format!("Fuel: {}", shuttle.fuel_level),
+            14,
+            Color::RGBA(255, 255, 255, 255),
+            WIDTH - 100,
+            10,
+        )?;
+        draw_text(
+            canvas,
+            &ttf_context,
+            &format!(
+                "({}:{})",
+                shuttle.position.x + v_point.x,
+                shuttle.position.y + v_point.y
+            ),
+            14,
+            Color::RGBA(255, 255, 255, 255),
+            WIDTH - 100,
+            30,
+        )?;
 
         Ok(())
     }

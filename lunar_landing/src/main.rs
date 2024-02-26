@@ -1,5 +1,4 @@
 mod constants;
-mod draw;
 mod entity;
 mod ext_factors;
 mod game;
@@ -7,8 +6,7 @@ mod math;
 mod utility;
 
 use crate::constants::*;
-use crate::draw::*;
-use crate::entity::Shuttle;
+use crate::entity::{Hud, Shuttle};
 use crate::ext_factors::ExternalFactors;
 use crate::game::Game;
 use crate::math::Vector;
@@ -33,6 +31,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut game = Game::new();
     let mut last_update = Instant::now();
+    let hud = Hud {};
 
     'running: loop {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
@@ -87,18 +86,16 @@ fn main() -> Result<(), String> {
         }
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
+        game.move_meteors(delta_seconds);
         game.draw(&mut canvas)?;
-        draw_landing_platforms(&mut canvas, &game)?;
-        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
-        draw_hud(&shuttle, &mut canvas)?;
+
         if !shuttle.is_landed(&game) {
             factors.toss_randomly(&mut shuttle, Vector { x: 40., y: 80. }, delta_seconds);
             shuttle.velocity.y += 2.5 * delta_seconds;
             shuttle.fuel_level -= 1;
         }
-        game.move_meteors(delta_seconds);
-        draw_meteors(&mut canvas, &game)?;
-
+        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
+        hud.draw(&shuttle, &mut canvas)?;
         canvas.present();
     }
 
