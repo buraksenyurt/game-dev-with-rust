@@ -88,9 +88,15 @@ impl Game {
     pub fn move_meteors(&mut self, delta_time: f32) {
         let mut rng = thread_rng();
         for m in self.meteors.iter_mut() {
+            m.rot_angle += 25. * delta_time as f64;
             m.velocity.y += rng.gen_range(10.0..15.) * delta_time;
             m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
+            m.mark_range();
         }
+    }
+
+    pub fn check_out_of_ranges(&mut self) {
+        self.meteors.retain(|m| m.in_range);
     }
 
     fn spawn_random_meteor() -> Meteor {
@@ -100,6 +106,6 @@ impl Game {
         let side_count = rng.gen_range(6..10);
         let radius = rng.gen_range(10..20);
         let angle = rng.gen_range(10..30) as f64;
-        Meteor::new(Point::new(x, y), side_count, radius, angle)
+        Meteor::new(Point::new(x, y), side_count, radius, angle, true)
     }
 }

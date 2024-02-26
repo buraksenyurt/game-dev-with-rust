@@ -149,16 +149,27 @@ pub struct Meteor {
     pub radius: i16,
     pub rot_angle: f64,
     pub velocity: Vector,
+    pub in_range: bool,
 }
 
 impl Meteor {
-    pub fn new(center: Point, sides: u8, radius: i16, rot_angle: f64) -> Self {
+    pub fn new(center: Point, sides: u8, radius: i16, rot_angle: f64, in_range: bool) -> Self {
         Self {
             center,
             sides,
             radius,
             rot_angle,
             velocity: Vector::default(),
+            in_range,
+        }
+    }
+    pub fn mark_range(&mut self) {
+        let curr_x = self.center.x + self.velocity.x as i32;
+        let curr_y = self.center.y + self.velocity.y as i32;
+        //println!("{curr_x}:{curr_y}");
+        if curr_x > WIDTH || curr_y > HEIGHT {
+            self.in_range = false;
+            //println!("Meteor is out of range");
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
@@ -207,7 +218,7 @@ impl Hud {
             canvas,
             &ttf_context,
             &format!(
-                "({}:{})",
+                "Pos {}:{}",
                 shuttle.position.x + v_point.x,
                 shuttle.position.y + v_point.y
             ),

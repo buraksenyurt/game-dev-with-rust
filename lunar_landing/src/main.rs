@@ -87,7 +87,9 @@ fn main() -> Result<(), String> {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         game.move_meteors(delta_seconds);
+        game.check_out_of_ranges();
         game.draw(&mut canvas)?;
+        //println!("Current meteor count is {}", game.meteors.iter().count());
 
         if !shuttle.is_landed(&game) {
             factors.toss_randomly(&mut shuttle, Vector { x: 40., y: 80. }, delta_seconds);
