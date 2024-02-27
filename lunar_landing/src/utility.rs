@@ -1,7 +1,6 @@
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, TextureQuery};
-use sdl2::ttf;
 use sdl2::video::Window;
 
 pub fn find_ground_height(points: &[Point], x: i32) -> i32 {
@@ -36,13 +35,13 @@ fn interpolate_height(points: &[Point], x: i32) -> i32 {
 
 pub fn draw_text(
     canvas: &mut Canvas<Window>,
-    ttf_context: &ttf::Sdl2TtfContext,
     text: &str,
     font_size: u16,
     color: Color,
     x: i32,
     y: i32,
 ) -> Result<(), String> {
+    let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let font = ttf_context.load_font("fonts/OpenSans-Bold.ttf", font_size)?;
     let surface = font
         .render(text)

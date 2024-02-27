@@ -105,6 +105,10 @@ impl Shuttle {
     pub fn is_fuel_critical(&self) -> bool {
         self.fuel_level <= DEFAULT_FUEL_LEVEL / 4
     }
+
+    pub fn is_low_altitude(&self) -> bool {
+        self.position.y + self.velocity.y as i32 >= HEIGHT - HEIGHT / 4
+    }
 }
 
 pub struct LandingPlatform {
@@ -205,25 +209,29 @@ impl Meteor {
 }
 
 pub struct Hud {
-    last_blink: Instant,
-    blink_interval: Duration,
-    warning_visible: bool,
+    fuel_warn_last_blink: Instant,
+    fuel_warn_blink_interval: Duration,
+    fuel_warn_blink_visible: bool,
+    alt_warn_last_blink: Instant,
+    alt_warn_blink_interval: Duration,
+    alt_warn_blink_visible: bool,
 }
 
 impl Hud {
     pub fn new() -> Self {
         Self {
-            last_blink: Instant::now(),
-            warning_visible: true,
-            blink_interval: Duration::from_millis(500),
+            fuel_warn_last_blink: Instant::now(),
+            fuel_warn_blink_visible: true,
+            fuel_warn_blink_interval: Duration::from_millis(750),
+            alt_warn_last_blink: Instant::now(),
+            alt_warn_blink_visible: true,
+            alt_warn_blink_interval: Duration::from_millis(500),
         }
     }
     pub fn draw(&mut self, shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
-        let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
         let v_point = shuttle.velocity.to_point();
         draw_text(
             canvas,
-            &ttf_context,
             &format!("Fuel: {}", shuttle.fuel_level),
             14,
             Color::RGBA(255, 255, 255, 255),
@@ -232,7 +240,6 @@ impl Hud {
         )?;
         draw_text(
             canvas,
-            &ttf_context,
             &format!(
                 "Pos {}:{}",
                 shuttle.position.x + v_point.x,
@@ -243,25 +250,52 @@ impl Hud {
             WIDTH - 100,
             30,
         )?;
+        self.show_fuel_warning(shuttle, canvas)?;
+        self.show_low_altitude_warning(shuttle, canvas)?;
+
+        Ok(())
+    }
+
+    fn show_fuel_warning(
+        &mut self,
+        shuttle: &Shuttle,
+        canvas: &mut Canvas<Window>,
+    ) -> Result<(), String> {
         if shuttle.is_fuel_critical() {
             let now = Instant::now();
-            if now.duration_since(self.last_blink) >= self.blink_interval {
-                self.warning_visible = !self.warning_visible;
-                self.last_blink = now;
+            if now.duration_since(self.fuel_warn_last_blink) >= self.fuel_warn_blink_interval {
+                self.fuel_warn_blink_visible = !self.fuel_warn_blink_visible;
+                self.fuel_warn_last_blink = now;
             }
-            if self.warning_visible {
+            if self.fuel_warn_blink_visible {
                 draw_text(
                     canvas,
-                    &ttf_context,
                     "Fuel Critical",
                     14,
                     Color::RGBA(255, 0, 0, 255),
                     30,
-                    10,
+                    30,
                 )?;
             }
         }
+        Ok(())
+    }
 
+    fn show_low_altitude_warning(
+        &mut self,
+        shuttle: &Shuttle,
+        canvas: &mut Canvas<Window>,
+    ) -> Result<(), String> {
+        if shuttle.is_low_altitude() {
+            let now = Instant::now();
+            if now.duration_since(self.alt_warn_last_blink) >= self.alt_warn_blink_interval {
+                self.alt_warn_blink_visible = !self.alt_warn_blink_visible;
+                self.alt_warn_last_blink = now;
+            }
+            if self.alt_warn_blink_visible {
+                draw_text(canvas, "Altitude", 14, Color::RGBA(255, 0, 0, 255), 30, 10)?;
+            }
+        }
         Ok(())
     }
 }
