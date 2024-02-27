@@ -31,7 +31,7 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
     let mut game = Game::new();
     let mut last_update = Instant::now();
-    let hud = Hud {};
+    let mut hud = Hud::new();
 
     'running: loop {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);

@@ -8,6 +8,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, WindowCanvas};
 use sdl2::video::Window;
 use std::f64::consts::PI;
+use std::time::{Duration, Instant};
 
 pub struct Shuttle {
     pub position: Point,
@@ -99,6 +100,10 @@ impl Shuttle {
             }
         }
         is_landed
+    }
+
+    pub fn is_fuel_critical(&self) -> bool {
+        self.fuel_level <= DEFAULT_FUEL_LEVEL / 4
     }
 }
 
@@ -199,10 +204,21 @@ impl Meteor {
     }
 }
 
-pub struct Hud {}
+pub struct Hud {
+    last_blink: Instant,
+    blink_interval: Duration,
+    warning_visible: bool,
+}
 
 impl Hud {
-    pub fn draw(&self, shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
+    pub fn new() -> Self {
+        Self {
+            last_blink: Instant::now(),
+            warning_visible: true,
+            blink_interval: Duration::from_millis(500),
+        }
+    }
+    pub fn draw(&mut self, shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
         let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
         let v_point = shuttle.velocity.to_point();
         draw_text(
@@ -227,6 +243,24 @@ impl Hud {
             WIDTH - 100,
             30,
         )?;
+        if shuttle.is_fuel_critical() {
+            let now = Instant::now();
+            if now.duration_since(self.last_blink) >= self.blink_interval {
+                self.warning_visible = !self.warning_visible;
+                self.last_blink = now;
+            }
+            if self.warning_visible {
+                draw_text(
+                    canvas,
+                    &ttf_context,
+                    "Fuel Critical",
+                    14,
+                    Color::RGBA(255, 0, 0, 255),
+                    30,
+                    10,
+                )?;
+            }
+        }
 
         Ok(())
     }
