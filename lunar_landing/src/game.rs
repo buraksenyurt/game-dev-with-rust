@@ -1,5 +1,5 @@
 use crate::constants::*;
-use crate::entity::{LandingPlatform, Meteor};
+use crate::entity::*;
 use crate::utility::*;
 use rand::{thread_rng, Rng};
 use sdl2::pixels::Color;
@@ -7,12 +7,6 @@ use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
 use std::cmp;
 
-#[derive(PartialEq)]
-pub enum GameState {
-    Playing,
-    Over,
-    MissionAccomplished,
-}
 #[derive(PartialEq)]
 pub struct Game {
     pub mountain_points: Vec<Point>,
@@ -118,25 +112,28 @@ impl Game {
         Meteor::new(Point::new(x, y), side_count, radius, angle, true)
     }
 
-    pub fn draw_game_over(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        draw_center_text(
-            canvas,
-            "Fuel is Empty. Game is over!",
-            48,
-            Color::RGBA(255, 0, 0, 255),
-        )?;
-
+    pub fn draw_end_menu(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        let info = self.state.to_string();
+        match self.state {
+            GameState::Playing => {}
+            GameState::OutOfFuel => {
+                draw_center_text(canvas, info, 48, Color::RGBA(255, 0, 0, 255))?;
+            }
+            GameState::MeteorHit => {
+                draw_center_text(canvas, info, 48, Color::RGBA(125, 125, 125, 255))?;
+            }
+            GameState::JobsDone => {
+                draw_center_text(canvas, info, 48, Color::RGBA(0, 255, 0, 255))?;
+            }
+        }
         Ok(())
     }
-
-    pub fn draw_mission_accomplished(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        draw_center_text(
-            canvas,
-            "Mission accomplished!",
-            48,
-            Color::RGBA(0, 255, 0, 255),
-        )?;
-
-        Ok(())
+    pub fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
+        for m in self.meteors.iter() {
+            if shuttle.check_collision_with_meteor(m) {
+                return true;
+            }
+        }
+        false
     }
 }

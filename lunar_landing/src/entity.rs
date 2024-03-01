@@ -8,6 +8,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, WindowCanvas};
 use sdl2::video::Window;
 use std::f64::consts::PI;
+use std::fmt::{Display, Formatter};
 use std::time::{Duration, Instant};
 
 pub struct Shuttle {
@@ -108,6 +109,23 @@ impl Shuttle {
 
     pub fn is_low_altitude(&self) -> bool {
         self.position.y + self.velocity.y as i32 >= HEIGHT - HEIGHT / 4
+    }
+
+    pub fn check_collision_with_meteor(&self, meteor: &Meteor) -> bool {
+        let body = Rect::new(
+            self.position.x + self.velocity.x as i32,
+            self.position.y + self.velocity.y as i32,
+            SHUTTLE_HEAD_WIDTH as u32,
+            (SHUTTLE_HEAD_WIDTH * 2) as u32,
+        );
+        // println!("{:?}", body);
+        let x = meteor.center.x + meteor.velocity.x as i32 + meteor.radius as i32;
+        let y = meteor.center.y + meteor.velocity.y as i32 + meteor.radius as i32;
+        let meteor_front_point = Point::new(x, y);
+
+        // println!("{:?}", meteor_front_point);
+
+        body.contains_point(meteor_front_point)
     }
 }
 
@@ -299,5 +317,32 @@ impl Hud {
             }
         }
         Ok(())
+    }
+}
+
+#[derive(PartialEq)]
+pub enum GameState {
+    Playing,
+    OutOfFuel,
+    MeteorHit,
+    JobsDone,
+}
+
+impl Display for GameState {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GameState::Playing => {
+                write!(f, "Playing")
+            }
+            GameState::OutOfFuel => {
+                write!(f, "Out of fuel. Game is over!")
+            }
+            GameState::MeteorHit => {
+                write!(f, "Meteor hit. Game is over!")
+            }
+            GameState::JobsDone => {
+                write!(f, "Job's done... Well done!")
+            }
+        }
     }
 }

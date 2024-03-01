@@ -6,9 +6,9 @@ mod math;
 mod utility;
 
 use crate::constants::*;
-use crate::entity::{Hud, Shuttle};
+use crate::entity::{GameState, Hud, Shuttle};
 use crate::ext_factors::ExternalFactors;
-use crate::game::{Game, GameState};
+use crate::game::Game;
 use crate::math::Vector;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -93,8 +93,12 @@ fn main() -> Result<(), String> {
                     game.check_out_of_ranges();
                     game.draw(&mut canvas)?;
                     //println!("Current meteor count is {}", game.meteors.iter().count());
-                    if shuttle.fuel_level == 0 {
-                        game.state = GameState::Over;
+                    if shuttle.fuel_level <= 0 {
+                        game.state = GameState::OutOfFuel;
+                        continue 'game_loop;
+                    }
+                    if game.check_meteor_shuttle_collisions(&shuttle) {
+                        game.state = GameState::MeteorHit;
                         continue 'game_loop;
                     }
                     if !shuttle.is_landed(&game) {
@@ -106,7 +110,7 @@ fn main() -> Result<(), String> {
                         shuttle.velocity.y += 2.5 * delta_seconds;
                         shuttle.fuel_level -= 1;
                     } else {
-                        game.state = GameState::MissionAccomplished;
+                        game.state = GameState::JobsDone;
                         continue 'game_loop;
                     }
                     shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
@@ -114,14 +118,10 @@ fn main() -> Result<(), String> {
                     canvas.present();
                 }
             }
-            GameState::Over | GameState::MissionAccomplished => {
+            GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
-                if game.state == GameState::Over {
-                    game.draw_game_over(&mut canvas)?;
-                } else if game.state == GameState::MissionAccomplished {
-                    game.draw_mission_accomplished(&mut canvas)?;
-                }
+                game.draw_end_menu(&mut canvas)?;
                 if handle_inputs(&mut event_pump, &mut game, &mut shuttle) {
                     break 'game_loop;
                 }
