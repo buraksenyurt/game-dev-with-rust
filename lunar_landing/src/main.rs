@@ -105,43 +105,54 @@ fn main() -> Result<(), String> {
                         );
                         shuttle.velocity.y += 2.5 * delta_seconds;
                         shuttle.fuel_level -= 1;
+                    } else {
+                        game.state = GameState::MissionAccomplished;
+                        continue 'game_loop;
                     }
                     shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
                     hud.draw(&shuttle, &mut canvas)?;
                     canvas.present();
                 }
             }
-            GameState::Over => {
+            GameState::Over | GameState::MissionAccomplished => {
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
-                game.draw_game_over(&mut canvas)?;
-
-                for event in event_pump.poll_iter() {
-                    match event {
-                        Event::Quit { .. }
-                        | Event::KeyDown {
-                            keycode: Some(Keycode::Escape),
-                            ..
-                        } => {
-                            break 'game_loop;
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::Space),
-                            ..
-                        } => {
-                            game = Game::new();
-                            shuttle = Shuttle::new();
-                            game.state = GameState::Playing;
-                            continue 'game_loop;
-                        }
-                        _ => {}
-                    }
+                if game.state == GameState::Over {
+                    game.draw_game_over(&mut canvas)?;
+                } else if game.state == GameState::MissionAccomplished {
+                    game.draw_mission_accomplished(&mut canvas)?;
                 }
-
+                if handle_inputs(&mut event_pump, &mut game, &mut shuttle) {
+                    break 'game_loop;
+                }
                 canvas.present();
             }
         }
     }
 
     Ok(())
+}
+
+fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game, shuttle: &mut Shuttle) -> bool {
+    for event in event_pump.poll_iter() {
+        match event {
+            Event::Quit { .. }
+            | Event::KeyDown {
+                keycode: Some(Keycode::Escape),
+                ..
+            } => {
+                return true;
+            }
+            Event::KeyDown {
+                keycode: Some(Keycode::Space),
+                ..
+            } => {
+                *game = Game::new();
+                *shuttle = Shuttle::new();
+                game.state = GameState::Playing;
+            }
+            _ => {}
+        }
+    }
+    false
 }

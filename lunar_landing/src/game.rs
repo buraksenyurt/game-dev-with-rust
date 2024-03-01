@@ -11,6 +11,7 @@ use std::cmp;
 pub enum GameState {
     Playing,
     Over,
+    MissionAccomplished,
 }
 #[derive(PartialEq)]
 pub struct Game {
@@ -123,6 +124,17 @@ impl Game {
             "Fuel is Empty. Game is over!",
             48,
             Color::RGBA(255, 0, 0, 255),
+        )?;
+
+        Ok(())
+    }
+
+    pub fn draw_mission_accomplished(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        draw_center_text(
+            canvas,
+            "Mission accomplished!",
+            48,
+            Color::RGBA(0, 255, 0, 255),
         )?;
 
         Ok(())
