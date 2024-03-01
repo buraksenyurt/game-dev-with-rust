@@ -7,10 +7,17 @@ use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
 use std::cmp;
 
+#[derive(PartialEq)]
+pub enum GameState {
+    Playing,
+    Over,
+}
+#[derive(PartialEq)]
 pub struct Game {
     pub mountain_points: Vec<Point>,
     pub landing_platforms: Vec<LandingPlatform>,
     pub meteors: Vec<Meteor>,
+    pub state: GameState,
 }
 
 impl Game {
@@ -64,6 +71,7 @@ impl Game {
             mountain_points,
             landing_platforms: platforms,
             meteors,
+            state: GameState::Playing,
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
@@ -107,5 +115,16 @@ impl Game {
         let radius = rng.gen_range(10..20);
         let angle = rng.gen_range(10..30) as f64;
         Meteor::new(Point::new(x, y), side_count, radius, angle, true)
+    }
+
+    pub fn draw_game_over(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        draw_center_text(
+            canvas,
+            "Fuel is Empty. Game is over!",
+            48,
+            Color::RGBA(255, 0, 0, 255),
+        )?;
+
+        Ok(())
     }
 }

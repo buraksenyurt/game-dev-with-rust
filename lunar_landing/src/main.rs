@@ -8,7 +8,7 @@ mod utility;
 use crate::constants::*;
 use crate::entity::{Hud, Shuttle};
 use crate::ext_factors::ExternalFactors;
-use crate::game::Game;
+use crate::game::{Game, GameState};
 use crate::math::Vector;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -45,6 +45,10 @@ fn main() -> Result<(), String> {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
+
+        if game.state == GameState::Over {
+            game.draw_game_over(&mut canvas)?;
+        }
 
         for event in event_pump.poll_iter() {
             match event {
@@ -90,7 +94,9 @@ fn main() -> Result<(), String> {
         game.check_out_of_ranges();
         game.draw(&mut canvas)?;
         //println!("Current meteor count is {}", game.meteors.iter().count());
-
+        if shuttle.fuel_level == 0 {
+            game.state = GameState::Over;
+        }
         if !shuttle.is_landed(&game) {
             factors.toss_randomly(&mut shuttle, Vector { x: 40., y: 80. }, delta_seconds);
             shuttle.velocity.y += 2.5 * delta_seconds;

@@ -111,6 +111,7 @@ impl Shuttle {
     }
 }
 
+#[derive(PartialEq)]
 pub struct LandingPlatform {
     pub p1: Point,
     pub p2: Point,
@@ -152,6 +153,7 @@ impl LandingPlatform {
     }
 }
 
+#[derive(PartialEq)]
 pub struct Meteor {
     pub center: Point,
     pub sides: u8,
