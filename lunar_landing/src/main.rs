@@ -33,78 +33,114 @@ fn main() -> Result<(), String> {
     let mut last_update = Instant::now();
     let mut hud = Hud::new();
 
-    'running: loop {
-        let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
-        let now = Instant::now();
-        let delta = now.duration_since(last_update);
-        last_update = now;
-        let delta_seconds = delta.as_secs_f32();
-        if frame_duration > delta {
-            std::thread::sleep(frame_duration - delta);
-        }
+    'game_loop: loop {
+        match game.state {
+            GameState::Playing => {
+                loop {
+                    let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
+                    let now = Instant::now();
+                    let delta = now.duration_since(last_update);
+                    last_update = now;
+                    let delta_seconds = delta.as_secs_f32();
+                    if frame_duration > delta {
+                        std::thread::sleep(frame_duration - delta);
+                    }
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
+                    canvas.set_draw_color(Color::RGB(0, 0, 0));
+                    canvas.clear();
 
-        if game.state == GameState::Over {
-            game.draw_game_over(&mut canvas)?;
-        }
+                    for event in event_pump.poll_iter() {
+                        match event {
+                            Event::Quit { .. }
+                            | Event::KeyDown {
+                                keycode: Some(Keycode::Escape),
+                                ..
+                            } => {
+                                break 'game_loop;
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Left),
+                                ..
+                            } => {
+                                shuttle.velocity.x -= 30. * delta_seconds;
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Right),
+                                ..
+                            } => {
+                                shuttle.velocity.x += 30. * delta_seconds;
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Down),
+                                ..
+                            } => {
+                                shuttle.velocity.y += 75. * delta_seconds;
+                                shuttle.fuel_level -= 2;
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Space),
+                                ..
+                            } => {
+                                shuttle.velocity.y -= 50. * delta_seconds;
+                                shuttle.fuel_level -= 10;
+                            }
+                            _ => {}
+                        }
+                    }
 
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => {
-                    break 'running;
+                    canvas.set_draw_color(Color::RGB(0, 0, 0));
+                    game.move_meteors(delta_seconds);
+                    game.check_out_of_ranges();
+                    game.draw(&mut canvas)?;
+                    //println!("Current meteor count is {}", game.meteors.iter().count());
+                    if shuttle.fuel_level == 0 {
+                        game.state = GameState::Over;
+                        continue 'game_loop;
+                    }
+                    if !shuttle.is_landed(&game) {
+                        factors.toss_randomly(
+                            &mut shuttle,
+                            Vector { x: 40., y: 80. },
+                            delta_seconds,
+                        );
+                        shuttle.velocity.y += 2.5 * delta_seconds;
+                        shuttle.fuel_level -= 1;
+                    }
+                    shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
+                    hud.draw(&shuttle, &mut canvas)?;
+                    canvas.present();
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Left),
-                    ..
-                } => {
-                    shuttle.velocity.x -= 30. * delta_seconds;
+            }
+            GameState::Over => {
+                canvas.set_draw_color(Color::RGB(0, 0, 0));
+                canvas.clear();
+                game.draw_game_over(&mut canvas)?;
+
+                for event in event_pump.poll_iter() {
+                    match event {
+                        Event::Quit { .. }
+                        | Event::KeyDown {
+                            keycode: Some(Keycode::Escape),
+                            ..
+                        } => {
+                            break 'game_loop;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Space),
+                            ..
+                        } => {
+                            game = Game::new();
+                            shuttle = Shuttle::new();
+                            game.state = GameState::Playing;
+                            continue 'game_loop;
+                        }
+                        _ => {}
+                    }
                 }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Right),
-                    ..
-                } => {
-                    shuttle.velocity.x += 30. * delta_seconds;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Down),
-                    ..
-                } => {
-                    shuttle.velocity.y += 75. * delta_seconds;
-                    shuttle.fuel_level -= 2;
-                }
-                Event::KeyDown {
-                    keycode: Some(Keycode::Space),
-                    ..
-                } => {
-                    shuttle.velocity.y -= 50. * delta_seconds;
-                    shuttle.fuel_level -= 10;
-                }
-                _ => {}
+
+                canvas.present();
             }
         }
-
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        game.move_meteors(delta_seconds);
-        game.check_out_of_ranges();
-        game.draw(&mut canvas)?;
-        //println!("Current meteor count is {}", game.meteors.iter().count());
-        if shuttle.fuel_level == 0 {
-            game.state = GameState::Over;
-        }
-        if !shuttle.is_landed(&game) {
-            factors.toss_randomly(&mut shuttle, Vector { x: 40., y: 80. }, delta_seconds);
-            shuttle.velocity.y += 2.5 * delta_seconds;
-            shuttle.fuel_level -= 1;
-        }
-        shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
-        hud.draw(&shuttle, &mut canvas)?;
-        canvas.present();
     }
 
     Ok(())
