@@ -93,7 +93,14 @@ impl Game {
         for m in self.meteors.iter_mut() {
             m.rot_angle += 25. * delta_time as f64;
             m.velocity.y += rng.gen_range(10.0..15.) * delta_time;
-            m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
+            match m.kind {
+                MeteorType::LeftBottomCorner => {
+                    m.velocity.x -= rng.gen_range(10.0..15.) * delta_time;
+                }
+                MeteorType::RightBottomCorner => {
+                    m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
+                }
+            }
             m.mark_range();
         }
     }

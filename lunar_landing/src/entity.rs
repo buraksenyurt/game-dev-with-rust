@@ -184,6 +184,12 @@ impl LandingPlatform {
 }
 
 #[derive(PartialEq)]
+pub enum MeteorType {
+    LeftBottomCorner,
+    RightBottomCorner,
+}
+
+#[derive(PartialEq)]
 pub struct Meteor {
     pub center: Point,
     pub sides: u8,
@@ -191,10 +197,17 @@ pub struct Meteor {
     pub rot_angle: f64,
     pub velocity: Vector,
     pub in_range: bool,
+    pub kind: MeteorType,
 }
 
 impl Meteor {
     pub fn new(center: Point, sides: u8, radius: i16, rot_angle: f64, in_range: bool) -> Self {
+        let mut rng = thread_rng();
+        let kind = if rng.gen_range(0..100) < 50 {
+            MeteorType::LeftBottomCorner
+        } else {
+            MeteorType::RightBottomCorner
+        };
         Self {
             center,
             sides,
@@ -202,6 +215,7 @@ impl Meteor {
             rot_angle,
             velocity: Vector::default(),
             in_range,
+            kind,
         }
     }
     pub fn mark_range(&mut self) {
@@ -211,6 +225,10 @@ impl Meteor {
         if curr_x > WIDTH || curr_y > HEIGHT {
             self.in_range = false;
             //println!("Meteor is out of range");
+        }
+        if curr_x < 0 {
+            self.in_range = false;
+            println!("Meteor is out of range");
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
