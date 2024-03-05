@@ -322,6 +322,7 @@ impl Hud {
 
 #[derive(PartialEq)]
 pub enum GameState {
+    Menu,
     Playing,
     OutOfFuel,
     MeteorHit,
@@ -343,6 +344,7 @@ impl Display for GameState {
             GameState::JobsDone => {
                 write!(f, "Job's done... Well done!")
             }
+            _ => write!(f, ""),
         }
     }
 }

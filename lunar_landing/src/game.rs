@@ -66,7 +66,7 @@ impl Game {
             mountain_points,
             landing_platforms: platforms,
             meteors,
-            state: GameState::Playing,
+            state: GameState::Menu,
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
@@ -125,9 +125,17 @@ impl Game {
             GameState::JobsDone => {
                 draw_center_text(canvas, info, 48, Color::RGBA(0, 255, 0, 255))?;
             }
+            _ => {}
         }
         Ok(())
     }
+
+    pub fn draw_main_menu(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        let info = String::from("Start Game (Enter)");
+        draw_center_text(canvas, info, 48, Color::RGBA(0, 125, 255, 255))?;
+        Ok(())
+    }
+
     pub fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
         for m in self.meteors.iter() {
             if shuttle.check_collision_with_meteor(m) {

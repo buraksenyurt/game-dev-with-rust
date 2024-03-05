@@ -35,6 +35,34 @@ fn main() -> Result<(), String> {
 
     'game_loop: loop {
         match game.state {
+            GameState::Menu => {
+                canvas.set_draw_color(Color::RGB(0, 0, 0));
+                canvas.clear();
+                game.draw_main_menu(&mut canvas)?;
+
+                for event in event_pump.poll_iter() {
+                    match event {
+                        Event::Quit { .. }
+                        | Event::KeyDown {
+                            keycode: Some(Keycode::Escape),
+                            ..
+                        } => {
+                            break 'game_loop;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Return),
+                            ..
+                        } => {
+                            game = Game::new();
+                            game.state = GameState::Playing;
+                            continue 'game_loop;
+                        }
+                        _ => {}
+                    }
+                }
+
+                canvas.present();
+            }
             GameState::Playing => {
                 loop {
                     let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
@@ -122,7 +150,7 @@ fn main() -> Result<(), String> {
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
                 game.draw_end_menu(&mut canvas)?;
-                if handle_inputs(&mut event_pump, &mut game, &mut shuttle) {
+                if handle_inputs(&mut event_pump, &mut game) {
                     break 'game_loop;
                 }
                 canvas.present();
@@ -133,7 +161,7 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game, shuttle: &mut Shuttle) -> bool {
+fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game) -> bool {
     for event in event_pump.poll_iter() {
         match event {
             Event::Quit { .. }
@@ -144,12 +172,10 @@ fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game, shuttle: &mu
                 return true;
             }
             Event::KeyDown {
-                keycode: Some(Keycode::Space),
+                keycode: Some(Keycode::Return),
                 ..
             } => {
-                *game = Game::new();
-                *shuttle = Shuttle::new();
-                game.state = GameState::Playing;
+                game.state = GameState::Menu;
             }
             _ => {}
         }
