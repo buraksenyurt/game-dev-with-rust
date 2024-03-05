@@ -1,15 +1,11 @@
 mod constants;
 mod entity;
-mod ext_factors;
 mod game;
-mod math;
 mod utility;
 
 use crate::constants::*;
-use crate::entity::{GameState, Hud, Shuttle};
-use crate::ext_factors::ExternalFactors;
+use crate::entity::{GameState, Hud, Shuttle, Vector};
 use crate::game::Game;
-use crate::math::Vector;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -18,7 +14,6 @@ use std::time::{Duration, Instant};
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let factors = ExternalFactors {};
     let mut shuttle = Shuttle::new();
 
     let window = video_subsystem
@@ -130,11 +125,7 @@ fn main() -> Result<(), String> {
                         continue 'game_loop;
                     }
                     if !shuttle.is_landed(&game) {
-                        factors.toss_randomly(
-                            &mut shuttle,
-                            Vector { x: 40., y: 80. },
-                            delta_seconds,
-                        );
+                        shuttle.toss_randomly(Vector { x: 40., y: 80. }, delta_seconds);
                         shuttle.velocity.y += 2.5 * delta_seconds;
                         shuttle.fuel_level -= 1;
                     } else {

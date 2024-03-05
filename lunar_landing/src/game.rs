@@ -57,7 +57,7 @@ impl Game {
             ));
         }
         let mut meteors = Vec::new();
-        for _ in 1..MAX_METEOR_COUNT {
+        for _ in 1..=MAX_METEOR_COUNT {
             let m = Self::spawn_random_meteor();
             meteors.push(m);
         }

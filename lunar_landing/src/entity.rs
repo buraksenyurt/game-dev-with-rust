@@ -1,8 +1,7 @@
 use crate::constants::*;
 use crate::game::Game;
-use crate::math::Vector;
 use crate::utility::draw_text;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::{Canvas, WindowCanvas};
@@ -72,6 +71,7 @@ impl Shuttle {
 
         Ok(())
     }
+
     pub fn calculate_foot_points(&self) -> ((Point, Point), (Point, Point)) {
         let foot_width = SHUTTLE_HEAD_WIDTH / 2;
         let foot_y = self.position.y + SHUTTLE_HEAD_WIDTH * 2 + self.velocity.y as i32;
@@ -90,6 +90,7 @@ impl Shuttle {
             (right_foot_start, right_foot_end),
         )
     }
+
     pub fn is_landed(&self, game: &Game) -> bool {
         let mut is_landed = false;
         for lp in &game.landing_platforms {
@@ -126,6 +127,17 @@ impl Shuttle {
         // println!("{:?}", meteor_front_point);
 
         body.contains_point(meteor_front_point)
+    }
+
+    pub fn toss_randomly(&mut self, x_limits: Vector, delta_time: f32) {
+        let mut rng = thread_rng();
+        if rng.gen_range(0..100) < 2 {
+            if rng.gen_bool(0.5) {
+                self.velocity.x += rng.gen_range(x_limits.x..x_limits.y) * delta_time;
+            } else {
+                self.velocity.x -= rng.gen_range(x_limits.x..x_limits.y) * delta_time;
+            }
+        }
     }
 }
 
@@ -346,5 +358,16 @@ impl Display for GameState {
             }
             _ => write!(f, ""),
         }
+    }
+}
+
+#[derive(Default, PartialEq)]
+pub struct Vector {
+    pub x: f32,
+    pub y: f32,
+}
+impl Vector {
+    pub fn to_point(&self) -> Point {
+        Point::new(self.x as i32, self.y as i32)
     }
 }
