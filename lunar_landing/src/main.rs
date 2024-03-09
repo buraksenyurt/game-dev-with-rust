@@ -1,20 +1,24 @@
 mod constants;
 mod entity;
 mod game;
+mod input;
 mod utility;
 
 use crate::constants::*;
 use crate::entity::{GameState, Hud, Shuttle, Vector};
 use crate::game::Game;
+use crate::input::*;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
+use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
     let mut shuttle = Shuttle::new();
+    let commands = get_command_map();
 
     let window = video_subsystem
         .window("Lunar Landing 2049", WIDTH as u32, HEIGHT as u32)
@@ -75,38 +79,20 @@ fn main() -> Result<(), String> {
 
                     for event in event_pump.poll_iter() {
                         match event {
-                            Event::Quit { .. }
-                            | Event::KeyDown {
-                                keycode: Some(Keycode::Escape),
-                                ..
-                            } => {
-                                break 'game_loop;
-                            }
                             Event::KeyDown {
-                                keycode: Some(Keycode::Left),
+                                keycode: Some(keycode),
                                 ..
                             } => {
-                                shuttle.velocity.x -= 30. * delta_seconds;
-                            }
-                            Event::KeyDown {
-                                keycode: Some(Keycode::Right),
-                                ..
-                            } => {
-                                shuttle.velocity.x += 30. * delta_seconds;
-                            }
-                            Event::KeyDown {
-                                keycode: Some(Keycode::Down),
-                                ..
-                            } => {
-                                shuttle.velocity.y += 75. * delta_seconds;
-                                shuttle.fuel_level -= 2;
-                            }
-                            Event::KeyDown {
-                                keycode: Some(Keycode::Space),
-                                ..
-                            } => {
-                                shuttle.velocity.y -= 50. * delta_seconds;
-                                shuttle.fuel_level -= 10;
+                                if let Some(command) = commands.get(&keycode) {
+                                    if let Some(new_state) =
+                                        command.execute(&mut shuttle, &mut game, delta_seconds)
+                                    {
+                                        game.state = new_state;
+                                        if game.state == GameState::Menu {
+                                            continue 'game_loop;
+                                        }
+                                    }
+                                }
                             }
                             _ => {}
                         }
@@ -152,6 +138,16 @@ fn main() -> Result<(), String> {
     }
 
     Ok(())
+}
+
+fn get_command_map() -> HashMap<Keycode, Box<dyn Command>> {
+    let mut command_map: HashMap<Keycode, Box<dyn Command>> = HashMap::new();
+    command_map.insert(Keycode::Left, Box::new(MoveLeftCommand));
+    command_map.insert(Keycode::Right, Box::new(MoveRightCommand));
+    command_map.insert(Keycode::Space, Box::new(MoveUpCommand));
+    command_map.insert(Keycode::Down, Box::new(MoveDownCommand));
+    command_map.insert(Keycode::Escape, Box::new(ExitGameCommand));
+    command_map
 }
 
 fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game) -> bool {
