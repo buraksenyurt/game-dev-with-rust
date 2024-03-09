@@ -41,17 +41,15 @@ fn main() -> Result<(), String> {
                 game.draw_main_menu(&mut canvas)?;
 
                 for event in event_pump.poll_iter() {
-                    match event {
-                        Event::KeyDown {
-                            keycode: Some(keycode),
-                            ..
-                        } => {
-                            if let Some(command) = menu_commands.get(&keycode) {
-                                game.state = command.execute().unwrap();
-                                continue 'game_loop;
-                            }
+                    if let Event::KeyDown {
+                        keycode: Some(keycode),
+                        ..
+                    } = event
+                    {
+                        if let Some(command) = menu_commands.get(&keycode) {
+                            game.state = command.execute().unwrap();
+                            continue 'game_loop;
                         }
-                        _ => {}
                     }
                 }
 
@@ -78,24 +76,22 @@ fn main() -> Result<(), String> {
                     canvas.clear();
 
                     for event in event_pump.poll_iter() {
-                        match event {
-                            Event::KeyDown {
-                                keycode: Some(keycode),
-                                ..
-                            } => {
-                                if let Some(command) = play_commands.get(&keycode) {
-                                    command.execute(&mut shuttle, delta_seconds);
-                                }
-                                if let Some(m_command) = menu_commands.get(&keycode) {
-                                    if let Some(new_state) = m_command.execute() {
-                                        game.state = new_state;
-                                        if game.state == GameState::Menu {
-                                            continue 'game_loop;
-                                        }
+                        if let Event::KeyDown {
+                            keycode: Some(keycode),
+                            ..
+                        } = event
+                        {
+                            if let Some(command) = play_commands.get(&keycode) {
+                                command.execute(&mut shuttle, delta_seconds);
+                            }
+                            if let Some(m_command) = menu_commands.get(&keycode) {
+                                if let Some(new_state) = m_command.execute() {
+                                    game.state = new_state;
+                                    if game.state == GameState::Menu {
+                                        continue 'game_loop;
                                     }
                                 }
                             }
-                            _ => {}
                         }
                     }
 
@@ -132,20 +128,18 @@ fn main() -> Result<(), String> {
                 canvas.clear();
                 game.draw_end_menu(&mut canvas)?;
                 for event in event_pump.poll_iter() {
-                    match event {
-                        Event::KeyDown {
-                            keycode: Some(keycode),
-                            ..
-                        } => {
-                            if let Some(command) = menu_commands.get(&keycode) {
-                                game.state = command.execute().unwrap();
-                                if game.state == GameState::NewGame {
-                                    game.state = GameState::Menu;
-                                }
-                                continue 'game_loop;
+                    if let Event::KeyDown {
+                        keycode: Some(keycode),
+                        ..
+                    } = event
+                    {
+                        if let Some(command) = menu_commands.get(&keycode) {
+                            game.state = command.execute().unwrap();
+                            if game.state == GameState::NewGame {
+                                game.state = GameState::Menu;
                             }
+                            continue 'game_loop;
                         }
-                        _ => {}
                     }
                 }
                 canvas.present();

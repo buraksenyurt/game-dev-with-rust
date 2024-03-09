@@ -123,7 +123,7 @@ impl Game {
     }
 
     pub fn respawn_meteors(&mut self) {
-        if self.meteors.iter().count() == 0 {
+        if self.meteors.is_empty() {
             for _ in 1..=MAX_METEOR_COUNT {
                 let m = Self::spawn_random_meteor();
                 self.meteors.push(m);

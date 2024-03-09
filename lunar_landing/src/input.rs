@@ -1,5 +1,4 @@
 use crate::entity::{GameState, Shuttle};
-use crate::game::Game;
 
 pub trait DirectionCommand {
     fn execute(&self, shuttle: &mut Shuttle, delta_time: f32);
