@@ -122,6 +122,15 @@ impl Game {
         Meteor::new(Point::new(x, y), side_count, radius, angle, true)
     }
 
+    pub fn respawn_meteors(&mut self) {
+        if self.meteors.iter().count() == 0 {
+            for _ in 1..=MAX_METEOR_COUNT {
+                let m = Self::spawn_random_meteor();
+                self.meteors.push(m);
+            }
+        }
+    }
+
     pub fn draw_end_menu(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
         let info = self.state.to_string();
         match self.state {

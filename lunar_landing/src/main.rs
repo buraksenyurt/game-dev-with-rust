@@ -50,6 +50,7 @@ fn main() -> Result<(), String> {
                         } => {
                             game = Game::new();
                             game.state = GameState::Playing;
+                            shuttle = Shuttle::new();
                             continue 'game_loop;
                         }
                         _ => {}
@@ -114,6 +115,7 @@ fn main() -> Result<(), String> {
                     canvas.set_draw_color(Color::RGB(0, 0, 0));
                     game.move_meteors(delta_seconds);
                     game.check_out_of_ranges();
+                    game.respawn_meteors();
                     game.draw(&mut canvas)?;
                     //println!("Current meteor count is {}", game.meteors.iter().count());
                     if shuttle.fuel_level <= 0 {

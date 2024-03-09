@@ -231,7 +231,7 @@ impl Meteor {
         }
         if curr_x < 0 {
             self.in_range = false;
-            println!("Meteor is out of range");
+            //println!("Meteor is out of range");
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
