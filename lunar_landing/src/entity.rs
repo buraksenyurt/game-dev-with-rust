@@ -1,6 +1,7 @@
 use crate::constants::*;
 use crate::game::Game;
 use crate::utility::draw_text;
+use rand::prelude::SliceRandom;
 use rand::{thread_rng, Rng};
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
@@ -183,10 +184,11 @@ impl LandingPlatform {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum MeteorType {
     LeftBottomCorner,
     RightBottomCorner,
+    Vertical,
 }
 
 #[derive(PartialEq)]
@@ -203,11 +205,12 @@ pub struct Meteor {
 impl Meteor {
     pub fn new(center: Point, sides: u8, radius: i16, rot_angle: f64, in_range: bool) -> Self {
         let mut rng = thread_rng();
-        let kind = if rng.gen_range(0..100) < 50 {
-            MeteorType::LeftBottomCorner
-        } else {
-            MeteorType::RightBottomCorner
-        };
+        let kinds = [
+            MeteorType::RightBottomCorner,
+            MeteorType::LeftBottomCorner,
+            MeteorType::Vertical,
+        ];
+        let kind = *kinds.choose(&mut rng).unwrap();
         Self {
             center,
             sides,

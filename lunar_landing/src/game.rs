@@ -100,6 +100,9 @@ impl Game {
                 MeteorType::RightBottomCorner => {
                     m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
                 }
+                MeteorType::Vertical => {
+                    m.velocity.y += 10. * delta_time;
+                }
             }
             m.mark_range();
         }
