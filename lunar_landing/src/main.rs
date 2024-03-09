@@ -2,17 +2,20 @@ mod constants;
 mod entity;
 mod game;
 mod input;
+mod ui;
 mod utility;
 
 use crate::constants::*;
-use crate::entity::{GameState, Hud, Shuttle, Vector};
+use crate::entity::*;
 use crate::game::Game;
 use crate::input::*;
+use crate::ui::{GameOverMenu, MainMenu};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
+use crate::ui::hud::Hud;
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
@@ -38,7 +41,7 @@ fn main() -> Result<(), String> {
             GameState::Menu => {
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
-                game.draw_main_menu(&mut canvas)?;
+                MainMenu::draw(&mut canvas)?;
 
                 for event in event_pump.poll_iter() {
                     if let Event::KeyDown {
@@ -126,7 +129,7 @@ fn main() -> Result<(), String> {
                 game.meteors.clear();
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
-                game.draw_end_menu(&mut canvas)?;
+                GameOverMenu::draw(&game.state, &mut canvas)?;
                 for event in event_pump.poll_iter() {
                     if let Event::KeyDown {
                         keycode: Some(keycode),

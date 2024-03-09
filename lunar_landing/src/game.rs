@@ -131,30 +131,6 @@ impl Game {
         }
     }
 
-    pub fn draw_end_menu(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        let info = self.state.to_string();
-        match self.state {
-            GameState::Playing => {}
-            GameState::OutOfFuel => {
-                draw_center_text(canvas, info, 48, Color::RGBA(255, 0, 0, 255))?;
-            }
-            GameState::MeteorHit => {
-                draw_center_text(canvas, info, 48, Color::RGBA(125, 125, 125, 255))?;
-            }
-            GameState::JobsDone => {
-                draw_center_text(canvas, info, 48, Color::RGBA(0, 255, 0, 255))?;
-            }
-            _ => {}
-        }
-        Ok(())
-    }
-
-    pub fn draw_main_menu(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        let info = String::from("Start Game (Enter)");
-        draw_center_text(canvas, info, 48, Color::RGBA(0, 125, 255, 255))?;
-        Ok(())
-    }
-
     pub fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
         for m in self.meteors.iter() {
             if shuttle.check_collision_with_meteor(m) {
