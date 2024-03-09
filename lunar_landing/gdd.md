@@ -41,7 +41,9 @@ Oyun başlatıldığında atmosferin üst katmanında olan mekiğimiz aşağıya
 
 Menü ve ekranlara ait tasarımları aşağıdaki gibidir.
 
-// OYUN ZAMANINA AİT GÖRÜNTÜLER EKLENECEK
+Rastgele t anından bir görüntü.
+
+![Runtime](runtime_01.png)
 
 ## Geliştirme Takvimi
 
