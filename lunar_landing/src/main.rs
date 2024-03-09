@@ -1,27 +1,24 @@
 mod constants;
 mod entity;
 mod game;
-mod input;
+mod setup;
 mod ui;
 mod utility;
 
 use crate::constants::*;
 use crate::entity::*;
 use crate::game::Game;
-use crate::input::*;
+use crate::setup::setup_commands;
+use crate::ui::hud::Hud;
 use crate::ui::{GameOverMenu, MainMenu};
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use std::collections::HashMap;
 use std::time::{Duration, Instant};
-use crate::ui::hud::Hud;
 
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let play_commands = get_play_commands();
-    let menu_commands = get_menu_commands();
+    let (play_commands, menu_commands) = setup_commands().unwrap();
 
     let window = video_subsystem
         .window("Lunar Landing 2049", WIDTH as u32, HEIGHT as u32)
@@ -154,21 +151,4 @@ fn main() -> Result<(), String> {
     }
 
     Ok(())
-}
-
-fn get_play_commands() -> HashMap<Keycode, Box<dyn DirectionCommand>> {
-    let mut command_map: HashMap<Keycode, Box<dyn DirectionCommand>> = HashMap::new();
-    command_map.insert(Keycode::Left, Box::new(MoveLeftCommand));
-    command_map.insert(Keycode::Right, Box::new(MoveRightCommand));
-    command_map.insert(Keycode::Space, Box::new(MoveUpCommand));
-    command_map.insert(Keycode::Down, Box::new(MoveDownCommand));
-    command_map
-}
-
-fn get_menu_commands() -> HashMap<Keycode, Box<dyn MenuCommand>> {
-    let mut command_map: HashMap<Keycode, Box<dyn MenuCommand>> = HashMap::new();
-    command_map.insert(Keycode::Backspace, Box::new(ReturnToMenuCommand));
-    command_map.insert(Keycode::Return, Box::new(StartNewGameCommand));
-    command_map.insert(Keycode::Escape, Box::new(ExitGameCommand));
-    command_map
 }

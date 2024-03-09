@@ -1,0 +1,27 @@
+[[play_commands]]
+key = "A"
+command = "MoveLeftCommand"
+
+[[play_commands]]
+key = "D"
+command = "MoveRightCommand"
+
+[[play_commands]]
+key = "W"
+command = "MoveUpCommand"
+
+[[play_commands]]
+key = "S"
+command = "MoveDownCommand"
+
+[[menu_commands]]
+key = "Backspace"
+command = "ReturnToMenuCommand"
+
+[[menu_commands]]
+key = "Return"
+command = "StartNewGameCommand"
+
+[[menu_commands]]
+key = "Escape"
+command = "ExitGameCommand"
