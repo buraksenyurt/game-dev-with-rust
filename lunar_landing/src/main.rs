@@ -17,8 +17,8 @@ use std::time::{Duration, Instant};
 fn main() -> Result<(), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let mut shuttle = Shuttle::new();
-    let commands = get_command_map();
+    let play_commands = get_play_commands();
+    let menu_commands = get_menu_commands();
 
     let window = video_subsystem
         .window("Lunar Landing 2049", WIDTH as u32, HEIGHT as u32)
@@ -29,6 +29,7 @@ fn main() -> Result<(), String> {
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
     let mut event_pump = sdl_context.event_pump()?;
     let mut game = Game::new();
+    let mut shuttle = Shuttle::new();
     let mut last_update = Instant::now();
     let mut hud = Hud::new();
 
@@ -41,27 +42,26 @@ fn main() -> Result<(), String> {
 
                 for event in event_pump.poll_iter() {
                     match event {
-                        Event::Quit { .. }
-                        | Event::KeyDown {
-                            keycode: Some(Keycode::Escape),
-                            ..
-                        } => {
-                            break 'game_loop;
-                        }
                         Event::KeyDown {
-                            keycode: Some(Keycode::Return),
+                            keycode: Some(keycode),
                             ..
                         } => {
-                            game = Game::new();
-                            game.state = GameState::Playing;
-                            shuttle = Shuttle::new();
-                            continue 'game_loop;
+                            if let Some(command) = menu_commands.get(&keycode) {
+                                game.state = command.execute().unwrap();
+                                continue 'game_loop;
+                            }
                         }
                         _ => {}
                     }
                 }
 
                 canvas.present();
+            }
+            GameState::NewGame => {
+                game = Game::new();
+                shuttle = Shuttle::new();
+                game.state = GameState::Playing;
+                continue 'game_loop;
             }
             GameState::Playing => {
                 loop {
@@ -83,10 +83,11 @@ fn main() -> Result<(), String> {
                                 keycode: Some(keycode),
                                 ..
                             } => {
-                                if let Some(command) = commands.get(&keycode) {
-                                    if let Some(new_state) =
-                                        command.execute(&mut shuttle, &mut game, delta_seconds)
-                                    {
+                                if let Some(command) = play_commands.get(&keycode) {
+                                    command.execute(&mut shuttle, delta_seconds);
+                                }
+                                if let Some(m_command) = menu_commands.get(&keycode) {
+                                    if let Some(new_state) = m_command.execute() {
                                         game.state = new_state;
                                         if game.state == GameState::Menu {
                                             continue 'game_loop;
@@ -126,13 +127,31 @@ fn main() -> Result<(), String> {
                 }
             }
             GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
+                game.meteors.clear();
                 canvas.set_draw_color(Color::RGB(0, 0, 0));
                 canvas.clear();
                 game.draw_end_menu(&mut canvas)?;
-                if handle_inputs(&mut event_pump, &mut game) {
-                    break 'game_loop;
+                for event in event_pump.poll_iter() {
+                    match event {
+                        Event::KeyDown {
+                            keycode: Some(keycode),
+                            ..
+                        } => {
+                            if let Some(command) = menu_commands.get(&keycode) {
+                                game.state = command.execute().unwrap();
+                                if game.state == GameState::NewGame {
+                                    game.state = GameState::Menu;
+                                }
+                                continue 'game_loop;
+                            }
+                        }
+                        _ => {}
+                    }
                 }
                 canvas.present();
+            }
+            GameState::ExitGame => {
+                break 'game_loop;
             }
         }
     }
@@ -140,34 +159,19 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn get_command_map() -> HashMap<Keycode, Box<dyn Command>> {
-    let mut command_map: HashMap<Keycode, Box<dyn Command>> = HashMap::new();
+fn get_play_commands() -> HashMap<Keycode, Box<dyn DirectionCommand>> {
+    let mut command_map: HashMap<Keycode, Box<dyn DirectionCommand>> = HashMap::new();
     command_map.insert(Keycode::Left, Box::new(MoveLeftCommand));
     command_map.insert(Keycode::Right, Box::new(MoveRightCommand));
     command_map.insert(Keycode::Space, Box::new(MoveUpCommand));
     command_map.insert(Keycode::Down, Box::new(MoveDownCommand));
-    command_map.insert(Keycode::Escape, Box::new(ExitGameCommand));
     command_map
 }
 
-fn handle_inputs(event_pump: &mut sdl2::EventPump, game: &mut Game) -> bool {
-    for event in event_pump.poll_iter() {
-        match event {
-            Event::Quit { .. }
-            | Event::KeyDown {
-                keycode: Some(Keycode::Escape),
-                ..
-            } => {
-                return true;
-            }
-            Event::KeyDown {
-                keycode: Some(Keycode::Return),
-                ..
-            } => {
-                game.state = GameState::Menu;
-            }
-            _ => {}
-        }
-    }
-    false
+fn get_menu_commands() -> HashMap<Keycode, Box<dyn MenuCommand>> {
+    let mut command_map: HashMap<Keycode, Box<dyn MenuCommand>> = HashMap::new();
+    command_map.insert(Keycode::Backspace, Box::new(ReturnToMenuCommand));
+    command_map.insert(Keycode::Return, Box::new(StartNewGameCommand));
+    command_map.insert(Keycode::Escape, Box::new(ExitGameCommand));
+    command_map
 }

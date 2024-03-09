@@ -360,6 +360,8 @@ pub enum GameState {
     OutOfFuel,
     MeteorHit,
     JobsDone,
+    ExitGame,
+    NewGame,
 }
 
 impl Display for GameState {
