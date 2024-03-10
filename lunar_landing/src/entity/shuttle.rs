@@ -111,20 +111,21 @@ impl Shuttle {
     }
 
     pub fn check_collision_with_meteor(&self, meteor: &Meteor) -> bool {
-        let body = Rect::new(
-            self.position.x + self.velocity.x as i32,
-            self.position.y + self.velocity.y as i32,
-            SHUTTLE_HEAD_WIDTH as u32,
-            (SHUTTLE_HEAD_WIDTH * 2) as u32,
-        );
-        // println!("{:?}", body);
-        let x = meteor.center.x + meteor.velocity.x as i32 + meteor.radius as i32;
-        let y = meteor.center.y + meteor.velocity.y as i32 + meteor.radius as i32;
-        let meteor_front_point = Point::new(x, y);
+        let shuttle_x = self.position.x as f32 + self.velocity.x + (SHUTTLE_HEAD_WIDTH / 2) as f32;
+        let shuttle_y = self.position.y as f32 + self.velocity.y + (SHUTTLE_HEAD_WIDTH / 2) as f32;
 
-        // println!("{:?}", meteor_front_point);
+        let meteor_x = meteor.center.x as f32 + meteor.velocity.x;
+        let meteor_y = meteor.center.y as f32 + meteor.velocity.y;
 
-        body.contains_point(meteor_front_point)
+        let dist_x = shuttle_x - meteor_x;
+        let dist_y = shuttle_y - meteor_y;
+        let euclidean_distance = (dist_x.powi(2) + dist_y.powi(2)).sqrt();
+
+        let shuttle_radius =
+            ((SHUTTLE_HEAD_WIDTH.pow(2) + SHUTTLE_HEAD_WIDTH.pow(2)) as f32).sqrt() / 2.0;
+        let meteor_radius = meteor.radius as f32;
+
+        euclidean_distance <= (shuttle_radius + meteor_radius)
     }
 
     pub fn toss_randomly(&mut self, x_limits: Vector, delta_time: f32) {
