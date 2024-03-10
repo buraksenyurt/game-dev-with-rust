@@ -1,4 +1,4 @@
-use crate::constants::WIDTH;
+use crate::constants::{WIDTH};
 use crate::entity::Shuttle;
 use crate::ui::draw_text;
 use sdl2::pixels::Color;
@@ -32,7 +32,7 @@ impl Hud {
             canvas,
             &format!("Fuel: {}", shuttle.fuel_level),
             14,
-            Color::RGBA(255, 255, 255, 255),
+            Color::WHITE,
             WIDTH - 100,
             10,
         )?;
@@ -44,7 +44,7 @@ impl Hud {
                 shuttle.position.y + v_point.y
             ),
             14,
-            Color::RGBA(255, 255, 255, 255),
+            Color::WHITE,
             WIDTH - 100,
             30,
         )?;
@@ -70,7 +70,7 @@ impl Hud {
                     canvas,
                     "Fuel Critical",
                     14,
-                    Color::RGBA(255, 0, 0, 255),
+                    Color::RED,
                     30,
                     30,
                 )?;
@@ -91,7 +91,7 @@ impl Hud {
                 self.alt_warn_last_blink = now;
             }
             if self.alt_warn_blink_visible {
-                draw_text(canvas, "Altitude", 14, Color::RGBA(255, 0, 0, 255), 30, 10)?;
+                draw_text(canvas, "Altitude", 14, Color::RED, 30, 10)?;
             }
         }
         Ok(())

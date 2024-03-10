@@ -22,7 +22,7 @@ impl LandingPlatform {
     }
 
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        canvas.set_draw_color(Color::RGB(255, 0, 0));
+        canvas.set_draw_color(Color::RED);
         canvas.draw_line(self.p1, self.p2)?;
         canvas.draw_line(self.p1, self.left_leg)?;
         canvas.draw_line(self.p2, self.right_leg)?;

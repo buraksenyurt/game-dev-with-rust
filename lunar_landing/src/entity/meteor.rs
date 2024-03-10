@@ -62,7 +62,7 @@ impl Meteor {
             let y = (self.radius as f64 * angle.sin()).round() as i32 + self.center.y + velocity.y;
             points.push((x, y));
         }
-        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas.set_draw_color(Color::GRAY);
         for i in 0..points.len() {
             let (x1, y1) = points[i];
             let (x2, y2) = if i == points.len() - 1 {

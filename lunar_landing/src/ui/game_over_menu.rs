@@ -1,7 +1,9 @@
 use crate::entity::GameState;
-use crate::ui::draw_center_text;
+use crate::ui::{draw_vertical_center_text};
 use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
+use crate::constants::{ROCKET_RED};
+use crate::utility::hex_to_color;
 
 pub struct GameOverMenu;
 
@@ -11,13 +13,13 @@ impl GameOverMenu {
         match state {
             GameState::Playing => {}
             GameState::OutOfFuel => {
-                draw_center_text(canvas, info, 48, Color::RGBA(255, 0, 0, 255))?;
+                draw_vertical_center_text(canvas, info, 48, Color::RED,200)?;
             }
             GameState::MeteorHit => {
-                draw_center_text(canvas, info, 48, Color::RGBA(125, 125, 125, 255))?;
+                draw_vertical_center_text(canvas, info, 48, Color::RED,200)?;
             }
             GameState::JobsDone => {
-                draw_center_text(canvas, info, 48, Color::RGBA(0, 255, 0, 255))?;
+                draw_vertical_center_text(canvas, info, 48, hex_to_color(ROCKET_RED),200)?;
             }
             _ => {}
         }

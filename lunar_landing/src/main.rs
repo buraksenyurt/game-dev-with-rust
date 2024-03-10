@@ -36,7 +36,7 @@ fn main() -> Result<(), String> {
     'game_loop: loop {
         match game.state {
             GameState::Menu => {
-                canvas.set_draw_color(Color::RGB(0, 0, 0));
+                canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
                 MainMenu::draw(&mut canvas)?;
 
@@ -72,7 +72,7 @@ fn main() -> Result<(), String> {
                         std::thread::sleep(frame_duration - delta);
                     }
 
-                    canvas.set_draw_color(Color::RGB(0, 0, 0));
+                    canvas.set_draw_color(Color::BLACK);
                     canvas.clear();
 
                     for event in event_pump.poll_iter() {
@@ -95,7 +95,7 @@ fn main() -> Result<(), String> {
                         }
                     }
 
-                    canvas.set_draw_color(Color::RGB(0, 0, 0));
+                    canvas.set_draw_color(Color::BLACK);
                     game.move_meteors(delta_seconds);
                     game.check_out_of_ranges();
                     game.respawn_meteors();
@@ -117,14 +117,14 @@ fn main() -> Result<(), String> {
                         game.state = GameState::JobsDone;
                         continue 'game_loop;
                     }
-                    shuttle.draw(&mut canvas, Color::RGB(255, 255, 0))?;
+                    shuttle.draw(&mut canvas, Color::YELLOW)?;
                     hud.draw(&shuttle, &mut canvas)?;
                     canvas.present();
                 }
             }
             GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
                 game.meteors.clear();
-                canvas.set_draw_color(Color::RGB(0, 0, 0));
+                canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
                 GameOverMenu::draw(&game.state, &mut canvas)?;
                 for event in event_pump.poll_iter() {

@@ -73,7 +73,7 @@ impl Game {
         for i in 0..self.mountain_points.len() - 1 {
             let start = self.mountain_points[i];
             let end = self.mountain_points[i + 1];
-            canvas.set_draw_color(Color::RGB(255, 255, 255));
+            canvas.set_draw_color(Color::GRAY);
             canvas.draw_line(start, end)?;
         }
 

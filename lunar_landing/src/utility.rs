@@ -1,3 +1,4 @@
+use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
 pub fn find_ground_height(points: &[Point], x: i32) -> i32 {
@@ -28,4 +29,16 @@ fn interpolate_height(points: &[Point], x: i32) -> i32 {
         }
     }
     points.first().unwrap().y
+}
+
+pub fn hex_to_color(hex: &str) -> Color {
+    let hex = hex.trim_start_matches('#');
+    let hex_value = u32::from_str_radix(hex, 16).unwrap();
+
+    let r = ((hex_value >> 24) & 255) as u8;
+    let g = ((hex_value >> 16) & 255) as u8;
+    let b = ((hex_value >> 8) & 255) as u8;
+    let a = (hex_value & 255) as u8;
+
+    Color::RGBA(r, g, b, a)
 }
