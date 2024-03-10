@@ -59,8 +59,10 @@ Rastgele t anından bir görüntü.
   - Hud(Struct) : Head Up Display. Skor ve gösterge bilgileri.
   - GameState(Enum) : Oyun zamanı durumları.
   - Game(Struct) : Temel oyun yöneticisi.
-  
-// MODEL DİYAGRAM EKLENECEK
+
+- **Çarpışma Tespiti :** Oyundaki görevi başarıyla tamamlayabilmek için öncelikle mekiğin herhangi bir meteora çarpmadan ve yakıtı bitmeden belirlenen iniş pistlerinden birisine inebilmelidir. Meteor'ların mekiğe çarpıp çarpmadığını anlamak için merkez noktaları arasındaki öklid mesafesinin yarıçapların toplamı ile kıyaslanmasından yararlanılmıştır. Aşağıdaki şekilde bu durum ele alınmaktadır.
+
+![Collision Detection](collision_detection.png)
 
 - **Teknoloji :** Oyun Rust programlama dili ve SDL2 paketi baz alınarak geliştirilmektedir.
 - **Sistem Gereksinimleri :** Terminalden çalışan text tabanlı bir oyun olduğundan minimum sistem gereksinimiyle çalışabilecek şekilde tasarlanmaktadır. Minimum konfigurasyon gereksinimi aşağıdaki gibidir.
