@@ -8,6 +8,7 @@ use sdl2::rect::{Point, Rect};
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
+#[derive(PartialEq)]
 pub struct Shuttle {
     pub position: Point,
     pub fuel_level: i32,

@@ -29,7 +29,6 @@ fn main() -> Result<(), String> {
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
     let mut event_pump = sdl_context.event_pump()?;
     let mut game = Game::new();
-    let mut shuttle = Shuttle::new();
     let mut last_update = Instant::now();
     let mut hud = Hud::new();
 
@@ -57,7 +56,6 @@ fn main() -> Result<(), String> {
             }
             GameState::NewGame => {
                 game = Game::new();
-                shuttle = Shuttle::new();
                 game.state = GameState::Playing;
                 continue 'game_loop;
             }
@@ -80,7 +78,7 @@ fn main() -> Result<(), String> {
                     } = event
                     {
                         if let Some(command) = play_commands.get(&keycode) {
-                            command.execute(&mut shuttle, game.delta_second.as_secs_f32());
+                            command.execute(&mut game);
                         }
                         if let Some(m_command) = menu_commands.get(&keycode) {
                             if let Some(new_state) = m_command.execute() {
@@ -92,22 +90,21 @@ fn main() -> Result<(), String> {
                         }
                     }
                 }
-
                 canvas.set_draw_color(Color::BLACK);
-                if game.update(&mut shuttle).is_some() {
+
+                if game.update().is_some() {
                     continue 'game_loop;
                 }
-
                 game.draw(&mut canvas)?;
-                shuttle.draw(&mut canvas, Color::YELLOW)?;
-                hud.draw(&shuttle, &mut canvas)?;
+                hud.draw(&game.shuttle, &mut canvas)?;
+
                 canvas.present();
             },
             GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
                 game.meteors.clear();
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
-                GameOverMenu::draw(&game.state, &mut canvas)?;
+                GameOverMenu::draw(&game, &mut canvas)?;
                 for event in event_pump.poll_iter() {
                     if let Event::KeyDown {
                         keycode: Some(keycode),

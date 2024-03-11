@@ -10,6 +10,7 @@ use std::time::Duration;
 
 #[derive(PartialEq)]
 pub struct Game {
+    pub shuttle: Shuttle,
     pub mountain_points: Vec<Point>,
     pub landing_platforms: Vec<LandingPlatform>,
     pub meteors: Vec<Meteor>,
@@ -65,6 +66,7 @@ impl Game {
         }
 
         Self {
+            shuttle: Shuttle::new(),
             mountain_points,
             landing_platforms: platforms,
             meteors,
@@ -88,33 +90,36 @@ impl Game {
             m.draw(canvas)?;
         }
 
+        self.shuttle.draw(canvas, Color::YELLOW)?;
+
         Ok(())
     }
 
-    pub fn update(&mut self, shuttle: &mut Shuttle) -> Option<GameState> {
+    pub fn update(&mut self) -> Option<GameState> {
         self.move_meteors(self.delta_second.as_secs_f32());
         self.check_out_of_ranges();
         self.respawn_meteors();
-        if self.check_meteor_shuttle_collisions(shuttle) {
+        if self.check_meteor_shuttle_collisions() {
             self.state = GameState::MeteorHit;
             return Some(GameState::MeteorHit);
         }
 
-        if let Some(value) = self.check_shuttle(shuttle) {
+        if let Some(value) = self.check_shuttle() {
             return value;
         }
         None
     }
 
-    fn check_shuttle(&mut self, shuttle: &mut Shuttle) -> Option<Option<GameState>> {
-        if shuttle.fuel_level <= 0 {
+    fn check_shuttle(&mut self) -> Option<Option<GameState>> {
+        if self.shuttle.fuel_level <= 0 {
             self.state = GameState::OutOfFuel;
             return Some(Some(GameState::OutOfFuel));
         }
-        if !shuttle.is_landed(self) {
-            shuttle.toss_randomly(Vector { x: 40., y: 80. }, self.delta_second.as_secs_f32());
-            shuttle.velocity.y += 2.5 * self.delta_second.as_secs_f32();
-            shuttle.fuel_level -= 1;
+        if !self.shuttle.is_landed(self) {
+            self.shuttle
+                .toss_randomly(Vector { x: 40., y: 80. }, self.delta_second.as_secs_f32());
+            self.shuttle.velocity.y += 2.5 * self.delta_second.as_secs_f32();
+            self.shuttle.fuel_level -= 1;
             Some(None)
         } else {
             self.state = GameState::JobsDone;
@@ -165,9 +170,9 @@ impl Game {
         }
     }
 
-    fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
+    fn check_meteor_shuttle_collisions(&self) -> bool {
         for m in self.meteors.iter() {
-            if shuttle.check_collision_with_meteor(m) {
+            if self.shuttle.check_collision_with_meteor(m) {
                 return true;
             }
         }
