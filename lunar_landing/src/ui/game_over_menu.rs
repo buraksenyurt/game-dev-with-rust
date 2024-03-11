@@ -27,7 +27,7 @@ impl GameOverMenu {
                 )?;
             }
             GameState::JobsDone => {
-                let point = (DEFAULT_FUEL_LEVEL as f32 - game.shuttle.fuel_level as f32) * 0.5;
+                let point = DEFAULT_FUEL_LEVEL - game.shuttle.fuel_level;
                 draw_vertical_center_text(canvas, info, 48, hex_to_color(ROCKET_RED), 200)?;
                 draw_vertical_center_text(
                     canvas,

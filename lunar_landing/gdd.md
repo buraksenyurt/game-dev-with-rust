@@ -41,9 +41,25 @@ Oyun başlatıldığında atmosferin üst katmanında olan mekiğimiz aşağıya
 
 Menü ve ekranlara ait tasarımları aşağıdaki gibidir.
 
-Rastgele t anından bir görüntü.
+Ana menü
+
+![Main Menu](main_menu.png)
+
+Oyun zamanı
 
 ![Runtime](runtime_01.png)
+
+Meteor çarpması 
+
+![Meteor Hit](meteor_hit.png)
+
+Yakıt kritik ve irtifa uyarısı.
+
+![Alerts](alerts.png)
+
+Yakıt bitmesi
+
+![Out of fuel](out_of_fuel.png)
 
 ## Geliştirme Takvimi
 
