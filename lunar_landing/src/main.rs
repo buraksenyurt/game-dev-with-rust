@@ -61,67 +61,48 @@ fn main() -> Result<(), String> {
                 game.state = GameState::Playing;
                 continue 'game_loop;
             }
-            GameState::Playing => {
-                loop {
-                    let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
-                    let now = Instant::now();
-                    let delta = now.duration_since(last_update);
-                    last_update = now;
-                    let delta_seconds = delta.as_secs_f32();
-                    if frame_duration > delta {
-                        std::thread::sleep(frame_duration - delta);
-                    }
+            GameState::Playing => loop {
+                let frame_duration = Duration::new(0, 1_000_000_000u32 / 60);
+                let now = Instant::now();
+                game.delta_second = now.duration_since(last_update);
+                last_update = now;
+                if frame_duration > game.delta_second {
+                    std::thread::sleep(frame_duration - game.delta_second);
+                }
 
-                    canvas.set_draw_color(Color::BLACK);
-                    canvas.clear();
+                canvas.set_draw_color(Color::BLACK);
+                canvas.clear();
 
-                    for event in event_pump.poll_iter() {
-                        if let Event::KeyDown {
-                            keycode: Some(keycode),
-                            ..
-                        } = event
-                        {
-                            if let Some(command) = play_commands.get(&keycode) {
-                                command.execute(&mut shuttle, delta_seconds);
-                            }
-                            if let Some(m_command) = menu_commands.get(&keycode) {
-                                if let Some(new_state) = m_command.execute() {
-                                    game.state = new_state;
-                                    if game.state == GameState::Menu {
-                                        continue 'game_loop;
-                                    }
+                for event in event_pump.poll_iter() {
+                    if let Event::KeyDown {
+                        keycode: Some(keycode),
+                        ..
+                    } = event
+                    {
+                        if let Some(command) = play_commands.get(&keycode) {
+                            command.execute(&mut shuttle, game.delta_second.as_secs_f32());
+                        }
+                        if let Some(m_command) = menu_commands.get(&keycode) {
+                            if let Some(new_state) = m_command.execute() {
+                                game.state = new_state;
+                                if game.state == GameState::Menu {
+                                    continue 'game_loop;
                                 }
                             }
                         }
                     }
-
-                    canvas.set_draw_color(Color::BLACK);
-                    game.move_meteors(delta_seconds);
-                    game.check_out_of_ranges();
-                    game.respawn_meteors();
-                    game.draw(&mut canvas)?;
-                    //println!("Current meteor count is {}", game.meteors.iter().count());
-                    if shuttle.fuel_level <= 0 {
-                        game.state = GameState::OutOfFuel;
-                        continue 'game_loop;
-                    }
-                    if game.check_meteor_shuttle_collisions(&shuttle) {
-                        game.state = GameState::MeteorHit;
-                        continue 'game_loop;
-                    }
-                    if !shuttle.is_landed(&game) {
-                        shuttle.toss_randomly(Vector { x: 40., y: 80. }, delta_seconds);
-                        shuttle.velocity.y += 2.5 * delta_seconds;
-                        shuttle.fuel_level -= 1;
-                    } else {
-                        game.state = GameState::JobsDone;
-                        continue 'game_loop;
-                    }
-                    shuttle.draw(&mut canvas, Color::YELLOW)?;
-                    hud.draw(&shuttle, &mut canvas)?;
-                    canvas.present();
                 }
-            }
+
+                canvas.set_draw_color(Color::BLACK);
+                if game.update(&mut shuttle).is_some() {
+                    continue 'game_loop;
+                }
+
+                game.draw(&mut canvas)?;
+                shuttle.draw(&mut canvas, Color::YELLOW)?;
+                hud.draw(&shuttle, &mut canvas)?;
+                canvas.present();
+            },
             GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
                 game.meteors.clear();
                 canvas.set_draw_color(Color::BLACK);

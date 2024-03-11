@@ -1,4 +1,4 @@
-use crate::constants::{WIDTH};
+use crate::constants::WIDTH;
 use crate::entity::Shuttle;
 use crate::ui::draw_text;
 use sdl2::pixels::Color;
@@ -66,14 +66,7 @@ impl Hud {
                 self.fuel_warn_last_blink = now;
             }
             if self.fuel_warn_blink_visible {
-                draw_text(
-                    canvas,
-                    "Fuel Critical",
-                    14,
-                    Color::RED,
-                    30,
-                    30,
-                )?;
+                draw_text(canvas, "Fuel Critical", 14, Color::RED, 30, 30)?;
             }
         }
         Ok(())

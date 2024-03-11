@@ -6,6 +6,7 @@ use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
 use std::cmp;
+use std::time::Duration;
 
 #[derive(PartialEq)]
 pub struct Game {
@@ -13,6 +14,7 @@ pub struct Game {
     pub landing_platforms: Vec<LandingPlatform>,
     pub meteors: Vec<Meteor>,
     pub state: GameState,
+    pub delta_second: Duration,
 }
 
 impl Game {
@@ -67,6 +69,7 @@ impl Game {
             landing_platforms: platforms,
             meteors,
             state: GameState::Menu,
+            delta_second: Duration::default(),
         }
     }
     pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
@@ -88,7 +91,38 @@ impl Game {
         Ok(())
     }
 
-    pub fn move_meteors(&mut self, delta_time: f32) {
+    pub fn update(&mut self, shuttle: &mut Shuttle) -> Option<GameState> {
+        self.move_meteors(self.delta_second.as_secs_f32());
+        self.check_out_of_ranges();
+        self.respawn_meteors();
+        if self.check_meteor_shuttle_collisions(shuttle) {
+            self.state = GameState::MeteorHit;
+            return Some(GameState::MeteorHit);
+        }
+
+        if let Some(value) = self.check_shuttle(shuttle) {
+            return value;
+        }
+        None
+    }
+
+    fn check_shuttle(&mut self, shuttle: &mut Shuttle) -> Option<Option<GameState>> {
+        if shuttle.fuel_level <= 0 {
+            self.state = GameState::OutOfFuel;
+            return Some(Some(GameState::OutOfFuel));
+        }
+        if !shuttle.is_landed(self) {
+            shuttle.toss_randomly(Vector { x: 40., y: 80. }, self.delta_second.as_secs_f32());
+            shuttle.velocity.y += 2.5 * self.delta_second.as_secs_f32();
+            shuttle.fuel_level -= 1;
+            Some(None)
+        } else {
+            self.state = GameState::JobsDone;
+            Some(Some(GameState::JobsDone))
+        }
+    }
+
+    fn move_meteors(&mut self, delta_time: f32) {
         let mut rng = thread_rng();
         for m in self.meteors.iter_mut() {
             m.rot_angle += 25. * delta_time as f64;
@@ -108,7 +142,7 @@ impl Game {
         }
     }
 
-    pub fn check_out_of_ranges(&mut self) {
+    fn check_out_of_ranges(&mut self) {
         self.meteors.retain(|m| m.in_range);
     }
 
@@ -122,7 +156,7 @@ impl Game {
         Meteor::new(Point::new(x, y), side_count, radius, angle, true)
     }
 
-    pub fn respawn_meteors(&mut self) {
+    fn respawn_meteors(&mut self) {
         if self.meteors.is_empty() {
             for _ in 1..=MAX_METEOR_COUNT {
                 let m = Self::spawn_random_meteor();
@@ -131,7 +165,7 @@ impl Game {
         }
     }
 
-    pub fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
+    fn check_meteor_shuttle_collisions(&self, shuttle: &Shuttle) -> bool {
         for m in self.meteors.iter() {
             if shuttle.check_collision_with_meteor(m) {
                 return true;

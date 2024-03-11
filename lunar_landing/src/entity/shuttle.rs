@@ -1,4 +1,4 @@
-use crate::constants::{DEFAULT_FUEL_LEVEL, HEIGHT, SHUTTLE_HEAD_WIDTH, WIDTH};
+use crate::constants::*;
 use crate::entity::meteor::Meteor;
 use crate::entity::vector::Vector;
 use crate::game::Game;
@@ -92,9 +92,7 @@ impl Shuttle {
     pub fn is_landed(&self, game: &Game) -> bool {
         let mut is_landed = false;
         for lp in &game.landing_platforms {
-            // println!("{:?} {:?}", lp.p1, lp.p2);
             if lp.check_collision(self) {
-                // println!("Congrats!!! Shuttle has been landed...");
                 is_landed = true;
                 break;
             }
