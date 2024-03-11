@@ -14,6 +14,7 @@ pub struct Game {
     pub mountain_points: Vec<Point>,
     pub landing_platforms: Vec<LandingPlatform>,
     pub meteors: Vec<Meteor>,
+    pub stars: Vec<Star>,
     pub state: GameState,
     pub delta_second: Duration,
 }
@@ -60,9 +61,24 @@ impl Game {
             ));
         }
         let mut meteors = Vec::new();
-        for _ in 1..=MAX_METEOR_COUNT {
+        for _ in 1..=MAX_METEORS_COUNT {
             let m = Self::spawn_random_meteor();
             meteors.push(m);
+        }
+
+        let mut stars = Vec::new();
+        for _ in 0..MAX_STARS_COUNT {
+            let x = rng.gen_range(0..WIDTH);
+            let y = rng.gen_range(0..HEIGHT / 2);
+
+            let star = Star::new(
+                (Point::new(x - 5, y), Point::new(x + 5, y)),
+                (Point::new(x, y - 5), Point::new(x, y + 5)),
+                (Point::new(x - 3, y - 3), Point::new(x + 3, y + 3)),
+                (Point::new(x - 3, y + 3), Point::new(x + 3, y - 3)),
+            );
+
+            stars.push(star);
         }
 
         Self {
@@ -70,29 +86,10 @@ impl Game {
             mountain_points,
             landing_platforms: platforms,
             meteors,
+            stars,
             state: GameState::Menu,
             delta_second: Duration::default(),
         }
-    }
-    pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
-        for i in 0..self.mountain_points.len() - 1 {
-            let start = self.mountain_points[i];
-            let end = self.mountain_points[i + 1];
-            canvas.set_draw_color(Color::GRAY);
-            canvas.draw_line(start, end)?;
-        }
-
-        for p in &self.landing_platforms {
-            p.draw(canvas)?;
-        }
-
-        for m in &self.meteors {
-            m.draw(canvas)?;
-        }
-
-        self.shuttle.draw(canvas, Color::YELLOW)?;
-
-        Ok(())
     }
 
     pub fn update(&mut self) -> Option<GameState> {
@@ -163,7 +160,7 @@ impl Game {
 
     fn respawn_meteors(&mut self) {
         if self.meteors.is_empty() {
-            for _ in 1..=MAX_METEOR_COUNT {
+            for _ in 1..=MAX_METEORS_COUNT {
                 let m = Self::spawn_random_meteor();
                 self.meteors.push(m);
             }
@@ -177,5 +174,30 @@ impl Game {
             }
         }
         false
+    }
+
+    pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+        for i in 0..self.mountain_points.len() - 1 {
+            let start = self.mountain_points[i];
+            let end = self.mountain_points[i + 1];
+            canvas.set_draw_color(Color::GRAY);
+            canvas.draw_line(start, end)?;
+        }
+
+        for p in &self.landing_platforms {
+            p.draw(canvas)?;
+        }
+
+        for m in &self.meteors {
+            m.draw(canvas)?;
+        }
+
+        self.shuttle.draw(canvas, Color::YELLOW)?;
+
+        for s in &self.stars {
+            s.draw(canvas)?;
+        }
+
+        Ok(())
     }
 }
