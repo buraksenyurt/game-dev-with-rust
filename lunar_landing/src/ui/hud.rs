@@ -1,5 +1,5 @@
 use crate::constants::WIDTH;
-use crate::entity::Shuttle;
+use crate::game::Game;
 use crate::ui::draw_text;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
@@ -26,11 +26,11 @@ impl Hud {
             alt_warn_blink_interval: Duration::from_millis(500),
         }
     }
-    pub fn draw(&mut self, shuttle: &Shuttle, canvas: &mut Canvas<Window>) -> Result<(), String> {
-        let v_point = shuttle.velocity.to_point();
+    pub fn draw(&mut self, game: &Game, canvas: &mut Canvas<Window>) -> Result<(), String> {
+        let v_point = game.shuttle.velocity.to_point();
         draw_text(
             canvas,
-            &format!("Fuel: {}", shuttle.fuel_level),
+            &format!("Fuel: {}", game.shuttle.fuel_level),
             14,
             Color::WHITE,
             WIDTH - 100,
@@ -40,26 +40,36 @@ impl Hud {
             canvas,
             &format!(
                 "Pos {}:{}",
-                shuttle.position.x + v_point.x,
-                shuttle.position.y + v_point.y
+                game.shuttle.position.x + v_point.x,
+                game.shuttle.position.y + v_point.y
             ),
             14,
             Color::WHITE,
             WIDTH - 100,
             30,
         )?;
-        self.show_fuel_warning(shuttle, canvas)?;
-        self.show_low_altitude_warning(shuttle, canvas)?;
+        for (i, dist) in game.distances.iter().enumerate() {
+            draw_text(
+                canvas,
+                &format!("Dist{}:{:.2}", i + 1, dist),
+                14,
+                Color::GREEN,
+                WIDTH - 100,
+                60 + (i as i32 * 20),
+            )?;
+        }
+        self.show_fuel_warning(&game, canvas)?;
+        self.show_low_altitude_warning(&game, canvas)?;
 
         Ok(())
     }
 
     fn show_fuel_warning(
         &mut self,
-        shuttle: &Shuttle,
+        game: &Game,
         canvas: &mut Canvas<Window>,
     ) -> Result<(), String> {
-        if shuttle.is_fuel_critical() {
+        if game.shuttle.is_fuel_critical() {
             let now = Instant::now();
             if now.duration_since(self.fuel_warn_last_blink) >= self.fuel_warn_blink_interval {
                 self.fuel_warn_blink_visible = !self.fuel_warn_blink_visible;
@@ -74,10 +84,10 @@ impl Hud {
 
     fn show_low_altitude_warning(
         &mut self,
-        shuttle: &Shuttle,
+        game: &Game,
         canvas: &mut Canvas<Window>,
     ) -> Result<(), String> {
-        if shuttle.is_low_altitude() {
+        if game.shuttle.is_low_altitude() {
             let now = Instant::now();
             if now.duration_since(self.alt_warn_last_blink) >= self.alt_warn_blink_interval {
                 self.alt_warn_blink_visible = !self.alt_warn_blink_visible;

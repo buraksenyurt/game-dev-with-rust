@@ -93,7 +93,7 @@ fn main() -> Result<(), String> {
                     continue 'game_loop;
                 }
                 game.draw(&mut canvas)?;
-                hud.draw(&game.shuttle, &mut canvas)?;
+                hud.draw(&game, &mut canvas)?;
 
                 canvas.present();
             },

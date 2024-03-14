@@ -1,4 +1,4 @@
-use crate::constants::{DEFAULT_FUEL_LEVEL};
+use crate::constants::DEFAULT_FUEL_LEVEL;
 use crate::entity::GameState;
 use crate::game::Game;
 use crate::ui::draw_vertical_center_text;

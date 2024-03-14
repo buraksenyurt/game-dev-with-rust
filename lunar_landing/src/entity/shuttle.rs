@@ -13,6 +13,7 @@ pub struct Shuttle {
     pub position: Point,
     pub fuel_level: i32,
     pub velocity: Vector,
+    pub base_center: Vector,
 }
 
 impl Shuttle {
@@ -25,10 +26,11 @@ impl Shuttle {
             position,
             fuel_level: DEFAULT_FUEL_LEVEL,
             velocity: Vector::default(),
+            base_center: Vector::default(),
         }
     }
 
-    pub fn draw(&self, canvas: &mut Canvas<Window>, color: Color) -> Result<(), String> {
+    pub fn draw(&mut self, canvas: &mut Canvas<Window>, color: Color) -> Result<(), String> {
         let point = self.position;
         let velocity = self.velocity.to_point();
         let base_x = point.x + velocity.x;
@@ -67,6 +69,11 @@ impl Shuttle {
             right_leg_end,
             Point::new(right_leg_end.x + quarter_width, leg_y),
         )?;
+
+        self.base_center = Vector {
+            x: left_leg_start.x as f32 + self.velocity.x,
+            y: leg_y as f32 + self.velocity.y,
+        };
 
         Ok(())
     }

@@ -1,6 +1,6 @@
 use sdl2::rect::Point;
 
-#[derive(Default, PartialEq)]
+#[derive(Default, PartialEq, Debug)]
 pub struct Vector {
     pub x: f32,
     pub y: f32,

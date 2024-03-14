@@ -17,6 +17,7 @@ pub struct Game {
     pub stars: Vec<Star>,
     pub state: GameState,
     pub delta_second: Duration,
+    pub distances: Vec<f32>,
 }
 
 impl Game {
@@ -89,10 +90,12 @@ impl Game {
             stars,
             state: GameState::Menu,
             delta_second: Duration::default(),
+            distances: vec![],
         }
     }
 
     pub fn update(&mut self) -> Option<GameState> {
+        self.calc_distances();
         self.move_meteors(self.delta_second.as_secs_f32());
         self.check_out_of_ranges();
         self.respawn_meteors();
@@ -105,6 +108,23 @@ impl Game {
             return value;
         }
         None
+    }
+
+    fn calc_distances(&mut self) {
+        self.distances.clear();
+
+        let shuttle_x = self.shuttle.position.x as f32
+            + self.shuttle.velocity.x
+            + (SHUTTLE_HEAD_WIDTH / 2) as f32;
+        let shuttle_y =
+            self.shuttle.position.y as f32 + self.shuttle.velocity.y + SHUTTLE_HEAD_WIDTH as f32 * 2.;
+
+        for lp in self.landing_platforms.iter() {
+            let dist_x = shuttle_x - (lp.p1.x + (lp.p2.x - lp.p1.x) / 2) as f32;
+            let dist_y = shuttle_y - lp.p1.y as f32;
+            let dist = (dist_x.powi(2) + dist_y.powi(2)).sqrt();
+            self.distances.push(dist);
+        }
     }
 
     fn check_shuttle(&mut self) -> Option<Option<GameState>> {
@@ -176,7 +196,7 @@ impl Game {
         false
     }
 
-    pub fn draw(&self, canvas: &mut WindowCanvas) -> Result<(), String> {
+    pub fn draw(&mut self, canvas: &mut WindowCanvas) -> Result<(), String> {
         for i in 0..self.mountain_points.len() - 1 {
             let start = self.mountain_points[i];
             let end = self.mountain_points[i + 1];
