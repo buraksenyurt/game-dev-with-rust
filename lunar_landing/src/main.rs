@@ -35,8 +35,6 @@ fn main() -> Result<(), String> {
     'game_loop: loop {
         match game.state {
             GameState::Menu => {
-                canvas.set_draw_color(Color::BLACK);
-                canvas.clear();
                 MainMenu::draw(&mut canvas)?;
 
                 for event in event_pump.poll_iter() {
@@ -90,7 +88,6 @@ fn main() -> Result<(), String> {
                         }
                     }
                 }
-                canvas.set_draw_color(Color::BLACK);
 
                 if game.update().is_some() {
                     continue 'game_loop;
@@ -102,8 +99,6 @@ fn main() -> Result<(), String> {
             },
             GameState::OutOfFuel | GameState::JobsDone | GameState::MeteorHit => {
                 game.meteors.clear();
-                canvas.set_draw_color(Color::BLACK);
-                canvas.clear();
                 GameOverMenu::draw(&game, &mut canvas)?;
                 for event in event_pump.poll_iter() {
                     if let Event::KeyDown {
