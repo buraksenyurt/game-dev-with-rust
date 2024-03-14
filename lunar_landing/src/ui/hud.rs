@@ -58,8 +58,8 @@ impl Hud {
                 60 + (i as i32 * 20),
             )?;
         }
-        self.show_fuel_warning(&game, canvas)?;
-        self.show_low_altitude_warning(&game, canvas)?;
+        self.show_fuel_warning(game, canvas)?;
+        self.show_low_altitude_warning(game, canvas)?;
 
         Ok(())
     }
