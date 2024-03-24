@@ -1,0 +1,12 @@
+[package]
+name = "mono-bird"
+version = "0.1.0"
+edition = "2021"
+description = "A tiny flappy bird clone on monochrome screen"
+authors = ["Burak Selim Şenyurt"]
+
+[dependencies]
+sdl2 = { version = "0.36.0", features = ["ttf","image"] }
+rand = "0.8.5"
+toml = "0.8.10"
+serde = { version = "1.0.197", features = ["derive"] }
