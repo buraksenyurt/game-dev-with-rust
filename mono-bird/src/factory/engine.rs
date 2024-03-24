@@ -1,4 +1,3 @@
-use crate::constants::*;
 use crate::game::{Game, GameState};
 use crate::ui::MainMenu;
 use sdl2::pixels::Color;
@@ -8,34 +7,13 @@ use sdl2::EventPump;
 use std::time::{Duration, Instant};
 
 pub struct Engine {
-    sdl_context: sdl2::Sdl,
-    canvas: Canvas<Window>,
-    event_pump: EventPump,
-    game: Game,
-    fps: u32,
+    pub game: Game,
+    pub fps: u32,
+    pub canvas: Canvas<Window>,
+    pub event_pump: EventPump,
 }
 
 impl Engine {
-    pub fn new(game: Game, fps: u32) -> Result<Self, String> {
-        let sdl_context = sdl2::init()?;
-        let video_subsystem = sdl_context.video()?;
-        let window = video_subsystem
-            .window("Monochrome Bird", SCREEN_WIDTH, SCREEN_HEIGHT)
-            .position_centered()
-            .build()
-            .map_err(|e| e.to_string())?;
-        let canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
-        let event_pump = sdl_context.event_pump()?;
-
-        Ok(Self {
-            sdl_context,
-            canvas,
-            event_pump,
-            game,
-            fps,
-        })
-    }
-
     pub fn run(&mut self) -> Result<(), String> {
         let mut last_update = Instant::now();
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
