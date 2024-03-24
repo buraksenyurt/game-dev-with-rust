@@ -1,8 +1,6 @@
 use crate::constants::*;
 use crate::game::{Game, GameState};
 use crate::ui::MainMenu;
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -43,57 +41,22 @@ impl Engine {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
 
         loop {
+            self.game.update(&mut self.event_pump);
+
             match self.game.state {
                 GameState::Crashed => {}
                 GameState::ExitGame => break,
                 GameState::MainMenu => {
                     MainMenu::draw(&mut self.canvas)?;
-                    for event in self.event_pump.poll_iter() {
-                        match event {
-                            Event::Quit { .. }
-                            | Event::KeyDown {
-                                keycode: Some(Keycode::Escape),
-                                ..
-                            } => {
-                                self.game.state = GameState::ExitGame;
-                                break;
-                            }
-                            Event::KeyDown {
-                                keycode: Some(Keycode::Return),
-                                ..
-                            } => {
-                                self.game.state = GameState::Playing;
-                                break;
-                            }
-                            _ => {}
-                        }
-                    }
-
                     self.canvas.present();
                 }
                 GameState::NewGame => {
-                    self.game = Game::new();
                     self.game.state = GameState::Playing;
                     continue;
                 }
                 GameState::Playing => {
                     self.canvas.set_draw_color(Color::BLACK);
                     self.canvas.clear();
-
-                    for event in self.event_pump.poll_iter() {
-                        match event {
-                            Event::Quit { .. }
-                            | Event::KeyDown {
-                                keycode: Some(Keycode::Escape),
-                                ..
-                            } => {
-                                self.game.state = GameState::MainMenu;
-                                break;
-                            }
-                            _ => {}
-                        }
-                    }
-
                     self.canvas.present();
                 }
             }
