@@ -5,11 +5,11 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 
 pub struct Block {
-    x: i32,
-    y: i32,
-    width: u32,
-    height: u32,
-    x_velocity: i32,
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+    pub x_velocity: i32,
 }
 
 impl Entity for Block {

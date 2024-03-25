@@ -1,8 +1,15 @@
-use crate::entity::Block;
+use crate::constants::{
+    BLOCK_RESPAWN_TIME_IN_SECONDS, MAX_BLOCK_COUNT, SCREEN_HEIGHT, SCREEN_WIDTH,
+};
+use crate::entity::{Block, Drawable, Entity};
+use rand::Rng;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
+use sdl2::render::Canvas;
+use sdl2::video::Window;
 use sdl2::EventPump;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 #[derive(PartialEq)]
 pub enum GameState {
@@ -17,6 +24,8 @@ pub struct Game {
     pub point: u64,
     pub state: GameState,
     pub delta_second: Duration,
+    pub blocks: Vec<Block>,
+    last_block_time: Instant,
 }
 
 impl Game {
@@ -25,10 +34,12 @@ impl Game {
             point: 0,
             state: GameState::MainMenu,
             delta_second: Duration::default(),
+            blocks: Vec::new(),
+            last_block_time: Instant::now(),
         }
     }
 
-    pub fn update(&mut self, event_pump: &mut EventPump) {
+    pub fn update(&mut self, event_pump: &mut EventPump, canvas: &mut Canvas<Window>) {
         match self.state {
             GameState::Crashed => self.state = GameState::Crashed,
             GameState::ExitGame => self.state = GameState::ExitGame,
@@ -58,6 +69,30 @@ impl Game {
                 self.state = GameState::Playing;
             }
             GameState::Playing => {
+                canvas.set_draw_color(Color::BLACK);
+                canvas.clear();
+                let now = Instant::now();
+                if now.duration_since(self.last_block_time).as_secs()
+                    >= BLOCK_RESPAWN_TIME_IN_SECONDS
+                    && self.blocks.len() < MAX_BLOCK_COUNT
+                    && self.state == GameState::Playing
+                {
+                    self.spawn_block();
+                    self.last_block_time = now;
+                }
+
+                for block in &mut self.blocks {
+                    block.update(self.delta_second.as_secs_f32());
+                }
+
+                self.blocks.retain(|block| block.x + block.width as i32 > 0);
+
+                for block in &self.blocks {
+                    block.draw(canvas);
+                }
+
+                canvas.present();
+
                 for event in event_pump.poll_iter() {
                     match event {
                         Event::Quit { .. }
@@ -73,6 +108,23 @@ impl Game {
                 }
             }
         }
+    }
+
+    fn spawn_block(&mut self) {
+        let mut rng = rand::thread_rng();
+        let heights = [75, 175, 300];
+        let widths = [25, 45, 55];
+        let height = heights[rng.gen_range(0..heights.len())];
+        let width = widths[rng.gen_range(0..widths.len())];
+
+        let block = Block {
+            x: SCREEN_WIDTH as i32,
+            y: SCREEN_HEIGHT as i32 - height as i32,
+            width,
+            height,
+            x_velocity: -100,
+        };
+        self.blocks.push(block);
     }
 }
 

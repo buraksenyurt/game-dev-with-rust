@@ -1,6 +1,5 @@
 use crate::game::{Game, GameState};
 use crate::ui::MainMenu;
-use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
@@ -19,7 +18,7 @@ impl Engine {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
 
         loop {
-            self.game.update(&mut self.event_pump);
+            self.game.update(&mut self.event_pump, &mut self.canvas);
 
             match self.game.state {
                 GameState::Crashed => {}
@@ -32,11 +31,7 @@ impl Engine {
                     self.game.state = GameState::Playing;
                     continue;
                 }
-                GameState::Playing => {
-                    self.canvas.set_draw_color(Color::BLACK);
-                    self.canvas.clear();
-                    self.canvas.present();
-                }
+                GameState::Playing => {}
             }
 
             let now = Instant::now();
