@@ -1,6 +1,4 @@
-use crate::constants::{
-    BLOCK_RESPAWN_TIME_IN_SECONDS, MAX_BLOCK_COUNT, SCREEN_HEIGHT, SCREEN_WIDTH,
-};
+use crate::constants::*;
 use crate::entity::{Block, Drawable, Entity};
 use rand::Rng;
 use sdl2::event::Event;
@@ -26,16 +24,19 @@ pub struct Game {
     pub delta_second: Duration,
     pub blocks: Vec<Block>,
     last_block_time: Instant,
+    next_block_delay: Duration,
 }
 
 impl Game {
     pub fn new() -> Self {
+        let mut rng = rand::thread_rng();
         Self {
             point: 0,
             state: GameState::MainMenu,
             delta_second: Duration::default(),
             blocks: Vec::new(),
             last_block_time: Instant::now(),
+            next_block_delay: Duration::from_secs(rng.gen_range(3..=5)),
         }
     }
 
@@ -72,13 +73,13 @@ impl Game {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
                 let now = Instant::now();
-                if now.duration_since(self.last_block_time).as_secs()
-                    >= BLOCK_RESPAWN_TIME_IN_SECONDS
+                if now.duration_since(self.last_block_time) >= self.next_block_delay
                     && self.blocks.len() < MAX_BLOCK_COUNT
-                    && self.state == GameState::Playing
                 {
                     self.spawn_block();
                     self.last_block_time = now;
+                    self.next_block_delay =
+                        Duration::from_secs(rand::thread_rng().gen_range(3..=5));
                 }
 
                 for block in &mut self.blocks {
@@ -112,8 +113,8 @@ impl Game {
 
     fn spawn_block(&mut self) {
         let mut rng = rand::thread_rng();
-        let heights = [75, 175, 300];
-        let widths = [25, 45, 55];
+        let heights = [80, 180, 280, 380];
+        let widths = [40, 45, 50];
         let height = heights[rng.gen_range(0..heights.len())];
         let width = widths[rng.gen_range(0..widths.len())];
 
