@@ -4,6 +4,7 @@ use crate::game::Game;
 use crate::screen::Screen;
 
 mod constants;
+mod entity;
 mod factory;
 mod game;
 mod screen;
