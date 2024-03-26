@@ -16,7 +16,7 @@ fn main() -> Result<(), String> {
     let mut engine = EngineBuilder::new()?
         .setup_screen(screen)?
         .add_game(game)
-        .change_fps(30)
+        .change_fps(60)
         .build()?;
     engine.run()
 }

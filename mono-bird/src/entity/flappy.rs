@@ -1,28 +1,28 @@
+use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::entity::{Drawable, Entity};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
-use crate::constants::SCREEN_WIDTH;
 
 pub struct Flappy {
     pub x: i32,
     pub y: i32,
-    pub y_velocity: f32,
+    velocity: f32,
 }
 
-impl Default for Flappy{
+impl Default for Flappy {
     fn default() -> Self {
-        Self{
-            x:25,
-            y:SCREEN_WIDTH as i32 /2,
-            y_velocity:0.
+        Self {
+            x: 25,
+            y: SCREEN_WIDTH as i32 / 2,
+            velocity: 0.5,
         }
     }
 }
 impl Entity for Flappy {
     fn update(&mut self, delta_time: f32) {
-        self.y += (self.y_velocity * delta_time) as i32;
+        self.y += (self.velocity * delta_time) as i32;
     }
 
     fn position(&self) -> (i32, i32) {

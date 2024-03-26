@@ -80,7 +80,7 @@ impl Game {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
 
-                self.player.y_velocity += 1.;
+                self.player.y += 1;
 
                 for event in event_pump.poll_iter() {
                     match event {
@@ -96,7 +96,7 @@ impl Game {
                             keycode: Some(Keycode::Space),
                             ..
                         } => {
-                            self.player.y_velocity -= 10.;
+                            self.player.y -= 10;
                         }
                         _ => {}
                     }
