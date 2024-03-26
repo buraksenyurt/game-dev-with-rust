@@ -1,4 +1,5 @@
 use crate::constants::*;
+use crate::entity::flappy::Flappy;
 use crate::entity::{Block, Drawable, Entity};
 use rand::Rng;
 use sdl2::event::Event;
@@ -23,6 +24,7 @@ pub struct Game {
     pub state: GameState,
     pub delta_second: Duration,
     pub blocks: Vec<Block>,
+    pub player: Flappy,
     last_block_time: Instant,
     next_block_delay: Duration,
 }
@@ -34,6 +36,7 @@ impl Game {
             point: 0,
             state: GameState::MainMenu,
             delta_second: Duration::default(),
+            player: Flappy::default(),
             blocks: Vec::new(),
             last_block_time: Instant::now(),
             next_block_delay: Duration::from_secs(rng.gen_range(3..=5)),
@@ -68,10 +71,40 @@ impl Game {
             }
             GameState::NewGame => {
                 self.state = GameState::Playing;
+                // canvas.set_draw_color(Color::BLACK);
+                // canvas.clear();
+                self.player.draw(canvas);
+                // canvas.present();
             }
             GameState::Playing => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
+
+                self.player.y_velocity += 1.;
+
+                for event in event_pump.poll_iter() {
+                    match event {
+                        Event::Quit { .. }
+                        | Event::KeyDown {
+                            keycode: Some(Keycode::Escape),
+                            ..
+                        } => {
+                            self.state = GameState::MainMenu;
+                            break;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Space),
+                            ..
+                        } => {
+                            self.player.y_velocity -= 10.;
+                        }
+                        _ => {}
+                    }
+                }
+
+                self.player.update(self.delta_second.as_secs_f32());
+                self.player.draw(canvas);
+
                 let now = Instant::now();
                 if now.duration_since(self.last_block_time) >= self.next_block_delay
                     && self.blocks.len() < MAX_BLOCK_COUNT
@@ -93,20 +126,6 @@ impl Game {
                 }
 
                 canvas.present();
-
-                for event in event_pump.poll_iter() {
-                    match event {
-                        Event::Quit { .. }
-                        | Event::KeyDown {
-                            keycode: Some(Keycode::Escape),
-                            ..
-                        } => {
-                            self.state = GameState::MainMenu;
-                            break;
-                        }
-                        _ => {}
-                    }
-                }
             }
         }
     }
@@ -114,7 +133,7 @@ impl Game {
     fn spawn_block(&mut self) {
         let mut rng = rand::thread_rng();
         let heights = [80, 180, 240, 300];
-        let widths = [35, 40, 45, 50];
+        let widths = [40, 45, 50];
 
         let height = heights[rng.gen_range(0..heights.len())];
         let width = widths[rng.gen_range(0..widths.len())];
@@ -128,7 +147,7 @@ impl Game {
             y,
             width,
             height,
-            x_velocity: -100,
+            x_velocity: -100.,
         };
         self.blocks.push(block);
     }

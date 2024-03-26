@@ -8,12 +8,12 @@ pub struct Block {
     pub y: i32,
     pub width: u32,
     pub height: u32,
-    pub x_velocity: i32,
+    pub x_velocity: f32,
 }
 
 impl Entity for Block {
     fn update(&mut self, delta_time: f32) {
-        self.x += (self.x_velocity as f32 * delta_time) as i32;
+        self.x += (self.x_velocity * delta_time) as i32;
     }
 
     fn position(&self) -> (i32, i32) {
