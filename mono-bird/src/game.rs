@@ -113,14 +113,19 @@ impl Game {
 
     fn spawn_block(&mut self) {
         let mut rng = rand::thread_rng();
-        let heights = [80, 180, 280, 380];
-        let widths = [40, 45, 50];
+        let heights = [80, 180, 240, 300];
+        let widths = [35, 40, 45, 50];
+
         let height = heights[rng.gen_range(0..heights.len())];
         let width = widths[rng.gen_range(0..widths.len())];
+        let y = match rng.gen_range(0..100) % 3 == 0 {
+            false => SCREEN_HEIGHT as i32 - height as i32,
+            true => 0,
+        };
 
         let block = Block {
             x: SCREEN_WIDTH as i32,
-            y: SCREEN_HEIGHT as i32 - height as i32,
+            y,
             width,
             height,
             x_velocity: -100,
