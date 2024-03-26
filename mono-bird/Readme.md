@@ -38,14 +38,14 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 - **Adı  :** Mono Bird
 - **Türü :** Terminal tabanlı Arcade / Obstacle Avoidance (Macera / Engelden Kaçınma)
 - **Platform :** Linux, Windows, MacOs Terminal
+- **Geliştirici : ** Burak Selim Şenyurt / Bağımsız Programcı
 
-### Oyunun Amacı
+### Oynanış
 
-- **Ana Hedef :** Oyunda amaç borulara çarpmadan mümkün olan en uzak mesafeye uçabilmektir.
-- **Oynanış Mekanikleri :** Oyun sürekli akan moddadır. Başlangıç konumunda yer alan kuş karakteri ekranın sağ tarafından gelen borulara çarpmadan uçmaya çalışır. Kuş yer çekimi etkisi ile sürekli aşağıya doğru iner. Oyuncu Space tuşunu kullanarak kuşun irtifasını yukarı çıkarabilir. İrtifayı ayarlayarak borulara çarpmadan uçmaya çalışır.
-
-### Oyun Dünyası
-
+- **Hedef :** Oyunda amaç borulara çarpmadan mümkün olan en uzak mesafeye uçabilmektir.
+- **Kontroller :** Oyun tek bir kontrol mekanizmasına sahiptir. Oyuncu Space tuşuna basarak yönettiği kuşun bir miktar irtifa kazanmasını sağlar. Space tuşuna basılmadığında kuş irtifa kaybeder.
+- **Mekanikler :** Oyun sürekli akan moddadır. Başlangıç konumunda yer alan kuş karakteri ekranın sağ tarafından gelen borulara çarpmadan uçmaya çalışır. Kuş yer çekimi etkisi ile sürekli aşağıya doğru iner. Oyuncu Space tuşunu kullanarak kuşun irtifasını yukarı çıkarabilir. İrtifayı ayarlayarak borulara çarpmadan uçmaya çalışır. Geçilen her engelden sonra oyuncu belli değerde puan kazanır.
+- **Zorluk :** Oyunun zorluğu borular arasındaki mesafe ve boruların yüksekliğine göre değişir. Bu özellikler oyun boyunca sabit kalırken oyuncunun reaksiyon hızı ve zamanlaması önem kazanır.
 - **Mekan :** Herhangi bir zaman, herhangi bir yer.
 - **Kurallar :** Oyunun temel kuralları aşağıdaki gibidir.
   - Oyunucunun yönettiği kuş herhangi bir boruya temas ettiği andan oyun sonlanır.
@@ -54,15 +54,17 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 
 ### Oyun Mekanikleri
 
-### Karakterler
-
-- **Bird :** Oyundaki ana karakterdir. Oyuncu tarafından yönetilir.
-- **Block :** Ekranın alt tarafından üste veya üst tarafından alta doğru uzanan boruları temsil eder. Farklı boyutlarda ve uzunluklarda rastgele oluşur.
+- **Bird (Oyuncu Karakteri) :** Oyundaki ana karakterdir. Oyuncu tarafından yönetilir.
+- **Engeller (Blocks) :** Ekranın alt tarafından üste veya üst tarafından alta doğru uzanan boruları temsil eder. Farklı boyutlarda ve uzunluklarda rastgele oluşur.
 
 ### Görsel ve Ses Tasarımı
 
-- **Arayüz Tasarımları :** 
-- **Ses ve Müzik :** 
+- **Görsel Stil :**
+    - Görsel tasarım tamamen vektör tasarımlara yöneliktir.
+    - Renk tonlaması olarak sadece siyah, beyaz ve gri kullanılmıştır.
+- **Ses ve Müzik :**
+    - Ses efektleri basittir(Sadece kanat çırpma sesi ve puan kazanma sesi)
+    - Arka fon müziği kullanılmamaktadır.
 
 ### Kullanıcı Arayüzü ve Deneyimi
 
@@ -79,11 +81,9 @@ Oyun zamanı
 
 ### Teknik Detay
 
+- **Motor :** Oyun Rust programlama dili ve SDL2 kullanılarak geliştirilmiştir. Belli bir oyun motoru kullanılmamaıştır.
 - **Domain Kurgusu :** Oyunda kullanılan veri modelleri aşağıdaki gibidir.
   - Block(Struct) :
-
-- **Çarpışma Tespiti :**
-- **Teknoloji :** Oyun Rust programlama dili ve SDL2 paketi baz alınarak geliştirilmektedir.
 - **Sistem Gereksinimleri :** Terminalden çalışan text tabanlı bir oyun olduğundan minimum sistem gereksinimiyle çalışabilecek şekilde tasarlanmaktadır. Minimum konfigurasyon gereksinimi aşağıdaki gibidir.
 
 | Özellik | Minimum Gereksinim            |
@@ -92,3 +92,9 @@ Oyun zamanı
 | CPU     | 1 GHz veya daha hızlı işlemci |
 | RAM     | 512 MB veya daha fazla        |
 | Disk    | Minimum 15 Mb boş alan        |
+
+### Pazarlama ve Hedef Kitle
+
+- **Hedef Kitle :**
+    - Sadece Rust dilini ve SDL2 kütüphanesinin örnek kullanımını öğrenmeye çalışan amatör oyun geliştiricileri.
+- **Pazarlama Stratejisi:** NAN
