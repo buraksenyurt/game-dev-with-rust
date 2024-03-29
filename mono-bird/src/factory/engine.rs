@@ -22,7 +22,11 @@ impl Engine {
 
             match self.game.state {
                 GameState::Crashed => {
-                    GameOverMenu::draw(&mut self.canvas, self.game.point)?;
+                    GameOverMenu::draw(
+                        &mut self.canvas,
+                        self.game.point,
+                        self.game.total_time.as_secs_f32(),
+                    )?;
                     self.canvas.present();
                 }
                 GameState::ExitGame => break,

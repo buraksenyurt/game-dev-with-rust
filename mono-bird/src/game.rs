@@ -28,6 +28,7 @@ pub struct Game {
     pub player: Flappy,
     last_block_time: Instant,
     next_block_delay: Duration,
+    pub total_time: Duration,
 }
 
 impl Game {
@@ -41,6 +42,7 @@ impl Game {
             blocks: Vec::new(),
             last_block_time: Instant::now(),
             next_block_delay: Duration::from_secs(rng.gen_range(3..=5)),
+            total_time: Duration::new(0, 0),
         }
     }
 
@@ -90,6 +92,7 @@ impl Game {
                 self.player.draw(canvas);
             }
             GameState::Playing => {
+                self.total_time += self.delta_second;
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
 
@@ -128,8 +131,13 @@ impl Game {
                 {
                     self.spawn_block();
                     self.last_block_time = now;
-                    self.next_block_delay =
-                        Duration::from_secs(rand::thread_rng().gen_range(3..=5));
+                    if self.total_time >= Duration::new(30, 0) {
+                        self.next_block_delay =
+                            Duration::from_secs(rand::thread_rng().gen_range(2..=4));
+                    } else {
+                        self.next_block_delay =
+                            Duration::from_secs(rand::thread_rng().gen_range(3..=5));
+                    }
                 }
 
                 for block in &mut self.blocks {
@@ -143,7 +151,7 @@ impl Game {
                     block.draw(canvas);
                 }
                 self.count_point();
-                Hud::draw(canvas, self.point).unwrap();
+                Hud::draw(canvas, self.point, self.total_time.as_secs_f32()).unwrap();
 
                 canvas.present();
             }
@@ -201,6 +209,7 @@ impl Game {
     fn restart(&mut self) {
         self.blocks.clear();
         self.point = 0;
+        self.total_time = Duration::default();
         self.player = Flappy::default();
     }
 }
