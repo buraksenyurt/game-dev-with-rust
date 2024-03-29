@@ -55,6 +55,7 @@ impl Game {
                             ..
                         } => {
                             self.state = GameState::MainMenu;
+                            self.restart();
                             break;
                         }
                         _ => {}
@@ -86,10 +87,7 @@ impl Game {
             }
             GameState::NewGame => {
                 self.state = GameState::Playing;
-                // canvas.set_draw_color(Color::BLACK);
-                // canvas.clear();
                 self.player.draw(canvas);
-                // canvas.present();
             }
             GameState::Playing => {
                 canvas.set_draw_color(Color::BLACK);
@@ -137,7 +135,8 @@ impl Game {
                     block.update(self.delta_second.as_secs_f32());
                 }
 
-                self.blocks.retain(|block| block.x + block.width as i32 + 10 > 0);
+                self.blocks
+                    .retain(|block| block.x + block.width as i32 + 10 > 0);
 
                 for block in &self.blocks {
                     block.draw(canvas);
@@ -192,11 +191,16 @@ impl Game {
 
     fn count_point(&mut self) {
         for block in self.blocks.iter_mut() {
-            if !block.counted && block.x < -1 * block.width as i32 {
+            if !block.counted && block.x < -(block.width as i32) {
                 block.counted = true;
                 self.point += 10;
             }
         }
+    }
+    fn restart(&mut self) {
+        self.blocks.clear();
+        self.point = 0;
+        self.player = Flappy::default();
     }
 }
 
