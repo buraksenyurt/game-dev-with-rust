@@ -1,5 +1,5 @@
 use crate::game::{Game, GameState};
-use crate::ui::MainMenu;
+use crate::ui::{GameOverMenu, MainMenu};
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
@@ -21,7 +21,10 @@ impl Engine {
             self.game.update(&mut self.event_pump, &mut self.canvas);
 
             match self.game.state {
-                GameState::Crashed => {}
+                GameState::Crashed => {
+                    GameOverMenu::draw(&mut self.canvas, self.game.point)?;
+                    self.canvas.present();
+                }
                 GameState::ExitGame => break,
                 GameState::MainMenu => {
                     MainMenu::draw(&mut self.canvas)?;

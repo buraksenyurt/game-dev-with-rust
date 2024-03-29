@@ -1,5 +1,7 @@
+pub mod game_over_menu;
 pub mod main_menu;
 
+pub use game_over_menu::GameOverMenu;
 pub use main_menu::MainMenu;
 
 use crate::constants::SCREEN_WIDTH;

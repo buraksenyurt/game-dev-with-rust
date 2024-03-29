@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::entity::flappy::Flappy;
-use crate::entity::{Block, Drawable, Entity};
+use crate::entity::{Block, BlockDirection, Drawable, Entity};
 use rand::Rng;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -45,7 +45,21 @@ impl Game {
 
     pub fn update(&mut self, event_pump: &mut EventPump, canvas: &mut Canvas<Window>) {
         match self.state {
-            GameState::Crashed => self.state = GameState::Crashed,
+            GameState::Crashed => {
+                for event in event_pump.poll_iter() {
+                    match event {
+                        Event::Quit { .. }
+                        | Event::KeyDown {
+                            keycode: Some(Keycode::Escape),
+                            ..
+                        } => {
+                            self.state = GameState::MainMenu;
+                            break;
+                        }
+                        _ => {}
+                    }
+                }
+            }
             GameState::ExitGame => self.state = GameState::ExitGame,
             GameState::MainMenu => {
                 for event in event_pump.poll_iter() {
@@ -81,6 +95,9 @@ impl Game {
                 canvas.clear();
 
                 self.player.y += 1;
+                if self.check_collision() {
+                    self.state = GameState::Crashed;
+                }
 
                 for event in event_pump.poll_iter() {
                     match event {
@@ -137,9 +154,16 @@ impl Game {
 
         let height = heights[rng.gen_range(0..heights.len())];
         let width = widths[rng.gen_range(0..widths.len())];
+        let direction: BlockDirection;
         let y = match rng.gen_range(0..100) % 3 == 0 {
-            false => SCREEN_HEIGHT as i32 - height as i32,
-            true => 0,
+            false => {
+                direction = BlockDirection::BottomToUp;
+                SCREEN_HEIGHT as i32 - height as i32
+            }
+            true => {
+                direction = BlockDirection::TopToBottom;
+                0
+            }
         };
 
         let block = Block {
@@ -148,8 +172,18 @@ impl Game {
             width,
             height,
             x_velocity: -100.,
+            direction,
         };
         self.blocks.push(block);
+    }
+
+    fn check_collision(&mut self) -> bool {
+        for b in self.blocks.iter() {
+            if b.intersects(&self.player) {
+                return true;
+            }
+        }
+        false
     }
 }
 

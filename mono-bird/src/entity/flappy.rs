@@ -1,4 +1,4 @@
-use crate::constants::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::constants::*;
 use crate::entity::{Drawable, Entity};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
