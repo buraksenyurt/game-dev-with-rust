@@ -20,6 +20,13 @@ impl Default for Flappy {
         }
     }
 }
+
+impl Flappy {
+    pub fn is_out_of_border(&self) -> bool {
+        self.y > SCREEN_HEIGHT as i32
+    }
+}
+
 impl Entity for Flappy {
     fn update(&mut self, delta_time: f32) {
         self.y += (self.velocity * delta_time) as i32;

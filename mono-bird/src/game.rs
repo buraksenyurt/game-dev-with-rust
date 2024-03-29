@@ -94,8 +94,9 @@ impl Game {
                 canvas.clear();
 
                 self.player.y += 1;
-                if self.check_collision() {
+                if self.check_collision() || self.player.is_out_of_border() {
                     self.state = GameState::Crashed;
+                    return;
                 }
 
                 for event in event_pump.poll_iter() {
