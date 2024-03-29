@@ -1,5 +1,5 @@
-use crate::game::{Game, GameState};
-use crate::ui::{GameOverMenu, MainMenu};
+use crate::game::*;
+use crate::ui::*;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;

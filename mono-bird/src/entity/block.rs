@@ -12,6 +12,7 @@ pub struct Block {
     pub height: u32,
     pub x_velocity: f32,
     pub direction: BlockDirection,
+    pub counted: bool,
 }
 
 impl Block {

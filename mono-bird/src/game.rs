@@ -1,6 +1,7 @@
 use crate::constants::*;
 use crate::entity::flappy::Flappy;
 use crate::entity::{Block, BlockDirection, Drawable, Entity};
+use crate::ui::Hud;
 use rand::Rng;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -136,11 +137,13 @@ impl Game {
                     block.update(self.delta_second.as_secs_f32());
                 }
 
-                self.blocks.retain(|block| block.x + block.width as i32 > 0);
+                self.blocks.retain(|block| block.x + block.width as i32 + 10 > 0);
 
                 for block in &self.blocks {
                     block.draw(canvas);
                 }
+                self.count_point();
+                Hud::draw(canvas, self.point).unwrap();
 
                 canvas.present();
             }
@@ -173,6 +176,7 @@ impl Game {
             height,
             x_velocity: -100.,
             direction,
+            counted: false,
         };
         self.blocks.push(block);
     }
@@ -184,6 +188,15 @@ impl Game {
             }
         }
         false
+    }
+
+    fn count_point(&mut self) {
+        for block in self.blocks.iter_mut() {
+            if !block.counted && block.x < -1 * block.width as i32 {
+                block.counted = true;
+                self.point += 10;
+            }
+        }
     }
 }
 

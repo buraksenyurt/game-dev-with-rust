@@ -1,10 +1,11 @@
-pub mod game_over_menu;
-pub mod main_menu;
-
-pub use game_over_menu::GameOverMenu;
-pub use main_menu::MainMenu;
+mod game_over_menu;
+mod hud;
+mod main_menu;
 
 use crate::constants::SCREEN_WIDTH;
+pub use game_over_menu::GameOverMenu;
+pub use hud::Hud;
+pub use main_menu::MainMenu;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::{Canvas, TextureQuery};
