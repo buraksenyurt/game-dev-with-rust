@@ -8,14 +8,14 @@ Lunar Landing isimli terminal oyununda da SDL2 kütüphanesini kullanmıştım. 
 
 ```rust
 fn main() -> Result<(), String> {
-    let game = Game::default();
-    let screen = Screen::new("Monochrome Bird".to_string(), SCREEN_WIDTH, SCREEN_HEIGHT);
-    let mut engine = EngineBuilder::new()?
-        .setup_screen(screen)?
-        .add_game(game)
-        .change_fps(60)
-        .build()?;
-    engine.run()
+  let game = Game::default();
+  let screen = Screen::new("Monochrome Bird".to_string(), SCREEN_WIDTH, SCREEN_HEIGHT);
+  let mut engine = EngineBuilder::new()?
+          .setup_screen(screen)?
+          .add_game(Box::new(game))
+          .change_fps(60)
+          .build()?;
+  engine.run()
 }
 ```
 
@@ -72,7 +72,15 @@ Menü ve ekranlara ait tasarımları aşağıdaki gibidir.
 
 Ana menü
 
+![Menu](menu.png)
+
 Oyun zamanı
+
+![Game Time](game_time.png)
+
+Oyuncu yanarsa
+
+![Game Over](game_over.png)
 
 ### Geliştirme Takvimi
 
