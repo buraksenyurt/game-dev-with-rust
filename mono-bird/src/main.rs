@@ -15,7 +15,7 @@ fn main() -> Result<(), String> {
     let screen = Screen::new("Monochrome Bird".to_string(), SCREEN_WIDTH, SCREEN_HEIGHT);
     let mut engine = EngineBuilder::new()?
         .setup_screen(screen)?
-        .add_game(game)
+        .add_game(Box::new(game))
         .change_fps(60)
         .build()?;
     engine.run()

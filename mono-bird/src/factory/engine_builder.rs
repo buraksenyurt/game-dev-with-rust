@@ -1,5 +1,4 @@
-use crate::factory::Engine;
-use crate::game::Game;
+use crate::factory::{Engine, GameObject};
 use crate::screen::Screen;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -9,7 +8,7 @@ pub struct EngineBuilder {
     sdl_context: sdl2::Sdl,
     canvas: Option<Canvas<Window>>,
     event_pump: Option<EventPump>,
-    game: Option<Game>,
+    game: Option<Box<dyn GameObject>>,
     fps: u32,
 }
 
@@ -39,7 +38,7 @@ impl EngineBuilder {
         Ok(self)
     }
 
-    pub fn add_game(mut self, game: Game) -> Self {
+    pub fn add_game(mut self, game: Box<dyn GameObject>) -> Self {
         self.game = Some(game);
         self
     }

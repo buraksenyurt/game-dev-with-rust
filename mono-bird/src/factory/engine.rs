@@ -1,12 +1,11 @@
-use crate::game::*;
-use crate::ui::*;
+use crate::factory::{GameObject, MainState};
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
 use std::time::{Duration, Instant};
 
 pub struct Engine {
-    pub game: Game,
+    pub game: Box<dyn GameObject>,
     pub fps: u32,
     pub canvas: Canvas<Window>,
     pub event_pump: EventPump,
@@ -18,34 +17,21 @@ impl Engine {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
 
         loop {
-            self.game.update(&mut self.event_pump, &mut self.canvas);
+            let now = Instant::now();
+            let delta = now.duration_since(last_update);
 
-            match self.game.state {
-                GameState::Crashed => {
-                    GameOverMenu::draw(
-                        &mut self.canvas,
-                        self.game.point,
-                        self.game.total_time.as_secs_f32(),
-                    )?;
-                    self.canvas.present();
-                }
-                GameState::ExitGame => break,
-                GameState::MainMenu => {
-                    MainMenu::draw(&mut self.canvas)?;
-                    self.canvas.present();
-                }
-                GameState::NewGame => {
-                    self.game.state = GameState::Playing;
-                    continue;
-                }
-                GameState::Playing => {}
+            let state = self
+                .game
+                .update(&mut self.event_pump, &mut self.canvas, delta);
+
+            match state {
+                MainState::Exit => break,
+                MainState::Running => {}
             }
 
-            let now = Instant::now();
-            self.game.delta_second = now.duration_since(last_update);
             last_update = now;
-            if frame_duration > self.game.delta_second {
-                std::thread::sleep(frame_duration - self.game.delta_second);
+            if frame_duration > delta {
+                std::thread::sleep(frame_duration - delta);
             }
         }
 
