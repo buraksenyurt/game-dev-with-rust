@@ -4,7 +4,7 @@ Rust programlama dilinde oyun geliştirmek için popüler birkaç hazır çatıy
 
 Not! Tamamlayamadığım projeleri kendime ibretlik olsun diye garbage isimli klasöre bıraktım.
 
-- [ ] **[30 - mono-bird](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/mono-bird):** Lunar Landing oyununda olduğu gibi SDL2 kütüphanesini kullandığım ve Flappy Bird klonunu yapmaya gayret ettiğim çalışmadır. Bu seferkinde bir oyun motorunun da temellerini atmaya çalışıyorum. En azından Game nesnesi ile ortam ayarlarını alan, pencereyi ayarlayan, fps'i belirleyen bir Engine nesnesi inşa etmeye çalışıyorum.
+- [x] **[30 - mono-bird](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/mono-bird):** Lunar Landing oyununda olduğu gibi SDL2 kütüphanesini kullandığım ve Flappy Bird klonunu yapmaya gayret ettiğim çalışmadır. Bu seferkinde bir oyun motorunun da temellerini atmaya çalışıyorum. En azından Game nesnesi ile ortam ayarlarını alan, pencereyi ayarlayan, fps'i belirleyen bir Engine nesnesi inşa etmeye çalışıyorum.
 - [x] **[29 - lunar_landing](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/lunar_landing):** SDL2 kütüphanesini kullanarak geliştirmeye çalıştığım 1969 yapımı Lunar Landing klonu.
 - [x] **[27 - on-my-way](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/on-my-way)** Bevy oyun motorunu kullanarak yazmaya çalıştığım bir uzay savaş oyunu. Kendi yolunda uzayı keşfe çıkmış kahraman pilotumuz karşısına çıkan meteorları yok etmeye çalışıyor. Füzeleri pahalı ve yakıttan yiyor ve yakıt sürekli azalıyor. Lakin yol boyunca insanlığın gezegenler arasına koyduğu otonomo yakıt istasyonları ile de karşılaşıyor. Onların üstünden geçerken belli süreliğine yakıtını tekrarda yenileyebiliyor. Ve macera bu şekilde gayet anlamsızca devam ediyor :D Maksat Rust kodlamak, Bevy ve ECS ile haşırneşir olmak.
 - [x] **[26 - baller-game](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/baller-game)** Bu çalışmada Fredericj Joubert'in Bevy ECS sistemini örnek bir oyun yazarak anlattığı [video serisini](https://www.youtube.com/playlist?list=PLVnntJRoP85JHGX7rGDu6LaF3fmDDbqyd) uyguluyorum.
@@ -38,6 +38,10 @@ Not! Tamamlayamadığım projeleri kendime ibretlik olsun diye garbage isimli kl
   - [ ] **[28 - dungeon-day](https://github.com/buraksenyurt/game-dev-with-rust/tree/main/dungeon-day):** Bevy oyun motorunu kullanıp board oyunu yazdıran [çok güzel bir öğreti buldum](https://maciejglowka.com/blog/bevy-roguelike-tutorial-devlog-part-1/). Hem detaylı hem de yazıya dökülmüş. Bevy'nin güncel sürümüne göre takip edip yazmaya çalışıyorum. Sonrasında buradaki bilgilerden faydalanıp yine yeni bir oyun yazmayı deneyeceğim.
 
 ## Örnek Çalışma Zamanları
+
+Monochrome Bird oyununa ait çalışma zamanı görüntüsü aşağıdaki gibidir. 
+
+![Monochrome-Bird](assets/mono-bird.gif)
 
 1969 yapımı Lunar Landing oyunundan esinlenerek SLD2 kütüphanesini kullanarak yazmaya çalıştığım oyuna ait bir çalışma zamanı görüntüsü.
 
