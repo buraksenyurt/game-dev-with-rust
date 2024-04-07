@@ -1,7 +1,7 @@
 pub const INIT_LEVEL: &str = "wwwwwwwwww\
         \nwwtwttttte\
         \nwtssstwttw\
-        \ntsswtqtwtw\
+        \npsswtqtwtw\
         \nwwwwtwwwsw\
         \nwwwttttstw\
         \nwwwwwttstw\

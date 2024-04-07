@@ -1,10 +1,11 @@
+use crate::entity::player::Player;
 use crate::entity::*;
 
 pub struct Map {
     pub level: u32,
     pub column_count: u32,
     pub row_count: u32,
-    pub entities: Vec<Box<dyn Drawable>>,
+    pub entities: Vec<Box<dyn DrawableEntity>>,
 }
 
 impl Map {
@@ -22,11 +23,12 @@ impl Map {
         let mut idx = 0;
         for row in rows {
             for entity in row.chars() {
-                let e: Box<dyn Drawable> = match entity {
+                let e: Box<dyn DrawableEntity> = match entity {
                     'w' => Box::new(Block::new(idx, BlockType::Wall)),
                     'e' => Box::new(Block::new(idx, BlockType::ExitDoor)),
                     'q' => Box::new(Block::new(idx, BlockType::QuestionTower)),
                     's' => Box::new(Block::new(idx, BlockType::StoneTile)),
+                    'p' => Box::new(Player::new(idx)),
                     _ => Box::new(Block::new(idx, BlockType::Tile)),
                 };
                 idx += 1;

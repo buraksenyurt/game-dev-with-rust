@@ -88,7 +88,6 @@ impl GameObject for Game {
                 map.load(INIT_LEVEL);
                 self.current_map = map;
                 self.state = GameState::Playing(0);
-                //self.player.draw(canvas);
             }
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
