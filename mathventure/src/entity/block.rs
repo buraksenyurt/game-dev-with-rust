@@ -9,6 +9,7 @@ use sdl2::video::Window;
 pub enum BlockType {
     Wall,
     Tile,
+    StoneTile,
     ExitDoor,
     QuestionTower,
 }
@@ -41,6 +42,9 @@ impl Drawable for Block {
                 .unwrap(),
             BlockType::QuestionTower => texture_creator
                 .load_texture("assets/question_tower.png")
+                .unwrap(),
+            BlockType::StoneTile => texture_creator
+                .load_texture("assets/stone_tile.png")
                 .unwrap(),
         };
 

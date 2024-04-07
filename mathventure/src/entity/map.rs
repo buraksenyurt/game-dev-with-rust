@@ -26,6 +26,7 @@ impl Map {
                     'w' => Box::new(Block::new(idx, BlockType::Wall)),
                     'e' => Box::new(Block::new(idx, BlockType::ExitDoor)),
                     'q' => Box::new(Block::new(idx, BlockType::QuestionTower)),
+                    's' => Box::new(Block::new(idx, BlockType::StoneTile)),
                     _ => Box::new(Block::new(idx, BlockType::Tile)),
                 };
                 idx += 1;
