@@ -2,8 +2,12 @@ use crate::factory::screen::Screen;
 use crate::factory::EngineBuilder;
 use crate::game::Game;
 
+mod entity;
 mod factory;
 mod game;
+mod tests;
+mod ui;
+mod utility;
 
 fn main() -> Result<(), String> {
     let game = Game::default();
