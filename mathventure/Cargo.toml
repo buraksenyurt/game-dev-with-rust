@@ -1,0 +1,10 @@
+[package]
+name = "mathventure"
+version = "0.1.0"
+edition = "2021"
+description = "A simple 2D Math game"
+authors = ["Burak Selim Şenyurt"]
+
+[dependencies]
+sdl2 = { version = "0.36.0", features = ["ttf","image"] }
+rand = "0.8.5"
