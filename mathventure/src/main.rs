@@ -5,6 +5,7 @@ use crate::game::Game;
 mod entity;
 mod factory;
 mod game;
+mod resources;
 mod tests;
 mod ui;
 mod utility;

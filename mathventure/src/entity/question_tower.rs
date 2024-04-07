@@ -3,6 +3,7 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use std::any::Any;
 
+#[derive(Debug, Clone)]
 pub struct QuestionTower {
     pub idx: u32,
     pub width: u32,

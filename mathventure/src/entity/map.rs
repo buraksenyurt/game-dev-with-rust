@@ -5,7 +5,7 @@ pub struct Map {
     pub level: u32,
     pub column_count: u32,
     pub row_count: u32,
-    pub entities: Vec<Box<dyn Entity>>,
+    pub entities: Vec<Box<dyn DrawableEntity>>,
 }
 
 impl Map {
@@ -23,7 +23,7 @@ impl Map {
         let mut idx = 0;
         for row in rows {
             for entity in row.chars() {
-                let e: Box<dyn Entity> = match entity {
+                let e: Box<dyn DrawableEntity> = match entity {
                     'w' => Box::new(Wall::new(idx, 32, 32)),
                     'e' => Box::new(ExitDoor::new(idx, 32, 32)),
                     'q' => Box::new(QuestionTower::new(idx, 32, 32)),
@@ -32,6 +32,14 @@ impl Map {
                 idx += 1;
                 self.entities.push(e)
             }
+        }
+    }
+}
+
+impl Drawable for Map {
+    fn draw(&self, canvas: &mut Canvas<Window>) {
+        for (idx, entity) in self.entities.iter().enumerate() {
+            entity.draw(canvas);
         }
     }
 }

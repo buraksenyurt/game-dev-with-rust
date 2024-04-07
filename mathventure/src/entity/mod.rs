@@ -22,3 +22,6 @@ pub trait Entity {
 pub trait Drawable {
     fn draw(&self, canvas: &mut Canvas<Window>);
 }
+
+pub trait DrawableEntity: Entity + Drawable {}
+impl<T: Entity + Drawable + ?Sized> DrawableEntity for T {}
