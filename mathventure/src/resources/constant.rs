@@ -4,3 +4,4 @@ pub const BLOCK_WIDTH: u32 = 64;
 pub const BLOCK_HEIGHT: u32 = 64;
 pub const STANDARD_COLUMN_COUNT: u32 = 10;
 pub const STANDARD_ROW_COUNT: u32 = 8;
+pub const LINE_SPACING: i32 = 8;

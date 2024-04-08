@@ -1,16 +1,16 @@
 use std::time::Duration;
 
 use sdl2::event::Event;
-use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use sdl2::EventPump;
 
 use crate::entity::{BlockType, Drawable, Map, Player};
 use crate::factory::{GameObject, MainState};
 use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
-use crate::ui::{GameOverMenu, MainMenu};
+use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 
 pub enum GameState {
     Failed,
@@ -126,6 +126,10 @@ impl GameObject for Game {
                 canvas.clear();
                 self.current_map.draw(canvas);
                 self.player.draw(canvas);
+                ConversationBox::draw(
+                    canvas,
+                    "Bir çemberin çevresinin çapına oranı PI sayısı ile ifade edilir. Doğru mu yanlış mı?".to_string(),
+                );
 
                 for event in event_pump.poll_iter() {
                     match event {
