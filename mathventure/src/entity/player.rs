@@ -1,4 +1,4 @@
-use crate::entity::{BlockType, Drawable, Entity};
+use crate::entity::Drawable;
 use crate::resources::{BLOCK_HEIGHT, BLOCK_WIDTH, STANDARD_COLUMN_COUNT};
 use crate::utility::get_position;
 use sdl2::image::LoadTexture;
@@ -13,12 +13,6 @@ pub struct Player {
 impl Player {
     pub fn new(idx: u32) -> Self {
         Self { idx }
-    }
-}
-
-impl Entity for Player {
-    fn get_type(&self) -> BlockType {
-        BlockType::Player
     }
 }
 

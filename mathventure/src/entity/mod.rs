@@ -8,10 +8,10 @@ pub use player::*;
 
 use sdl2::render::Canvas;
 use sdl2::video::Window;
-use std::any::Any;
 
 pub trait Entity {
     fn get_type(&self) -> BlockType;
+    fn get_idx(&self) -> u32;
 }
 
 pub trait Updatable {

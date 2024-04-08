@@ -6,14 +6,13 @@ use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
-#[derive(Debug,PartialEq,Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum BlockType {
     Wall,
     Tile,
     StoneTile,
     ExitDoor,
     QuestionTower,
-    Player
 }
 pub struct Block {
     pub idx: u32,
@@ -37,6 +36,9 @@ impl Entity for Block {
     fn get_type(&self) -> BlockType {
         self.block_type
     }
+    fn get_idx(&self) -> u32 {
+        self.idx
+    }
 }
 
 impl Drawable for Block {
@@ -54,9 +56,6 @@ impl Drawable for Block {
             BlockType::StoneTile => texture_creator
                 .load_texture("assets/stone_tile.png")
                 .unwrap(),
-            BlockType::Player => texture_creator
-                .load_texture("assets/player.png")
-                .unwrap()
         };
 
         let (x, y) = get_position(self.idx, STANDARD_COLUMN_COUNT, BLOCK_HEIGHT, BLOCK_WIDTH);

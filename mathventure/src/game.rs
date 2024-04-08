@@ -1,6 +1,6 @@
-use crate::entity::{Drawable, Map};
+use crate::entity::{Drawable, Map, Player};
 use crate::factory::{GameObject, MainState};
-use crate::resources::INIT_LEVEL;
+use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
 use crate::ui::{GameOverMenu, MainMenu};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -21,14 +21,28 @@ pub enum GameState {
 pub struct Game {
     pub current_map: Map,
     pub state: GameState,
+    pub player: Player,
 }
 
 impl Default for Game {
     fn default() -> Self {
         Self {
-            current_map: Map::new(0, 9, 5),
+            current_map: Map::new(0, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0),
             state: GameState::MainMenu,
+            player: Player::new(0),
         }
+    }
+}
+
+impl Game {
+    pub fn init(&mut self, level: u8) {
+        //TODO@Burak Must implement level based map loading
+        let mut map = Map::new(0, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
+        map.load(INIT_LEVEL);
+        let player_idx = map.player_idx;
+        self.player = Player::new(player_idx);
+        self.current_map = map;
+        self.state = GameState::Playing(level);
     }
 }
 
@@ -84,15 +98,13 @@ impl GameObject for Game {
                 canvas.present();
             }
             GameState::NewGame => {
-                let mut map = Map::new(0, 9, 5);
-                map.load(INIT_LEVEL);
-                self.current_map = map;
-                self.state = GameState::Playing(0);
+                self.init(0);
             }
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
                 self.current_map.draw(canvas);
+                self.player.draw(canvas);
 
                 for event in event_pump.poll_iter() {
                     match event {
@@ -103,6 +115,40 @@ impl GameObject for Game {
                         } => {
                             self.state = GameState::MainMenu;
                             break;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Right),
+                            ..
+                        } => {
+                            println!("Player index is {}", self.player.idx + 1);
+                            self.player.idx += 1;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Left),
+                            ..
+                        } => {
+                            println!("Player index is {}", self.player.idx - 1);
+                            self.player.idx -= 1;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Up),
+                            ..
+                        } => {
+                            println!(
+                                "Player index is {}",
+                                self.player.idx - STANDARD_COLUMN_COUNT
+                            );
+                            self.player.idx -= STANDARD_COLUMN_COUNT;
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::Down),
+                            ..
+                        } => {
+                            println!(
+                                "Player index is {}",
+                                self.player.idx + STANDARD_COLUMN_COUNT
+                            );
+                            self.player.idx += STANDARD_COLUMN_COUNT;
                         }
                         _ => {}
                     }

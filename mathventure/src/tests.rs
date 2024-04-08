@@ -1,26 +1,31 @@
 #[cfg(test)]
 mod tests {
     use crate::entity::*;
-    use crate::resources::INIT_LEVEL;
+    use crate::game::Game;
+    use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
     use crate::utility::{get_index, get_position};
 
     #[test]
     fn load_map_from_string_content_test() {
-        let mut level_1_map = Map::new(1, 9, 5);
+        let mut level_1_map = Map::new(1, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
         let map_content = INIT_LEVEL;
         level_1_map.load(map_content);
 
-        let entity = &level_1_map.entities[1];
+        let entity = &level_1_map.tiles[1];
         assert_eq!(entity.get_type(), BlockType::Wall);
 
-        let entity = &level_1_map.entities[30];
-        assert_eq!(entity.get_type(), BlockType::Player);
-
-        let entity = &level_1_map.entities[19];
+        let entity = &level_1_map.tiles[19];
         assert_eq!(entity.get_type(), BlockType::ExitDoor);
 
-        let entity = &level_1_map.entities[35];
+        let entity = &level_1_map.tiles[35];
         assert_eq!(entity.get_type(), BlockType::QuestionTower);
+    }
+
+    #[test]
+    fn get_player_index_test() {
+        let mut game = Game::default();
+        game.init(0);
+        assert_eq!(game.player.idx, 30);
     }
 
     #[test]
