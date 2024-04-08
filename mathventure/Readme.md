@@ -55,7 +55,11 @@ Menü ve ekranlara ait tasarımları aşağıdaki gibidir.
 
 Ana menü
 
-Oyun zamanı
+![Main menu](main_menu.png)
+
+Oyun zamanı _(Örnek giriş seviyesi)_
+
+![Level 1 Runtime](level_01_runtime.png)
 
 Oyuncu yanarsa
 
