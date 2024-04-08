@@ -17,6 +17,9 @@ mod tests {
         let entity = &level_1_map.tiles[19];
         assert_eq!(entity.get_type(), BlockType::ExitDoor);
 
+        let entity = &level_1_map.tiles[20];
+        assert_eq!(entity.get_type(), BlockType::Wall);
+
         let entity = &level_1_map.tiles[35];
         assert_eq!(entity.get_type(), BlockType::QuestionTower);
     }

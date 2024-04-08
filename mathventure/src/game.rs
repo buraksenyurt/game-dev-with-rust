@@ -1,14 +1,16 @@
-use crate::entity::{Drawable, Map, Player};
-use crate::factory::{GameObject, MainState};
-use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
-use crate::ui::{GameOverMenu, MainMenu};
+use std::time::Duration;
+
 use sdl2::event::Event;
+use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
-use sdl2::EventPump;
-use std::time::Duration;
+
+use crate::entity::{BlockType, Drawable, Map, Player};
+use crate::factory::{GameObject, MainState};
+use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
+use crate::ui::{GameOverMenu, MainMenu};
 
 pub enum GameState {
     Failed,
@@ -44,6 +46,25 @@ impl Game {
         self.current_map = map;
         self.state = GameState::Playing(level);
     }
+
+    pub fn move_player(&mut self, direction: Direction) {
+        let target_index = match direction {
+            Direction::Down => self.player.idx + STANDARD_COLUMN_COUNT,
+            Direction::Left => self.player.idx - 1,
+            Direction::Right => self.player.idx + 1,
+            Direction::Up => self.player.idx - STANDARD_COLUMN_COUNT,
+        };
+        let target_type = self.current_map.tiles[target_index as usize].get_type();
+        if target_type == BlockType::StoneTile || target_type == BlockType::Tile {
+            self.player.idx = target_index
+        }
+    }
+}
+pub enum Direction {
+    Down,
+    Left,
+    Right,
+    Up,
 }
 
 impl GameObject for Game {
@@ -120,35 +141,25 @@ impl GameObject for Game {
                             keycode: Some(Keycode::Right),
                             ..
                         } => {
-                            println!("Player index is {}", self.player.idx + 1);
-                            self.player.idx += 1;
+                            self.move_player(Direction::Right);
                         }
                         Event::KeyDown {
                             keycode: Some(Keycode::Left),
                             ..
                         } => {
-                            println!("Player index is {}", self.player.idx - 1);
-                            self.player.idx -= 1;
+                            self.move_player(Direction::Left);
                         }
                         Event::KeyDown {
                             keycode: Some(Keycode::Up),
                             ..
                         } => {
-                            println!(
-                                "Player index is {}",
-                                self.player.idx - STANDARD_COLUMN_COUNT
-                            );
-                            self.player.idx -= STANDARD_COLUMN_COUNT;
+                            self.move_player(Direction::Up);
                         }
                         Event::KeyDown {
                             keycode: Some(Keycode::Down),
                             ..
                         } => {
-                            println!(
-                                "Player index is {}",
-                                self.player.idx + STANDARD_COLUMN_COUNT
-                            );
-                            self.player.idx += STANDARD_COLUMN_COUNT;
+                            self.move_player(Direction::Down);
                         }
                         _ => {}
                     }
