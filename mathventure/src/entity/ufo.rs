@@ -27,8 +27,8 @@ impl Ufo {
 
 impl Updatable for Ufo {
     fn update(&mut self, delta_time: f32) {
-        self.x += (self.velocity.x * delta_time) as i32;
-        self.y += (self.velocity.y * delta_time) as i32;
+        self.x += (self.velocity.x as f32 * delta_time) as i32;
+        self.y += (self.velocity.y as f32 * delta_time) as i32;
     }
 }
 

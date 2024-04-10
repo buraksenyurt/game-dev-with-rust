@@ -12,7 +12,7 @@ use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
 use crate::factory::{GameObject, MainState};
 use crate::resources::{
     Level, LevelManager, TextureManager, Velocity, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
-    STANDARD_COLUMN_COUNT, UFO_HEIGHT, UFO_WIDTH,
+    SCREEN_HEIGHT, SCREEN_WIDTH, STANDARD_COLUMN_COUNT, UFO_HEIGHT, UFO_WIDTH,
 };
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 use crate::utility::get_position;
@@ -84,15 +84,24 @@ impl Game {
     }
 
     fn spawn_ufo(&mut self) {
-        let (mut x, mut y) = get_position(
-            self.current_map.tower_idx,
-            STANDARD_COLUMN_COUNT,
-            BLOCK_HEIGHT,
-            BLOCK_WIDTH,
-        );
+        let mut rng = rand::thread_rng();
+        let (mut x, mut y) = get_position(self.current_map.tower_idx);
         x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
         y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
-        let velocity = Velocity::new(-100.0, -100.0);
+
+        let (player_x, player_y) = get_position(self.player.idx);
+        // let direction = get_unit_vector(x, y, player_x, player_y);
+        //let velocity = Velocity::new(direction.0 * 100, direction.1 * 100);
+        let directions = [
+            (-100, -100),
+            (0, -100),
+            (0, 100),
+            (100, 0),
+            (-100, 0),
+            (100, 100),
+        ];
+        let direction = directions[rng.gen_range(0..directions.len())];
+        let velocity = Velocity::new(direction.0, direction.1);
         let ufo = Ufo::new(x as i32, y as i32, velocity, UFO_WIDTH, UFO_HEIGHT);
         self.ufo_list.push(ufo);
     }
@@ -242,10 +251,19 @@ impl GameObject for Game {
 
                 for ufo in &mut self.ufo_list {
                     ufo.update(delta_time.as_secs_f32());
+                    println!("{}  {}", ufo.x, ufo.y);
+                }
+                for ufo in &self.ufo_list {
                     ufo.draw(canvas, &texture_manager);
                 }
-                self.ufo_list.retain(|u| u.x + u.width as i32 - 10 > 0);
-                //println!("Current ufo count {}", self.ufo_list.len());
+
+                self.ufo_list.retain(|u| {
+                    (u.x + u.width as i32) - 10 > 0
+                        && (u.x + u.width as i32) + 10 < SCREEN_WIDTH as i32
+                        && (u.y + u.height as i32) - 10 > 0
+                        && (u.y + u.height as i32) + 10 < SCREEN_HEIGHT as i32
+                });
+                println!("Current ufo count {}", self.ufo_list.len());
 
                 canvas.present();
             }

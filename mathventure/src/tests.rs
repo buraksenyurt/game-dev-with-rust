@@ -37,15 +37,15 @@ mod tests {
     fn get_cell_index_from_position_test() {
         let x = 32;
         let y = 64;
-        let index = get_index(x, y, 9, 32, 32);
-        assert_eq!(index, 19);
+        let index = get_index(x, y);
+        assert_eq!(index, 10);
     }
 
     #[test]
     fn get_cell_position_from_index_test() {
-        let index = 19;
-        let position = get_position(index, 9, 32, 32);
-        assert_eq!(position.0, 32);
+        let index = 12;
+        let position = get_position(index);
+        assert_eq!(position.0, 128);
         assert_eq!(position.1, 64);
     }
 
