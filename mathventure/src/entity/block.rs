@@ -1,12 +1,11 @@
 use crate::entity::*;
 use crate::resources::*;
 use crate::utility::get_position;
-use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq, Hash)]
 pub enum BlockType {
     Wall,
     Tile,
@@ -14,6 +13,8 @@ pub enum BlockType {
     ExitDoor,
     QuestionTower,
     Ghost,
+    Player,
+    Ufo,
 }
 pub struct Block {
     pub idx: u32,
@@ -43,26 +44,12 @@ impl Entity for Block {
 }
 
 impl Drawable for Block {
-    fn draw(&self, canvas: &mut Canvas<Window>) {
-        let texture_creator = canvas.texture_creator();
-        let texture = match self.block_type {
-            BlockType::Wall => texture_creator.load_texture("assets/wall.png").unwrap(),
-            BlockType::Tile => texture_creator.load_texture("assets/tile.png").unwrap(),
-            BlockType::ExitDoor => texture_creator
-                .load_texture("assets/exit_door.png")
-                .unwrap(),
-            BlockType::QuestionTower => texture_creator
-                .load_texture("assets/question_tower.png")
-                .unwrap(),
-            BlockType::Ghost => texture_creator.load_texture("assets/snake.png").unwrap(),
-            BlockType::StoneTile => texture_creator
-                .load_texture("assets/stone_tile.png")
-                .unwrap(),
-        };
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
+        let texture = texture_manager.get_texture(&self.block_type);
 
         let (x, y) = get_position(self.idx, STANDARD_COLUMN_COUNT, BLOCK_HEIGHT, BLOCK_WIDTH);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);
 
-        canvas.copy(&texture, None, Some(rect)).unwrap();
+        canvas.copy(texture, None, Some(rect)).unwrap();
     }
 }

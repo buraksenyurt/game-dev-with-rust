@@ -1,7 +1,6 @@
-use crate::entity::Drawable;
-use crate::resources::{BLOCK_HEIGHT, BLOCK_WIDTH, STANDARD_COLUMN_COUNT};
+use crate::entity::{BlockType, Drawable};
+use crate::resources::{TextureManager, BLOCK_HEIGHT, BLOCK_WIDTH, STANDARD_COLUMN_COUNT};
 use crate::utility::get_position;
-use sdl2::image::LoadTexture;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -17,9 +16,8 @@ impl Player {
 }
 
 impl Drawable for Player {
-    fn draw(&self, canvas: &mut Canvas<Window>) {
-        let texture_creator = canvas.texture_creator();
-        let texture = texture_creator.load_texture("assets/player.png").unwrap();
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
+        let texture = texture_manager.get_texture(&BlockType::Player);
         let (x, y) = get_position(self.idx, STANDARD_COLUMN_COUNT, BLOCK_HEIGHT, BLOCK_WIDTH);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);
 

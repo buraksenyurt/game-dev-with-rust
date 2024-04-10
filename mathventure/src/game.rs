@@ -11,7 +11,8 @@ use sdl2::EventPump;
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
 use crate::factory::{GameObject, MainState};
 use crate::resources::{
-    Level, LevelManager, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT, STANDARD_COLUMN_COUNT,
+    Level, LevelManager, TextureManager, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
+    STANDARD_COLUMN_COUNT,
 };
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 use crate::utility::get_position;
@@ -107,6 +108,9 @@ impl GameObject for Game {
         canvas: &mut Canvas<Window>,
         delta_time: Duration,
     ) -> MainState {
+        let texture_creator = canvas.texture_creator();
+        let texture_manager = TextureManager::new(&texture_creator);
+
         match self.state {
             GameState::Failed => {
                 GameOverMenu::draw(canvas, 0, 1.).unwrap();
@@ -159,8 +163,8 @@ impl GameObject for Game {
                 canvas.clear();
 
                 let question = &self.current_level.question.description;
-                self.current_map.draw(canvas);
-                self.player.draw(canvas);
+                self.current_map.draw(canvas, &texture_manager);
+                self.player.draw(canvas, &texture_manager);
                 ConversationBox::draw(canvas, question);
 
                 let now = Instant::now();
@@ -235,7 +239,7 @@ impl GameObject for Game {
 
                 for ufo in &mut self.ufo_list {
                     ufo.update(delta_time.as_secs_f32());
-                    ufo.draw(canvas);
+                    ufo.draw(canvas, &texture_manager);
                 }
                 self.ufo_list.retain(|u| u.x + u.width as i32 - 10 > 0);
                 //println!("Current ufo count {}", self.ufo_list.len());

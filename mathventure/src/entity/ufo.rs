@@ -1,4 +1,5 @@
-use crate::entity::{Drawable, Updatable};
+use crate::entity::{BlockType, Drawable, Updatable};
+use crate::resources::TextureManager;
 use sdl2::image::LoadTexture;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
@@ -33,10 +34,9 @@ impl Updatable for Ufo {
 }
 
 impl Drawable for Ufo {
-    fn draw(&self, canvas: &mut Canvas<Window>) {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
         canvas.set_draw_color(Color::BLACK);
-        let texture_creator = canvas.texture_creator();
-        let texture = texture_creator.load_texture("assets/owl.png").unwrap();
+        let texture = texture_manager.get_texture(&BlockType::Ufo);
         let rect = Rect::new(self.x, self.y, self.width, self.height);
 
         canvas.copy(&texture, None, Some(rect)).unwrap();

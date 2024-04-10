@@ -2,7 +2,7 @@
 mod tests {
     use crate::entity::*;
     use crate::game::Game;
-    use crate::resources::{LevelManager, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
+    use crate::resources::LevelManager;
     use crate::utility::{get_index, get_position};
 
     #[test]
