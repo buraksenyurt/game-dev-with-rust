@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
+use sdl2::keyboard::{Keycode, Mod};
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -25,6 +25,7 @@ pub struct Game {
     pub current_level: Level,
     pub state: GameState,
     pub player: Player,
+    pub max_level: u32,
 }
 
 impl Default for Game {
@@ -36,6 +37,7 @@ impl Default for Game {
             state: GameState::MainMenu,
             player: Player::new(0),
             current_level,
+            max_level: level_manager.max_level_count,
         }
     }
 }
@@ -169,6 +171,30 @@ impl GameObject for Game {
                             ..
                         } => {
                             self.move_player(Direction::Down);
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::N),
+                            keymod,
+                            ..
+                        } => {
+                            if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
+                                && self.current_level.id < self.max_level
+                            {
+                                let new_level = self.current_level.id + 1;
+                                self.init(new_level);
+                            }
+                        }
+                        Event::KeyDown {
+                            keycode: Some(Keycode::P),
+                            keymod,
+                            ..
+                        } => {
+                            if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
+                                && self.current_level.id > 0
+                            {
+                                let new_level = self.current_level.id - 1;
+                                self.init(new_level);
+                            }
                         }
                         _ => {}
                     }

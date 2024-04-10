@@ -10,6 +10,7 @@ pub struct Level {
 
 pub struct LevelManager {
     maps: Vec<Level>,
+    pub max_level_count: u32,
 }
 
 impl LevelManager {
@@ -68,8 +69,12 @@ impl LevelManager {
             ),
         };
         maps.push(third_level);
+        let max_level_count = maps.len() as u32 - 1;
 
-        Self { maps }
+        Self {
+            maps,
+            max_level_count,
+        }
     }
 
     pub fn get_level(&self, index: u32) -> Option<Level> {
