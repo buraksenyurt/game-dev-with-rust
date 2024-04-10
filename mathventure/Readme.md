@@ -36,7 +36,7 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 
 - **Player :** Oyuncu bir kare içerisinde sığabilecek büyüklüktedir. Sağ, sol, yukarı ve aşağı yönlü hareket edebilir.
 - **Duvar (Wall) :** Sabit nesnelerdir. Oyuncu içinden geçemez. 32x32 pixel gibi kare boyutlardadır. 
-- **Zemin (Tile) :** Oyuncunun üzerinde hareket edebildiği zeminlerdir.
+- **Zemin (Tile, Stone Tile) :** Oyuncunun üzerinde hareket edebildiği zeminlerdir. Düz çimen veya taşlıklı çimen olabilir.
 - **Soru Kulesi(Question Tower):** Sorulan soruya ait tanımlı cevapları fırlatır. Doğru cevap haricinde yanlış cevaplar da fırlatır. Oyundaki konumu sabittir ama seviyeden seviyeye değişiklik gösterir.
 - **Seviye Çıkış Kapısı(Exit Door):** Çıkış kapısını ifade eden bloktur. Sabit konumdadır, her seviyede yeri değişir.
 
@@ -57,11 +57,23 @@ Ana menü
 
 ![Main menu](main_menu.png)
 
-Oyun zamanı _(Örnek giriş seviyesi)_
+Oyun aşağıdaki gibi farklı seviyelerden oluşur.
+
+I. Seviye
 
 ![Level 1 Runtime](level_01_runtime.png)
 
-Oyuncu yanarsa
+II. Seviye
+
+![Level 2 Runtime](level_02_runtime.png)
+
+III. Seviye
+
+![Level 3 Runtime](level_03_runtime.png)
+
+Oyuncu yanlış cevap verip yandığı takdirde...
+
+_EKRAN GÖRÜNTÜSÜ GELECEK_
 
 ### Geliştirme Takvimi
 
