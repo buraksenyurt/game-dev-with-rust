@@ -89,9 +89,10 @@ impl Game {
         x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
         y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
 
-        let (player_x, player_y) = get_position(self.player.idx);
+        //let (player_x, player_y) = get_position(self.player.idx);
         // let direction = get_unit_vector(x, y, player_x, player_y);
         //let velocity = Velocity::new(direction.0 * 100, direction.1 * 100);
+
         let directions = [
             (-100, -100),
             (0, -100),
@@ -179,6 +180,13 @@ impl GameObject for Game {
                 self.player.draw(canvas, &texture_manager);
                 ConversationBox::draw(canvas, question);
 
+                for ufo in &mut self.ufo_list {
+                    ufo.update(delta_time.as_secs_f32());
+                }
+                for ufo in &self.ufo_list {
+                    ufo.draw(canvas, &texture_manager);
+                }
+
                 let now = Instant::now();
                 if now.duration_since(self.last_ufo_time) >= self.next_ufo_delay
                     && self.ufo_list.len() < MAX_UFO_COUNT
@@ -249,21 +257,13 @@ impl GameObject for Game {
                     }
                 }
 
-                for ufo in &mut self.ufo_list {
-                    ufo.update(delta_time.as_secs_f32());
-                    println!("{}  {}", ufo.x, ufo.y);
-                }
-                for ufo in &self.ufo_list {
-                    ufo.draw(canvas, &texture_manager);
-                }
-
                 self.ufo_list.retain(|u| {
                     (u.x + u.width as i32) - 10 > 0
                         && (u.x + u.width as i32) + 10 < SCREEN_WIDTH as i32
                         && (u.y + u.height as i32) - 10 > 0
                         && (u.y + u.height as i32) + 10 < SCREEN_HEIGHT as i32
                 });
-                println!("Current ufo count {}", self.ufo_list.len());
+                //println!("Current ufo count {}", self.ufo_list.len());
 
                 canvas.present();
             }
