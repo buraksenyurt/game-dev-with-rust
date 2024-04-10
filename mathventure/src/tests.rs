@@ -2,13 +2,15 @@
 mod tests {
     use crate::entity::*;
     use crate::game::Game;
-    use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
+    use crate::resources::{LevelManager, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
     use crate::utility::{get_index, get_position};
 
     #[test]
     fn load_map_from_string_content_test() {
-        let mut level_1_map = Map::new(1, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
-        let map_content = INIT_LEVEL;
+        let level_manager=LevelManager::init();
+        let level=level_manager.get_level(0).unwrap();
+        let mut level_1_map = Map::new(level.id, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
+        let map_content = level.map.as_str();
         level_1_map.load(map_content);
 
         let entity = &level_1_map.tiles[1];
@@ -46,4 +48,18 @@ mod tests {
         assert_eq!(position.0, 32);
         assert_eq!(position.1, 64);
     }
+
+    #[test]
+    fn get_level_by_index_test() {
+        let level_manager = LevelManager::init();
+        let expected = level_manager.get_level(0);
+        assert!(expected.is_some());
+    }
+
+    // #[test]
+    // fn get_level_by_unknown_index_test() {
+    //     let level_manager = LevelManager::init();
+    //     let expected = level_manager.get_level(9999);
+    //     assert!(expected.is_none());
+    // }
 }

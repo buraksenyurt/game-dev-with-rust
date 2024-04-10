@@ -9,7 +9,7 @@ use sdl2::EventPump;
 
 use crate::entity::{BlockType, Drawable, Map, Player};
 use crate::factory::{GameObject, MainState};
-use crate::resources::{INIT_LEVEL, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
+use crate::resources::{Level, LevelManager, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 
 pub enum GameState {
@@ -17,34 +17,41 @@ pub enum GameState {
     ExitGame,
     MainMenu,
     NewGame,
-    Playing(u8),
+    Playing(u32),
 }
 
 pub struct Game {
     pub current_map: Map,
+    pub current_level: Level,
     pub state: GameState,
     pub player: Player,
 }
 
 impl Default for Game {
     fn default() -> Self {
+        let level_manager = LevelManager::init();
+        let current_level = level_manager.get_level(0).unwrap();
         Self {
             current_map: Map::new(0, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0),
             state: GameState::MainMenu,
             player: Player::new(0),
+            current_level,
         }
     }
 }
 
 impl Game {
-    pub fn init(&mut self, level: u8) {
-        //TODO@Burak Must implement level based map loading
-        let mut map = Map::new(0, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
-        map.load(INIT_LEVEL);
+    pub fn init(&mut self, level_index: u32) {
+        let level_manager = LevelManager::init();
+        let level = level_manager.get_level(level_index).unwrap();
+
+        let mut map = Map::new(level_index, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
+        map.load(level.map.as_str());
         let player_idx = map.player_idx;
         self.player = Player::new(player_idx);
         self.current_map = map;
-        self.state = GameState::Playing(level);
+        self.current_level = level;
+        self.state = GameState::Playing(level_index);
     }
 
     pub fn move_player(&mut self, direction: Direction) {
@@ -124,12 +131,10 @@ impl GameObject for Game {
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
+                let question = &self.current_level.question;
                 self.current_map.draw(canvas);
                 self.player.draw(canvas);
-                ConversationBox::draw(
-                    canvas,
-                    "Bir çemberin çevresinin çapına oranı PI sayısı ile ifade edilir. Doğru mu yanlış mı?".to_string(),
-                );
+                ConversationBox::draw(canvas, question.to_string());
 
                 for event in event_pump.poll_iter() {
                     match event {
