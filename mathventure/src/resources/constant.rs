@@ -6,3 +6,5 @@ pub const STANDARD_COLUMN_COUNT: u32 = 10;
 pub const STANDARD_ROW_COUNT: u32 = 8;
 pub const LINE_SPACING: i32 = 8;
 pub const MAX_UFO_COUNT: usize = 8;
+pub const UFO_WIDTH: u32 = 32;
+pub const UFO_HEIGHT: u32 = 32;

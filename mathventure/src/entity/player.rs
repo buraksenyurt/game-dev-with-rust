@@ -21,6 +21,6 @@ impl Drawable for Player {
         let (x, y) = get_position(self.idx, STANDARD_COLUMN_COUNT, BLOCK_HEIGHT, BLOCK_WIDTH);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);
 
-        canvas.copy(&texture, None, Some(rect)).unwrap();
+        canvas.copy(texture, None, Some(rect)).unwrap();
     }
 }

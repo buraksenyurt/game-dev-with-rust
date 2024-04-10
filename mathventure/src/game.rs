@@ -11,8 +11,8 @@ use sdl2::EventPump;
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
 use crate::factory::{GameObject, MainState};
 use crate::resources::{
-    Level, LevelManager, TextureManager, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
-    STANDARD_COLUMN_COUNT,
+    Level, LevelManager, TextureManager, Velocity, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
+    STANDARD_COLUMN_COUNT, UFO_HEIGHT, UFO_WIDTH,
 };
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 use crate::utility::get_position;
@@ -84,13 +84,16 @@ impl Game {
     }
 
     fn spawn_ufo(&mut self) {
-        let (x, y) = get_position(
+        let (mut x, mut y) = get_position(
             self.current_map.tower_idx,
             STANDARD_COLUMN_COUNT,
             BLOCK_HEIGHT,
             BLOCK_WIDTH,
         );
-        let ufo = Ufo::new(x as i32, y as i32, -100_f32, 32, 32);
+        x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
+        y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
+        let velocity = Velocity::new(-100.0, -100.0);
+        let ufo = Ufo::new(x as i32, y as i32, velocity, UFO_WIDTH, UFO_HEIGHT);
         self.ufo_list.push(ufo);
     }
 }
