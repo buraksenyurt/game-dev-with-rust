@@ -131,10 +131,10 @@ impl GameObject for Game {
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
-                let question = &self.current_level.question;
+                let question = &self.current_level.question.description;
                 self.current_map.draw(canvas);
                 self.player.draw(canvas);
-                ConversationBox::draw(canvas, question.to_string());
+                ConversationBox::draw(canvas, question);
 
                 for event in event_pump.poll_iter() {
                     match event {

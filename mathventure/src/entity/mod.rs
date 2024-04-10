@@ -1,10 +1,12 @@
 mod block;
 mod map;
 mod player;
+mod question;
 
 pub use block::*;
 pub use map::Map;
 pub use player::*;
+pub use question::*;
 
 use sdl2::render::Canvas;
 use sdl2::video::Window;
