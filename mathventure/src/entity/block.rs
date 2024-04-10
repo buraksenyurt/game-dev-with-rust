@@ -13,6 +13,7 @@ pub enum BlockType {
     StoneTile,
     ExitDoor,
     QuestionTower,
+    Ghost,
 }
 pub struct Block {
     pub idx: u32,
@@ -53,6 +54,7 @@ impl Drawable for Block {
             BlockType::QuestionTower => texture_creator
                 .load_texture("assets/question_tower.png")
                 .unwrap(),
+            BlockType::Ghost => texture_creator.load_texture("assets/snake.png").unwrap(),
             BlockType::StoneTile => texture_creator
                 .load_texture("assets/stone_tile.png")
                 .unwrap(),

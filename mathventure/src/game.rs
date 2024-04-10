@@ -1,4 +1,5 @@
-use std::time::Duration;
+use rand::Rng;
+use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
 use sdl2::keyboard::{Keycode, Mod};
@@ -7,10 +8,13 @@ use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
 
-use crate::entity::{BlockType, Drawable, Map, Player};
+use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
 use crate::factory::{GameObject, MainState};
-use crate::resources::{Level, LevelManager, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT};
+use crate::resources::{
+    Level, LevelManager, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT, STANDARD_COLUMN_COUNT,
+};
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
+use crate::utility::get_position;
 
 pub enum GameState {
     Failed,
@@ -26,6 +30,9 @@ pub struct Game {
     pub state: GameState,
     pub player: Player,
     pub max_level: u32,
+    last_ufo_time: Instant,
+    next_ufo_delay: Duration,
+    pub ufo_list: Vec<Ufo>,
 }
 
 impl Default for Game {
@@ -33,27 +40,33 @@ impl Default for Game {
         let level_manager = LevelManager::init();
         let current_level = level_manager.get_level(0).unwrap();
         Self {
-            current_map: Map::new(0, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0),
+            current_map: Map::default(),
             state: GameState::MainMenu,
             player: Player::new(0),
             current_level,
             max_level: level_manager.max_level_count,
+            last_ufo_time: Instant::now(),
+            next_ufo_delay: Duration::default(),
+            ufo_list: Vec::new(),
         }
     }
 }
 
 impl Game {
     pub fn init(&mut self, level_index: u32) {
+        let mut rng = rand::thread_rng();
         let level_manager = LevelManager::init();
         let level = level_manager.get_level(level_index).unwrap();
 
-        let mut map = Map::new(level_index, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
+        let mut map = Map::default();
         map.load(level.map.as_str());
         let player_idx = map.player_idx;
         self.player = Player::new(player_idx);
         self.current_map = map;
         self.current_level = level;
         self.state = GameState::Playing(level_index);
+        self.last_ufo_time = Instant::now();
+        self.next_ufo_delay = Duration::from_secs(rng.gen_range(2..=4))
     }
 
     pub fn move_player(&mut self, direction: Direction) {
@@ -68,6 +81,17 @@ impl Game {
             self.player.idx = target_index
         }
     }
+
+    fn spawn_ufo(&mut self) {
+        let (x, y) = get_position(
+            self.current_map.tower_idx,
+            STANDARD_COLUMN_COUNT,
+            BLOCK_HEIGHT,
+            BLOCK_WIDTH,
+        );
+        let ufo = Ufo::new(x as i32, y as i32, -100_f32, 32, 32);
+        self.ufo_list.push(ufo);
+    }
 }
 pub enum Direction {
     Down,
@@ -81,7 +105,7 @@ impl GameObject for Game {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
-        _delta_time: Duration,
+        delta_time: Duration,
     ) -> MainState {
         match self.state {
             GameState::Failed => {
@@ -133,10 +157,19 @@ impl GameObject for Game {
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
+
                 let question = &self.current_level.question.description;
                 self.current_map.draw(canvas);
                 self.player.draw(canvas);
                 ConversationBox::draw(canvas, question);
+
+                let now = Instant::now();
+                if now.duration_since(self.last_ufo_time) >= self.next_ufo_delay
+                    && self.ufo_list.len() < MAX_UFO_COUNT
+                {
+                    self.spawn_ufo();
+                    self.last_ufo_time = now;
+                }
 
                 for event in event_pump.poll_iter() {
                     match event {
@@ -199,6 +232,13 @@ impl GameObject for Game {
                         _ => {}
                     }
                 }
+
+                for ufo in &mut self.ufo_list {
+                    ufo.update(delta_time.as_secs_f32());
+                    ufo.draw(canvas);
+                }
+                self.ufo_list.retain(|u| u.x + u.width as i32 - 10 > 0);
+                //println!("Current ufo count {}", self.ufo_list.len());
 
                 canvas.present();
             }

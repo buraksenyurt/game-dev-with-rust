@@ -9,7 +9,7 @@ mod tests {
     fn load_map_from_string_content_test() {
         let level_manager = LevelManager::init();
         let level = level_manager.get_level(0).unwrap();
-        let mut level_1_map = Map::new(level.id, STANDARD_COLUMN_COUNT, STANDARD_ROW_COUNT, 0);
+        let mut level_1_map = Map::default();
         let map_content = level.map.as_str();
         level_1_map.load(map_content);
 

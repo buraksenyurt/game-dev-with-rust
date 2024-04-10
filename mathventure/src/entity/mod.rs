@@ -2,11 +2,13 @@ mod block;
 mod map;
 mod player;
 mod question;
+mod ufo;
 
 pub use block::*;
 pub use map::Map;
 pub use player::*;
 pub use question::*;
+pub use ufo::*;
 
 use sdl2::render::Canvas;
 use sdl2::video::Window;

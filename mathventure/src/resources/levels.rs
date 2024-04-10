@@ -55,7 +55,7 @@ impl LevelManager {
             id: 2,
             title: "III. Seviye".to_string(),
             map: "wwwwwwwwww\
-                \nwtttqststw\
+                \nwtttgststw\
                 \nwtsssttttw\
                 \nwpsssttttw\
                 \nwsststtwtw\
