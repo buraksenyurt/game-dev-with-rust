@@ -4,6 +4,7 @@ use crate::utility::get_position;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use std::fmt::Display;
 
 #[derive(Debug, PartialEq, Copy, Clone, Eq, Hash)]
 pub enum BlockType {
@@ -21,6 +22,22 @@ pub struct Block {
     pub width: u32,
     pub height: u32,
     pub block_type: BlockType,
+}
+
+impl Display for BlockType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let value = match self {
+            BlockType::Wall => "wall",
+            BlockType::Tile => "tile",
+            BlockType::StoneTile => "stone_tile",
+            BlockType::ExitDoor => "exit_door",
+            BlockType::QuestionTower => "question_tower",
+            BlockType::Ghost => "ghost",
+            BlockType::Player => "player",
+            BlockType::Ufo => "ufo",
+        };
+        write!(f, "{}", value)
+    }
 }
 
 impl Block {
@@ -45,7 +62,7 @@ impl Entity for Block {
 
 impl Drawable for Block {
     fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
-        let texture = texture_manager.get_texture(&self.block_type);
+        let texture = texture_manager.get(&self.block_type.to_string());
 
         let (x, y) = get_position(self.idx);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);

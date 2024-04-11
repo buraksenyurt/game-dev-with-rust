@@ -11,16 +11,18 @@ pub struct Ufo {
     pub velocity: Velocity,
     pub width: u32,
     pub height: u32,
+    pub name: String,
 }
 
 impl Ufo {
-    pub fn new(x: i32, y: i32, velocity: Velocity, width: u32, height: u32) -> Self {
+    pub fn new(x: i32, y: i32, velocity: Velocity, width: u32, height: u32, name: String) -> Self {
         Self {
             x,
             y,
             velocity,
             width,
             height,
+            name,
         }
     }
 }
@@ -35,7 +37,7 @@ impl Updatable for Ufo {
 impl Drawable for Ufo {
     fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
         canvas.set_draw_color(Color::BLACK);
-        let texture = texture_manager.get_texture(&BlockType::Ufo);
+        let texture = texture_manager.get(&self.name);
         let rect = Rect::new(self.x, self.y, self.width, self.height);
 
         canvas.copy(texture, None, Some(rect)).unwrap();

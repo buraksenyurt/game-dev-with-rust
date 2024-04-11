@@ -1,11 +1,10 @@
-use crate::entity::BlockType;
 use sdl2::image::LoadTexture;
 use sdl2::render::{Texture, TextureCreator};
 use sdl2::video::WindowContext;
 use std::collections::HashMap;
 
 pub struct TextureManager<'a> {
-    textures: HashMap<BlockType, Texture<'a>>,
+    textures: HashMap<&'a str, Texture<'a>>,
 }
 
 impl<'a> TextureManager<'a> {
@@ -13,48 +12,56 @@ impl<'a> TextureManager<'a> {
         let mut textures = HashMap::new();
 
         textures.insert(
-            BlockType::Player,
+            "player",
             texture_creator.load_texture("assets/player.png").unwrap(),
         );
         textures.insert(
-            BlockType::Wall,
+            "wall",
             texture_creator.load_texture("assets/wall.png").unwrap(),
         );
         textures.insert(
-            BlockType::Tile,
+            "tile",
             texture_creator.load_texture("assets/tile.png").unwrap(),
         );
         textures.insert(
-            BlockType::ExitDoor,
+            "exit_door",
             texture_creator
                 .load_texture("assets/exit_door.png")
                 .unwrap(),
         );
         textures.insert(
-            BlockType::QuestionTower,
+            "question_tower",
             texture_creator
                 .load_texture("assets/question_tower.png")
                 .unwrap(),
         );
         textures.insert(
-            BlockType::Ghost,
+            "ghost",
             texture_creator.load_texture("assets/snake.png").unwrap(),
         );
         textures.insert(
-            BlockType::StoneTile,
+            "stone_tile",
             texture_creator
                 .load_texture("assets/stone_tile.png")
                 .unwrap(),
         );
         textures.insert(
-            BlockType::Ufo,
+            "ufo_1",
             texture_creator.load_texture("assets/owl.png").unwrap(),
+        );
+        textures.insert(
+            "ufo_2",
+            texture_creator.load_texture("assets/hippo.png").unwrap(),
+        );
+        textures.insert(
+            "ufo_3",
+            texture_creator.load_texture("assets/giraffe.png").unwrap(),
         );
 
         Self { textures }
     }
 
-    pub fn get_texture(&self, block_type: &BlockType) -> &Texture {
-        self.textures.get(block_type).expect("Texture not found!")
+    pub fn get(&self, key: &str) -> &Texture {
+        self.textures.get(key).expect("Texture not found!")
     }
 }

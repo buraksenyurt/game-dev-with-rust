@@ -18,6 +18,7 @@ impl Engine {
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
         let texture_creator = self.canvas.texture_creator();
         let texture_manager = TextureManager::new(&texture_creator);
+        let mut rng = rand::thread_rng();
 
         loop {
             let now = Instant::now();
@@ -27,6 +28,7 @@ impl Engine {
                 &mut self.event_pump,
                 &mut self.canvas,
                 &texture_manager,
+                &mut rng,
                 delta,
             );
 

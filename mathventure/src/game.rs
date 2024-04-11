@@ -1,3 +1,4 @@
+use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::time::{Duration, Instant};
 
@@ -83,8 +84,7 @@ impl Game {
         }
     }
 
-    fn spawn_ufo(&mut self) {
-        let mut rng = rand::thread_rng();
+    fn spawn_ufo(&mut self, rng: &mut ThreadRng) {
         let (mut x, mut y) = get_position(self.current_map.tower_idx);
         x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
         y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
@@ -93,17 +93,26 @@ impl Game {
         // let direction = get_unit_vector(x, y, player_x, player_y);
         //let velocity = Velocity::new(direction.0 * 100, direction.1 * 100);
 
+        let names = ["ufo_1", "ufo_2", "ufo_3"];
+        let name = names[rng.gen_range(0..names.len())];
         let directions = [
-            (-100, -100),
-            (0, -100),
-            (0, 100),
-            (100, 0),
-            (-100, 0),
-            (100, 100),
+            (-200, -200),
+            (0, -200),
+            (0, 200),
+            (200, 0),
+            (-200, 0),
+            (200, 200),
         ];
         let direction = directions[rng.gen_range(0..directions.len())];
         let velocity = Velocity::new(direction.0, direction.1);
-        let ufo = Ufo::new(x as i32, y as i32, velocity, UFO_WIDTH, UFO_HEIGHT);
+        let ufo = Ufo::new(
+            x as i32,
+            y as i32,
+            velocity,
+            UFO_WIDTH,
+            UFO_HEIGHT,
+            name.to_string(),
+        );
         self.ufo_list.push(ufo);
     }
 }
@@ -120,6 +129,7 @@ impl GameObject for Game {
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
         texture_manager: &TextureManager,
+        randomizer: &mut ThreadRng,
         delta_time: Duration,
     ) -> MainState {
         match self.state {
@@ -189,7 +199,7 @@ impl GameObject for Game {
                 if now.duration_since(self.last_ufo_time) >= self.next_ufo_delay
                     && self.ufo_list.len() < MAX_UFO_COUNT
                 {
-                    self.spawn_ufo();
+                    self.spawn_ufo(randomizer);
                     self.last_ufo_time = now;
                 }
 
@@ -256,10 +266,10 @@ impl GameObject for Game {
                 }
 
                 self.ufo_list.retain(|u| {
-                    (u.x + u.width as i32) - 10 > 0
-                        && (u.x + u.width as i32) + 10 < SCREEN_WIDTH as i32
-                        && (u.y + u.height as i32) - 10 > 0
-                        && (u.y + u.height as i32) + 10 < SCREEN_HEIGHT as i32
+                    (u.x + u.width as i32) > 0
+                        && u.x < SCREEN_WIDTH as i32
+                        && (u.y + u.height as i32) > 0
+                        && u.y < SCREEN_HEIGHT as i32
                 });
                 //println!("Current ufo count {}", self.ufo_list.len());
 

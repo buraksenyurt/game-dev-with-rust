@@ -17,7 +17,8 @@ impl Player {
 
 impl Drawable for Player {
     fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
-        let texture = texture_manager.get_texture(&BlockType::Player);
+        let texture = texture_manager.get("player");
+
         let (x, y) = get_position(self.idx);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);
 
