@@ -30,7 +30,7 @@ impl Display for BlockType {
             BlockType::StoneTile => "stone_tile",
             BlockType::ExitDoor => "exit_door",
             BlockType::QuestionTower => "question_tower",
-            BlockType::Ghost => "ghost",
+            BlockType::Ghost => "snake",
         };
         write!(f, "{}", value)
     }
@@ -57,7 +57,7 @@ impl Entity for Block {
 }
 
 impl Drawable for Block {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
         let texture = texture_manager.get(&self.block_type.to_string());
 
         let (x, y) = get_position(self.idx);

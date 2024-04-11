@@ -1,5 +1,5 @@
 use crate::factory::{GameObject, MainState};
-use crate::resources::TextureManager;
+use crate::resources::AssetManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
@@ -17,17 +17,7 @@ impl Engine {
         let mut last_update = Instant::now();
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
         let texture_creator = self.canvas.texture_creator();
-        let mut texture_manager = TextureManager::new(&texture_creator);
-        texture_manager.add("player", "assets/player.png");
-        texture_manager.add("wall", "assets/wall.png");
-        texture_manager.add("tile", "assets/tile.png");
-        texture_manager.add("exit_door", "assets/exit_door.png");
-        texture_manager.add("question_tower", "assets/question_tower.png");
-        texture_manager.add("ghost", "assets/snake.png");
-        texture_manager.add("stone_tile", "assets/stone_tile.png");
-        texture_manager.add("ufo_1", "assets/owl.png");
-        texture_manager.add("ufo_2", "assets/hippo.png");
-        texture_manager.add("ufo_3", "assets/giraffe.png");
+        let texture_manager = AssetManager::new(&texture_creator);
 
         let mut rng = rand::thread_rng();
 

@@ -10,7 +10,7 @@ pub use player::*;
 pub use question::*;
 pub use ufo::*;
 
-use crate::resources::TextureManager;
+use crate::resources::AssetManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
@@ -24,7 +24,7 @@ pub trait Updatable {
 }
 
 pub trait Drawable {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager);
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager);
 }
 
 pub trait DrawableEntity: Entity + Drawable {}

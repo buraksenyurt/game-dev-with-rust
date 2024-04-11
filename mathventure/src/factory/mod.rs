@@ -6,7 +6,7 @@ pub use engine::Engine;
 pub use engine_builder::EngineBuilder;
 pub use screen::Screen;
 
-use crate::resources::TextureManager;
+use crate::resources::AssetManager;
 use rand::rngs::ThreadRng;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -18,7 +18,7 @@ pub trait GameObject {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
-        texture_manager: &TextureManager,
+        texture_manager: &AssetManager,
         randomizer: &mut ThreadRng,
         delta_time: Duration,
     ) -> MainState;

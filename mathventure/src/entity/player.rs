@@ -1,5 +1,5 @@
 use crate::entity::Drawable;
-use crate::resources::{TextureManager, BLOCK_HEIGHT, BLOCK_WIDTH};
+use crate::resources::{AssetManager, BLOCK_HEIGHT, BLOCK_WIDTH};
 use crate::utility::get_position;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -16,7 +16,7 @@ impl Player {
 }
 
 impl Drawable for Player {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
         let texture = texture_manager.get("player");
 
         let (x, y) = get_position(self.idx);

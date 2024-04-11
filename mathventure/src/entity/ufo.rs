@@ -1,5 +1,5 @@
 use crate::entity::{Drawable, Updatable};
-use crate::resources::{TextureManager, Velocity};
+use crate::resources::{AssetManager, Velocity};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -35,7 +35,7 @@ impl Updatable for Ufo {
 }
 
 impl Drawable for Ufo {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &TextureManager) {
+    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
         canvas.set_draw_color(Color::BLACK);
         let texture = texture_manager.get(&self.name);
         let rect = Rect::new(self.x, self.y, self.width, self.height);

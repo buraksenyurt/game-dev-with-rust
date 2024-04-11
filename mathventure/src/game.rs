@@ -12,7 +12,7 @@ use sdl2::EventPump;
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
 use crate::factory::{GameObject, MainState};
 use crate::resources::{
-    Level, LevelManager, TextureManager, Velocity, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
+    AssetManager, Level, LevelManager, Velocity, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
     SCREEN_HEIGHT, SCREEN_WIDTH, STANDARD_COLUMN_COUNT, UFO_HEIGHT, UFO_WIDTH,
 };
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
@@ -93,7 +93,7 @@ impl Game {
         // let direction = get_unit_vector(x as f32, y as f32, player_x as f32, player_y as f32);
         // let velocity = Velocity::new((direction.0 * 200.0) as i32, (direction.1 * 200.0) as i32);
 
-        let names = ["ufo_1", "ufo_2", "ufo_3"];
+        let names = ["owl", "hippo", "giraffe"];
         let name = names[rng.gen_range(0..names.len())];
         let directions = [
             (-200, -200),
@@ -128,7 +128,7 @@ impl GameObject for Game {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
-        texture_manager: &TextureManager,
+        texture_manager: &AssetManager,
         randomizer: &mut ThreadRng,
         delta_time: Duration,
     ) -> MainState {
