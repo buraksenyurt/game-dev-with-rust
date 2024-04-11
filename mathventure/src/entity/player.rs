@@ -1,4 +1,4 @@
-use crate::entity::{BlockType, Drawable};
+use crate::entity::Drawable;
 use crate::resources::{TextureManager, BLOCK_HEIGHT, BLOCK_WIDTH};
 use crate::utility::get_position;
 use sdl2::rect::Rect;

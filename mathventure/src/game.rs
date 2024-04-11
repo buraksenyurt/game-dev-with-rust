@@ -89,9 +89,9 @@ impl Game {
         x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
         y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
 
-        //let (player_x, player_y) = get_position(self.player.idx);
-        // let direction = get_unit_vector(x, y, player_x, player_y);
-        //let velocity = Velocity::new(direction.0 * 100, direction.1 * 100);
+        // let (player_x, player_y) = get_position(self.player.idx);
+        // let direction = get_unit_vector(x as f32, y as f32, player_x as f32, player_y as f32);
+        // let velocity = Velocity::new((direction.0 * 200.0) as i32, (direction.1 * 200.0) as i32);
 
         let names = ["ufo_1", "ufo_2", "ufo_3"];
         let name = names[rng.gen_range(0..names.len())];

@@ -14,8 +14,6 @@ pub enum BlockType {
     ExitDoor,
     QuestionTower,
     Ghost,
-    Player,
-    Ufo,
 }
 pub struct Block {
     pub idx: u32,
@@ -33,8 +31,6 @@ impl Display for BlockType {
             BlockType::ExitDoor => "exit_door",
             BlockType::QuestionTower => "question_tower",
             BlockType::Ghost => "ghost",
-            BlockType::Player => "player",
-            BlockType::Ufo => "ufo",
         };
         write!(f, "{}", value)
     }

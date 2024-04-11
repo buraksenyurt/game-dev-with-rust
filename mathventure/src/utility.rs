@@ -11,9 +11,9 @@ pub fn get_position(index: u32) -> (u32, u32) {
     )
 }
 
-// pub fn get_unit_vector(xa: u32, ya: u32, xb: u32, yb: u32) -> (u32, u32) {
+// pub fn get_unit_vector(xa: f32, ya: f32, xb: f32, yb: f32) -> (f32, f32) {
 //     let vec_ab = (xb - xa, yb - ya);
-//     let magnitude_ab = ((vec_ab.0).pow(2) + (vec_ab.1).pow(2)).sqrt();
+//     let magnitude_ab = ((vec_ab.0).powf(2.0) + (vec_ab.1).powf(2.0)).sqrt();
 //     let unit_vec_ab = (vec_ab.0 / magnitude_ab, vec_ab.1 / magnitude_ab);
 //     unit_vec_ab
 // }

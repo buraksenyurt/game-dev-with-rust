@@ -1,4 +1,4 @@
-use crate::entity::{BlockType, Drawable, Updatable};
+use crate::entity::{Drawable, Updatable};
 use crate::resources::{TextureManager, Velocity};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
