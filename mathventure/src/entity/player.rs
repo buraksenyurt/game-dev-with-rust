@@ -1,9 +1,10 @@
 use crate::entity::Drawable;
-use crate::resources::{AssetManager, BLOCK_HEIGHT, BLOCK_WIDTH};
+use crate::resources::{BLOCK_HEIGHT, BLOCK_WIDTH};
 use crate::utility::get_position;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use crate::factory::AssetManager;
 
 pub struct Player {
     pub idx: u32,
@@ -16,8 +17,8 @@ impl Player {
 }
 
 impl Drawable for Player {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
-        let texture = texture_manager.get("player");
+    fn draw(&self, canvas: &mut Canvas<Window>, asset_manager: &AssetManager) {
+        let texture = asset_manager.get("player");
 
         let (x, y) = get_position(self.idx);
         let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);

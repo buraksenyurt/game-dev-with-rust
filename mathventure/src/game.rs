@@ -10,11 +10,8 @@ use sdl2::video::Window;
 use sdl2::EventPump;
 
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
-use crate::factory::{GameObject, MainState};
-use crate::resources::{
-    AssetManager, Level, LevelManager, Velocity, BLOCK_HEIGHT, BLOCK_WIDTH, MAX_UFO_COUNT,
-    SCREEN_HEIGHT, SCREEN_WIDTH, STANDARD_COLUMN_COUNT, UFO_HEIGHT, UFO_WIDTH,
-};
+use crate::factory::{AssetManager, GameObject, MainState};
+use crate::resources::*;
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 use crate::utility::get_position;
 
@@ -128,7 +125,7 @@ impl GameObject for Game {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
-        texture_manager: &AssetManager,
+        asset_manager: &AssetManager,
         randomizer: &mut ThreadRng,
         delta_time: Duration,
     ) -> MainState {
@@ -184,15 +181,15 @@ impl GameObject for Game {
                 canvas.clear();
 
                 let question = &self.current_level.question.description;
-                self.current_map.draw(canvas, texture_manager);
-                self.player.draw(canvas, texture_manager);
+                self.current_map.draw(canvas, asset_manager);
+                self.player.draw(canvas, asset_manager);
                 ConversationBox::draw(canvas, question);
 
                 for ufo in &mut self.ufo_list {
                     ufo.update(delta_time.as_secs_f32());
                 }
                 for ufo in &self.ufo_list {
-                    ufo.draw(canvas, texture_manager);
+                    ufo.draw(canvas, asset_manager);
                 }
 
                 let now = Instant::now();

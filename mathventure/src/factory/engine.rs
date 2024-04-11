@@ -1,5 +1,4 @@
-use crate::factory::{GameObject, MainState};
-use crate::resources::AssetManager;
+use crate::factory::{AssetManager, GameObject, MainState};
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;

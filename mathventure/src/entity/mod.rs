@@ -10,9 +10,9 @@ pub use player::*;
 pub use question::*;
 pub use ufo::*;
 
-use crate::resources::AssetManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use crate::factory::AssetManager;
 
 pub trait Entity {
     fn get_type(&self) -> BlockType;
@@ -24,7 +24,7 @@ pub trait Updatable {
 }
 
 pub trait Drawable {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager);
+    fn draw(&self, canvas: &mut Canvas<Window>, asset_manager: &AssetManager);
 }
 
 pub trait DrawableEntity: Entity + Drawable {}

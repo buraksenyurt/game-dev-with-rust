@@ -37,9 +37,9 @@ impl Map {
 }
 
 impl Drawable for Map {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
+    fn draw(&self, canvas: &mut Canvas<Window>, asset_manager: &AssetManager) {
         for entity in self.tiles.iter() {
-            entity.draw(canvas, texture_manager);
+            entity.draw(canvas, asset_manager);
         }
     }
 }

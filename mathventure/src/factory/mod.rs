@@ -1,12 +1,13 @@
 pub mod engine;
 pub mod engine_builder;
 pub mod screen;
+pub mod asset_manager;
 
 pub use engine::Engine;
 pub use engine_builder::EngineBuilder;
 pub use screen::Screen;
+pub use asset_manager::AssetManager;
 
-use crate::resources::AssetManager;
 use rand::rngs::ThreadRng;
 use sdl2::render::Canvas;
 use sdl2::video::Window;

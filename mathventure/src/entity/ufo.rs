@@ -1,9 +1,10 @@
 use crate::entity::{Drawable, Updatable};
-use crate::resources::{AssetManager, Velocity};
+use crate::resources::{Velocity};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
+use crate::factory::AssetManager;
 
 pub struct Ufo {
     pub x: i32,
@@ -35,9 +36,9 @@ impl Updatable for Ufo {
 }
 
 impl Drawable for Ufo {
-    fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
+    fn draw(&self, canvas: &mut Canvas<Window>, asset_manager: &AssetManager) {
         canvas.set_draw_color(Color::BLACK);
-        let texture = texture_manager.get(&self.name);
+        let texture = asset_manager.get(&self.name);
         let rect = Rect::new(self.x, self.y, self.width, self.height);
 
         canvas.copy(texture, None, Some(rect)).unwrap();
