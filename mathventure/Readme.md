@@ -40,6 +40,12 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 - **Soru Kulesi(Question Tower):** Sorulan soruya ait tanımlı cevapları fırlatır. Doğru cevap haricinde yanlış cevaplar da fırlatır. Oyundaki konumu sabittir ama seviyeden seviyeye değişiklik gösterir.
 - **Seviye Çıkış Kapısı(Exit Door):** Çıkış kapısını ifade eden bloktur. Sabit konumdadır, her seviyede yeri değişir.
 
+### Tuş Kombinasyonları
+
+- Yön tuşları : Oyuncunun sağa, sola, yukarı, aşağı hareket etmesini sağlar.
+- Seviye tuşları : Shift + N ile sonraki seviyeye, Shift + P ile önceki seviyeye geçiş yapılabilir.
+- Çıkış : Oyunun herhangi bir noktasında Esc tuşuna basılırsa menüye dönülür. Menüde Esc tuşuna basılırsa oyundan çıkılır.
+
 ### Görsel ve Ses Tasarımı
 
 - **Görsel Stil :**
@@ -70,6 +76,12 @@ II. Seviye
 III. Seviye
 
 ![Level 3 Runtime](level_03_runtime.png)
+
+Question Tower tarafından belli yönlere doğru oyuncu tarafından yakalanılmaması gereken karakterlerin fırlatılmasına ait ekran görüntüleri.
+
+![Flying UFO 1](flying_ufo_1.png)
+
+![Flying UFO 2](flying_ufo_2.png)
 
 Oyuncu yanlış cevap verip yandığı takdirde...
 
