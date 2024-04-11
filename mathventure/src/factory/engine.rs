@@ -1,4 +1,5 @@
 use crate::factory::{GameObject, MainState};
+use crate::resources::TextureManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
@@ -15,14 +16,19 @@ impl Engine {
     pub fn run(&mut self) -> Result<(), String> {
         let mut last_update = Instant::now();
         let frame_duration = Duration::new(0, 1_000_000_000u32 / self.fps);
+        let texture_creator = self.canvas.texture_creator();
+        let texture_manager = TextureManager::new(&texture_creator);
 
         loop {
             let now = Instant::now();
             let delta = now.duration_since(last_update);
 
-            let state = self
-                .game
-                .update(&mut self.event_pump, &mut self.canvas, delta);
+            let state = self.game.update(
+                &mut self.event_pump,
+                &mut self.canvas,
+                &texture_manager,
+                delta,
+            );
 
             match state {
                 MainState::Exit => break,

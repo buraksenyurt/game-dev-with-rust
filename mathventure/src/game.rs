@@ -119,11 +119,9 @@ impl GameObject for Game {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
+        texture_manager: &TextureManager,
         delta_time: Duration,
     ) -> MainState {
-        let texture_creator = canvas.texture_creator();
-        let texture_manager = TextureManager::new(&texture_creator);
-
         match self.state {
             GameState::Failed => {
                 GameOverMenu::draw(canvas, 0, 1.).unwrap();
@@ -176,15 +174,15 @@ impl GameObject for Game {
                 canvas.clear();
 
                 let question = &self.current_level.question.description;
-                self.current_map.draw(canvas, &texture_manager);
-                self.player.draw(canvas, &texture_manager);
+                self.current_map.draw(canvas, texture_manager);
+                self.player.draw(canvas, texture_manager);
                 ConversationBox::draw(canvas, question);
 
                 for ufo in &mut self.ufo_list {
                     ufo.update(delta_time.as_secs_f32());
                 }
                 for ufo in &self.ufo_list {
-                    ufo.draw(canvas, &texture_manager);
+                    ufo.draw(canvas, texture_manager);
                 }
 
                 let now = Instant::now();

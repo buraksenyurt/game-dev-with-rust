@@ -6,6 +6,7 @@ pub use engine::Engine;
 pub use engine_builder::EngineBuilder;
 pub use screen::Screen;
 
+use crate::resources::TextureManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
@@ -16,6 +17,7 @@ pub trait GameObject {
         &mut self,
         event_pump: &mut EventPump,
         canvas: &mut Canvas<Window>,
+        texture_manager: &TextureManager,
         delta_time: Duration,
     ) -> MainState;
 }
