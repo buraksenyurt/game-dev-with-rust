@@ -10,7 +10,9 @@ use sdl2::video::Window;
 use sdl2::EventPump;
 
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
-use crate::factory::{AssetManager, Dimension, GameObject, Location, MainState, Math, Vector};
+use crate::factory::{
+    AssetManager, Dimension, GameObject, Location, MainState, Math, Rectangle, Vector,
+};
 use crate::resources::*;
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
 
@@ -192,6 +194,14 @@ impl GameObject for Game {
                 }
                 for ufo in &self.ufo_list {
                     ufo.draw(canvas, asset_manager);
+                }
+                for ufo in &mut self.ufo_list {
+                    let r1 = self.player.get_rect();
+                    let r2 = ufo.get_rect();
+                    if !ufo.hit && Math::check_collision(r1, r2) {
+                        //println!("Collision detected!!! {:?}", Instant::now());
+                        ufo.hit = true;
+                    }
                 }
 
                 let now = Instant::now();

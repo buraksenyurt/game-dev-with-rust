@@ -1,5 +1,5 @@
 use crate::entity::{Drawable, Updatable};
-use crate::factory::{AssetManager, Dimension, Location, Vector};
+use crate::factory::{AssetManager, Dimension, Location, Rectangle, Vector};
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -10,6 +10,7 @@ pub struct Ufo {
     pub velocity: Vector,
     pub dimension: Dimension,
     pub name: String,
+    pub hit: bool,
 }
 
 impl Ufo {
@@ -19,7 +20,14 @@ impl Ufo {
             velocity,
             dimension,
             name,
+            hit: false,
         }
+    }
+    pub fn get_rect(&self) -> Rectangle {
+        Rectangle::new(
+            Location::new(self.location.x, self.location.y),
+            Dimension::new(self.dimension.width, self.dimension.height),
+        )
     }
 }
 

@@ -1,5 +1,5 @@
 use crate::entity::Drawable;
-use crate::factory::{AssetManager, Dimension, Math};
+use crate::factory::{AssetManager, Dimension, Location, Math, Rectangle};
 use crate::resources::{BLOCK_HEIGHT, BLOCK_WIDTH, STANDARD_COLUMN_COUNT};
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -12,6 +12,14 @@ pub struct Player {
 impl Player {
     pub fn new(idx: u32) -> Self {
         Self { idx }
+    }
+
+    pub fn get_rect(&self) -> Rectangle {
+        let dimension = Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT);
+        let player_position =
+            Math::get_position(self.idx, dimension.clone(), STANDARD_COLUMN_COUNT);
+        let location = Location::new(player_position.0 as i32, player_position.1 as i32);
+        Rectangle::new(location, dimension)
     }
 }
 
