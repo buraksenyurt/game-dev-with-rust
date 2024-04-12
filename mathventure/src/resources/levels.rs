@@ -24,9 +24,9 @@ impl LevelManager {
                 \nwwtwttttte\
                 \nwtssstwttw\
                 \npsswtqtwtw\
-                \nwwwwtwwwsw\
-                \nwwwttttstw\
-                \nwwwwwttstw\
+                \nwswwtwwwsw\
+                \nwtwttttstw\
+                \nwttswttstw\
                 \nwwwwwwwwww"
                 .to_string(),
             question:Question::new("Bir çemberin çevresinin çapına oranı PI sayısı ile ifade edilir. Doğru mu yanlış mı?".to_string(),

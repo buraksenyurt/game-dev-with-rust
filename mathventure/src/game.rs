@@ -4,17 +4,16 @@ use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
 use sdl2::keyboard::{Keycode, Mod};
+use sdl2::libc::tcsendbreak;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::EventPump;
 
-use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
-use crate::factory::{
-    AssetManager, Dimension, GameObject, Location, MainState, Math, Rectangle, Vector,
-};
+use crate::entity::*;
+use crate::factory::*;
 use crate::resources::*;
-use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
+use crate::ui::*;
 
 pub enum GameState {
     Failed,
@@ -135,7 +134,7 @@ impl GameObject for Game {
     ) -> MainState {
         match self.state {
             GameState::Failed => {
-                GameOverMenu::draw(canvas, 0, 1.).unwrap();
+                GameOverMenu::draw(canvas, 0).unwrap();
                 for event in event_pump.poll_iter() {
                     match event {
                         Event::Quit { .. }
@@ -183,104 +182,108 @@ impl GameObject for Game {
             GameState::Playing(_level) => {
                 canvas.set_draw_color(Color::BLACK);
                 canvas.clear();
+                if self.player.live == 0 {
+                    self.state = GameState::Failed;
+                } else {
+                    let question = &self.current_level.question.description;
+                    self.current_map.draw(canvas, asset_manager);
+                    self.player.draw(canvas, asset_manager);
+                    ConversationBox::draw(canvas, question, self.player.live);
 
-                let question = &self.current_level.question.description;
-                self.current_map.draw(canvas, asset_manager);
-                self.player.draw(canvas, asset_manager);
-                ConversationBox::draw(canvas, question);
-
-                for ufo in &mut self.ufo_list {
-                    ufo.update(delta_time.as_secs_f32());
-                }
-                for ufo in &self.ufo_list {
-                    ufo.draw(canvas, asset_manager);
-                }
-                for ufo in &mut self.ufo_list {
-                    let r1 = self.player.get_rect();
-                    let r2 = ufo.get_rect();
-                    if !ufo.hit && Math::check_collision(r1, r2) {
-                        //println!("Collision detected!!! {:?}", Instant::now());
-                        ufo.hit = true;
+                    for ufo in &mut self.ufo_list {
+                        ufo.update(delta_time.as_secs_f32());
                     }
-                }
-
-                let now = Instant::now();
-                if now.duration_since(self.last_ufo_time) >= self.next_ufo_delay
-                    && self.ufo_list.len() < MAX_UFO_COUNT
-                {
-                    self.spawn_ufo(randomizer);
-                    self.last_ufo_time = now;
-                }
-
-                for event in event_pump.poll_iter() {
-                    match event {
-                        Event::Quit { .. }
-                        | Event::KeyDown {
-                            keycode: Some(Keycode::Escape),
-                            ..
-                        } => {
-                            self.state = GameState::MainMenu;
-                            break;
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::Right),
-                            ..
-                        } => {
-                            self.move_player(Direction::Right);
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::Left),
-                            ..
-                        } => {
-                            self.move_player(Direction::Left);
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::Up),
-                            ..
-                        } => {
-                            self.move_player(Direction::Up);
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::Down),
-                            ..
-                        } => {
-                            self.move_player(Direction::Down);
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::N),
-                            keymod,
-                            ..
-                        } => {
-                            if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
-                                && self.current_level.id < self.max_level
-                            {
-                                let new_level = self.current_level.id + 1;
-                                self.init(new_level);
-                            }
-                        }
-                        Event::KeyDown {
-                            keycode: Some(Keycode::P),
-                            keymod,
-                            ..
-                        } => {
-                            if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
-                                && self.current_level.id > 0
-                            {
-                                let new_level = self.current_level.id - 1;
-                                self.init(new_level);
-                            }
-                        }
-                        _ => {}
+                    for ufo in &self.ufo_list {
+                        ufo.draw(canvas, asset_manager);
                     }
-                }
+                    for ufo in &mut self.ufo_list {
+                        let r1 = self.player.get_rect();
+                        let r2 = ufo.get_rect();
+                        if !ufo.hit && Math::check_collision(r1, r2) {
+                            ufo.hit = true;
+                            self.player.live -= 1;
+                        }
+                    }
 
-                self.ufo_list.retain(|u| {
-                    (u.location.x + u.dimension.width as i32) > 0
-                        && u.location.x < SCREEN_WIDTH as i32
-                        && (u.location.y + u.dimension.height as i32) > 0
-                        && u.location.y < SCREEN_HEIGHT as i32
-                });
-                //println!("Current ufo count {}", self.ufo_list.len());
+                    let now = Instant::now();
+                    if now.duration_since(self.last_ufo_time) >= self.next_ufo_delay
+                        && self.ufo_list.len() < MAX_UFO_COUNT
+                    {
+                        self.spawn_ufo(randomizer);
+                        self.last_ufo_time = now;
+                    }
+
+                    for event in event_pump.poll_iter() {
+                        match event {
+                            Event::Quit { .. }
+                            | Event::KeyDown {
+                                keycode: Some(Keycode::Escape),
+                                ..
+                            } => {
+                                self.state = GameState::MainMenu;
+                                break;
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Right),
+                                ..
+                            } => {
+                                self.move_player(Direction::Right);
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Left),
+                                ..
+                            } => {
+                                self.move_player(Direction::Left);
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Up),
+                                ..
+                            } => {
+                                self.move_player(Direction::Up);
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::Down),
+                                ..
+                            } => {
+                                self.move_player(Direction::Down);
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::N),
+                                keymod,
+                                ..
+                            } => {
+                                if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
+                                    && self.current_level.id < self.max_level
+                                {
+                                    let new_level = self.current_level.id + 1;
+                                    self.init(new_level);
+                                }
+                            }
+                            Event::KeyDown {
+                                keycode: Some(Keycode::P),
+                                keymod,
+                                ..
+                            } => {
+                                if keymod.intersects(Mod::LSHIFTMOD | Mod::RSHIFTMOD)
+                                    && self.current_level.id > 0
+                                {
+                                    let new_level = self.current_level.id - 1;
+                                    self.init(new_level);
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+
+                    self.ufo_list.retain(|u| {
+                        (u.location.x + u.dimension.width as i32) > 0
+                            && u.location.x < SCREEN_WIDTH as i32
+                            && (u.location.y + u.dimension.height as i32) > 0
+                            && u.location.y < SCREEN_HEIGHT as i32
+                            && !u.hit
+                    });
+                    //println!("Current ufo count {}", self.ufo_list.len());
+                }
 
                 canvas.present();
             }
