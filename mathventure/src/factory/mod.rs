@@ -1,12 +1,14 @@
+pub mod asset_manager;
 pub mod engine;
 pub mod engine_builder;
+mod math;
 pub mod screen;
-pub mod asset_manager;
 
+pub use asset_manager::AssetManager;
 pub use engine::Engine;
 pub use engine_builder::EngineBuilder;
+pub use math::*;
 pub use screen::Screen;
-pub use asset_manager::AssetManager;
 
 use rand::rngs::ThreadRng;
 use sdl2::render::Canvas;

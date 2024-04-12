@@ -10,10 +10,9 @@ use sdl2::video::Window;
 use sdl2::EventPump;
 
 use crate::entity::{BlockType, Drawable, Map, Player, Ufo, Updatable};
-use crate::factory::{AssetManager, GameObject, MainState};
+use crate::factory::{AssetManager, Dimension, GameObject, Location, MainState, Math, Vector};
 use crate::resources::*;
 use crate::ui::{ConversationBox, GameOverMenu, MainMenu};
-use crate::utility::get_position;
 
 pub enum GameState {
     Failed,
@@ -82,7 +81,12 @@ impl Game {
     }
 
     fn spawn_ufo(&mut self, rng: &mut ThreadRng) {
-        let (mut x, mut y) = get_position(self.current_map.tower_idx);
+        let dimension = Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT);
+        let (mut x, mut y) = Math::get_position(
+            self.current_map.tower_idx,
+            dimension.clone(),
+            STANDARD_COLUMN_COUNT,
+        );
         x += (BLOCK_WIDTH / 2) - UFO_WIDTH / 2;
         y += (BLOCK_HEIGHT / 2) - UFO_HEIGHT / 2;
 
@@ -101,13 +105,11 @@ impl Game {
             (200, 200),
         ];
         let direction = directions[rng.gen_range(0..directions.len())];
-        let velocity = Velocity::new(direction.0, direction.1);
+        let velocity = Vector::new(direction.0 as f32, direction.1 as f32);
         let ufo = Ufo::new(
-            x as i32,
-            y as i32,
+            Location::new(x as i32, y as i32),
             velocity,
-            UFO_WIDTH,
-            UFO_HEIGHT,
+            Dimension::new(UFO_WIDTH, UFO_HEIGHT),
             name.to_string(),
         );
         self.ufo_list.push(ufo);
@@ -263,10 +265,10 @@ impl GameObject for Game {
                 }
 
                 self.ufo_list.retain(|u| {
-                    (u.x + u.width as i32) > 0
-                        && u.x < SCREEN_WIDTH as i32
-                        && (u.y + u.height as i32) > 0
-                        && u.y < SCREEN_HEIGHT as i32
+                    (u.location.x + u.dimension.width as i32) > 0
+                        && u.location.x < SCREEN_WIDTH as i32
+                        && (u.location.y + u.dimension.height as i32) > 0
+                        && u.location.y < SCREEN_HEIGHT as i32
                 });
                 //println!("Current ufo count {}", self.ufo_list.len());
 

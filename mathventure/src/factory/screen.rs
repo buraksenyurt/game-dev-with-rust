@@ -1,15 +1,12 @@
+use crate::factory::Dimension;
+
 pub struct Screen {
     pub title: String,
-    pub width: u32,
-    pub height: u32,
+    pub dimension: Dimension,
 }
 
 impl Screen {
-    pub fn new(title: String, width: u32, height: u32) -> Self {
-        Self {
-            title,
-            width,
-            height,
-        }
+    pub fn new(title: String, dimension: Dimension) -> Self {
+        Self { title, dimension }
     }
 }

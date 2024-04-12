@@ -25,7 +25,11 @@ impl EngineBuilder {
     pub fn setup_screen(mut self, screen: Screen) -> Result<Self, String> {
         let video_subsystem = self.sdl_context.video().map_err(|e| e.to_string())?;
         let window = video_subsystem
-            .window(&screen.title, screen.width, screen.height)
+            .window(
+                &screen.title,
+                screen.dimension.width,
+                screen.dimension.height,
+            )
             .position_centered()
             .build()
             .map_err(|e| e.to_string())?;

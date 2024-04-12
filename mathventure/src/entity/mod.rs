@@ -10,9 +10,9 @@ pub use player::*;
 pub use question::*;
 pub use ufo::*;
 
+use crate::factory::AssetManager;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
-use crate::factory::AssetManager;
 
 pub trait Entity {
     fn get_type(&self) -> BlockType;

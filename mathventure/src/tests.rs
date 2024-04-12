@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
     use crate::entity::*;
+    use crate::factory::{Dimension, Math};
     use crate::game::Game;
-    use crate::resources::LevelManager;
-    use crate::utility::{get_index, get_position};
+    use crate::resources::{LevelManager, BLOCK_HEIGHT, BLOCK_WIDTH, STANDARD_COLUMN_COUNT};
 
     #[test]
     fn load_map_from_string_content_test() {
@@ -37,14 +37,16 @@ mod tests {
     fn get_cell_index_from_position_test() {
         let x = 32;
         let y = 64;
-        let index = get_index(x, y);
+        let dimension = Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT);
+        let index = Math::get_index(x, y, dimension, STANDARD_COLUMN_COUNT);
         assert_eq!(index, 10);
     }
 
     #[test]
     fn get_cell_position_from_index_test() {
         let index = 12;
-        let position = get_position(index);
+        let dimension = Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT);
+        let position = Math::get_position(index, dimension, STANDARD_COLUMN_COUNT);
         assert_eq!(position.0, 128);
         assert_eq!(position.1, 64);
     }

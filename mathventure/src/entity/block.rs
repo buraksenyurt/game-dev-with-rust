@@ -1,6 +1,6 @@
 use crate::entity::*;
+use crate::factory::{Dimension, Math};
 use crate::resources::*;
-use crate::utility::get_position;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
@@ -17,8 +17,7 @@ pub enum BlockType {
 }
 pub struct Block {
     pub idx: u32,
-    pub width: u32,
-    pub height: u32,
+    pub dimension: Dimension,
     pub block_type: BlockType,
 }
 
@@ -40,8 +39,7 @@ impl Block {
     pub fn new(idx: u32, block_type: BlockType) -> Self {
         Self {
             idx,
-            width: BLOCK_WIDTH,
-            height: BLOCK_HEIGHT,
+            dimension: Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT),
             block_type,
         }
     }
@@ -59,9 +57,10 @@ impl Entity for Block {
 impl Drawable for Block {
     fn draw(&self, canvas: &mut Canvas<Window>, texture_manager: &AssetManager) {
         let texture = texture_manager.get(&self.block_type.to_string());
+        let dimension = Dimension::new(BLOCK_WIDTH, BLOCK_HEIGHT);
 
-        let (x, y) = get_position(self.idx);
-        let rect = Rect::new(x as i32, y as i32, BLOCK_WIDTH, BLOCK_HEIGHT);
+        let (x, y) = Math::get_position(self.idx, dimension.clone(), STANDARD_COLUMN_COUNT);
+        let rect = Rect::new(x as i32, y as i32, dimension.width, dimension.height);
 
         canvas.copy(texture, None, Some(rect)).unwrap();
     }
