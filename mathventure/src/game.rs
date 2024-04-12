@@ -94,15 +94,15 @@ impl Game {
         // let direction = get_unit_vector(x as f32, y as f32, player_x as f32, player_y as f32);
         // let velocity = Velocity::new((direction.0 * 200.0) as i32, (direction.1 * 200.0) as i32);
 
-        let names = ["owl", "hippo", "giraffe"];
+        let names = ["owl", "hippo", "giraffe", "correct", "wrong"];
         let name = names[rng.gen_range(0..names.len())];
         let directions = [
-            (-200, -200),
-            (0, -200),
-            (0, 200),
-            (200, 0),
-            (-200, 0),
-            (200, 200),
+            (-125, -125),
+            (0, -125),
+            (0, 125),
+            (125, 0),
+            (-125, 0),
+            (125, 125),
         ];
         let direction = directions[rng.gen_range(0..directions.len())];
         let velocity = Vector::new(direction.0 as f32, direction.1 as f32);
@@ -133,7 +133,7 @@ impl GameObject for Game {
     ) -> MainState {
         match self.state {
             GameState::Failed => {
-                GameOverMenu::draw(canvas, 0).unwrap();
+                GameOverMenu::draw(canvas, self.player.point).unwrap();
                 for event in event_pump.poll_iter() {
                     match event {
                         Event::Quit { .. }
@@ -187,7 +187,7 @@ impl GameObject for Game {
                     let question = &self.current_level.question.description;
                     self.current_map.draw(canvas, asset_manager);
                     self.player.draw(canvas, asset_manager);
-                    ConversationBox::draw(canvas, question, self.player.live);
+                    ConversationBox::draw(canvas, question, self.player.live, self.player.point);
 
                     for ufo in &mut self.ufo_list {
                         ufo.update(delta_time.as_secs_f32());
@@ -200,7 +200,12 @@ impl GameObject for Game {
                         let r2 = ufo.get_rect();
                         if !ufo.hit && Math::check_collision(r1, r2) {
                             ufo.hit = true;
-                            self.player.live -= 1;
+                            if ufo.name == self.current_level.question.expected_answer {
+                                self.player.point += 10;
+                                //TODO@Burak Go to next level with middle info screen
+                            } else {
+                                self.player.live -= 1;
+                            }
                         }
                     }
 

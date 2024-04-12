@@ -5,7 +5,7 @@ use sdl2::render::WindowCanvas;
 pub struct GameOverMenu;
 
 impl GameOverMenu {
-    pub fn draw(canvas: &mut WindowCanvas, point: u64) -> Result<(), String> {
+    pub fn draw(canvas: &mut WindowCanvas, point: i32) -> Result<(), String> {
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();
 

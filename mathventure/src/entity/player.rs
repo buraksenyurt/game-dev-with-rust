@@ -8,11 +8,16 @@ use sdl2::video::Window;
 pub struct Player {
     pub idx: u32,
     pub live: i8,
+    pub point: i32,
 }
 
 impl Player {
     pub fn new(idx: u32) -> Self {
-        Self { idx, live: 3 }
+        Self {
+            idx,
+            live: 3,
+            point: 0,
+        }
     }
 
     pub fn get_rect(&self) -> Rectangle {

@@ -6,7 +6,7 @@ use sdl2::render::WindowCanvas;
 pub struct ConversationBox;
 
 impl ConversationBox {
-    pub fn draw(canvas: &mut WindowCanvas, question: &str, live: i8) {
+    pub fn draw(canvas: &mut WindowCanvas, question: &str, live: i8, point: i32) {
         let map_height = STANDARD_ROW_COUNT * BLOCK_HEIGHT;
         let y = (map_height + (SCREEN_WIDTH - map_height) / 2) - BLOCK_HEIGHT + 10;
         draw_vertical_center_text(canvas, question.to_string(), 24, Color::WHITE, y as i32)
@@ -14,7 +14,7 @@ impl ConversationBox {
 
         draw_vertical_center_text(
             canvas,
-            format!("Kalan Can {}", live),
+            format!("Kalan Can {}. Puan {}", live, point),
             24,
             Color::RED,
             SCREEN_HEIGHT as i32 - 50,

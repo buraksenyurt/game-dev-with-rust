@@ -30,7 +30,7 @@ impl LevelManager {
                 \nwwwwwwwwww"
                 .to_string(),
             question:Question::new("Bir çemberin çevresinin çapına oranı PI sayısı ile ifade edilir. Doğru mu yanlış mı?".to_string(),
-            "D".to_string())
+            "correct".to_string())
         };
         maps.push(first_level);
 
@@ -47,7 +47,7 @@ impl LevelManager {
                 \nwwwtwwwwww"
                 .to_string(),
             question: Question::new("Her dik üçgenin hipotenüsü, diğer iki kenarının uzunluklarının toplamına eşittir. Doğru mu Yanlış mı?".to_string(),
-            "Y".to_string())
+            "wrong".to_string())
         };
         maps.push(second_level);
 
@@ -65,7 +65,7 @@ impl LevelManager {
                 .to_string(),
             question: Question::new(
                 "Bir üçgenin iç açılarının toplamı 180 derecedir. Doğru mu Yanlış mı?".to_string(),
-                "D".to_string(),
+                "correct".to_string(),
             ),
         };
         maps.push(third_level);
