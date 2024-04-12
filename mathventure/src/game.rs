@@ -4,7 +4,6 @@ use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
 use sdl2::keyboard::{Keycode, Mod};
-use sdl2::libc::tcsendbreak;
 use sdl2::pixels::Color;
 use sdl2::render::Canvas;
 use sdl2::video::Window;

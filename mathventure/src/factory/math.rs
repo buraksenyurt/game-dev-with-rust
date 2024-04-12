@@ -70,14 +70,9 @@ impl Math {
         let rect2_right = rectangle_2.location.x + rectangle_2.dimension.width as i32;
         let rect2_bottom = rectangle_2.location.y + rectangle_2.dimension.height as i32;
 
-        if rectangle_1.location.x < rect2_right
+        rectangle_1.location.x < rect2_right
             && rect1_right > rectangle_2.location.x
             && rectangle_1.location.y < rect2_bottom
             && rect1_bottom > rectangle_2.location.y
-        {
-            true
-        } else {
-            false
-        }
     }
 }
