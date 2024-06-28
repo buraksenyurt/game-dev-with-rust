@@ -1,8 +1,23 @@
 # Mono Bird
 
+![Game Time](game_time.png)
+
 Rust programlama dili ve SDL2 kütüphanesini kullanarak geliştirmeye çalıştığım basit bir Flappy Bird klonu.
 
-## Genel Notlar
+- [Mono Bird](#mono-bird)
+  - [Genel Bilgiler](#genel-bilgiler)
+    - [Sorular](#sorular)
+  - [Game Design Document](#game-design-document)
+    - [Oyun Tanımı](#oyun-tanımı)
+    - [Oynanış](#oynanış)
+    - [Oyun Mekanikleri](#oyun-mekanikleri)
+    - [Görsel ve Ses Tasarımı](#görsel-ve-ses-tasarımı)
+    - [Kullanıcı Arayüzü ve Deneyimi](#kullanıcı-arayüzü-ve-deneyimi)
+    - [Geliştirme Takvimi](#geliştirme-takvimi)
+    - [Teknik Detay](#teknik-detay)
+    - [Pazarlama ve Hedef Kitle](#pazarlama-ve-hedef-kitle)
+
+## Genel Bilgiler
 
 Lunar Landing isimli terminal oyununda da SDL2 kütüphanesini kullanmıştım. Bu klon oyunda da aynı kütüphaneyi kullanıyorum. Bu sefer bir oyun motorunun temellerini de atmaya çalışıyorum. Örneğin main fonksiyonunda doğrudan oyun döngüsünü başlatmak yerine, bazı setup ayarlamalarının yapıldığı, asıl game nesnesinin kullanıldığı bir başka nesneden yararlanmaya çalışıyorum.
 
@@ -19,9 +34,9 @@ fn main() -> Result<(), String> {
 }
 ```
 
-Burada EngineBuilder tarafında basit Builder tasarım kalıbını ele alarak Fluent API yaklaşımında olduğu gibi bir engine nesnesi oluşturmaya çalışıyorum. Rust tarafındaki pek çok oyun motorunda buna benzer bir yaklaşım söz konusu. Bunu keşfetmeye çalışıyorum diyebilirim. 
+Burada EngineBuilder tarafında basit Builder tasarım kalıbını ele alarak Fluent API yaklaşımında olduğu gibi bir engine nesnesi oluşturmaya çalışıyorum. Rust tarafındaki pek çok oyun motorunda buna benzer bir yaklaşım söz konusu. Bunu keşfetmeye çalışıyorum diyebilirim.
 
-Çalışmadaki amaçlarımdan birisi de oyun geliştirirken ki soyutlamaları daha doğru kullanabilmek ve hatta ECS _(Entity Component System)_ ihtiyacını ortaya koyabilmek. 
+Çalışmadaki amaçlarımdan birisi de oyun geliştirirken ki soyutlamaları daha doğru kullanabilmek ve hatta ECS _(Entity Component System)_ ihtiyacını ortaya koyabilmek.
 
 ### Sorular
 
@@ -38,7 +53,7 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 - **Adı  :** Mono Bird
 - **Türü :** Terminal tabanlı Arcade / Obstacle Avoidance (Macera / Engelden Kaçınma)
 - **Platform :** Linux, Windows, MacOs Terminal
-- **Geliştirici : ** Burak Selim Şenyurt / Bağımsız Programcı
+- **Geliştirici :** Burak Selim Şenyurt / Bağımsız Programcı
 
 ### Oynanış
 
@@ -60,11 +75,11 @@ Oyuna ait taslak tasarım dokümanı aşağıdaki gibidir.
 ### Görsel ve Ses Tasarımı
 
 - **Görsel Stil :**
-    - Görsel tasarım tamamen vektör tasarımlara yöneliktir.
-    - Renk tonlaması olarak sadece siyah, beyaz ve gri kullanılmıştır.
+  - Görsel tasarım tamamen vektör tasarımlara yöneliktir.
+  - Renk tonlaması olarak sadece siyah, beyaz ve gri kullanılmıştır.
 - **Ses ve Müzik :**
-    - Ses efektleri basittir(Sadece kanat çırpma sesi ve puan kazanma sesi)
-    - Arka fon müziği kullanılmamaktadır.
+  - Ses efektleri basittir(Sadece kanat çırpma sesi ve puan kazanma sesi)
+  - Arka fon müziği kullanılmamaktadır.
 
 ### Kullanıcı Arayüzü ve Deneyimi
 
@@ -104,5 +119,5 @@ Oyuncu yanarsa
 ### Pazarlama ve Hedef Kitle
 
 - **Hedef Kitle :**
-    - Sadece Rust dilini ve SDL2 kütüphanesinin örnek kullanımını öğrenmeye çalışan amatör oyun geliştiricileri.
+  - Sadece Rust dilini ve SDL2 kütüphanesinin örnek kullanımını öğrenmeye çalışan amatör oyun geliştiricileri.
 - **Pazarlama Stratejisi:** NAN
