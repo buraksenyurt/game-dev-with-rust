@@ -1,7 +1,6 @@
 use crate::components::*;
 use crate::constants::*;
 use bevy::asset::Assets;
-use bevy::input::keyboard::KeyboardInput;
 use bevy::math::Vec2;
 use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
@@ -10,7 +9,7 @@ pub fn spawn_camera(mut commands: Commands) {
     commands.spawn_empty().insert(Camera2dBundle::default());
 }
 
-pub fn draw_all(mut positions: Query<(&mut Transform, &Position)>) {
+pub fn draw_npc(mut positions: Query<(&mut Transform, &Position), Without<Player>>) {
     for (mut transform, position) in &mut positions {
         transform.translation = position.0.extend(0.);
     }
@@ -76,5 +75,43 @@ pub fn spawn_towers(
                 },
             ));
         }
+    }
+}
+
+pub fn handle_player_rotations(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut player_query: Query<(&mut Transform, &mut Dir), With<Player>>,
+) {
+    for (mut transform, mut direction) in &mut player_query {
+        if keyboard_input.pressed(KeyCode::ArrowRight) {
+            transform.rotate_z(-ROTATION_ANGLE);
+            let rotation = Quat::from_rotation_z(-ROTATION_ANGLE);
+            let new_direction = rotation * direction.0.extend(0.0);
+            direction.0 = new_direction.truncate();
+        }
+
+        if keyboard_input.pressed(KeyCode::ArrowLeft) {
+            transform.rotate_z(ROTATION_ANGLE);
+            let rotation = Quat::from_rotation_z(ROTATION_ANGLE);
+            let new_direction = rotation * direction.0.extend(0.0);
+            direction.0 = new_direction.truncate();
+        }
+    }
+}
+
+pub fn move_forward_player(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut player_query: Query<(&mut Transform, &mut Velocity, &Dir), With<Player>>,
+    timer: Res<Time>,
+) {
+    for (mut transform, mut velocity, direction) in &mut player_query {
+        if keyboard_input.pressed(KeyCode::Space) {
+            velocity.0 = direction.0.normalize() * TRIANGLE_SPEED;
+        } else {
+            velocity.0 = Vec2::ZERO;
+        }
+
+        let translation = velocity.0 * timer.delta_seconds();
+        transform.translation += Vec3::new(translation.x, translation.y, 0.0);
     }
 }

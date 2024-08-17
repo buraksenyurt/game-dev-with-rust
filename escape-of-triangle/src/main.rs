@@ -9,6 +9,9 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, (spawn_towers, spawn_camera, spawn_player))
-        .add_systems(Update, draw_all)
+        .add_systems(
+            Update,
+            (handle_player_rotations, move_forward_player.after(handle_player_rotations), draw_npc),
+        )
         .run();
 }
