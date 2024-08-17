@@ -8,7 +8,7 @@ pub struct Position(pub Vec2);
 pub struct Velocity(pub Vec2);
 
 #[derive(Component, Debug)]
-pub struct Dir(pub Vec2);
+pub struct Direction(pub Vec2);
 
 #[derive(Component)]
 pub struct Tower;
@@ -34,7 +34,7 @@ impl TowerBundle {
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub player: Player,
-    pub direction: Dir,
+    pub direction: Direction,
     pub position: Position,
     pub velocity: Velocity,
 }
@@ -43,7 +43,7 @@ impl PlayerBundle {
     pub fn new(x: f32, y: f32) -> Self {
         Self {
             player: Player,
-            direction: Dir(Vec2::new(1., 0.)),
+            direction: Direction(Vec2::new(1., 0.)),
             position: Position(Vec2::new(x, y)),
             velocity: Velocity(Vec2::ZERO),
         }

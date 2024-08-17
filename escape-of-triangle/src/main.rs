@@ -11,7 +11,10 @@ fn main() {
         .add_systems(Startup, (spawn_towers, spawn_camera, spawn_player))
         .add_systems(
             Update,
-            (handle_player_rotations, move_forward_player.after(handle_player_rotations), draw_npc),
+            (
+                handle_player_rotations,
+                move_forward_player.after(handle_player_rotations),
+            ),
         )
         .run();
 }

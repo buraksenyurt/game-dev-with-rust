@@ -9,12 +9,6 @@ pub fn spawn_camera(mut commands: Commands) {
     commands.spawn_empty().insert(Camera2dBundle::default());
 }
 
-pub fn draw_npc(mut positions: Query<(&mut Transform, &Position), Without<Player>>) {
-    for (mut transform, position) in &mut positions {
-        transform.translation = position.0.extend(0.);
-    }
-}
-
 pub fn spawn_player(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -36,6 +30,10 @@ pub fn spawn_player(
             MaterialMesh2dBundle {
                 mesh: mesh_handle.into(),
                 material: material_handle,
+                transform: Transform {
+                    translation: Vec3::new(w_width * 0.25, w_height * 0.25, 0.0),
+                    ..default()
+                },
                 ..default()
             },
         ));
@@ -71,6 +69,10 @@ pub fn spawn_towers(
                 MaterialMesh2dBundle {
                     mesh: mesh_handle.into(),
                     material: material_handle,
+                    transform: Transform {
+                        translation: Vec3::new(position.x, position.y, 0.0),
+                        ..default()
+                    },
                     ..default()
                 },
             ));
@@ -80,7 +82,7 @@ pub fn spawn_towers(
 
 pub fn handle_player_rotations(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut player_query: Query<(&mut Transform, &mut Dir), With<Player>>,
+    mut player_query: Query<(&mut Transform, &mut crate::components::Direction), With<Player>>,
 ) {
     for (mut transform, mut direction) in &mut player_query {
         if keyboard_input.pressed(KeyCode::ArrowRight) {
@@ -101,7 +103,10 @@ pub fn handle_player_rotations(
 
 pub fn move_forward_player(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut player_query: Query<(&mut Transform, &mut Velocity, &Dir), With<Player>>,
+    mut player_query: Query<
+        (&mut Transform, &mut Velocity, &crate::components::Direction),
+        With<Player>,
+    >,
     timer: Res<Time>,
 ) {
     for (mut transform, mut velocity, direction) in &mut player_query {
