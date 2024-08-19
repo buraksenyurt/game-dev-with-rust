@@ -142,3 +142,64 @@ pub fn move_forward_player(
         transform.translation += Vec3::new(translation.x, translation.y, 0.0);
     }
 }
+
+pub fn board_check(
+    mut player_query: Query<(&mut Transform, &mut Position, &mut Velocity), With<Player>>,
+    window: Query<&Window>,
+) {
+    if let Ok(window) = window.get_single() {
+        let half_width = window.width() * 0.5;
+        let half_height = window.height() * 0.5;
+
+        if let Ok((mut transform, mut position, mut velocity)) = player_query.get_single_mut() {
+            let mut new_translation = transform.translation;
+            if new_translation.x <= -half_width {
+                new_translation.x = -half_width;
+                velocity.0 = Vec2::ZERO;
+            } else if new_translation.x >= half_width {
+                new_translation.x = half_width;
+                velocity.0 = Vec2::ZERO;
+            }
+
+            if new_translation.y <= -half_height {
+                new_translation.y = -half_height;
+                velocity.0 = Vec2::ZERO;
+            } else if new_translation.y >= half_height {
+                new_translation.y = half_height;
+                velocity.0 = Vec2::ZERO;
+            }
+
+            transform.translation = new_translation;
+            position.0 = transform.translation.truncate();
+        }
+    }
+}
+
+pub fn wrap_around(
+    mut player_query: Query<(&mut Transform, &mut Position), With<Player>>,
+    window: Query<&Window>,
+) {
+    if let Ok(window) = window.get_single() {
+        let half_width = window.width() * 0.5;
+        let half_height = window.height() * 0.5;
+
+        if let Ok((mut transform, mut position)) = player_query.get_single_mut() {
+            let mut new_translation = transform.translation;
+
+            if new_translation.x < -half_width {
+                new_translation.x = half_width;
+            } else if new_translation.x > half_width {
+                new_translation.x = -half_width;
+            }
+
+            if new_translation.y < -half_height {
+                new_translation.y = half_height;
+            } else if new_translation.y > half_height {
+                new_translation.y = -half_height;
+            }
+
+            transform.translation = new_translation;
+            position.0 = transform.translation.truncate();
+        }
+    }
+}

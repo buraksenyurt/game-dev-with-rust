@@ -14,6 +14,7 @@ fn main() {
             (
                 handle_player_rotations,
                 move_forward_player.after(handle_player_rotations),
+                wrap_around,
             ),
         )
         .run();
