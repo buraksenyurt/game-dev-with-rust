@@ -5,7 +5,7 @@ use bevy::math::Vec3;
 use bevy::prelude::*;
 
 const INITIAL_POSITION: Vec3 = Vec3::new(0.0, 0.0, 0.0);
-const VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
+const _VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 
 pub struct ShuttlePlugin;
 impl Plugin for ShuttlePlugin {
