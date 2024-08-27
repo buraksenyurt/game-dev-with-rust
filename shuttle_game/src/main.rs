@@ -3,12 +3,14 @@ mod camera;
 mod log;
 mod movement;
 mod pickup_crate;
+mod planet;
 mod shuttle;
 
 use crate::assets_manager::AssetsManagerPlugin;
 use crate::camera::CameraPlugin;
 use crate::movement::MovementPlugin;
 use crate::pickup_crate::PickupPlugin;
+use crate::planet::PlanetPlugin;
 use crate::shuttle::ShuttlePlugin;
 use bevy::prelude::*;
 
@@ -21,6 +23,7 @@ fn main() {
         })
         // User plugins
         .add_plugins(DefaultPlugins)
+        .add_plugins(PlanetPlugin)
         .add_plugins(AssetsManagerPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(ShuttlePlugin)

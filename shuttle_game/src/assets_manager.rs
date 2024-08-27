@@ -5,6 +5,7 @@ pub struct AssetsResource {
     pub pickup_crate: Handle<Scene>,
     pub shuttle: Handle<Scene>,
     pub rocket: Handle<Scene>,
+    pub planet: Handle<Scene>,
 }
 
 pub struct AssetsManagerPlugin;
@@ -21,5 +22,6 @@ fn load_assets(mut assets: ResMut<AssetsResource>, asset_server: Res<AssetServer
         pickup_crate: asset_server.load("crate.glb#Scene0"),
         shuttle: asset_server.load("shuttle.glb#Scene0"),
         rocket: asset_server.load("missile.glb#Scene0"),
+        planet: asset_server.load("planet.glb#Scene0"),
     }
 }

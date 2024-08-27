@@ -1,6 +1,6 @@
 use crate::assets_manager::AssetsResource;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
-use bevy::app::{App, Plugin, Startup};
+use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
 use bevy::prelude::*;
 
