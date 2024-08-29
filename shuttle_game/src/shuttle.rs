@@ -3,11 +3,18 @@ use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
 use bevy::prelude::*;
+use std::f32::consts::FRAC_PI_2;
 
 const INITIAL_POSITION: Vec3 = Vec3::new(0.0, 0.0, 0.0);
 const SPEED: f32 = 25.0;
+const ROCKET_SPEED: f32 = 30.;
+const ROCKET_FORWARD_SPAWN: f32 = 2.5;
 const ROTATION_SPEED: f32 = 2.5;
 const ROLL_SPEED: f32 = 2.5;
+const ROCKET_SCALE_FACTOR: f32 = 1. / 4.;
+
+#[derive(Component, Debug)]
+pub struct Rocket;
 
 #[derive(Component, Debug)]
 pub struct Shuttle;
@@ -15,7 +22,7 @@ pub struct ShuttlePlugin;
 impl Plugin for ShuttlePlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, spawn_shuttle)
-            .add_systems(Update, move_shuttle);
+            .add_systems(Update, (move_shuttle, fire_at_will));
     }
 }
 fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
@@ -63,4 +70,33 @@ fn move_shuttle(
     transform.rotate_y(rotation);
     transform.rotate_local_z(roll);
     velocity.value = -transform.forward() * movement;
+}
+
+fn fire_at_will(
+    mut commands: Commands,
+    query: Query<&Transform, With<Shuttle>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    assets_resource: Res<AssetsResource>,
+) {
+    let transform = query.single();
+    if keyboard_input.just_pressed(KeyCode::Space) {
+        commands.spawn((
+            MovingObjectBundle {
+                velocity: Velocity::new(-transform.forward() * ROCKET_SPEED),
+                acceleration: Acceleration::new(Vec3::ZERO),
+                model: SceneBundle {
+                    scene: assets_resource.rocket.clone(),
+                    transform: Transform {
+                        translation: transform.translation
+                            + -transform.forward() * ROCKET_FORWARD_SPAWN,
+                        scale: Vec3::splat(ROCKET_SCALE_FACTOR),
+                        rotation: transform.rotation * Quat::from_rotation_y(-FRAC_PI_2),
+                        ..default()
+                    },
+                    ..default()
+                },
+            },
+            Rocket,
+        ));
+    }
 }
