@@ -1,5 +1,6 @@
 mod assets_manager;
 mod camera;
+mod collision;
 mod log;
 mod movement;
 mod pickup_crate;
@@ -8,6 +9,7 @@ mod shuttle;
 
 use crate::assets_manager::AssetsManagerPlugin;
 use crate::camera::CameraPlugin;
+use crate::collision::CollisionPlugin;
 use crate::movement::MovementPlugin;
 use crate::pickup_crate::PickupPlugin;
 use crate::planet::PlanetPlugin;
@@ -28,6 +30,7 @@ fn main() {
         .add_plugins(MovementPlugin)
         .add_plugins(ShuttlePlugin)
         .add_plugins(PickupPlugin)
+        .add_plugins(CollisionPlugin)
         //.add_plugins(LogPlugin)
         .add_plugins(CameraPlugin)
         .run();

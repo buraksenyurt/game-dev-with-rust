@@ -1,4 +1,5 @@
 use crate::assets_manager::AssetsResource;
+use crate::collision::Collider;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
@@ -12,6 +13,8 @@ const ROCKET_FORWARD_SPAWN: f32 = 2.5;
 const ROTATION_SPEED: f32 = 2.5;
 const ROLL_SPEED: f32 = 2.5;
 const ROCKET_SCALE_FACTOR: f32 = 1. / 4.;
+const SHUTTLE_RADIUS: f32 = 5.0;
+const ROCKET_RADIUS: f32 = 1.;
 
 #[derive(Component, Debug)]
 pub struct Rocket;
@@ -30,6 +33,7 @@ fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
         MovingObjectBundle {
             velocity: Velocity::new(Vec3::ZERO),
             acceleration: Acceleration::new(Vec3::ZERO),
+            collider: Collider::new(SHUTTLE_RADIUS),
             model: SceneBundle {
                 scene: assets_resource.shuttle.clone(),
                 transform: Transform::from_translation(INITIAL_POSITION),
@@ -84,6 +88,7 @@ fn fire_at_will(
             MovingObjectBundle {
                 velocity: Velocity::new(-transform.forward() * ROCKET_SPEED),
                 acceleration: Acceleration::new(Vec3::ZERO),
+                collider: Collider::new(ROCKET_RADIUS),
                 model: SceneBundle {
                     scene: assets_resource.rocket.clone(),
                     transform: Transform {

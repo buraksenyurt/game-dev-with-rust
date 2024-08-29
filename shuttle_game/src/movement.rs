@@ -1,3 +1,4 @@
+use crate::collision::Collider;
 use bevy::math::Vec3;
 use bevy::prelude::*;
 
@@ -28,6 +29,7 @@ pub struct MovingObjectBundle {
     pub velocity: Velocity,
     pub acceleration: Acceleration,
     pub model: SceneBundle,
+    pub collider: Collider,
 }
 
 pub struct MovementPlugin;

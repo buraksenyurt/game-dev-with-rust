@@ -1,4 +1,5 @@
 use crate::assets_manager::AssetsResource;
+use crate::collision::Collider;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::prelude::*;
 use rand::Rng;
@@ -10,6 +11,7 @@ const VELOCITY_SCALE: f32 = 2.5;
 const ACCELERATION_SCALE: f32 = 1.0;
 const SPAWN_TIME_SECONDS: f32 = 2.0;
 const SCALE_FACTOR: f32 = 3.0;
+const RADIUS: f32 = 2.5;
 
 #[derive(Component, Debug)]
 pub struct PickupCrate;
@@ -26,11 +28,11 @@ impl Plugin for PickupPlugin {
         app.insert_resource(SpawnTimer {
             timer: Timer::from_seconds(SPAWN_TIME_SECONDS, TimerMode::Repeating),
         })
-        .add_systems(Update, spawn_meteor);
+        .add_systems(Update, (spawn_crate, hitting_check));
     }
 }
 
-fn spawn_meteor(
+fn spawn_crate(
     mut commands: Commands,
     mut spawn_timer: ResMut<SpawnTimer>,
     time: Res<Time>,
@@ -56,6 +58,7 @@ fn spawn_meteor(
         MovingObjectBundle {
             velocity: Velocity::new(velocity),
             acceleration: Acceleration::new(acceleration),
+            collider: Collider::new(RADIUS),
             model: SceneBundle {
                 scene: assets_resource.pickup_crate.clone(),
                 transform: Transform {
@@ -68,4 +71,15 @@ fn spawn_meteor(
         },
         PickupCrate,
     ));
+}
+
+fn hitting_check(mut commands: Commands, query: Query<(Entity, &Collider), With<PickupCrate>>) {
+    for (entity, collider) in query.iter() {
+        for &collided in collider.entities.iter() {
+            if query.get(collided).is_ok() {
+                continue;
+            }
+            commands.entity(entity).despawn();
+        }
+    }
 }
