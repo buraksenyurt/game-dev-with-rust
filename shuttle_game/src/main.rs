@@ -1,6 +1,8 @@
 mod assets_manager;
 mod camera;
 mod collision;
+mod game_data;
+mod hud;
 mod log;
 mod movement;
 mod out_off_boundary;
@@ -11,6 +13,8 @@ mod shuttle;
 use crate::assets_manager::AssetsManagerPlugin;
 use crate::camera::CameraPlugin;
 use crate::collision::CollisionPlugin;
+use crate::game_data::GameDataPlugin;
+use crate::hud::ScoreboardPlugin;
 use crate::movement::MovementPlugin;
 use crate::out_off_boundary::OutOffBoundaryPlugin;
 use crate::pickup_crate::PickupPlugin;
@@ -27,6 +31,8 @@ fn main() {
         })
         // User plugins
         .add_plugins(DefaultPlugins)
+        .add_plugins(GameDataPlugin)
+        .add_plugins(ScoreboardPlugin)
         .add_plugins(PlanetPlugin)
         .add_plugins(AssetsManagerPlugin)
         .add_plugins(MovementPlugin)

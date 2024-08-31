@@ -1,5 +1,6 @@
 use crate::assets_manager::AssetsResource;
 use crate::collision::Collider;
+use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
 use bevy::prelude::*;
@@ -75,12 +76,17 @@ fn spawn_crate(
     ));
 }
 
-fn hitting_check(mut commands: Commands, query: Query<(Entity, &Collider), With<PickupCrate>>) {
+fn hitting_check(
+    mut commands: Commands,
+    query: Query<(Entity, &Collider), With<PickupCrate>>,
+    mut score: ResMut<Score>,
+) {
     for (entity, collider) in query.iter() {
         for &collided in collider.entities.iter() {
             if query.get(collided).is_ok() {
                 continue;
             }
+            score.total_hit += 1;
             commands.entity(entity).despawn();
         }
     }

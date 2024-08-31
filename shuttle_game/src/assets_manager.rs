@@ -6,6 +6,7 @@ pub struct AssetsResource {
     pub shuttle: Handle<Scene>,
     pub rocket: Handle<Scene>,
     pub planets: Vec<Handle<Scene>>,
+    pub score_font: Handle<Font>,
 }
 
 pub struct AssetsManagerPlugin;
@@ -28,5 +29,6 @@ fn load_assets(mut assets: ResMut<AssetsResource>, asset_server: Res<AssetServer
             asset_server.load("planet_3.glb#Scene0"),
             asset_server.load("planet_4.glb#Scene0"),
         ],
+        score_font: asset_server.load("FiraMono-Medium.ttf"),
     }
 }
