@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-const DISTANCE_X_SCALE: f32 = 60.0;
-const DISTANCE_Z_SCALE: f32 = 60.0;
+const DISTANCE_FROM_ORIGIN: f32 = 80.;
 
 #[derive(Component, Debug, Default)]
 pub struct Boundary;
@@ -13,13 +12,12 @@ impl Plugin for OutOffBoundaryPlugin {
     }
 }
 
-fn check_boundaries(mut commands: Commands, query: Query<(Entity, &Transform, &Boundary)>) {
+fn check_boundaries(mut commands: Commands, query: Query<(Entity, &GlobalTransform, &Boundary)>) {
     for (entity, transform, _) in query.iter() {
-        let distance_x = transform.translation.x.abs();
-        let distance_z = transform.translation.z.abs();
+        let distance_from_origin = transform.translation().distance(Vec3::ZERO);
 
-        if distance_x > DISTANCE_X_SCALE || distance_z > DISTANCE_Z_SCALE {
-            commands.entity(entity).despawn();
+        if distance_from_origin > DISTANCE_FROM_ORIGIN {
+            commands.entity(entity).despawn_recursive();
             info!("{:?} Crate is out of the edge", entity);
         }
     }
