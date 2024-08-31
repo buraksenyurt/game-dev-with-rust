@@ -106,7 +106,6 @@ fn fire_at_will(
                             + -transform.forward() * ROCKET_FORWARD_SPAWN,
                         scale: Vec3::splat(ROCKET_SCALE_FACTOR),
                         rotation: transform.rotation * Quat::from_rotation_y(-FRAC_PI_2),
-                        ..default()
                     },
                     ..default()
                 },

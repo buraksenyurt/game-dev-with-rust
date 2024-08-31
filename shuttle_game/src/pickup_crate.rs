@@ -3,7 +3,7 @@ use crate::collision::Collider;
 use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
-use crate::shuttle::{Damageable, Shuttle, Weapon};
+use crate::shuttle::{Shuttle, Weapon};
 use bevy::prelude::*;
 use rand::Rng;
 use std::ops::Range;
@@ -88,11 +88,11 @@ fn hitting_check(
 ) {
     for (entity, collider) in pickup_query.iter() {
         for &collided_entity in collider.entities.iter() {
-            if let Ok(_) = shuttle_query.get(collided_entity) {
-                score.player_damage -= 1;
+            if shuttle_query.get(collided_entity).is_ok() {
+                score.player_damage -= PLAYER_DAMAGE;
                 commands.entity(entity).despawn();
-            } else if let Ok(_) = weapon_query.get(collided_entity) {
-                score.total_hit += 1;
+            } else if weapon_query.get(collided_entity).is_ok() {
+                score.total_hit += PLAYER_HIT;
                 commands.entity(entity).despawn();
             }
         }
