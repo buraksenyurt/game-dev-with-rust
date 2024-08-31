@@ -3,6 +3,7 @@ use crate::collision::Collider;
 use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
+use crate::shuttle::{Damageable, Shuttle, Weapon};
 use bevy::prelude::*;
 use rand::Rng;
 use std::ops::Range;
@@ -14,6 +15,8 @@ const ACCELERATION_SCALE: f32 = 1.0;
 const SPAWN_TIME_SECONDS: f32 = 2.0;
 const SCALE_FACTOR: f32 = 3.0;
 const RADIUS: f32 = 2.5;
+const PLAYER_DAMAGE: i8 = 10;
+const PLAYER_HIT: u8 = 1;
 
 #[derive(Component, Debug)]
 pub struct PickupCrate;
@@ -78,16 +81,20 @@ fn spawn_crate(
 
 fn hitting_check(
     mut commands: Commands,
-    query: Query<(Entity, &Collider), With<PickupCrate>>,
+    pickup_query: Query<(Entity, &Collider), With<PickupCrate>>,
+    shuttle_query: Query<Entity, With<Shuttle>>,
+    weapon_query: Query<Entity, With<Weapon>>,
     mut score: ResMut<Score>,
 ) {
-    for (entity, collider) in query.iter() {
-        for &collided in collider.entities.iter() {
-            if query.get(collided).is_ok() {
-                continue;
+    for (entity, collider) in pickup_query.iter() {
+        for &collided_entity in collider.entities.iter() {
+            if let Ok(_) = shuttle_query.get(collided_entity) {
+                score.player_damage -= 1;
+                commands.entity(entity).despawn();
+            } else if let Ok(_) = weapon_query.get(collided_entity) {
+                score.total_hit += 1;
+                commands.entity(entity).despawn();
             }
-            score.total_hit += 1;
-            commands.entity(entity).despawn();
         }
     }
 }

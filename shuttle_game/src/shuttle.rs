@@ -18,8 +18,10 @@ const SHUTTLE_RADIUS: f32 = 5.0;
 const ROCKET_RADIUS: f32 = 1.;
 
 #[derive(Component, Debug)]
-pub struct Rocket;
+pub struct Weapon;
 
+#[derive(Component, Debug)]
+pub struct Damageable;
 #[derive(Component, Debug)]
 pub struct Shuttle;
 pub struct ShuttlePlugin;
@@ -48,6 +50,7 @@ fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
             },
         },
         Shuttle,
+        Damageable,
     ));
 }
 
@@ -108,7 +111,7 @@ fn fire_at_will(
                     ..default()
                 },
             },
-            Rocket,
+            Weapon,
             Boundary,
         ));
     }
