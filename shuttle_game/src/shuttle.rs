@@ -1,6 +1,7 @@
 use crate::assets_manager::AssetsResource;
 use crate::collision::Collider;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
+use crate::out_off_boundary::Boundary;
 use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
 use bevy::prelude::*;
@@ -24,8 +25,14 @@ pub struct Shuttle;
 pub struct ShuttlePlugin;
 impl Plugin for ShuttlePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_shuttle)
-            .add_systems(Update, (move_shuttle, fire_at_will));
+        app.add_systems(PostStartup, spawn_shuttle).add_systems(
+            Update,
+            (
+                move_shuttle,
+                fire_at_will,
+                // log_shuttle_translation
+            ),
+        );
     }
 }
 fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
@@ -102,6 +109,13 @@ fn fire_at_will(
                 },
             },
             Rocket,
+            Boundary,
         ));
     }
 }
+
+// fn log_shuttle_translation(query: Query<(Entity, &Transform), With<Shuttle>>) {
+//     for (entity, transform) in query.iter() {
+//         info!("Entity {:?} at {:?}", entity, transform.translation);
+//     }
+// }

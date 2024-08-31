@@ -1,6 +1,7 @@
 use crate::assets_manager::AssetsResource;
 use crate::collision::Collider;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
+use crate::out_off_boundary::Boundary;
 use bevy::prelude::*;
 use rand::Rng;
 use std::ops::Range;
@@ -70,6 +71,7 @@ fn spawn_crate(
             },
         },
         PickupCrate,
+        Boundary,
     ));
 }
 
