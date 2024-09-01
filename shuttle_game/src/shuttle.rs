@@ -22,7 +22,24 @@ const ROCKET_RADIUS: f32 = 1.;
 pub struct Weapon;
 
 #[derive(Component, Debug)]
-pub struct Damageable;
+pub struct Damage {
+    pub value: i8,
+}
+impl Default for Damage {
+    fn default() -> Self {
+        Self { value: 10 }
+    }
+}
+#[derive(Component, Debug)]
+pub struct Health {
+    pub value: i8,
+}
+impl Default for Health {
+    fn default() -> Self {
+        Self { value: 100 }
+    }
+}
+
 #[derive(Component, Debug)]
 pub struct Shuttle;
 pub struct ShuttlePlugin;
@@ -53,7 +70,8 @@ fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
             },
         },
         Shuttle,
-        Damageable,
+        Damage::default(),
+        Health::default(),
     ));
 }
 

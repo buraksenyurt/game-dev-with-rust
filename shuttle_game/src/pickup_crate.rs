@@ -1,10 +1,10 @@
 use crate::assets_manager::AssetsResource;
-use crate::collision::Collider;
+use crate::collision::{Collider, CollisionEvent};
 use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
 use crate::planner::GameSystemSet;
-use crate::shuttle::{Shuttle, Weapon};
+use crate::shuttle::{Damage, Shuttle, Weapon};
 use bevy::prelude::*;
 use rand::Rng;
 use std::ops::Range;
@@ -16,7 +16,6 @@ const ACCELERATION_SCALE: f32 = 1.0;
 const SPAWN_TIME_SECONDS: f32 = 2.0;
 const SCALE_FACTOR: f32 = 3.0;
 const RADIUS: f32 = 2.5;
-const PLAYER_DAMAGE: i8 = 10;
 const PLAYER_HIT: u8 = 1;
 
 #[derive(Component, Debug)]
@@ -91,12 +90,13 @@ fn hitting_check(
     pickup_query: Query<(Entity, &Collider), With<PickupCrate>>,
     shuttle_query: Query<Entity, With<Shuttle>>,
     weapon_query: Query<Entity, With<Weapon>>,
+    mut collision_event_writer: EventWriter<CollisionEvent>,
     mut score: ResMut<Score>,
 ) {
     for (entity, collider) in pickup_query.iter() {
         for &collided_entity in collider.entities.iter() {
             if shuttle_query.get(collided_entity).is_ok() {
-                score.player_damage -= PLAYER_DAMAGE;
+                collision_event_writer.send(CollisionEvent::new(entity, collided_entity));
                 commands.entity(entity).despawn();
             } else if weapon_query.get(collided_entity).is_ok() {
                 score.total_hit += PLAYER_HIT;
