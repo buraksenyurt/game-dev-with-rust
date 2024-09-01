@@ -8,6 +8,7 @@ mod movement;
 mod out_off_boundary;
 mod pickup_crate;
 mod planet;
+mod planner;
 mod shuttle;
 
 use crate::assets_manager::AssetsManagerPlugin;
@@ -19,6 +20,7 @@ use crate::movement::MovementPlugin;
 use crate::out_off_boundary::OutOffBoundaryPlugin;
 use crate::pickup_crate::PickupPlugin;
 use crate::planet::PlanetPlugin;
+use crate::planner::PlannerPlugin;
 use crate::shuttle::ShuttlePlugin;
 use bevy::prelude::*;
 
@@ -40,6 +42,7 @@ fn main() {
         .add_plugins(PickupPlugin)
         .add_plugins(CollisionPlugin)
         .add_plugins(OutOffBoundaryPlugin)
+        .add_plugins(PlannerPlugin)
         //.add_plugins(LogPlugin)
         .add_plugins(CameraPlugin)
         .run();

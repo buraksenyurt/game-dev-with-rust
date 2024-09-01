@@ -1,4 +1,5 @@
 use crate::collision::Collider;
+use crate::planner::GameSystemSet;
 use bevy::math::Vec3;
 use bevy::prelude::*;
 
@@ -35,7 +36,12 @@ pub struct MovingObjectBundle {
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (update_velocity, update_position));
+        app.add_systems(
+            Update,
+            (update_velocity, update_position)
+                .chain()
+                .in_set(GameSystemSet::EntityUpdates),
+        );
     }
 }
 

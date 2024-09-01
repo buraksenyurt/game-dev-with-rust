@@ -1,4 +1,5 @@
 use crate::hud::ScoreText;
+use crate::planner::GameSystemSet;
 use bevy::prelude::*;
 
 #[derive(Resource, Debug)]
@@ -20,8 +21,10 @@ pub struct GameDataPlugin;
 
 impl Plugin for GameDataPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource::<Score>(Score::default())
-            .add_systems(Update, update_score_text);
+        app.insert_resource::<Score>(Score::default()).add_systems(
+            Update,
+            update_score_text.in_set(GameSystemSet::CollisionDetections),
+        );
     }
 }
 

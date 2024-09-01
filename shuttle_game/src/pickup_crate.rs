@@ -3,6 +3,7 @@ use crate::collision::Collider;
 use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
+use crate::planner::GameSystemSet;
 use crate::shuttle::{Shuttle, Weapon};
 use bevy::prelude::*;
 use rand::Rng;
@@ -33,7 +34,13 @@ impl Plugin for PickupPlugin {
         app.insert_resource(SpawnTimer {
             timer: Timer::from_seconds(SPAWN_TIME_SECONDS, TimerMode::Repeating),
         })
-        .add_systems(Update, (spawn_crate, hitting_check));
+        .add_systems(
+            Update,
+            (
+                spawn_crate.in_set(GameSystemSet::EntityUpdates),
+                hitting_check.in_set(GameSystemSet::CollisionDetections),
+            ),
+        );
     }
 }
 

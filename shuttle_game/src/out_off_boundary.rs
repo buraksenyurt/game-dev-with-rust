@@ -1,3 +1,4 @@
+use crate::planner::GameSystemSet;
 use bevy::prelude::*;
 
 const DISTANCE_FROM_ORIGIN: f32 = 80.;
@@ -8,7 +9,10 @@ pub struct Boundary;
 pub struct OutOffBoundaryPlugin;
 impl Plugin for OutOffBoundaryPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, check_boundaries);
+        app.add_systems(
+            Update,
+            check_boundaries.in_set(GameSystemSet::DespawnEntities),
+        );
     }
 }
 

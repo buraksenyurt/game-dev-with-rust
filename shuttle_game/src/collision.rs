@@ -1,3 +1,4 @@
+use crate::planner::GameSystemSet;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
@@ -20,7 +21,10 @@ pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, detect_collisions);
+        app.add_systems(
+            Update,
+            detect_collisions.in_set(GameSystemSet::CollisionDetections),
+        );
     }
 }
 

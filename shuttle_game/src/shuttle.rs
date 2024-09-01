@@ -2,6 +2,7 @@ use crate::assets_manager::AssetsResource;
 use crate::collision::Collider;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
+use crate::planner::GameSystemSet;
 use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
 use bevy::prelude::*;
@@ -33,7 +34,9 @@ impl Plugin for ShuttlePlugin {
                 move_shuttle,
                 fire_at_will,
                 // log_shuttle_translation
-            ),
+            )
+                .chain()
+                .in_set(GameSystemSet::PlayerInput),
         );
     }
 }
@@ -59,7 +62,9 @@ fn move_shuttle(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
 ) {
-    let (mut transform, mut velocity) = query.single_mut();
+    let Ok((mut transform, mut velocity)) = query.get_single_mut() else {
+        return;
+    };
     let mut rotation = 0.0;
     let mut roll = 0.0;
     let mut movement = 0.0;
@@ -92,7 +97,10 @@ fn fire_at_will(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     assets_resource: Res<AssetsResource>,
 ) {
-    let transform = query.single();
+    let Ok(transform) = query.get_single() else {
+        return;
+    };
+
     if keyboard_input.just_pressed(KeyCode::Space) {
         commands.spawn((
             MovingObjectBundle {
