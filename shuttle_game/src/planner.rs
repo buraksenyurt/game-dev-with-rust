@@ -1,4 +1,6 @@
+use crate::state::GameState;
 use bevy::prelude::*;
+
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub enum GameSystemSet {
     PlayerInput,
@@ -16,7 +18,8 @@ impl Plugin for PlannerPlugin {
                 GameSystemSet::EntityUpdates,
                 GameSystemSet::CollisionDetections,
             )
-                .chain(),
+                .chain()
+                .run_if(in_state(GameState::Playing)),
         )
         .add_systems(
             Update,

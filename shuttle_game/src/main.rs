@@ -10,6 +10,7 @@ mod pickup_crate;
 mod planet;
 mod planner;
 mod shuttle;
+mod state;
 
 use crate::assets_manager::AssetsManagerPlugin;
 use crate::camera::CameraPlugin;
@@ -22,6 +23,7 @@ use crate::pickup_crate::PickupPlugin;
 use crate::planet::PlanetPlugin;
 use crate::planner::PlannerPlugin;
 use crate::shuttle::ShuttlePlugin;
+use crate::state::GameStatePlugin;
 use bevy::prelude::*;
 
 fn main() {
@@ -43,6 +45,7 @@ fn main() {
         .add_plugins(CollisionPlugin)
         .add_plugins(OutOffBoundaryPlugin)
         .add_plugins(PlannerPlugin)
+        .add_plugins(GameStatePlugin)
         //.add_plugins(LogPlugin)
         .add_plugins(CameraPlugin)
         .run();
