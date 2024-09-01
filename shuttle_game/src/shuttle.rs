@@ -1,8 +1,10 @@
 use crate::assets_manager::AssetsResource;
 use crate::collision::Collider;
+use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
 use crate::planner::GameSystemSet;
+use crate::state::GameState;
 use bevy::app::{App, Plugin};
 use bevy::math::Vec3;
 use bevy::prelude::*;
@@ -45,19 +47,32 @@ pub struct Shuttle;
 pub struct ShuttlePlugin;
 impl Plugin for ShuttlePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_shuttle).add_systems(
-            Update,
-            (
-                move_shuttle,
-                fire_at_will,
-                // log_shuttle_translation
+        app.add_systems(PostStartup, spawn_shuttle)
+            .add_systems(
+                Update,
+                (
+                    move_shuttle,
+                    fire_at_will,
+                    // log_shuttle_translation
+                )
+                    .chain()
+                    .in_set(GameSystemSet::PlayerInput),
             )
-                .chain()
-                .in_set(GameSystemSet::PlayerInput),
-        );
+            .add_systems(Update, check_health.in_set(GameSystemSet::EntityUpdates))
+            .add_systems(
+                OnEnter(GameState::GameOver),
+                (despawn_shuttle, spawn_shuttle).chain(),
+            );
     }
 }
-fn spawn_shuttle(mut commands: Commands, assets_resource: Res<AssetsResource>) {
+fn spawn_shuttle(
+    mut commands: Commands,
+    assets_resource: Res<AssetsResource>,
+    mut score: ResMut<Score>,
+) {
+    score.total_hit = 0;
+    score.player_damage = 100;
+
     commands.spawn((
         MovingObjectBundle {
             velocity: Velocity::new(Vec3::ZERO),
@@ -139,6 +154,24 @@ fn fire_at_will(
             Weapon,
             Boundary,
         ));
+    }
+}
+
+fn check_health(
+    mut next_state: ResMut<NextState<GameState>>,
+    query: Query<&Health, With<Shuttle>>,
+) {
+    let Ok(health) = query.get_single() else {
+        return;
+    };
+    if health.value == 0 {
+        next_state.set(GameState::GameOver);
+    }
+}
+
+fn despawn_shuttle(mut commands: Commands, query: Query<Entity, With<Shuttle>>) {
+    if let Ok(entity) = query.get_single() {
+        commands.entity(entity).despawn_recursive();
     }
 }
 
