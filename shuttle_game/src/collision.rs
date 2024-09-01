@@ -1,13 +1,9 @@
 use crate::game_data::Score;
 use crate::planner::GameSystemSet;
-use crate::shuttle::Damage;
+use crate::shuttle::{Damage, Health};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 
-#[derive(Component, Debug)]
-pub struct CollisionDamage {
-    pub amount: u8,
-}
 #[derive(Event, Debug)]
 pub struct CollisionEvent {
     pub source: Entity,
@@ -80,14 +76,19 @@ fn detect_collisions(mut query: Query<(Entity, &GlobalTransform, &mut Collider)>
 
 fn apply_collision_changes(
     mut collision_event_reader: EventReader<CollisionEvent>,
-    query: Query<&Damage>,
+    mut health_query: Query<&mut Health>,
+    damage_query: Query<&Damage>,
     mut score: ResMut<Score>,
 ) {
     for &CollisionEvent { source, collided } in collision_event_reader.read() {
-        let Ok(damage) = query.get(collided) else {
+        let Ok(mut health) = health_query.get_mut(collided) else {
+            continue;
+        };
+        let Ok(damage) = damage_query.get(collided) else {
             continue;
         };
 
+        health.value -= damage.value;
         score.player_damage -= damage.value;
     }
 }

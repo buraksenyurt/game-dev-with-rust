@@ -4,7 +4,7 @@ use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
 use crate::planner::GameSystemSet;
-use crate::shuttle::{Damage, Shuttle, Weapon};
+use crate::shuttle::{Shuttle, Weapon};
 use bevy::prelude::*;
 use rand::Rng;
 use std::ops::Range;

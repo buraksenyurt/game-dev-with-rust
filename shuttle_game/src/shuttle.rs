@@ -30,7 +30,7 @@ impl Default for Damage {
         Self { value: 10 }
     }
 }
-#[derive(Component, Debug)]
+#[derive(Component)]
 pub struct Health {
     pub value: i8,
 }
