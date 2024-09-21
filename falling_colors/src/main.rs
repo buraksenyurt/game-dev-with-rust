@@ -1,16 +1,16 @@
 use glfw::{fail_on_errors, Action, Context, Key, WindowMode};
 use std::time::{Duration, Instant};
 
-const SCREEN_HEIGHT: u32 = 600;
-const SCREEN_WIDTH: u32 = 400;
+const SCREEN_HEIGHT: f32 = 600f32;
+const SCREEN_WIDTH: f32 = 400f32;
 const SQUARE_FALL_SPEED: f32 = 5f32;
 
 fn main() {
     let mut glfw = glfw::init(fail_on_errors!()).unwrap();
     let (mut window, events) = glfw
         .create_window(
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
+            SCREEN_WIDTH as u32,
+            SCREEN_HEIGHT as u32,
             "Falling Colors",
             WindowMode::Windowed,
         )
