@@ -1,10 +1,38 @@
+use glfw::{fail_on_errors, Action, Context, Key, WindowMode};
 use std::time::{Duration, Instant};
-const SCREEN_HEIGHT: f32 = 600f32;
-const SCREEN_WIDTH: f32 = 400f32;
+
+const SCREEN_HEIGHT: u32 = 600;
+const SCREEN_WIDTH: u32 = 400;
 const SQUARE_FALL_SPEED: f32 = 5f32;
 
 fn main() {
-    println!("Hello, world!");
+    let mut glfw = glfw::init(fail_on_errors!()).unwrap();
+    let (mut window, events) = glfw
+        .create_window(
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            "Falling Colors",
+            WindowMode::Windowed,
+        )
+        .unwrap();
+
+    window.set_key_polling(true);
+    window.set_mouse_button_polling(true);
+    window.make_current();
+
+    while !window.should_close() {
+        glfw.poll_events();
+        for (_, event) in glfw::flush_messages(&events) {
+            match event {
+                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
+                    window.set_should_close(true)
+                }
+                _ => {}
+            }
+        }
+
+        window.swap_buffers();
+    }
 }
 
 struct Game {
@@ -49,7 +77,8 @@ impl Game {
             square.free_fall(SQUARE_FALL_SPEED);
         }
 
-        self.smart_squares.retain(|s| !s.is_out_of_screen(SCREEN_HEIGHT));
+        self.smart_squares
+            .retain(|s| !s.is_out_of_screen(SCREEN_HEIGHT));
 
         if self.last_fall.elapsed() >= Duration::from_secs(1) {
             self.spawn_square();
