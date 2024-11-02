@@ -1,0 +1,16 @@
+[package]
+name = "another-space-invader"
+description = "Bevy oyun motoru bilgilerini pekiştirmek için yazılan bir space invader klonu"
+authors = ["Burak Selim Senyurt"]
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.14.2"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
