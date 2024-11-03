@@ -1,8 +1,12 @@
 use bevy::prelude::*;
+use rand::random;
 
-const COLUMN_COUNT: u16 = 6;
+const COLUMN_COUNT: u16 = 8;
 const ROW_COUNT: u16 = 4;
 const SPACING: f32 = 40.0;
+const INVADER_SPEED: f32 = 50.0;
+const SHIFT_DOWN_AMOUNT: f32 = 32.0;
+// const INVADER_DIMENSION: (f32, f32) = (40.0, 32.0);
 
 fn main() {
     App::new()
@@ -58,16 +62,37 @@ fn setup_invaders_system(
     asset_server: Res<AssetServer>,
     resolution: Res<Resolution>,
 ) {
-    let texture = asset_server.load("red_enemy.png");
+    commands.insert_resource(InvaderRouteResource {
+        distance_from_boundary: 0f32,
+        shift_down: false,
+        direction: 1f32,
+    });
+
+    let red_texture = asset_server.load("red_enemy.png");
+    let gold_texture = asset_server.load("gold_enemy.png");
+
     for col in 0..COLUMN_COUNT {
         for row in 0..ROW_COUNT {
-            let position = Vec3::new(col as f32 * SPACING, row as f32 * SPACING, 0.0);
-            commands.spawn(SpriteBundle {
-                transform: Transform::from_translation(position)
-                    .with_scale(Vec3::splat(resolution.pixel_ratio)),
-                texture: texture.clone(),
-                ..default()
-            });
+            let texture = if random::<bool>() {
+                red_texture.clone()
+            } else {
+                gold_texture.clone()
+            };
+
+            let position = Vec3::new(col as f32 * SPACING, row as f32 * SPACING, 0.0)
+                - (Vec3::X * COLUMN_COUNT as f32 * SPACING * 0.5)
+                - (Vec3::Y * ROW_COUNT as f32 * SPACING * 1.0)
+                + (Vec3::Y * resolution.dimension.y * 0.5);
+
+            commands.spawn((
+                SpriteBundle {
+                    transform: Transform::from_translation(position)
+                        .with_scale(Vec3::splat(resolution.pixel_ratio)),
+                    texture: texture.clone(),
+                    ..default()
+                },
+                Invader {},
+            ));
         }
     }
 }
@@ -75,6 +100,48 @@ struct InvaderPlugin;
 
 impl Plugin for InvaderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_invaders_system);
+        app.add_systems(Startup, setup_invaders_system).add_systems(
+            Update,
+            (update_invaders_system, manage_invaders_route_system),
+        );
+    }
+}
+
+#[derive(Resource)]
+struct InvaderRouteResource {
+    direction: f32,
+    shift_down: bool,
+    distance_from_boundary: f32,
+}
+#[derive(Component)]
+struct Invader;
+
+fn update_invaders_system(
+    mut query: Query<(&Invader, &mut Transform)>,
+    mut manager: ResMut<InvaderRouteResource>,
+    resolution: Res<Resolution>,
+    time: Res<Time>,
+) {
+    for (_, mut transform) in query.iter_mut() {
+        transform.translation.x += time.delta_seconds() * manager.direction * INVADER_SPEED;
+        if transform.translation.x.abs() > resolution.dimension.x * 0.5 {
+            manager.shift_down = true;
+            manager.distance_from_boundary =
+                resolution.dimension.x * manager.direction * 0.5 - transform.translation.x;
+        }
+    }
+}
+
+fn manage_invaders_route_system(
+    mut query: Query<(&mut Invader, &mut Transform)>,
+    mut manager: ResMut<InvaderRouteResource>,
+) {
+    if manager.shift_down {
+        manager.direction *= -1f32;
+        manager.shift_down = false;
+        for (_, mut transform) in query.iter_mut() {
+            transform.translation.x += manager.distance_from_boundary;
+            transform.translation.y -= SHIFT_DOWN_AMOUNT;
+        }
     }
 }
