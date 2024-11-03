@@ -6,6 +6,9 @@ const ROW_COUNT: u16 = 4;
 const SPACING: f32 = 40.0;
 const INVADER_SPEED: f32 = 50.0;
 const SHIFT_DOWN_AMOUNT: f32 = 32.0;
+const PLAYER_SPEED: f32 = 200.0;
+const BULLET_SPEED: f32 = 500.0;
+const SHOOTING_COOLDOWN: f32 = 0.4;
 // const INVADER_DIMENSION: (f32, f32) = (40.0, 32.0);
 
 fn main() {
@@ -33,7 +36,7 @@ fn setup_system(mut commands: Commands) {
 struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((InvaderPlugin, ResolutionPlugin))
+        app.add_plugins((InvaderPlugin, ResolutionPlugin, PlayerPlugin))
             .add_systems(Startup, setup_system);
     }
 }
@@ -143,5 +146,69 @@ fn manage_invaders_route_system(
             transform.translation.x += manager.distance_from_boundary;
             transform.translation.y -= SHIFT_DOWN_AMOUNT;
         }
+    }
+}
+
+#[derive(Component)]
+struct Player {
+    cooldown_timer: f32,
+}
+
+struct PlayerPlugin;
+impl Plugin for PlayerPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_player_system)
+            .add_systems(Update, update_player_system);
+    }
+}
+
+fn setup_player_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    resolution: Res<Resolution>,
+) {
+    let texture = asset_server.load("player.png");
+    let position = Vec3::new(
+        0.0,
+        -(resolution.dimension.y * 0.5) + (resolution.pixel_ratio * 32.0),
+        0.0,
+    );
+    commands.spawn((
+        SpriteBundle {
+            texture,
+            transform: Transform::from_translation(position)
+                .with_scale(Vec3::splat(resolution.pixel_ratio)),
+            ..Default::default()
+        },
+        Player {
+            cooldown_timer: 0.0,
+        },
+    ));
+}
+
+fn update_player_system(
+    mut query: Query<(&mut Player, &mut Transform)>,
+    time: Res<Time>,
+    keys: Res<ButtonInput<KeyCode>>,
+    resolution: Res<Resolution>,
+) {
+    let (mut player,mut transform) = query.single_mut();
+    let mut horizontal = 0.0;
+    if keys.pressed(KeyCode::ArrowLeft) {
+        horizontal +=-1.0;
+    }
+    if keys.pressed(KeyCode::ArrowRight) {
+        horizontal+=1.0;
+    }
+    transform.translation.x += horizontal * time.delta_seconds() * PLAYER_SPEED;
+
+    let right_bound = resolution.dimension.x * 0.5;
+    let left_bound = -resolution.dimension.x * 0.5;
+
+    if transform.translation.x > right_bound {
+        transform.translation.x = right_bound;
+    }
+    if transform.translation.x < left_bound {
+        transform.translation.x = left_bound;
     }
 }
