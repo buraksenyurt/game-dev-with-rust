@@ -14,7 +14,7 @@ fn main() {
             (
                 apply_gravity_system,
                 player_movement_system,
-                update_position_system,
+                update_player_position_system,
             ),
         )
         .run();

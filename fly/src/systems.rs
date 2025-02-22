@@ -42,36 +42,37 @@ pub fn player_movement_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
 ) {
-    for (mut transform, mut velocity) in query.iter_mut() {
-        if keyboard_input.pressed(KeyCode::ArrowRight) {
-            transform.translation.x -= velocity.0.x * time.delta_secs();
-        }
-        if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            transform.translation.x += velocity.0.x * time.delta_secs();
-        }
-        // Jumping
-        if keyboard_input.pressed(KeyCode::Space) && transform.translation.y <= GROUND_LEVEL {
-            velocity.0.y = JUMP_FORCE;
-        }
+    let (mut transform, mut velocity) = query.single_mut();
+
+    if keyboard_input.pressed(KeyCode::ArrowRight) {
+        transform.translation.x -= velocity.0.x * time.delta_secs();
+        transform.scale.x = 1.0;
+    }
+    if keyboard_input.pressed(KeyCode::ArrowLeft) {
+        transform.translation.x += velocity.0.x * time.delta_secs();
+        transform.scale.x = -1.0;
+    }
+    // Jumping
+    if keyboard_input.pressed(KeyCode::Space) && transform.translation.y <= GROUND_LEVEL {
+        velocity.0.y = JUMP_FORCE;
     }
 }
 
 pub fn apply_gravity_system(time: Res<Time>, mut query: Query<&mut Velocity, With<Player>>) {
-    for mut velocity in query.iter_mut() {
-        velocity.0.y += GRAVITY * time.delta_secs();
-    }
+    let mut velocity = query.single_mut();
+    velocity.0.y += GRAVITY * time.delta_secs();
 }
 
 pub fn update_player_position_system(
     time: Res<Time>,
     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
 ) {
-    for (mut transform, mut velocity) in query.iter_mut() {
-        transform.translation.y += velocity.0.y * time.delta_secs();
+    let (mut transform, mut velocity) = query.single_mut();
 
-        if transform.translation.y <= GROUND_LEVEL {
-            transform.translation.y = GROUND_LEVEL;
-            velocity.0.y = 0.0;
-        }
+    transform.translation.y += velocity.0.y * time.delta_secs();
+
+    if transform.translation.y <= GROUND_LEVEL {
+        transform.translation.y = GROUND_LEVEL;
+        velocity.0.y = 0.0;
     }
 }
