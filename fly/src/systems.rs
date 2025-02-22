@@ -91,11 +91,12 @@ pub fn spawn_boxes_system(
     if spawn_timer.0.finished() {
         let obstacle_x = GROUND_EDGE;
         let obstacle_y = GROUND_LEVEL + (rng.next_u64() % 75) as f32;
+        let custom_size = Some(Vec2::ONE * (rng.next_u64() % 50) as f32);
         commands.spawn((
             Box,
             Sprite {
                 image: box_image,
-                custom_size: Some(Vec2::ONE * 32.0),
+                custom_size,
                 anchor: Anchor::BottomCenter,
                 ..default()
             },
