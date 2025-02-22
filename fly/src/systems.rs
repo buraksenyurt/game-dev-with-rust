@@ -2,7 +2,9 @@ use crate::components::*;
 use crate::constants::*;
 use bevy::prelude::*;
 use bevy::sprite::{Anchor, Sprite};
-use bevy::utils::default;
+use bevy_prng::WyRand;
+use bevy_rand::prelude::GlobalEntropy;
+use rand_core::RngCore;
 
 pub fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let player_image: Handle<Image> = asset_server.load("Fox.png");
@@ -74,5 +76,43 @@ pub fn update_player_position_system(
     if transform.translation.y <= GROUND_LEVEL {
         transform.translation.y = GROUND_LEVEL;
         velocity.0.y = 0.0;
+    }
+}
+
+pub fn spawn_boxes_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    time: Res<Time>,
+    mut spawn_timer: ResMut<BoxSpawningTimer>,
+    mut rng: GlobalEntropy<WyRand>,
+) {
+    let box_image: Handle<Image> = asset_server.load("Box.png");
+    spawn_timer.0.tick(time.delta());
+    if spawn_timer.0.finished() {
+        let obstacle_x = GROUND_EDGE;
+        let obstacle_y = GROUND_LEVEL + (rng.next_u64() % 75) as f32;
+        commands.spawn((
+            Box,
+            Sprite {
+                image: box_image,
+                custom_size: Some(Vec2::ONE * 32.0),
+                anchor: Anchor::BottomCenter,
+                ..default()
+            },
+            Transform::from_xyz(obstacle_x, obstacle_y, 0.0),
+        ));
+    }
+}
+
+pub fn move_boxes_system(
+    time: Res<Time>,
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Transform), With<Box>>,
+) {
+    for (entity, mut transform) in query.iter_mut() {
+        transform.translation.x -= GAME_SPEED * time.delta_secs();
+        if transform.translation.x < -GROUND_EDGE {
+            commands.entity(entity).despawn();
+        }
     }
 }
