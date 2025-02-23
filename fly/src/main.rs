@@ -1,6 +1,7 @@
 mod components;
 mod constants;
 mod systems;
+mod game_play;
 
 use crate::components::BoxSpawningTimer;
 use crate::constants::SPAWN_DURATION;
@@ -22,7 +23,7 @@ fn main() {
                 update_player_position_system,
             ),
         )
-        .add_systems(Update, (spawn_boxes_system, move_boxes_system))
+        //.add_systems(Update, (spawn_flying_boxes_system, move_boxes_system))
         .insert_resource(BoxSpawningTimer(Timer::from_seconds(
             SPAWN_DURATION,
             TimerMode::Repeating,

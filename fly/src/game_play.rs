@@ -1,0 +1,3 @@
+pub enum Level{
+    FirstGate,
+}

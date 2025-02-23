@@ -5,10 +5,10 @@ use bevy::sprite::{Anchor, Sprite};
 use bevy_prng::WyRand;
 use bevy_rand::prelude::GlobalEntropy;
 use rand_core::RngCore;
+use crate::game_play::Level;
 
 pub fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     let player_image: Handle<Image> = asset_server.load("Fox.png");
-    let tile_image: Handle<Image> = asset_server.load("Tile.png");
 
     commands.spawn(Camera2d::default());
 
@@ -25,16 +25,40 @@ pub fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         Velocity(Vec3::new(-PLAYER_VELOCITY_X, 0.0, 0.0)),
     ));
 
-    // Ground
-    for i in 0..36 {
+    load_level_tiles(Level::FirstGate,&mut commands, &asset_server);
+}
+
+fn load_level_tiles(game_level:Level, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    let tile_image: Handle<Image> = asset_server.load("Tile.png");
+
+    // Main Ground
+    draw_ground(
+        Vec3::new(-600.0, GROUND_LEVEL, 0.0),
+        36,
+        commands,
+        &tile_image,
+    );
+
+    // Jumping grounds
+    draw_ground(Vec3::new(-600.0, 100.0, 0.0), 3, commands, &tile_image);
+    draw_ground(Vec3::new(-500.0, 180.0, 0.0), 4, commands, &tile_image);
+    draw_ground(Vec3::new(-360.0, 140.0, 0.0), 2, commands, &tile_image);
+    draw_ground(Vec3::new(-280.0, 60.0, 0.0), 4, commands, &tile_image);
+    draw_ground(Vec3::new(-100.0, 80.0, 0.0), 3, commands, &tile_image);
+    draw_ground(Vec3::new(20.0, 150.0, 0.0), 5, commands, &tile_image);
+    draw_ground(Vec3::new(160.0, 60.0, 0.0), 3, commands, &tile_image);
+}
+
+fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Handle<Image>) {
+    for i in 0..count {
         commands.spawn((
             Sprite {
-                image: tile_image.clone(),
-                custom_size: Some(Vec2::ONE * 32.0),
+                image: image.clone(),
+                custom_size: Some(Vec2::ONE * 24.0),
                 anchor: Anchor::TopLeft,
                 ..default()
             },
-            Transform::from_xyz(-600.0 + (i * 32) as f32, GROUND_LEVEL, 0.0),
+            Transform::from_xyz(location.x + (i * 24) as f32, location.y, location.z),
         ));
     }
 }
@@ -79,7 +103,7 @@ pub fn update_player_position_system(
     }
 }
 
-pub fn spawn_boxes_system(
+pub fn spawn_flying_boxes_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     time: Res<Time>,
