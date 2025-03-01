@@ -1,6 +1,7 @@
 use crate::components::*;
 use crate::constants::*;
 use crate::game_play::Level;
+use crate::level_manager::*;
 use bevy::prelude::*;
 use bevy::sprite::Sprite;
 use bevy_rapier2d::prelude::*;
@@ -29,11 +30,11 @@ pub fn setup_system(
                 layout: idle_atlas_handle,
                 index: 0,
             }),
-            custom_size: Some(Vec2::ONE * 32.0),
+            custom_size: Some(Vec2::ONE * PLAYER_SIZE),
             ..default()
         },
         RigidBody::Dynamic,
-        Collider::cuboid(16.0, 16.0),
+        Collider::cuboid(PLAYER_SIZE / 2.0, PLAYER_SIZE / 2.0),
         GravityScale(GRAVITY_FORCE),
         Transform::from_xyz(PLAYER_START_X, 0.0, 0.0),
         Velocity::default(),
@@ -51,47 +52,79 @@ pub fn setup_system(
         },
     ));
 
-    load_level_tiles(Level::FirstGate, &mut commands, &asset_server);
+    load_level(Level::FirstGate, &mut commands, &asset_server);
 }
 
-fn load_level_tiles(_game_level: Level, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+fn load_level(level: Level, commands: &mut Commands, asset_server: &Res<AssetServer>) {
     let ground_tile_image: Handle<Image> = asset_server.load("Tile.png");
     let platform_image: Handle<Image> = asset_server.load("Platform.png");
 
-    // Main Ground
-    draw_ground(
-        Vec3::new(-600.0, GROUND_LEVEL, 0.0),
-        36,
-        commands,
-        &ground_tile_image,
-    );
+    if let Some(platforms) = get_level_data(level) {
+        for platform_data in platforms {
+            let image = match platform_data.platform_type {
+                PlatformType::Ground => ground_tile_image.clone(),
+                PlatformType::Platform => platform_image.clone(),
+            };
 
-    // Jumping grounds
-    draw_ground(Vec3::new(-600.0, 100.0, 0.0), 3, commands, &platform_image);
-    draw_ground(Vec3::new(-500.0, 180.0, 0.0), 4, commands, &platform_image);
-    draw_ground(Vec3::new(-360.0, 140.0, 0.0), 2, commands, &platform_image);
-    draw_ground(Vec3::new(-280.0, 60.0, 0.0), 4, commands, &platform_image);
-    draw_ground(Vec3::new(-100.0, 80.0, 0.0), 3, commands, &platform_image);
-    draw_ground(Vec3::new(20.0, 150.0, 0.0), 5, commands, &platform_image);
-    draw_ground(Vec3::new(160.0, 60.0, 0.0), 3, commands, &platform_image);
+            spawn_platform(
+                platform_data.position.extend(0.0),
+                platform_data.tile_count,
+                commands,
+                &image,
+                platform_data.platform_type,
+            );
+        }
+    }
 }
 
-fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Handle<Image>) {
+fn spawn_platform(
+    location: Vec3,
+    count: usize,
+    commands: &mut Commands,
+    image: &Handle<Image>,
+    platform_type: PlatformType,
+) {
     for i in 0..count {
         commands.spawn((
             Sprite {
                 image: image.clone(),
-                custom_size: Some(Vec2::ONE * 24.0),
-                //anchor: Anchor::BottomCenter,
+                custom_size: Some(Vec2::ONE * TILE_SIZE),
                 ..default()
             },
-            Transform::from_xyz(location.x + (i * 24) as f32, location.y, location.z),
+            Transform::from_xyz(
+                location.x + (i * TILE_SIZE as usize) as f32,
+                location.y,
+                location.z,
+            ),
             RigidBody::Fixed,
-            Collider::cuboid(12.0, 12.0),
-            // Friction::coefficient(0.1),
+            Collider::cuboid(TILE_SIZE / 2.0, TILE_SIZE / 2.0),
+            Platform {
+                platform_type: platform_type.clone(),
+            },
         ));
     }
 }
+
+// fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Handle<Image>) {
+//     for i in 0..count {
+//         commands.spawn((
+//             Sprite {
+//                 image: image.clone(),
+//                 custom_size: Some(Vec2::ONE * TILE_SIZE),
+//                 //anchor: Anchor::BottomCenter,
+//                 ..default()
+//             },
+//             Transform::from_xyz(
+//                 location.x + (i * TILE_SIZE as usize) as f32,
+//                 location.y,
+//                 location.z,
+//             ),
+//             RigidBody::Fixed,
+//             Collider::cuboid(TILE_SIZE / 2.0, TILE_SIZE / 2.0),
+//             // Friction::coefficient(0.1),
+//         ));
+//     }
+// }
 
 pub fn player_movement_system(
     keyboard: Res<ButtonInput<KeyCode>>,

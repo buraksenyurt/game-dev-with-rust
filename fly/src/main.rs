@@ -1,6 +1,7 @@
 mod components;
 mod constants;
 mod game_play;
+mod level_manager;
 mod systems;
 
 use crate::systems::*;
@@ -11,7 +12,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugins(RapierDebugRenderPlugin::default())
+        //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, setup_system)
         .add_systems(
             Update,
