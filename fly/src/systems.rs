@@ -1,14 +1,21 @@
 use crate::components::*;
 use crate::constants::*;
+use crate::game_play::Level;
 use bevy::prelude::*;
 use bevy::sprite::{Anchor, Sprite};
 use bevy_prng::WyRand;
 use bevy_rand::prelude::GlobalEntropy;
 use rand_core::RngCore;
-use crate::game_play::Level;
 
-pub fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let player_image: Handle<Image> = asset_server.load("Fox.png");
+pub fn setup_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
+) {
+    let fox_texture_handle: Handle<Image> = asset_server.load("Fox/Idle.png");
+    let frame_size = UVec2::new(32, 32);
+    let fox_atlas_layout = TextureAtlasLayout::from_grid(frame_size, 11, 1, None, None);
+    let fox_atlas_layout_handle = texture_atlases.add(fox_atlas_layout);
 
     commands.spawn(Camera2d::default());
 
@@ -16,37 +23,43 @@ pub fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Player,
         Sprite {
-            image: player_image,
-            custom_size: Some(Vec2::ONE * 48.0),
+            image: fox_texture_handle.clone(),
+            texture_atlas: Some(TextureAtlas {
+                layout: fox_atlas_layout_handle,
+                index: 0,
+            }),
+            custom_size: Some(Vec2::ONE * 32.0),
             anchor: Anchor::BottomCenter,
             ..default()
         },
         Transform::from_xyz(PLAYER_X, GROUND_LEVEL, 0.0),
         Velocity(Vec3::new(-PLAYER_VELOCITY_X, 0.0, 0.0)),
+        StandardAnimation::default(),
     ));
 
-    load_level_tiles(Level::FirstGate,&mut commands, &asset_server);
+    load_level_tiles(Level::FirstGate, &mut commands, &asset_server);
 }
 
-fn load_level_tiles(game_level:Level, commands: &mut Commands, asset_server: &Res<AssetServer>) {
-    let tile_image: Handle<Image> = asset_server.load("Tile.png");
+fn load_level_tiles(_game_level: Level, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    let ground_tile_image: Handle<Image> = asset_server.load("Tile.png");
+    let platform_image: Handle<Image> = asset_server.load("Platform.png");
 
     // Main Ground
     draw_ground(
         Vec3::new(-600.0, GROUND_LEVEL, 0.0),
         36,
         commands,
-        &tile_image,
+        &ground_tile_image,
     );
 
     // Jumping grounds
-    draw_ground(Vec3::new(-600.0, 100.0, 0.0), 3, commands, &tile_image);
-    draw_ground(Vec3::new(-500.0, 180.0, 0.0), 4, commands, &tile_image);
-    draw_ground(Vec3::new(-360.0, 140.0, 0.0), 2, commands, &tile_image);
-    draw_ground(Vec3::new(-280.0, 60.0, 0.0), 4, commands, &tile_image);
-    draw_ground(Vec3::new(-100.0, 80.0, 0.0), 3, commands, &tile_image);
-    draw_ground(Vec3::new(20.0, 150.0, 0.0), 5, commands, &tile_image);
-    draw_ground(Vec3::new(160.0, 60.0, 0.0), 3, commands, &tile_image);
+    draw_ground(Vec3::new(-600.0, 100.0, 0.0), 3, commands, &platform_image);
+    draw_ground(Vec3::new(-500.0, 180.0, 0.0), 4, commands, &platform_image);
+    draw_ground(Vec3::new(-360.0, 140.0, 0.0), 2, commands, &platform_image);
+    draw_ground(Vec3::new(-280.0, 60.0, 0.0), 4, commands, &platform_image);
+    draw_ground(Vec3::new(-100.0, 80.0, 0.0), 3, commands, &platform_image);
+    draw_ground(Vec3::new(20.0, 150.0, 0.0), 5, commands, &platform_image);
+    draw_ground(Vec3::new(160.0, 60.0, 0.0), 3, commands, &platform_image);
 }
 
 fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Handle<Image>) {
@@ -138,6 +151,17 @@ pub fn move_boxes_system(
         transform.translation.x -= GAME_SPEED * time.delta_secs();
         if transform.translation.x < -GROUND_EDGE {
             commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub fn apply_animation(time: Res<Time>, mut query: Query<(&mut StandardAnimation, &mut Sprite)>) {
+    for (mut animation, mut sprite) in &mut query.iter_mut() {
+        animation.timer.tick(time.delta());
+        if animation.timer.just_finished() {
+            if let Some(atlas) = &mut sprite.texture_atlas {
+                atlas.index = (atlas.index + 1) % 8;
+            }
         }
     }
 }

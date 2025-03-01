@@ -1,3 +1,3 @@
-pub enum Level{
+pub enum Level {
     FirstGate,
 }
