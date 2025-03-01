@@ -2,10 +2,8 @@ use crate::components::*;
 use crate::constants::*;
 use crate::game_play::Level;
 use bevy::prelude::*;
-use bevy::sprite::{Anchor, Sprite};
-use bevy_prng::WyRand;
-use bevy_rand::prelude::GlobalEntropy;
-use rand_core::RngCore;
+use bevy::sprite::Sprite;
+use bevy_rapier2d::prelude::{Collider, Friction, GravityScale, RigidBody, Velocity};
 
 pub fn setup_system(
     mut commands: Commands,
@@ -29,11 +27,16 @@ pub fn setup_system(
                 index: 0,
             }),
             custom_size: Some(Vec2::ONE * 32.0),
-            anchor: Anchor::BottomCenter,
+            //anchor: Anchor::BottomCenter,
             ..default()
         },
-        Transform::from_xyz(PLAYER_X, GROUND_LEVEL, 0.0),
-        Velocity(Vec3::new(-PLAYER_VELOCITY_X, 0.0, 0.0)),
+        RigidBody::Dynamic,
+        Collider::cuboid(16.0, 16.0),
+        GravityScale(9.8),
+        Transform::from_xyz(PLAYER_X, 0.0, 0.0),
+        Velocity::default(),
+        Friction::coefficient(0.5),
+        //Velocity(Vec3::new(-PLAYER_VELOCITY_X, 0.0, 0.0)),
         StandardAnimation::default(),
     ));
 
@@ -68,99 +71,84 @@ fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Ha
             Sprite {
                 image: image.clone(),
                 custom_size: Some(Vec2::ONE * 24.0),
-                anchor: Anchor::TopLeft,
+                //anchor: Anchor::BottomCenter,
                 ..default()
             },
             Transform::from_xyz(location.x + (i * 24) as f32, location.y, location.z),
+            RigidBody::Fixed,
+            Collider::cuboid(12.0, 12.0),
+            // Friction::coefficient(0.1),
         ));
     }
 }
 
 pub fn player_movement_system(
-    time: Res<Time>,
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+    mut query: Query<(&mut Velocity, &mut Sprite), With<Player>>,
 ) {
-    let (mut transform, mut velocity) = query.single_mut();
+    for (mut velocity, mut sprite) in query.iter_mut() {
+        if keyboard.pressed(KeyCode::ArrowRight) {
+            velocity.linvel.x = 200.0;
+            sprite.flip_x = false;
+        } else if keyboard.pressed(KeyCode::ArrowLeft) {
+            velocity.linvel.x = -200.0;
+            sprite.flip_x = true;
+        } else {
+            velocity.linvel.x = 0.0;
+        }
 
-    if keyboard_input.pressed(KeyCode::ArrowRight) {
-        transform.translation.x -= velocity.0.x * time.delta_secs();
-        transform.scale.x = 1.0;
-    }
-    if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        transform.translation.x += velocity.0.x * time.delta_secs();
-        transform.scale.x = -1.0;
-    }
-    // Jumping
-    if keyboard_input.pressed(KeyCode::Space) && transform.translation.y <= GROUND_LEVEL {
-        velocity.0.y = JUMP_FORCE;
-    }
-}
-
-pub fn apply_gravity_system(time: Res<Time>, mut query: Query<&mut Velocity, With<Player>>) {
-    let mut velocity = query.single_mut();
-    velocity.0.y += GRAVITY * time.delta_secs();
-}
-
-pub fn update_player_position_system(
-    time: Res<Time>,
-    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
-) {
-    let (mut transform, mut velocity) = query.single_mut();
-
-    transform.translation.y += velocity.0.y * time.delta_secs();
-
-    if transform.translation.y <= GROUND_LEVEL {
-        transform.translation.y = GROUND_LEVEL;
-        velocity.0.y = 0.0;
-    }
-}
-
-pub fn spawn_flying_boxes_system(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    time: Res<Time>,
-    mut spawn_timer: ResMut<BoxSpawningTimer>,
-    mut rng: GlobalEntropy<WyRand>,
-) {
-    let box_image: Handle<Image> = asset_server.load("Box.png");
-    spawn_timer.0.tick(time.delta());
-    if spawn_timer.0.finished() {
-        let obstacle_x = GROUND_EDGE;
-        let obstacle_y = GROUND_LEVEL + (rng.next_u64() % 75) as f32;
-        let custom_size = Some(Vec2::ONE * (rng.next_u64() % 50) as f32);
-        commands.spawn((
-            Box,
-            Sprite {
-                image: box_image,
-                custom_size,
-                anchor: Anchor::BottomCenter,
-                ..default()
-            },
-            Transform::from_xyz(obstacle_x, obstacle_y, 0.0),
-        ));
-    }
-}
-
-pub fn move_boxes_system(
-    time: Res<Time>,
-    mut commands: Commands,
-    mut query: Query<(Entity, &mut Transform), With<Box>>,
-) {
-    for (entity, mut transform) in query.iter_mut() {
-        transform.translation.x -= GAME_SPEED * time.delta_secs();
-        if transform.translation.x < -GROUND_EDGE {
-            commands.entity(entity).despawn();
+        if keyboard.just_pressed(KeyCode::Space) {
+            velocity.linvel.y = JUMP_FORCE;
         }
     }
 }
+
+// pub fn player_movement_system(
+//     time: Res<Time>,
+//     keyboard_input: Res<ButtonInput<KeyCode>>,
+//     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+// ) {
+//     let (mut transform, mut velocity) = query.single_mut();
+//
+//     if keyboard_input.pressed(KeyCode::ArrowRight) {
+//         transform.translation.x -= velocity.linvel.x * time.delta_secs();
+//         transform.scale.x = 1.0;
+//     }
+//     if keyboard_input.pressed(KeyCode::ArrowLeft) {
+//         transform.translation.x += velocity.linvel.x * time.delta_secs();
+//         transform.scale.x = -1.0;
+//     }
+//     // Jumping
+//     if keyboard_input.pressed(KeyCode::Space) && transform.translation.y <= GROUND_LEVEL {
+//         velocity.linvel.y = JUMP_FORCE;
+//     }
+// }
+
+// pub fn apply_gravity_system(time: Res<Time>, mut query: Query<&mut Velocity, With<Player>>) {
+//     let mut velocity = query.single_mut();
+//     velocity.0.y += GRAVITY * time.delta_secs();
+// }
+
+// pub fn update_player_position_system(
+//     time: Res<Time>,
+//     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+// ) {
+//     let (mut transform, mut velocity) = query.single_mut();
+//
+//     transform.translation.y += velocity.0.y * time.delta_secs();
+//
+//     // if transform.translation.y <= GROUND_LEVEL {
+//     //     transform.translation.y = GROUND_LEVEL;
+//     //     velocity.0.y = 0.0;
+//     // }
+// }
 
 pub fn apply_animation(time: Res<Time>, mut query: Query<(&mut StandardAnimation, &mut Sprite)>) {
     for (mut animation, mut sprite) in &mut query.iter_mut() {
         animation.timer.tick(time.delta());
         if animation.timer.just_finished() {
             if let Some(atlas) = &mut sprite.texture_atlas {
-                atlas.index = (atlas.index + 1) % 8;
+                atlas.index = (atlas.index + 1) % 11;
             }
         }
     }

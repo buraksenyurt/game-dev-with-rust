@@ -7,20 +7,20 @@ use crate::components::BoxSpawningTimer;
 use crate::constants::SPAWN_DURATION;
 use crate::systems::*;
 use bevy::prelude::*;
-use bevy_prng::WyRand;
-use bevy_rand::prelude::EntropyPlugin;
+use bevy_rapier2d::prelude::*;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(EntropyPlugin::<WyRand>::default())
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
+        .add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, setup_system)
         .add_systems(
             Update,
             (
-                apply_gravity_system,
+                //apply_gravity_system,
                 player_movement_system,
-                update_player_position_system,
+                //update_player_position_system,
                 apply_animation,
             ),
         )

@@ -1,4 +1,3 @@
-use bevy::math::Vec3;
 use bevy::prelude::*;
 
 #[derive(Component)]
@@ -7,8 +6,8 @@ pub struct Player;
 #[derive(Component)]
 pub struct Box;
 
-#[derive(Component)]
-pub struct Velocity(pub Vec3);
+// #[derive(Component)]
+// pub struct Velocity(pub Vec3);
 
 #[derive(Resource)]
 pub struct BoxSpawningTimer(pub Timer);
@@ -21,7 +20,7 @@ pub struct StandardAnimation {
 impl Default for StandardAnimation {
     fn default() -> Self {
         Self {
-            timer: Timer::from_seconds(0.2, TimerMode::Repeating),
+            timer: Timer::from_seconds(0.1, TimerMode::Repeating),
         }
     }
 }
