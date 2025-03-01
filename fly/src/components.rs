@@ -4,6 +4,20 @@ use bevy::prelude::*;
 pub struct Player;
 
 #[derive(Component)]
+pub enum PlayerState {
+    Idle,
+    Running,
+    Jumping,
+}
+
+#[derive(Component)]
+pub struct PlayerAnimationHandles {
+    pub idle: Handle<Image>,
+    pub running: Handle<Image>,
+    pub jumping: Handle<Image>,
+}
+
+#[derive(Component)]
 pub struct StandardAnimation {
     pub timer: Timer,
 }

@@ -10,10 +10,13 @@ pub fn setup_system(
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let fox_texture_handle: Handle<Image> = asset_server.load("Fox/Idle.png");
+    let idle_texture: Handle<Image> = asset_server.load("Fox/Idle.png");
+    let running_texture: Handle<Image> = asset_server.load("Fox/Run.png");
+    let jumping_texture: Handle<Image> = asset_server.load("Fox/Jump.png");
+
     let frame_size = UVec2::new(32, 32);
-    let fox_atlas_layout = TextureAtlasLayout::from_grid(frame_size, 11, 1, None, None);
-    let fox_atlas_layout_handle = texture_atlases.add(fox_atlas_layout);
+    let idle_atlas = TextureAtlasLayout::from_grid(frame_size, 11, 1, None, None);
+    let idle_atlas_handle = texture_atlases.add(idle_atlas);
 
     commands.spawn(Camera2d);
 
@@ -21,9 +24,9 @@ pub fn setup_system(
     commands.spawn((
         Player,
         Sprite {
-            image: fox_texture_handle.clone(),
+            image: idle_texture.clone(),
             texture_atlas: Some(TextureAtlas {
-                layout: fox_atlas_layout_handle,
+                layout: idle_atlas_handle,
                 index: 0,
             }),
             custom_size: Some(Vec2::ONE * 32.0),
@@ -40,6 +43,12 @@ pub fn setup_system(
             combine_rule: CoefficientCombineRule::Min,
         },
         StandardAnimation::default(),
+        PlayerState::Idle,
+        PlayerAnimationHandles {
+            idle: idle_texture,
+            running: running_texture,
+            jumping: jumping_texture,
+        },
     ));
 
     load_level_tiles(Level::FirstGate, &mut commands, &asset_server);
@@ -104,13 +113,51 @@ pub fn player_movement_system(
         }
     }
 }
-pub fn apply_animation(time: Res<Time>, mut query: Query<(&mut StandardAnimation, &mut Sprite)>) {
-    for (mut animation, mut sprite) in &mut query.iter_mut() {
+pub fn apply_animation(
+    time: Res<Time>,
+    mut query: Query<(&mut StandardAnimation, &mut Sprite, &PlayerState)>,
+) {
+    for (mut animation, mut sprite, state) in query.iter_mut() {
         animation.timer.tick(time.delta());
         if animation.timer.just_finished() {
             if let Some(atlas) = &mut sprite.texture_atlas {
-                atlas.index = (atlas.index + 1) % 11;
+                let max_frames = match state {
+                    PlayerState::Idle | PlayerState::Running => 11, // Idle.png 11 kareden oluştuğu için
+                    PlayerState::Jumping => 1, // Jump.png sadece 1 kareden oluşuyor
+                };
+
+                atlas.index = (atlas.index + 1) % max_frames;
             }
+        }
+    }
+}
+
+pub fn update_player_animation(
+    mut query: Query<(&mut Sprite, &PlayerState, &PlayerAnimationHandles)>,
+) {
+    for (mut sprite, state, handles) in query.iter_mut() {
+        match state {
+            PlayerState::Idle => {
+                sprite.image = handles.idle.clone();
+            }
+            PlayerState::Running => {
+                sprite.image = handles.running.clone();
+            }
+            PlayerState::Jumping => {
+                sprite.image = handles.jumping.clone();
+            }
+        }
+    }
+}
+
+pub fn update_player_state(mut query: Query<(&mut PlayerState, &Velocity)>) {
+    for (mut state, velocity) in query.iter_mut() {
+        if velocity.linvel.y > 1.0 {
+            *state = PlayerState::Jumping;
+        } else if velocity.linvel.x.abs() > 0.1 {
+            *state = PlayerState::Running;
+        } else {
+            *state = PlayerState::Idle;
         }
     }
 }

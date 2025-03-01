@@ -16,7 +16,9 @@ fn main() {
         .add_systems(
             Update,
             (
+                update_player_state,
                 player_movement_system,
+                update_player_animation,
                 apply_animation,
             ),
         )
