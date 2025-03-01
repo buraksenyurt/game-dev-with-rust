@@ -3,7 +3,7 @@ use crate::constants::*;
 use crate::game_play::Level;
 use bevy::prelude::*;
 use bevy::sprite::Sprite;
-use bevy_rapier2d::prelude::{Collider, Friction, GravityScale, RigidBody, Velocity};
+use bevy_rapier2d::prelude::*;
 
 pub fn setup_system(
     mut commands: Commands,
@@ -15,7 +15,7 @@ pub fn setup_system(
     let fox_atlas_layout = TextureAtlasLayout::from_grid(frame_size, 11, 1, None, None);
     let fox_atlas_layout_handle = texture_atlases.add(fox_atlas_layout);
 
-    commands.spawn(Camera2d::default());
+    commands.spawn(Camera2d);
 
     // Player
     commands.spawn((
@@ -27,16 +27,18 @@ pub fn setup_system(
                 index: 0,
             }),
             custom_size: Some(Vec2::ONE * 32.0),
-            //anchor: Anchor::BottomCenter,
             ..default()
         },
         RigidBody::Dynamic,
         Collider::cuboid(16.0, 16.0),
-        GravityScale(9.8),
-        Transform::from_xyz(PLAYER_X, 0.0, 0.0),
+        GravityScale(GRAVITY_FORCE),
+        Transform::from_xyz(PLAYER_START_X, 0.0, 0.0),
         Velocity::default(),
-        Friction::coefficient(0.5),
-        //Velocity(Vec3::new(-PLAYER_VELOCITY_X, 0.0, 0.0)),
+        LockedAxes::ROTATION_LOCKED,
+        Friction {
+            coefficient: 0.2,
+            combine_rule: CoefficientCombineRule::Min,
+        },
         StandardAnimation::default(),
     ));
 
@@ -88,10 +90,10 @@ pub fn player_movement_system(
 ) {
     for (mut velocity, mut sprite) in query.iter_mut() {
         if keyboard.pressed(KeyCode::ArrowRight) {
-            velocity.linvel.x = 200.0;
+            velocity.linvel.x = PLAYER_SPEED;
             sprite.flip_x = false;
         } else if keyboard.pressed(KeyCode::ArrowLeft) {
-            velocity.linvel.x = -200.0;
+            velocity.linvel.x = -PLAYER_SPEED;
             sprite.flip_x = true;
         } else {
             velocity.linvel.x = 0.0;
@@ -102,47 +104,6 @@ pub fn player_movement_system(
         }
     }
 }
-
-// pub fn player_movement_system(
-//     time: Res<Time>,
-//     keyboard_input: Res<ButtonInput<KeyCode>>,
-//     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
-// ) {
-//     let (mut transform, mut velocity) = query.single_mut();
-//
-//     if keyboard_input.pressed(KeyCode::ArrowRight) {
-//         transform.translation.x -= velocity.linvel.x * time.delta_secs();
-//         transform.scale.x = 1.0;
-//     }
-//     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-//         transform.translation.x += velocity.linvel.x * time.delta_secs();
-//         transform.scale.x = -1.0;
-//     }
-//     // Jumping
-//     if keyboard_input.pressed(KeyCode::Space) && transform.translation.y <= GROUND_LEVEL {
-//         velocity.linvel.y = JUMP_FORCE;
-//     }
-// }
-
-// pub fn apply_gravity_system(time: Res<Time>, mut query: Query<&mut Velocity, With<Player>>) {
-//     let mut velocity = query.single_mut();
-//     velocity.0.y += GRAVITY * time.delta_secs();
-// }
-
-// pub fn update_player_position_system(
-//     time: Res<Time>,
-//     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
-// ) {
-//     let (mut transform, mut velocity) = query.single_mut();
-//
-//     transform.translation.y += velocity.0.y * time.delta_secs();
-//
-//     // if transform.translation.y <= GROUND_LEVEL {
-//     //     transform.translation.y = GROUND_LEVEL;
-//     //     velocity.0.y = 0.0;
-//     // }
-// }
-
 pub fn apply_animation(time: Res<Time>, mut query: Query<(&mut StandardAnimation, &mut Sprite)>) {
     for (mut animation, mut sprite) in &mut query.iter_mut() {
         animation.timer.tick(time.delta());

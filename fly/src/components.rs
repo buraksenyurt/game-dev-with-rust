@@ -4,15 +4,6 @@ use bevy::prelude::*;
 pub struct Player;
 
 #[derive(Component)]
-pub struct Box;
-
-// #[derive(Component)]
-// pub struct Velocity(pub Vec3);
-
-#[derive(Resource)]
-pub struct BoxSpawningTimer(pub Timer);
-
-#[derive(Component)]
 pub struct StandardAnimation {
     pub timer: Timer,
 }
