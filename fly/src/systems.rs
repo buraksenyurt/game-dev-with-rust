@@ -5,6 +5,8 @@ use crate::level_manager::*;
 use bevy::prelude::*;
 use bevy::sprite::Sprite;
 use bevy_rapier2d::prelude::*;
+use rand::prelude::IndexedRandom;
+use rand::Rng;
 
 pub fn setup_system(
     mut commands: Commands,
@@ -64,42 +66,83 @@ fn load_level(level: Level, commands: &mut Commands, asset_server: &Res<AssetSer
             let image = match platform_data.platform_type {
                 PlatformType::Ground => ground_tile_image.clone(),
                 PlatformType::Platform => platform_image.clone(),
+                _ => continue,
             };
 
-            spawn_platform(
-                platform_data.position.extend(0.0),
-                platform_data.tile_count,
-                commands,
-                &image,
-                platform_data.platform_type,
-            );
+            spawn_platform(&platform_data, commands, &image);
         }
+    }
+
+    spawn_random_crates(8, commands, asset_server);
+}
+
+fn spawn_random_crates(count: usize, commands: &mut Commands, asset_server: &Res<AssetServer>) {
+    let crate_image: Handle<Image> = asset_server.load("Crate.png");
+    let mut rng = rand::rng();
+
+    for i in 0..count {
+        let location = Vec2::new(
+            rng.random_range(-500.0..500.0),
+            rng.random_range(400.0..500.0),
+        );
+        let crate_size = [32.0, 36.0, 40.0, 44.0].choose(&mut rng).unwrap();
+        commands.spawn((
+            Sprite {
+                image: crate_image.clone(),
+                custom_size: Some(Vec2::ONE * crate_size),
+                ..default()
+            },
+            Transform::from_xyz(location.x + (i as f32 * crate_size) as f32, location.y, 0.0),
+            GravityScale(BOX_GRAVITY_FORCE),
+            RigidBody::Dynamic,
+            Collider::cuboid(crate_size / 2.0, crate_size / 2.0),
+            AdditionalMassProperties::Mass(50.0),
+            Friction {
+                coefficient: 3.5,
+                combine_rule: CoefficientCombineRule::Min,
+            },
+            Restitution {
+                coefficient: 0.2,
+                combine_rule: CoefficientCombineRule::Average,
+            },
+            Damping {
+                linear_damping: 1.0,
+                angular_damping: 0.4,
+            },
+            Ccd::enabled(),
+            Platform {
+                platform_type: PlatformType::Crate,
+            },
+        ));
     }
 }
 
-fn spawn_platform(
-    location: Vec3,
-    count: usize,
-    commands: &mut Commands,
-    image: &Handle<Image>,
-    platform_type: PlatformType,
-) {
-    for i in 0..count {
+fn spawn_platform(platform_data: &PlatformData, commands: &mut Commands, image: &Handle<Image>) {
+    for i in 0..platform_data.tile_count {
+        let p_data = platform_data.clone();
+        let transform = match p_data.direction {
+            PlatformDirection::Horizontal => Vec2::new(
+                p_data.position.x + (i * TILE_SIZE as usize) as f32,
+                p_data.position.y,
+            )
+            .extend(0.0),
+            PlatformDirection::Vertical => Vec2::new(
+                p_data.position.x,
+                p_data.position.y + (i * TILE_SIZE as usize) as f32,
+            )
+            .extend(0.0),
+        };
         commands.spawn((
             Sprite {
                 image: image.clone(),
                 custom_size: Some(Vec2::ONE * TILE_SIZE),
                 ..default()
             },
-            Transform::from_xyz(
-                location.x + (i * TILE_SIZE as usize) as f32,
-                location.y,
-                location.z,
-            ),
+            Transform::from_translation(transform),
             RigidBody::Fixed,
             Collider::cuboid(TILE_SIZE / 2.0, TILE_SIZE / 2.0),
             Platform {
-                platform_type: platform_type.clone(),
+                platform_type: p_data.platform_type,
             },
         ));
     }
