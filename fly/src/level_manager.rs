@@ -39,7 +39,13 @@ pub fn get_level_data(level: Level) -> Option<Vec<PlatformData>> {
             },
             PlatformData {
                 position: Vec2::new(-600.0, GROUND_LEVEL),
-                tile_count: 15,
+                tile_count: VERTICAL_TILE_COUNT,
+                direction: PlatformDirection::Vertical,
+                platform_type: PlatformType::Ground,
+            },
+            PlatformData {
+                position: Vec2::new((GROUND_TILE_COUNT as f32 * TILE_SIZE) / 2.0, GROUND_LEVEL),
+                tile_count: VERTICAL_TILE_COUNT,
                 direction: PlatformDirection::Vertical,
                 platform_type: PlatformType::Ground,
             },

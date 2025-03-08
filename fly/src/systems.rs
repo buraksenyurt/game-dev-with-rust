@@ -3,7 +3,7 @@ use crate::constants::*;
 use crate::game_play::Level;
 use crate::level_manager::*;
 use bevy::prelude::*;
-use bevy::sprite::Sprite;
+use bevy::sprite::{Anchor, Sprite};
 use bevy_rapier2d::prelude::*;
 use rand::prelude::IndexedRandom;
 use rand::Rng;
@@ -13,13 +13,18 @@ pub fn setup_system(
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let idle_texture: Handle<Image> = asset_server.load("Fox/Idle.png");
-    let running_texture: Handle<Image> = asset_server.load("Fox/Run.png");
-    let jumping_texture: Handle<Image> = asset_server.load("Fox/Jump.png");
+    let fox_idle_texture: Handle<Image> = asset_server.load("fox/Idle.png");
+    let fox_running_texture: Handle<Image> = asset_server.load("fox/Run.png");
+    let fox_jumping_texture: Handle<Image> = asset_server.load("fox/Jump.png");
 
-    let frame_size = UVec2::new(32, 32);
-    let idle_atlas = TextureAtlasLayout::from_grid(frame_size, 11, 1, None, None);
-    let idle_atlas_handle = texture_atlases.add(idle_atlas);
+    let enemy_idle_texture: Handle<Image> = asset_server.load("enemy/Idle.png");
+    let enemy_walking_texture: Handle<Image> = asset_server.load("enemy/Walk.png");
+
+    let fox_atlas = TextureAtlasLayout::from_grid(PLAYER_SIZE.as_uvec2(), 11, 1, None, None);
+    let fox_atlas_handle = texture_atlases.add(fox_atlas);
+
+    let enemy_atlas = TextureAtlasLayout::from_grid(ENEMY_SIZE.as_uvec2(), 11, 1, None, None);
+    let enemy_atlas_handle = texture_atlases.add(enemy_atlas);
 
     commands.spawn(Camera2d);
 
@@ -27,16 +32,16 @@ pub fn setup_system(
     commands.spawn((
         Player,
         Sprite {
-            image: idle_texture.clone(),
+            image: fox_idle_texture.clone(),
             texture_atlas: Some(TextureAtlas {
-                layout: idle_atlas_handle,
+                layout: fox_atlas_handle,
                 index: 0,
             }),
             custom_size: Some(Vec2::ONE * PLAYER_SIZE),
             ..default()
         },
         RigidBody::Dynamic,
-        Collider::cuboid(PLAYER_SIZE / 2.0, PLAYER_SIZE / 2.0),
+        Collider::cuboid(PLAYER_SIZE.x / 2.1, PLAYER_SIZE.y / 2.1),
         GravityScale(GRAVITY_FORCE),
         Transform::from_xyz(PLAYER_START_X, 0.0, 0.0),
         Velocity::default(),
@@ -48,9 +53,48 @@ pub fn setup_system(
         StandardAnimation::default(),
         PlayerState::Idle,
         PlayerAnimationHandles {
-            idle: idle_texture,
-            running: running_texture,
-            jumping: jumping_texture,
+            idle: fox_idle_texture,
+            running: fox_running_texture,
+            jumping: fox_jumping_texture,
+        },
+    ));
+
+    let mut rng = rand::rng();
+
+    // Enemy
+    commands.spawn((
+        Enemy { power: 2.0 },
+        Sprite {
+            image: enemy_idle_texture.clone(),
+            anchor: Anchor::Center,
+            texture_atlas: Some(TextureAtlas {
+                layout: enemy_atlas_handle,
+                index: 0,
+            }),
+            custom_size: Some(Vec2::ONE * ENEMY_SIZE),
+            ..default()
+        },
+        RigidBody::Dynamic,
+        Collider::cuboid(ENEMY_SIZE.x / 4.0, ENEMY_SIZE.y / 2.0),
+        GravityScale(GRAVITY_FORCE),
+        Transform::from_translation(
+            Vec2::new(
+                rng.random_range(-500.0..500.0),
+                rng.random_range(400.0..500.0),
+            )
+            .extend(0.0),
+        ),
+        Velocity::default(),
+        LockedAxes::ROTATION_LOCKED,
+        Friction {
+            coefficient: 0.2,
+            combine_rule: CoefficientCombineRule::Min,
+        },
+        StandardAnimation::default(),
+        EnemyState::Idle,
+        EnemyAnimationHandles {
+            idle: enemy_idle_texture,
+            walking: enemy_walking_texture,
         },
     ));
 
@@ -85,7 +129,7 @@ fn spawn_random_crates(count: usize, commands: &mut Commands, asset_server: &Res
             rng.random_range(-500.0..500.0),
             rng.random_range(400.0..500.0),
         );
-        let crate_size = [32.0, 36.0, 40.0, 44.0].choose(&mut rng).unwrap();
+        let crate_size = [22.0, 32.0, 36.0, 42.0].choose(&mut rng).unwrap();
         commands.spawn((
             Sprite {
                 image: crate_image.clone(),
@@ -148,27 +192,6 @@ fn spawn_platform(platform_data: &PlatformData, commands: &mut Commands, image: 
     }
 }
 
-// fn draw_ground(location: Vec3, count: usize, commands: &mut Commands, image: &Handle<Image>) {
-//     for i in 0..count {
-//         commands.spawn((
-//             Sprite {
-//                 image: image.clone(),
-//                 custom_size: Some(Vec2::ONE * TILE_SIZE),
-//                 //anchor: Anchor::BottomCenter,
-//                 ..default()
-//             },
-//             Transform::from_xyz(
-//                 location.x + (i * TILE_SIZE as usize) as f32,
-//                 location.y,
-//                 location.z,
-//             ),
-//             RigidBody::Fixed,
-//             Collider::cuboid(TILE_SIZE / 2.0, TILE_SIZE / 2.0),
-//             // Friction::coefficient(0.1),
-//         ));
-//     }
-// }
-
 pub fn player_movement_system(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &mut Sprite), With<Player>>,
@@ -189,7 +212,7 @@ pub fn player_movement_system(
         }
     }
 }
-pub fn apply_animation(
+pub fn apply_player_animation(
     time: Res<Time>,
     mut query: Query<(&mut StandardAnimation, &mut Sprite, &PlayerState)>,
 ) {
@@ -234,6 +257,49 @@ pub fn update_player_state(mut query: Query<(&mut PlayerState, &Velocity)>) {
             *state = PlayerState::Running;
         } else {
             *state = PlayerState::Idle;
+        }
+    }
+}
+
+pub fn apply_enemy_animation(
+    time: Res<Time>,
+    mut query: Query<(&mut StandardAnimation, &mut Sprite, &EnemyState)>,
+) {
+    for (mut animation, mut sprite, state) in query.iter_mut() {
+        animation.timer.tick(time.delta());
+        if animation.timer.just_finished() {
+            if let Some(atlas) = &mut sprite.texture_atlas {
+                let max_frames = match state {
+                    EnemyState::Idle | EnemyState::Walking => 11, // Idle.png 11 kareden oluştuğu için
+                };
+
+                atlas.index = (atlas.index + 1) % max_frames;
+            }
+        }
+    }
+}
+
+pub fn update_enemy_animation(
+    mut query: Query<(&mut Sprite, &EnemyState, &EnemyAnimationHandles)>,
+) {
+    for (mut sprite, state, handles) in query.iter_mut() {
+        match state {
+            EnemyState::Idle => {
+                sprite.image = handles.idle.clone();
+            }
+            EnemyState::Walking => {
+                sprite.image = handles.walking.clone();
+            }
+        }
+    }
+}
+
+pub fn update_enemy_state(mut query: Query<(&mut EnemyState, &Velocity)>) {
+    for (mut state, velocity) in query.iter_mut() {
+        if velocity.linvel.x.abs() > 0.1 {
+            *state = EnemyState::Walking;
+        } else {
+            *state = EnemyState::Idle;
         }
     }
 }

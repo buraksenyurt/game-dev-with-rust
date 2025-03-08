@@ -1,6 +1,21 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
+pub struct Enemy {
+    pub power: f32,
+}
+#[derive(Component)]
+pub enum EnemyState {
+    Idle,
+    Walking,
+}
+#[derive(Component)]
+pub struct EnemyAnimationHandles {
+    pub idle: Handle<Image>,
+    pub walking: Handle<Image>,
+}
+
+#[derive(Component)]
 pub struct Player;
 
 #[derive(Component)]

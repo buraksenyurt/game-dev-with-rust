@@ -20,7 +20,10 @@ fn main() {
                 update_player_state,
                 player_movement_system,
                 update_player_animation,
-                apply_animation,
+                apply_player_animation,
+                update_enemy_state,
+                update_enemy_animation,
+                apply_enemy_animation
             ),
         )
         //.add_systems(Update, (spawn_flying_boxes_system, move_boxes_system))
