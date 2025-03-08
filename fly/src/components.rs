@@ -1,21 +1,6 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub struct Enemy {
-    pub power: f32,
-}
-#[derive(Component)]
-pub enum EnemyState {
-    Idle,
-    Walking,
-}
-#[derive(Component)]
-pub struct EnemyAnimationHandles {
-    pub idle: Handle<Image>,
-    pub walking: Handle<Image>,
-}
-
-#[derive(Component)]
 pub struct Player;
 
 #[derive(Component)]
@@ -41,6 +26,45 @@ impl Default for StandardAnimation {
     fn default() -> Self {
         Self {
             timer: Timer::from_seconds(0.1, TimerMode::Repeating),
+        }
+    }
+}
+
+#[derive(Component)]
+pub struct Barrel {
+    pub power: f32,
+}
+#[derive(Component)]
+pub enum BarrelState {
+    Idle,
+    Walking,
+}
+#[derive(Component)]
+pub struct BarrelAnimationHandles {
+    pub idle: Handle<Image>,
+    pub walking: Handle<Image>,
+}
+
+#[derive(Component)]
+pub struct BarrelDriver {
+    pub timer: Timer,
+    pub state: BarrelMoveState,
+    pub direction: Vec2,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum BarrelMoveState {
+    Moving,
+    Stopped,
+}
+
+impl Default for BarrelDriver {
+    fn default() -> Self {
+        let mut timer = Timer::from_seconds(2.0, TimerMode::Once);
+        Self {
+            timer,
+            state: BarrelMoveState::Stopped,
+            direction: Vec2::ZERO,
         }
     }
 }
