@@ -1,5 +1,6 @@
 mod commandos;
 mod common;
+mod map;
 mod model;
 
 use crate::commandos::Commando;

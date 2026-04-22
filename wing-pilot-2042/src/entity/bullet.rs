@@ -39,7 +39,7 @@ impl Bullet {
                     rotation: self.rotation,
                     ..Default::default()
                 };
-                draw_texture_ex(texture, self.location.x, self.location.y, WHITE, params);
+                draw_texture_ex(&texture, self.location.x, self.location.y, WHITE, params);
             }
         }
     }

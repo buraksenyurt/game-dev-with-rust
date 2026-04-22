@@ -86,22 +86,26 @@ async fn main() {
                 game.draw_bullets(EnemyType::Warship(None)).await;
                 game.draw_clouds().await;
 
-                match &game.extra_ammo_box {
-                    Some(mut ammo) => {
-                        if extra_ammo_tick == ammo.lift_of_time.unwrap() {
-                            ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
-                            if ammo.location.y > screen_height() + ammo.texture.height() {
-                                game.extra_ammo_box = None;
-                                extra_ammo_tick = 0;
-                                continue;
-                            }
-                            game.extra_ammo_box = Some(ammo);
-                            ammo.draw();
+                let remove_ammo = if let Some(ammo) = game.extra_ammo_box.as_mut() {
+                    if extra_ammo_tick == ammo.lift_of_time.unwrap() {
+                        ammo.location += ammo.velocity * EXTRA_AMMO_SPEED_FACTOR;
+                        if ammo.location.y > screen_height() + ammo.texture.height() {
+                            true
                         } else {
-                            extra_ammo_tick += 1;
+                            ammo.draw();
+                            false
                         }
+                    } else {
+                        extra_ammo_tick += 1;
+                        false
                     }
-                    None => {}
+                } else {
+                    false
+                };
+                if remove_ammo {
+                    game.extra_ammo_box = None;
+                    extra_ammo_tick = 0;
+                    continue;
                 }
 
                 if check_fighter_with_ammo(&mut game).await && game.fighter.ammo_count <= MAX_AMMO {

@@ -3,7 +3,7 @@ use macroquad::prelude::{draw_texture, load_texture, Rect, Vec2, WHITE};
 use macroquad::rand;
 use macroquad::texture::Texture2D;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Asset {
     pub asset_type: AssetType,
     pub location: Vec2,
@@ -51,7 +51,7 @@ impl Asset {
     }
 
     pub fn draw(&self) {
-        draw_texture(self.texture, self.location.x, self.location.y, WHITE);
+        draw_texture(&self.texture, self.location.x, self.location.y, WHITE);
     }
 
     pub async fn get_rect(&self, scale: f32) -> Rect {

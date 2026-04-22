@@ -229,7 +229,7 @@ impl Fighter {
             ..Default::default()
         };
         draw_texture_ex(
-            self.texture,
+            &self.texture,
             self.position.x,
             self.position.y,
             WHITE,
@@ -244,7 +244,7 @@ impl Fighter {
             EnemyType::Warship(_) => 3.,
         };
         draw_texture_ex(
-            self.texture_explosion,
+            &self.texture_explosion,
             self.position.x + self.texture.width() * 0.5,
             self.position.y - self.texture_explosion.height(),
             WHITE,

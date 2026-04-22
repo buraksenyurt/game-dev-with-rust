@@ -78,12 +78,12 @@ impl Enemy {
     }
 
     pub async fn draw(&self) {
-        draw_texture(self.texture, self.position.x, self.position.y, WHITE);
+        draw_texture(&self.texture, self.position.x, self.position.y, WHITE);
     }
 
     pub async fn draw_on_shot(&self) {
         draw_texture_ex(
-            self.texture_explosion,
+            &self.texture_explosion,
             self.position.x + self.texture.width() * 0.5,
             self.position.y + self.texture.height(),
             WHITE,
