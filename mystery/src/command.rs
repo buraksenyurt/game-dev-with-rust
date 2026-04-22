@@ -44,7 +44,6 @@ impl FromStr for Command {
 #[cfg(test)]
 mod command_tests {
     use crate::command::Command;
-    use crate::controller::parse;
     use std::str::FromStr;
 
     #[test]

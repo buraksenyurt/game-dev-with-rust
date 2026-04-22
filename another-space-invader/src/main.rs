@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 use rand::random;
 
 const COLUMN_COUNT: u16 = 8;
@@ -18,7 +19,7 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: String::from("Guardians of Space Invaders"),
-                        resolution: Vec2::new(480f32, 482f32).into(),
+                        resolution: WindowResolution::new(480, 482),
                         position: WindowPosition::Centered(MonitorSelection::Primary),
                         ..Default::default()
                     }),
@@ -31,7 +32,7 @@ fn main() {
 }
 
 fn setup_system(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 }
 struct GamePlugin;
 impl Plugin for GamePlugin {
@@ -47,7 +48,7 @@ struct Resolution {
     pub pixel_ratio: f32,
 }
 fn setup_resolution_system(mut commands: Commands, window: Query<&Window>) {
-    let window = window.single();
+    let window = window.single().unwrap();
     commands.insert_resource(Resolution {
         dimension: Vec2::new(window.width(), window.height()),
         pixel_ratio: 0.75,
@@ -88,12 +89,12 @@ fn setup_invaders_system(
                 + (Vec3::Y * resolution.dimension.y * 0.5);
 
             commands.spawn((
-                SpriteBundle {
-                    transform: Transform::from_translation(position)
-                        .with_scale(Vec3::splat(resolution.pixel_ratio)),
-                    texture: texture.clone(),
+                Sprite {
+                    image: texture.clone(),
                     ..default()
                 },
+                Transform::from_translation(position)
+                    .with_scale(Vec3::splat(resolution.pixel_ratio)),
                 Invader {},
             ));
         }
@@ -126,7 +127,7 @@ fn update_invaders_system(
     time: Res<Time>,
 ) {
     for (_, mut transform) in query.iter_mut() {
-        transform.translation.x += time.delta_seconds() * manager.direction * INVADER_SPEED;
+        transform.translation.x += time.delta_secs() * manager.direction * INVADER_SPEED;
         if transform.translation.x.abs() > resolution.dimension.x * 0.5 {
             manager.shift_down = true;
             manager.distance_from_boundary =
@@ -154,11 +155,14 @@ struct Player {
     cooldown_timer: f32,
 }
 
+#[derive(Component)]
+struct Bullet;
+
 struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup_player_system)
-            .add_systems(Update, update_player_system);
+            .add_systems(Update, (update_player_system, update_bullets_system, collision_system));
     }
 }
 
@@ -174,12 +178,12 @@ fn setup_player_system(
         0.0,
     );
     commands.spawn((
-        SpriteBundle {
-            texture,
-            transform: Transform::from_translation(position)
-                .with_scale(Vec3::splat(resolution.pixel_ratio)),
-            ..Default::default()
+        Sprite {
+            image: texture,
+            ..default()
         },
+        Transform::from_translation(position)
+            .with_scale(Vec3::splat(resolution.pixel_ratio)),
         Player {
             cooldown_timer: 0.0,
         },
@@ -187,20 +191,21 @@ fn setup_player_system(
 }
 
 fn update_player_system(
+    mut commands: Commands,
     mut query: Query<(&mut Player, &mut Transform)>,
     time: Res<Time>,
     keys: Res<ButtonInput<KeyCode>>,
     resolution: Res<Resolution>,
 ) {
-    let (mut player,mut transform) = query.single_mut();
+    let (mut player, mut transform) = query.single_mut().unwrap();
     let mut horizontal = 0.0;
     if keys.pressed(KeyCode::ArrowLeft) {
-        horizontal +=-1.0;
+        horizontal += -1.0;
     }
     if keys.pressed(KeyCode::ArrowRight) {
-        horizontal+=1.0;
+        horizontal += 1.0;
     }
-    transform.translation.x += horizontal * time.delta_seconds() * PLAYER_SPEED;
+    transform.translation.x += horizontal * time.delta_secs() * PLAYER_SPEED;
 
     let right_bound = resolution.dimension.x * 0.5;
     let left_bound = -resolution.dimension.x * 0.5;
@@ -210,5 +215,53 @@ fn update_player_system(
     }
     if transform.translation.x < left_bound {
         transform.translation.x = left_bound;
+    }
+
+    player.cooldown_timer -= time.delta_secs();
+    if keys.just_pressed(KeyCode::Space) && player.cooldown_timer <= 0.0 {
+        player.cooldown_timer = SHOOTING_COOLDOWN;
+        let bullet_pos = transform.translation + Vec3::Y * 20.0;
+        commands.spawn((
+            Sprite {
+                color: Color::srgb(1.0, 1.0, 0.0),
+                custom_size: Some(Vec2::new(4.0, 12.0)),
+                ..default()
+            },
+            Transform::from_translation(bullet_pos),
+            Bullet,
+        ));
+    }
+}
+
+fn update_bullets_system(
+    mut commands: Commands,
+    mut query: Query<(Entity, &Bullet, &mut Transform)>,
+    time: Res<Time>,
+    resolution: Res<Resolution>,
+) {
+    for (entity, _, mut transform) in query.iter_mut() {
+        transform.translation.y += BULLET_SPEED * time.delta_secs();
+        if transform.translation.y > resolution.dimension.y * 0.5 {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+fn collision_system(
+    mut commands: Commands,
+    bullets: Query<(Entity, &Transform), With<Bullet>>,
+    invaders: Query<(Entity, &Transform), With<Invader>>,
+) {
+    for (bullet_entity, bullet_transform) in bullets.iter() {
+        for (invader_entity, invader_transform) in invaders.iter() {
+            let distance = bullet_transform
+                .translation
+                .distance(invader_transform.translation);
+            if distance < 20.0 {
+                commands.entity(bullet_entity).despawn();
+                commands.entity(invader_entity).despawn();
+                break;
+            }
+        }
     }
 }
