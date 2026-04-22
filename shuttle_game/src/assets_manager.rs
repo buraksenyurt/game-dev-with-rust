@@ -18,7 +18,7 @@ impl Plugin for AssetsManagerPlugin {
     }
 }
 
-fn load_assets(mut assets: ResMut<AssetsResource>, asset_server: Res<AssetServer>) {
+pub fn load_assets(mut assets: ResMut<AssetsResource>, asset_server: Res<AssetServer>) {
     *assets = AssetsResource {
         pickup_crate: asset_server.load("crate.glb#Scene0"),
         shuttle: asset_server.load("shuttle.glb#Scene0"),

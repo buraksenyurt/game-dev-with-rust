@@ -1,0 +1,4 @@
+# LLD linker (faster linking) — uncomment if lld-link.exe is on your PATH
+# (install LLVM from https://releases.llvm.org/ to get it)
+# [target.x86_64-pc-windows-msvc]
+# linker = "lld-link.exe"

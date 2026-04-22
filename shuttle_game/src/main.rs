@@ -29,9 +29,10 @@ use bevy::prelude::*;
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::srgb(0.02353, 0.98039, 1.0)))
-        .insert_resource(AmbientLight {
+        .insert_resource(GlobalAmbientLight {
             color: Color::default(),
             brightness: 1000.,
+            affects_lightmapped_meshes: true,
         })
         // User plugins
         .add_plugins(DefaultPlugins)

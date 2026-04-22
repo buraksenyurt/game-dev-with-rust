@@ -6,7 +6,7 @@ use crate::out_off_boundary::Boundary;
 use crate::planner::GameSystemSet;
 use crate::shuttle::{Shuttle, Weapon};
 use bevy::prelude::*;
-use rand::Rng;
+use rand::RngExt;
 use std::ops::Range;
 
 const SPAWN_RANGE_X: Range<f32> = -25.0..25.0;
@@ -54,14 +54,20 @@ fn spawn_crate(
         return;
     }
 
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let translation = Vec3::new(
-        rng.gen_range(SPAWN_RANGE_X),
+        rng.random_range(SPAWN_RANGE_X),
         0.0,
-        rng.gen_range(SPAWN_RANGE_Z),
+        rng.random_range(SPAWN_RANGE_Z),
     );
-    let mut random_unit_vector =
-        || Vec3::new(rng.gen_range(-1.0..1.0), 0.0, rng.gen_range(-1.0..1.0)).normalize_or_zero();
+    let mut random_unit_vector = || {
+        Vec3::new(
+            rng.random_range(-1.0..1.0),
+            0.0,
+            rng.random_range(-1.0..1.0),
+        )
+        .normalize_or_zero()
+    };
     let velocity = random_unit_vector() * VELOCITY_SCALE;
     let acceleration = random_unit_vector() * ACCELERATION_SCALE;
 
@@ -70,13 +76,10 @@ fn spawn_crate(
             velocity: Velocity::new(velocity),
             acceleration: Acceleration::new(acceleration),
             collider: Collider::new(RADIUS),
-            model: SceneBundle {
-                scene: assets_resource.pickup_crate.clone(),
-                transform: Transform {
-                    translation,
-                    scale: Vec3::splat(SCALE_FACTOR),
-                    ..default()
-                },
+            scene: SceneRoot(assets_resource.pickup_crate.clone()),
+            transform: Transform {
+                translation,
+                scale: Vec3::splat(SCALE_FACTOR),
                 ..default()
             },
         },
@@ -90,13 +93,13 @@ fn hitting_check(
     pickup_query: Query<(Entity, &Collider), With<PickupCrate>>,
     shuttle_query: Query<Entity, With<Shuttle>>,
     weapon_query: Query<Entity, With<Weapon>>,
-    mut collision_event_writer: EventWriter<CollisionEvent>,
+    mut collision_event_writer: MessageWriter<CollisionEvent>,
     mut score: ResMut<Score>,
 ) {
     for (entity, collider) in pickup_query.iter() {
         for &collided_entity in collider.entities.iter() {
             if shuttle_query.get(collided_entity).is_ok() {
-                collision_event_writer.send(CollisionEvent::new(entity, collided_entity));
+                collision_event_writer.write(CollisionEvent::new(entity, collided_entity));
                 commands.entity(entity).despawn();
             } else if weapon_query.get(collided_entity).is_ok() {
                 score.total_hit += PLAYER_HIT;

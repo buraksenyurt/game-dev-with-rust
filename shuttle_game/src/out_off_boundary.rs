@@ -21,7 +21,7 @@ fn check_boundaries(mut commands: Commands, query: Query<(Entity, &GlobalTransfo
         let distance_from_origin = transform.translation().distance(Vec3::ZERO);
 
         if distance_from_origin > DISTANCE_FROM_ORIGIN {
-            commands.entity(entity).despawn_recursive();
+            commands.entity(entity).despawn();
             info!("{:?} Crate is out of the edge", entity);
         }
     }

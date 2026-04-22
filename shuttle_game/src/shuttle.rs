@@ -1,11 +1,11 @@
-use crate::assets_manager::AssetsResource;
+use crate::assets_manager::{load_assets, AssetsResource};
 use crate::collision::Collider;
 use crate::game_data::Score;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use crate::out_off_boundary::Boundary;
 use crate::planner::GameSystemSet;
 use crate::state::GameState;
-use bevy::app::{App, Plugin};
+use bevy::app::{App, Plugin, Startup};
 use bevy::math::Vec3;
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
@@ -47,7 +47,7 @@ pub struct Shuttle;
 pub struct ShuttlePlugin;
 impl Plugin for ShuttlePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_shuttle)
+        app.add_systems(Startup, spawn_shuttle.after(load_assets))
             .add_systems(
                 Update,
                 (
@@ -78,11 +78,8 @@ fn spawn_shuttle(
             velocity: Velocity::new(Vec3::ZERO),
             acceleration: Acceleration::new(Vec3::ZERO),
             collider: Collider::new(SHUTTLE_RADIUS),
-            model: SceneBundle {
-                scene: assets_resource.shuttle.clone(),
-                transform: Transform::from_translation(INITIAL_POSITION),
-                ..default()
-            },
+            scene: SceneRoot(assets_resource.shuttle.clone()),
+            transform: Transform::from_translation(INITIAL_POSITION),
         },
         Shuttle,
         Damage::default(),
@@ -95,7 +92,7 @@ fn move_shuttle(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
 ) {
-    let Ok((mut transform, mut velocity)) = query.get_single_mut() else {
+    let Ok((mut transform, mut velocity)) = query.single_mut() else {
         return;
     };
     let mut rotation = 0.0;
@@ -103,9 +100,9 @@ fn move_shuttle(
     let mut movement = 0.0;
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        rotation = -ROTATION_SPEED * time.delta_seconds();
+        rotation = -ROTATION_SPEED * time.delta_secs();
     } else if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        rotation = ROTATION_SPEED * time.delta_seconds();
+        rotation = ROTATION_SPEED * time.delta_secs();
     }
 
     if keyboard_input.pressed(KeyCode::ArrowDown) {
@@ -115,13 +112,13 @@ fn move_shuttle(
     }
 
     if keyboard_input.pressed(KeyCode::KeyA) {
-        roll = -ROLL_SPEED * time.delta_seconds();
+        roll = -ROLL_SPEED * time.delta_secs();
     } else if keyboard_input.pressed(KeyCode::KeyS) {
-        roll = ROLL_SPEED * time.delta_seconds();
+        roll = ROLL_SPEED * time.delta_secs();
     }
     transform.rotate_y(rotation);
     transform.rotate_local_z(roll);
-    velocity.value = -transform.forward() * movement;
+    velocity.value = -*transform.forward() * movement;
 }
 
 fn fire_at_will(
@@ -130,25 +127,22 @@ fn fire_at_will(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     assets_resource: Res<AssetsResource>,
 ) {
-    let Ok(transform) = query.get_single() else {
+    let Ok(transform) = query.single() else {
         return;
     };
 
     if keyboard_input.just_pressed(KeyCode::Space) {
         commands.spawn((
             MovingObjectBundle {
-                velocity: Velocity::new(-transform.forward() * ROCKET_SPEED),
+                velocity: Velocity::new(-*transform.forward() * ROCKET_SPEED),
                 acceleration: Acceleration::new(Vec3::ZERO),
                 collider: Collider::new(ROCKET_RADIUS),
-                model: SceneBundle {
-                    scene: assets_resource.rocket.clone(),
-                    transform: Transform {
-                        translation: transform.translation
-                            + -transform.forward() * ROCKET_FORWARD_SPAWN,
-                        scale: Vec3::splat(ROCKET_SCALE_FACTOR),
-                        rotation: transform.rotation * Quat::from_rotation_y(-FRAC_PI_2),
-                    },
-                    ..default()
+                scene: SceneRoot(assets_resource.rocket.clone()),
+                transform: Transform {
+                    translation: transform.translation
+                        + -*transform.forward() * ROCKET_FORWARD_SPAWN,
+                    scale: Vec3::splat(ROCKET_SCALE_FACTOR),
+                    rotation: transform.rotation * Quat::from_rotation_y(-FRAC_PI_2),
                 },
             },
             Weapon,
@@ -161,7 +155,7 @@ fn check_health(
     mut next_state: ResMut<NextState<GameState>>,
     query: Query<&Health, With<Shuttle>>,
 ) {
-    let Ok(health) = query.get_single() else {
+    let Ok(health) = query.single() else {
         return;
     };
     if health.value == 0 {
@@ -170,8 +164,8 @@ fn check_health(
 }
 
 fn despawn_shuttle(mut commands: Commands, query: Query<Entity, With<Shuttle>>) {
-    if let Ok(entity) = query.get_single() {
-        commands.entity(entity).despawn_recursive();
+    if let Ok(entity) = query.single() {
+        commands.entity(entity).despawn()
     }
 }
 

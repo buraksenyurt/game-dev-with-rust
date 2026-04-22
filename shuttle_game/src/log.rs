@@ -1,7 +1,8 @@
 use crate::planner::GameSystemSet;
 use bevy::app::{App, Plugin, Update};
 use bevy::log::info;
-use bevy::prelude::{Entity, IntoSystemConfigs, Query, Transform};
+use bevy::prelude::{Entity, Query, Transform};
+use bevy::prelude::IntoScheduleConfigs;
 
 pub struct LogPlugin;
 

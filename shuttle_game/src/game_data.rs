@@ -31,7 +31,7 @@ impl Plugin for GameDataPlugin {
 pub fn update_score_text(mut text_query: Query<&mut Text, With<ScoreText>>, live_data: Res<Score>) {
     if live_data.is_changed() {
         for mut text in text_query.iter_mut() {
-            text.sections[0].value = format!("{}/{}", live_data.total_hit, live_data.player_damage);
+            **text = format!("{}/{}", live_data.total_hit, live_data.player_damage);
         }
     }
 }

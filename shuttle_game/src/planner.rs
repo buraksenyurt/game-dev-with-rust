@@ -23,7 +23,7 @@ impl Plugin for PlannerPlugin {
         )
         .add_systems(
             Update,
-            apply_deferred
+            ApplyDeferred
                 .after(GameSystemSet::DespawnEntities)
                 .before(GameSystemSet::PlayerInput),
         );

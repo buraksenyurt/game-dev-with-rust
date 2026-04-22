@@ -29,7 +29,8 @@ impl Acceleration {
 pub struct MovingObjectBundle {
     pub velocity: Velocity,
     pub acceleration: Acceleration,
-    pub model: SceneBundle,
+    pub scene: SceneRoot,
+    pub transform: Transform,
     pub collider: Collider,
 }
 
@@ -45,14 +46,18 @@ impl Plugin for MovementPlugin {
     }
 }
 
+const MAX_DELTA_SECS: f32 = 1.0 / 20.0; // cap at 50ms to prevent first-frame spike
+
 fn update_position(mut query: Query<(&mut Transform, &Velocity)>, time: Res<Time>) {
+    let delta = time.delta_secs().min(MAX_DELTA_SECS);
     for (mut transform, vel) in query.iter_mut() {
-        transform.translation += vel.value * time.delta_seconds();
+        transform.translation += vel.value * delta;
     }
 }
 
 fn update_velocity(mut query: Query<(&Acceleration, &mut Velocity)>, time: Res<Time>) {
+    let delta = time.delta_secs().min(MAX_DELTA_SECS);
     for (acceleration, mut vel) in query.iter_mut() {
-        vel.value += acceleration.value * time.delta_seconds();
+        vel.value += acceleration.value * delta;
     }
 }

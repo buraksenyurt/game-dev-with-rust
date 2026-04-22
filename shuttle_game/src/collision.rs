@@ -2,9 +2,9 @@ use crate::game_data::Score;
 use crate::planner::GameSystemSet;
 use crate::shuttle::{Damage, Health};
 use bevy::prelude::*;
-use bevy::utils::HashMap;
+use std::collections::HashMap;
 
-#[derive(Event, Debug)]
+#[derive(Message, Debug)]
 pub struct CollisionEvent {
     pub source: Entity,
     pub collided: Entity,
@@ -43,7 +43,7 @@ impl Plugin for CollisionPlugin {
             Update,
             apply_collision_changes.in_set(GameSystemSet::DespawnEntities),
         )
-        .add_event::<CollisionEvent>();
+        .add_message::<CollisionEvent>();
     }
 }
 
@@ -75,7 +75,7 @@ fn detect_collisions(mut query: Query<(Entity, &GlobalTransform, &mut Collider)>
 }
 
 fn apply_collision_changes(
-    mut collision_event_reader: EventReader<CollisionEvent>,
+    mut collision_event_reader: MessageReader<CollisionEvent>,
     mut health_query: Query<&mut Health>,
     damage_query: Query<&Damage>,
     mut score: ResMut<Score>,
