@@ -65,7 +65,7 @@ async fn main() {
                     && game.bullets.len() < stage.max_bullet_count
                     && mini_gunner.is_fire_suitable()
                 {
-                    audio::play_sound_once(turret_fire_sound);
+                    audio::play_sound_once(&turret_fire_sound);
                     let bullet = Bullet::spawn(mini_gunner.muzzle_point);
                     game.bullets.push(bullet);
                 }
@@ -88,7 +88,7 @@ async fn main() {
                         );
                         if distance.length() <= e.radius {
                             //e.is_alive = false;
-                            audio::play_sound_once(explosion_sound);
+                            audio::play_sound_once(&explosion_sound);
                             game.score.total_hit += 1;
                             game.score.total_point += 10;
                             m.is_alive = false;
@@ -125,7 +125,7 @@ async fn main() {
                         if m.position.y > screen_height() - CITY_HEIGHT {
                             m.is_alive = false;
                             game.score.city_health -= PENALTY_VALUE;
-                            audio::play_sound_once(hit_sound);
+                            audio::play_sound_once(&hit_sound);
                         }
                     } else {
                         m.lift_off_time -= 1;

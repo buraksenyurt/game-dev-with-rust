@@ -19,7 +19,7 @@ impl Bullet {
             ..Default::default()
         };
         draw_texture_ex(
-            self.texture,
+            &self.texture,
             self.position.x,
             self.position.y,
             WHITE,

@@ -1,7 +1,7 @@
 use crate::Vec2;
 use macroquad::prelude::*;
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct Garrison {
     pub id: usize,
     pub position: Vec2,
@@ -21,6 +21,6 @@ impl Garrison {
         }
     }
     pub fn draw(&self) {
-        draw_texture(self.texture, self.position.x, self.position.y, WHITE);
+        draw_texture(&self.texture, self.position.x, self.position.y, WHITE);
     }
 }

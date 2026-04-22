@@ -52,7 +52,7 @@ async fn main() {
         }
 
         draw_texture(
-            ferris_texture,
+            &ferris_texture,
             ferris.position.x,
             ferris.position.y,
             ferris.color,

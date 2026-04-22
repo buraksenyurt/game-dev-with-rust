@@ -39,7 +39,7 @@ impl Game {
                 ),
             );
             //println!("{}", p);
-            let g = Garrison::new(g_counter, p, garrison_texture);
+            let g = Garrison::new(g_counter, p, garrison_texture.clone());
             if new_army
                 .iter()
                 .any(|s: &Garrison| (s.position - g.position).length() < g.texture.width())

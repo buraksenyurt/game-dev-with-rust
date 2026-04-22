@@ -5,4 +5,6 @@ edition = "2021"
 description = "Missile Command tutorial"
 
 [dependencies]
-macroquad = "0.3.25"
+macroquad = { version = "0.4.14", default-features = false, features = [
+    "audio",
+] }
