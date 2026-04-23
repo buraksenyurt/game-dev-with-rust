@@ -6,7 +6,7 @@ authors = ["Burak Selim Senyurt"]
 description = "Gggez örneklerinde astroblasto'nun uygulanışı. Öğrenim amaçlı."
 
 [dependencies]
-ggez="0.7.0"
+ggez = { workspace = true }
 oorandom="11.1.3"
-getrandom = "0.2.7"
-glam={ version = "0.21.3", features = ["mint"]}
+getrandom = "0.4.2"
+glam={ version = "0.32.1", features = ["mint"]}

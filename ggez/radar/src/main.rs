@@ -17,7 +17,7 @@ use ggez::{
     graphics::{self, Color},
     Context, GameError, GameResult,
 };
-use rand::Rng;
+use rand::RngExt;
 use std::f32::consts::PI;
 
 const SCREEN_WIDTH: f32 = 400.;
@@ -109,14 +109,14 @@ impl event::EventHandler<GameError> for GameState {
         self.angle += PI / 90.;
         // Calculate random vehicle points
         if ctx.time.ticks() % 180 == 0 {
-            let mut rng = rand::thread_rng();
-            let angle: f32 = rng.gen_range(-2. * PI..2. * PI);
+            let mut rng = rand::rng();
+            let angle: f32 = rng.random_range(-2. * PI..2. * PI);
             self.vehicle.pos = Vec2::new(
                 SCREEN_WIDTH * 0.5 + self.circle_r * angle.cos(),
                 SCREEN_HEIGHT * 0.5 + self.circle_r * angle.sin(),
             );
             self.vehicle.is_spawned = true;
-            let random_type: u8 = rng.gen_range(0..3);
+            let random_type: u8 = rng.random_range(0..3);
             match random_type {
                 0 => self.vehicle.v_type = VehicleType::Allie,
                 1 => self.vehicle.v_type = VehicleType::Enemy,

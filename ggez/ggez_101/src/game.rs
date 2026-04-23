@@ -1,12 +1,13 @@
 use crate::color_factory::{get_colors, Color};
 use crate::constant::{TINY_RECT_HEIGHT, TINY_RECT_WIDTH};
 use crate::mouse::Mouse;
-use ggez::event::{EventHandler, KeyCode, KeyMods};
-use ggez::graphics::{draw, DrawParam};
+use ggez::event::EventHandler;
+use ggez::graphics::DrawParam;
+use ggez::input::keyboard::{KeyCode, KeyInput};
 use ggez::mint::Point2;
 use ggez::{graphics, Context, GameResult};
-use rand::prelude::ThreadRng;
-use rand::{thread_rng, Rng};
+use rand::rngs::ThreadRng;
+use rand::{rng, RngExt};
 use std::path::Path;
 use std::time::Duration;
 
@@ -22,8 +23,8 @@ impl Game {
     pub fn new(context: &mut Context) -> Self {
         Game {
             stopped: false,
-            rnd: thread_rng(),
-            player: graphics::Image::new(context, Path::new("/senzoface2.png"))
+            rnd: rng(),
+            player: graphics::Image::from_path(context, Path::new("/senzoface2.png"))
                 .expect("oyuncu karakteri yüklenemedi"),
             mouse: Mouse::new(0., 0.),
             symbol_position: Point2 { x: 150., y: 250. },
@@ -32,25 +33,33 @@ impl Game {
 }
 
 impl EventHandler for Game {
-    fn mouse_motion_event(&mut self, _ctx: &mut Context, x: f32, y: f32, _dx: f32, _dy: f32) {
+    fn mouse_motion_event(
+        &mut self,
+        _ctx: &mut Context,
+        x: f32,
+        y: f32,
+        _dx: f32,
+        _dy: f32,
+    ) -> GameResult<()> {
         self.mouse.x = x;
         self.mouse.y = y;
         self.symbol_position.x = self.mouse.x;
         self.symbol_position.y = self.mouse.y;
         println!("({}x{})", x, y);
+        Ok(())
     }
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
-        keycode: KeyCode,
-        _keymods: KeyMods,
+        input: KeyInput,
         _repeat: bool,
-    ) {
-        if keycode == KeyCode::Down {
+    ) -> GameResult<()> {
+        if input.keycode == Some(KeyCode::Down) {
             self.stopped = true;
-        } else if keycode == KeyCode::Up {
+        } else if input.keycode == Some(KeyCode::Up) {
             self.stopped = false;
         }
+        Ok(())
     }
 
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
@@ -59,28 +68,33 @@ impl EventHandler for Game {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         if !self.stopped {
-            let screen = graphics::drawable_size(&ctx);
-            graphics::clear(ctx, graphics::Color::BLACK);
+            let screen = ctx.gfx.drawable_size();
+            let mut canvas = graphics::Canvas::from_frame(ctx, graphics::Color::BLACK);
             let colors = get_colors();
             for c in colors {
                 let origin = Point2 {
-                    x: self.rnd.gen_range(0.0..screen.0 - TINY_RECT_WIDTH),
-                    y: self.rnd.gen_range(0.0..screen.1 / 4.),
+                    x: self.rnd.random_range(0.0..screen.0 - TINY_RECT_WIDTH),
+                    y: self.rnd.random_range(0.0..screen.1 / 4.),
                 };
 
-                draw_rectangle(ctx, &c, origin)?;
+                draw_rectangle(ctx, &mut canvas, &c, origin)?;
             }
-            draw_textbox(ctx, &self.mouse)?;
-            draw_image(ctx, &self.player)?;
-            draw_mesh(ctx, self.symbol_position)?;
-            graphics::present(ctx)?;
+            draw_textbox(&mut canvas, &self.mouse)?;
+            draw_image(ctx, &mut canvas, &self.player)?;
+            draw_mesh(ctx, &mut canvas, self.symbol_position)?;
+            canvas.finish(ctx)?;
             ggez::timer::sleep(Duration::from_secs_f32(0.150));
         }
         Ok(())
     }
 }
 
-fn draw_rectangle(ctx: &mut Context, color: &Color, origin: Point2<f32>) -> GameResult<()> {
+fn draw_rectangle(
+    ctx: &mut Context,
+    canvas: &mut graphics::Canvas,
+    color: &Color,
+    origin: Point2<f32>,
+) -> GameResult<()> {
     // draw vertical rectangle
     let column = graphics::Rect::new(0., 0., TINY_RECT_WIDTH, TINY_RECT_HEIGHT);
     let column_mesh = graphics::Mesh::new_rectangle(
@@ -90,48 +104,47 @@ fn draw_rectangle(ctx: &mut Context, color: &Color, origin: Point2<f32>) -> Game
         graphics::Color::from_rgb(color.red, color.green, color.blue),
     )?;
 
-    draw(
-        ctx,
+    canvas.draw(
         &column_mesh,
         DrawParam::new().dest(Point2 {
             x: origin.x,
             y: origin.y,
         }),
-    )?;
+    );
 
     Ok(())
 }
 
-fn draw_textbox(ctx: &mut Context, mouse: &Mouse) -> GameResult {
+fn draw_textbox(canvas: &mut graphics::Canvas, mouse: &Mouse) -> GameResult {
     let text_box = graphics::Text::new(format!(
         "For stop press Down. For restart press Up. {}",
         mouse
     ));
-    draw(
-        ctx,
+    canvas.draw(
         &text_box,
         DrawParam::new().dest(Point2 { x: 0., y: 0. }),
-    )?;
+    );
     Ok(())
 }
 
-fn draw_image(ctx: &mut Context, image: &graphics::Image) -> GameResult {
-    let screen = graphics::drawable_size(&ctx);
+fn draw_image(ctx: &mut Context, canvas: &mut graphics::Canvas, image: &graphics::Image) -> GameResult {
+    let screen = ctx.gfx.drawable_size();
 
-    let screen_center_x = screen.0 * 0.5 - image.dimensions().w * 0.5;
-    let screen_center_y = screen.1 * 0.5 - image.dimensions().h * 0.5;
+    let screen_center_x = screen.0 * 0.5 - image.width() as f32 * 0.5;
+    let screen_center_y = screen.1 * 0.5 - image.height() as f32 * 0.5;
 
-    draw(
-        ctx,
+    canvas.draw(
         image,
         DrawParam::new().dest(Point2 {
             x: screen_center_x,
             y: screen_center_y,
         }),
-    )
+    );
+
+    Ok(())
 }
 
-fn draw_mesh(ctx: &mut Context, start: Point2<f32>) -> GameResult {
+fn draw_mesh(ctx: &mut Context, canvas: &mut graphics::Canvas, start: Point2<f32>) -> GameResult {
     let mesh_builder = &mut graphics::MeshBuilder::new();
 
     mesh_builder.line(
@@ -161,9 +174,9 @@ fn draw_mesh(ctx: &mut Context, start: Point2<f32>) -> GameResult {
         graphics::Color::from_rgb(234, 230, 202),
     )?;
 
-    let mesh = mesh_builder.build(ctx)?;
+    let mesh = graphics::Mesh::from_data(ctx, mesh_builder.build());
 
-    draw(ctx, &mesh, DrawParam::default())?;
+    canvas.draw(&mesh, DrawParam::default());
 
     Ok(())
 }

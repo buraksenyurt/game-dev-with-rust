@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-musi_lili = "0.2.0"
+musi_lili = "0.3.0"

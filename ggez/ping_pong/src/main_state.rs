@@ -5,13 +5,14 @@ use crate::constants::{
 };
 use crate::player::Player;
 use crate::racket::Racket;
-use ggez::event::{EventHandler, KeyCode};
-use ggez::graphics::{draw, DrawParam, Font, PxScale};
+use ggez::event::EventHandler;
+use ggez::graphics::{DrawParam, PxScale};
+use ggez::input::keyboard::KeyCode;
 use ggez::input::keyboard;
 use ggez::mint::Point2;
 use ggez::timer::delta;
 use ggez::{graphics, Context, GameResult};
-use rand::{thread_rng, Rng};
+use rand::RngExt;
 use std::path::Path;
 
 pub struct MainState {
@@ -26,7 +27,7 @@ pub struct MainState {
 
 impl MainState {
     pub fn new(ctx: &mut Context) -> Self {
-        let (scr_width, scr_height) = graphics::drawable_size(ctx);
+        let (scr_width, scr_height) = ctx.gfx.drawable_size();
         //println!("{}X{}", scr_width, scr_height);
         let (scr_width_half, scr_height_half) = (scr_width * 0.5, scr_height * 0.5);
         let mut ball_point = Point2 { x: 0., y: 0. };
@@ -134,7 +135,7 @@ impl MainState {
 impl EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let delta_time = delta(ctx).as_secs_f32();
-        let (screen_width, screen_height) = graphics::drawable_size(ctx);
+        let (screen_width, screen_height) = ctx.gfx.drawable_size();
 
         move_to(&mut self.player_2.position, Direction::Up, KeyCode::Up, ctx);
         move_to(
@@ -161,17 +162,17 @@ impl EventHandler for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::Color::from_rgb(55, 109, 93));
+        let mut canvas = graphics::Canvas::from_frame(ctx, graphics::Color::from_rgb(55, 109, 93));
 
-        draw_center_line(ctx, self)?;
-        draw_racket(ctx, &self.player_1)?;
-        draw_racket(ctx, &self.player_2)?;
-        draw_ball(ctx, self.ball.position)?;
-        draw_score_box(ctx, self)?;
-        draw_bonus(ctx, self.p1_bonus_position, P1_BONUS_IMAGE)?;
-        draw_bonus(ctx, self.p2_bonus_position, P2_BONUS_IMAGE)?;
+        draw_center_line(ctx, &mut canvas, self)?;
+        draw_racket(ctx, &mut canvas, &self.player_1)?;
+        draw_racket(ctx, &mut canvas, &self.player_2)?;
+        draw_ball(ctx, &mut canvas, self.ball.position)?;
+        draw_score_box(ctx, &mut canvas, self)?;
+        draw_bonus(ctx, &mut canvas, self.p1_bonus_position, P1_BONUS_IMAGE)?;
+        draw_bonus(ctx, &mut canvas, self.p2_bonus_position, P2_BONUS_IMAGE)?;
 
-        graphics::present(ctx)?;
+        canvas.finish(ctx)?;
         Ok(())
     }
 }
@@ -206,30 +207,30 @@ fn is_player_catch_the_bonus(player_position: Point2<f32>, bonus_position: Point
     result
 }
 
-fn draw_score_box(ctx: &mut Context, main_state: &MainState) -> GameResult {
-    let screen_width = graphics::drawable_size(ctx).0;
+fn draw_score_box(ctx: &mut Context, canvas: &mut graphics::Canvas, main_state: &MainState) -> GameResult {
+    let screen_width = ctx.gfx.drawable_size().0;
     let screen_width_half = screen_width * 0.5;
 
     let mut score_box = graphics::Text::new(format!(
         "Oyuncu L :{} vs Oyuncu R :{}",
         main_state.player_1.score, main_state.player_2.score
     ));
-    score_box.set_font(Font::default(), PxScale::from(32.));
+    score_box.set_scale(PxScale::from(32.));
 
     let mut score_position = Point2 {
         x: screen_width_half,
         y: 25.,
     };
-    let score_box_dimension = score_box.dimensions(ctx);
-    score_position.x -= score_box_dimension.w as f32 * 0.5;
-    score_position.y -= score_box_dimension.h as f32 * 0.5;
+    let score_box_dimension = score_box.measure(ctx)?;
+    score_position.x -= score_box_dimension.x * 0.5;
+    score_position.y -= score_box_dimension.y * 0.5;
 
-    draw(ctx, &score_box, DrawParam::new().dest(score_position))?;
+    canvas.draw(&score_box, DrawParam::new().dest(score_position));
 
     Ok(())
 }
 
-fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
+fn draw_ball(ctx: &mut Context, canvas: &mut graphics::Canvas, position: Point2<f32>) -> GameResult<()> {
     // let ball = graphics::Rect::new(-BALL_SIZE_HALF, -BALL_SIZE_HALF, BALL_SIZE, BALL_SIZE);
     // let ball_mesh = graphics::Mesh::new_rectangle(
     //     ctx,
@@ -237,21 +238,21 @@ fn draw_ball(ctx: &mut Context, position: Point2<f32>) -> GameResult<()> {
     //     ball,
     //     graphics::Color::WHITE,
     // )?;
-    let ball_image = graphics::Image::new(ctx, Path::new("/SoccerBall.png"))?;
-    draw(ctx, &ball_image, DrawParam::new().dest(position))?;
+    let ball_image = graphics::Image::from_path(ctx, Path::new("/SoccerBall.png"))?;
+    canvas.draw(&ball_image, DrawParam::new().dest(position));
     //draw(ctx, &ball_mesh, DrawParam::new().dest(position))?;
 
     Ok(())
 }
 
-fn draw_bonus(ctx: &mut Context, position: Point2<f32>, resource: &str) -> GameResult<()> {
-    let apple_image = graphics::Image::new(ctx, Path::new(resource))?;
-    draw(ctx, &apple_image, DrawParam::new().dest(position))?;
+fn draw_bonus(ctx: &mut Context, canvas: &mut graphics::Canvas, position: Point2<f32>, resource: &str) -> GameResult<()> {
+    let apple_image = graphics::Image::from_path(ctx, Path::new(resource))?;
+    canvas.draw(&apple_image, DrawParam::new().dest(position));
 
     Ok(())
 }
 
-fn draw_racket(ctx: &mut Context, player: &Player) -> GameResult<()> {
+fn draw_racket(ctx: &mut Context, canvas: &mut graphics::Canvas, player: &Player) -> GameResult<()> {
     let racket = graphics::Rect::new(
         -RACKET_W_HALF,
         -RACKET_H_HALF,
@@ -265,13 +266,13 @@ fn draw_racket(ctx: &mut Context, player: &Player) -> GameResult<()> {
         graphics::Color::WHITE,
     )?;
 
-    draw(ctx, &racket_mesh, DrawParam::new().dest(player.position))?;
+    canvas.draw(&racket_mesh, DrawParam::new().dest(player.position));
 
     Ok(())
 }
 
-fn draw_center_line(ctx: &mut Context, main_state: &MainState) -> GameResult<()> {
-    let screen_height = graphics::drawable_size(ctx).1;
+fn draw_center_line(ctx: &mut Context, canvas: &mut graphics::Canvas, main_state: &MainState) -> GameResult<()> {
+    let screen_height = ctx.gfx.drawable_size().1;
     let center_line = graphics::Rect::new(
         -CENTER_LINE_WIDTH * 0.5,
         0.,
@@ -285,11 +286,7 @@ fn draw_center_line(ctx: &mut Context, main_state: &MainState) -> GameResult<()>
         graphics::Color::WHITE,
     )?;
 
-    draw(
-        ctx,
-        &center_line_mesh,
-        DrawParam::new().dest(main_state.center_line_position),
-    )?;
+    canvas.draw(&center_line_mesh, DrawParam::new().dest(main_state.center_line_position));
 
     Ok(())
 }
@@ -300,7 +297,7 @@ fn move_to(
     key_code: KeyCode,
     ctx: &mut Context,
 ) {
-    let screen_height = graphics::drawable_size(ctx).1;
+    let screen_height = ctx.gfx.drawable_size().1;
     let delta_time = delta(ctx).as_secs_f32();
 
     if keyboard::is_key_pressed(ctx, key_code) {
@@ -322,23 +319,23 @@ fn border_check(value: &mut f32, low: f32, high: f32) {
 }
 
 fn get_rand_position(point: &mut Point2<f32>, x: f32, y: f32) {
-    let mut rnd = thread_rng();
-    point.x = match rnd.gen_bool(0.5) {
+    let mut rnd = rand::rng();
+    point.x = match rnd.random_bool(0.5) {
         true => x,
         false => -x,
     };
-    point.y = match rnd.gen_bool(0.5) {
+    point.y = match rnd.random_bool(0.5) {
         true => y,
         false => -y,
     };
 }
 
 fn get_rand_position_on_center_line(ctx: &Context) -> Point2<f32> {
-    let (screen_width, screen_height) = graphics::drawable_size(ctx);
+    let (screen_width, screen_height) = ctx.gfx.drawable_size();
     let center_of_screen = screen_width * 0.5;
 
-    let mut rnd = thread_rng();
-    let random_y: f32 = rnd.gen_range(50.0..screen_height - 50.);
+    let mut rnd = rand::rng();
+    let random_y: f32 = rnd.random_range(50.0..screen_height - 50.);
     Point2 {
         x: center_of_screen,
         y: random_y,

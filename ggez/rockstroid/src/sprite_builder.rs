@@ -52,7 +52,7 @@ pub fn create_random_rocks(
     max_radius: f32,
 ) -> Vec<Sprite> {
     let mut seed: [u8; 8] = [0; 8];
-    getrandom::getrandom(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
+    getrandom::fill(&mut seed[..]).expect("Randomizer oluşturulurken hata!");
     let mut randomizer = Rand32::new(u64::from_ne_bytes(seed));
 
     (0..count)

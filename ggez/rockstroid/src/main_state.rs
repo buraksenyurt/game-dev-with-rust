@@ -6,11 +6,11 @@ use crate::player::{fire_at_will, handle_input};
 use crate::sprite::Sprite;
 use crate::sprite_builder::{create_random_rocks, create_sprite};
 use crate::sprite_type::SpriteType;
-use ggez::event::{EventHandler, KeyCode, KeyMods};
-use ggez::graphics::{draw, Color, DrawParam, Font, PxScale};
+use ggez::event::EventHandler;
+use ggez::graphics::{Color, DrawParam, PxScale};
+use ggez::input::keyboard::{KeyCode, KeyInput};
 use ggez::mint::Point2;
 use ggez::timer::check_update_time;
-use ggez::winit::event::VirtualKeyCode;
 use ggez::{event, graphics, timer, Context, GameResult};
 
 // Oyunun herhangi bir andaki varlık durumunu tutacak veri yapısı.
@@ -41,7 +41,7 @@ impl MainState {
             MAX_RADIUS,
         );
 
-        let (w, h) = graphics::drawable_size(ctx);
+        let (w, h) = ctx.gfx.drawable_size();
 
         let ms = MainState {
             player,
@@ -96,7 +96,7 @@ impl EventHandler for MainState {
 
             if self.player.life <= 0. {
                 println!("Üzgünüm dostum ama kayaya tosladın :D !");
-                event::quit(ctx);
+                ctx.request_quit();
             }
         }
 
@@ -104,45 +104,45 @@ impl EventHandler for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, Color::BLACK);
+        let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
 
         let game_assets = &self.assets;
         let coordinates = (self.screen_width, self.screen_height);
 
         // Oyuncu çizilir
         let hero = &self.player;
-        draw_sprite(ctx, game_assets, hero, coordinates)?;
+        draw_sprite(&mut canvas, game_assets, hero, coordinates)?;
 
         // Atışlar çizdirilir.
         for s in &self.shots {
-            draw_sprite(ctx, game_assets, s, coordinates)?;
+            draw_sprite(&mut canvas, game_assets, s, coordinates)?;
         }
 
         // rastgele konumlanan kayalar çizdirilir.
         // Main State oluşturulurken belirlenen her bir kaya nesnesi için draw operasyonu çağrılır.
         for r in &self.rocks {
-            draw_sprite(ctx, game_assets, r, coordinates)?;
+            draw_sprite(&mut canvas, game_assets, r, coordinates)?;
         }
 
         // Skor tabelası çizimi.
         // Metin kutusunu hazırla
         let mut score_box = graphics::Text::new(format!("Skor : {}", &self.score));
         // Fontu ayarla
-        score_box.set_font(Font::default(), PxScale::from(24.));
+        score_box.set_scale(PxScale::from(24.));
         // İlk pozisyonunu ekrana göre ortalayarak ayarla
         let mut score_box_position = Point2 {
             x: &self.screen_width * 0.5,
             y: 25.,
         };
         // Kutunun boyutlarını hesaba katarak,
-        let score_box_dimension = score_box.dimensions(ctx);
+        let score_box_dimension = score_box.measure(ctx)?;
         // x,y koordinatlarını yeniden düzenle
-        score_box_position.x -= score_box_dimension.w as f32 * 0.5;
-        score_box_position.y -= score_box_dimension.h as f32 * 0.5;
+        score_box_position.x -= score_box_dimension.x * 0.5;
+        score_box_position.y -= score_box_dimension.y * 0.5;
         // Metin kutusunu ekrana çiz
-        draw(ctx, &score_box, DrawParam::new().dest(score_box_position))?;
+        canvas.draw(&score_box, DrawParam::new().dest(score_box_position));
 
-        graphics::present(ctx)?;
+        canvas.finish(ctx)?;
 
         // İşletim sistemine şimdilik CPU ile olan işimizin bittiğini
         // ama tekrar geri geleceğimizi söylüyoruz
@@ -155,54 +155,57 @@ impl EventHandler for MainState {
     fn key_down_event(
         &mut self,
         ctx: &mut Context,
-        keycode: KeyCode,
-        _keymods: KeyMods,
+        input: KeyInput,
         _repeat: bool,
-    ) {
+    ) -> GameResult<()> {
+        let keycode = input.keycode;
         match keycode {
-            KeyCode::W => {
+            Some(KeyCode::W) => {
                 //println!("W tuşuna basılıyor... y:{}", self.input_state.y_axis);
                 self.input_state.y_axis = 1.;
             }
-            KeyCode::A => {
+            Some(KeyCode::A) => {
                 self.input_state.x_axis = -1.;
             }
-            KeyCode::D => {
+            Some(KeyCode::D) => {
                 self.input_state.x_axis = 1.;
             }
-            KeyCode::Space => {
+            Some(KeyCode::Space) => {
                 self.input_state.fire = true;
             }
-            KeyCode::Escape => {
-                event::quit(ctx);
+            Some(KeyCode::Escape) => {
+                ctx.request_quit();
             }
             _ => (),
         }
+        Ok(())
     }
 
     // Oyuncu ilgili klavye tuşlarını bıraktığında input state başlangıç konumuna getirilir.
     // Böylece sola, sağa veya yukarı döner durumdan durağan hale,
     // ateş eder konumdan ateş etmeyen hale geçildiğini anlarız.
-    fn key_up_event(&mut self, _ctx: &mut Context, keycode: VirtualKeyCode, _keymods: KeyMods) {
+    fn key_up_event(&mut self, _ctx: &mut Context, input: KeyInput) -> GameResult<()> {
+        let keycode = input.keycode;
         match keycode {
-            KeyCode::W => {
+            Some(KeyCode::W) => {
                 //println!("W tuşu bırakıldı... y:{}", self.input_state.y_axis);
                 self.input_state.y_axis = 0.;
             }
-            KeyCode::A | KeyCode::D => {
+            Some(KeyCode::A) | Some(KeyCode::D) => {
                 self.input_state.x_axis = 0.;
             }
-            KeyCode::Space => {
+            Some(KeyCode::Space) => {
                 self.input_state.fire = false;
             }
             _ => (),
         }
+        Ok(())
     }
 }
 
 // Hareket edebilen bir nesneyi çizmek için kullanılan fonksiyon
 fn draw_sprite(
-    ctx: &mut Context,
+    canvas: &mut graphics::Canvas,
     assets: &GameAssets,
     sprite: &Sprite,
     world_coords: (f32, f32),
@@ -219,7 +222,7 @@ fn draw_sprite(
         .rotation(sprite.facing as f32)
         .offset(Point2 { x: 0.5, y: 0.5 });
     // nesneyi güncel context üstüne çiz
-    draw(ctx, image, drawparams)?;
+    canvas.draw(image, drawparams);
 
     Ok(())
 }

@@ -11,9 +11,9 @@ pub struct GameAssets {
 
 impl GameAssets {
     pub fn new(ctx: &mut Context) -> GameResult<GameAssets> {
-        let player_image = Image::new(ctx, "/ship.png")?;
-        let rock_image = Image::new(ctx, "/asteroid.png")?;
-        let shot_image = Image::new(ctx, "/shot.png")?;
+        let player_image = Image::from_path(ctx, "/ship.png")?;
+        let rock_image = Image::from_path(ctx, "/asteroid.png")?;
+        let shot_image = Image::from_path(ctx, "/shot.png")?;
 
         Ok(GameAssets {
             player_image,
