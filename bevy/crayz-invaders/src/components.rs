@@ -1,4 +1,4 @@
-use bevy::prelude::{Component, Timer, Vec2, Vec3};
+use bevy::prelude::{Component, Timer, TimerMode, Vec2, Vec3};
 
 #[derive(Component)]
 pub struct Player;

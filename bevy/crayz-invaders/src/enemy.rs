@@ -7,7 +7,7 @@ use crate::{
 };
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
-use rand::Rng;
+use rand::RngExt;
 use std::f32::consts::PI;
 
 pub struct EnemyPlugin;
@@ -113,7 +113,7 @@ pub fn enemy_hit_system(
     mut player_state: ResMut<PlayerState>,
     time: Res<Time>,
 ) {
-    if let Ok((ply_entity, ply_tf, ply_size)) = player_query.get_single() {
+    if let Ok((ply_entity, ply_tf, ply_size)) = player_query.single() {
         let player_scale = ply_tf.scale.xy();
 
         for (las_entity, las_tf, las_size) in laser_query.iter() {

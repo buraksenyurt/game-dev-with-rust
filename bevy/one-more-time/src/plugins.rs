@@ -6,10 +6,7 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (sys_start_game).run_if(in_state(GameState::MainMenu)),
-        );
+        app.add_systems(Update, sys_start_game.run_if(in_state(GameState::MainMenu)));
     }
 }
 

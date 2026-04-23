@@ -1,4 +1,4 @@
-use bevy::prelude::{States, SystemSet};
+use bevy::prelude::States;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -12,7 +12,7 @@ impl Display for DonutType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let title = match self {
             DonutType::Blue => "Nefis orman meyveli tatlı çörek.",
-            DonutType::White => "Vanilay ve saf sütten yapılmış kreması ile harika bir çörek.",
+            DonutType::White => "Vanilya ve saf sütten yapılmış kreması ile harika bir çörek.",
             DonutType::Red => "İçine alabildiğine vişne dolgusu ile kaplı şeytan çöreğimiz.",
         };
         write!(f, "{}", title)
@@ -26,7 +26,7 @@ pub enum Region {
     Downside,
 }
 
-#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States, SystemSet)]
+#[derive(Clone, Eq, PartialEq, Debug, Hash, Default, States)]
 pub enum GameState {
     #[default]
     MainMenu,

@@ -22,7 +22,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                 .with_children(|parent| {
                     parent.spawn((
                         image_node_size(),
-                        UiImage::new(asset_server.load("sprites/spaceShips_001.png")),
+                        ImageNode::new(asset_server.load("sprites/spaceShips_001.png")),
                     ));
                     parent.spawn((
                         Text::new("0"),
@@ -40,7 +40,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                 .with_children(|parent| {
                     parent.spawn((
                         image_node_size(),
-                        UiImage::new(asset_server.load("sprites/spaceMeteors_002.png")),
+                        ImageNode::new(asset_server.load("sprites/spaceMeteors_002.png")),
                     ));
                     parent.spawn((
                         Text::new("0"),
@@ -58,7 +58,7 @@ fn build(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
                 .with_children(|parent| {
                     parent.spawn((
                         image_node_size(),
-                        UiImage::new(asset_server.load("sprites/spaceBuilding_002.png")),
+                        ImageNode::new(asset_server.load("sprites/spaceBuilding_002.png")),
                     ));
 
                     parent.spawn((
@@ -79,6 +79,6 @@ pub fn despawn_head_up_display(
     hud_query: Query<Entity, With<HeadUpDisplay>>,
 ) {
     for entity in hud_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

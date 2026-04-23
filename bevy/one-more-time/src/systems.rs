@@ -4,10 +4,9 @@ use crate::constants::*;
 use crate::enums::*;
 use crate::resources::*;
 use crate::{builder, common};
-use bevy::core_pipeline::clear_color::ClearColorConfig;
+use bevy::camera::ScalingMode;
 use bevy::prelude::*;
-use bevy::render::camera::ScalingMode;
-use rand::Rng;
+use rand::RngExt;
 use std::process::exit;
 
 pub fn sys_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -17,18 +16,18 @@ pub fn sys_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             clear_color: ClearColorConfig::Custom(Color::srgb_u8(0, 143, 17)),
             ..default()
         },
-        OrthographicProjection {
+        Projection::Orthographic(OrthographicProjection {
             scaling_mode: ScalingMode::AutoMin {
                 min_width: 256.,
                 min_height: 144.,
             },
             ..OrthographicProjection::default_2d()
-        },
+        }),
     ));
 
     builder::create_schene(&mut commands, &asset_server);
 
-    let hero_texture = asset_server.load("blocky.png");
+    let hero_texture: Handle<Image> = asset_server.load("blocky.png");
     commands.spawn((
         Sprite::from_image(hero_texture),
         Transform::default(),
@@ -188,20 +187,27 @@ pub fn sys_spawn_donut(
     if !input.just_pressed(KeyCode::Space) {
         return;
     }
+
     if game_state.cook_donut_count == 1 {
         return;
     }
-    let player_transform = *player.single();
+
+    let Ok(player_transform) = player.single() else {
+        return;
+    };
+
     if game_state.balance >= DONUT_COST {
-        info!("Oyuncunun kalan altını {}", game_state.balance);
         let mut rng = rand::rng();
         let number = rng.random_range(1..10);
+
         let (texture, donut_type) = match number {
             1 | 3 | 5 => (asset_server.load("blue_donut.png"), DonutType::Blue),
             2 | 4 | 6 => (asset_server.load("red_donut.png"), DonutType::Red),
             _ => (asset_server.load("white_donut.png"), DonutType::White),
         };
+
         game_state.balance -= get_donut_cost(donut_type);
+
         let target_location = Transform::from_xyz(
             player_transform.translation.x + DONUT_DISTANCE_FROM_COOK,
             player_transform.translation.y,
@@ -216,11 +222,7 @@ pub fn sys_spawn_donut(
             location: target_location.translation,
         };
 
-        commands.spawn((
-            Sprite::from_image(texture),
-            target_location,
-            donut,
-        ));
+        commands.spawn((Sprite::from_image(texture), target_location, donut));
         game_state.cook_donut_count += 1;
     }
 }
@@ -229,15 +231,17 @@ pub fn sys_donut_movement(
     mut donuts: Query<(&mut Transform, &mut Donut)>,
     player: Query<(&Transform, &Player), Without<Donut>>,
 ) {
+    let Ok((player_transform, _player)) = player.single() else {
+        return;
+    };
+
     for (mut transform, mut donut) in &mut donuts {
-        let player_transform = player.single();
-        transform.translation.x = player_transform.0.translation.x + DONUT_DISTANCE_FROM_COOK;
-        transform.translation.y = player_transform.0.translation.y;
-        transform.translation.z = player_transform.0.translation.z;
+        transform.translation.x = player_transform.translation.x + DONUT_DISTANCE_FROM_COOK;
+        transform.translation.y = player_transform.translation.y;
+        transform.translation.z = player_transform.translation.z;
         donut.location = transform.translation;
     }
 }
-
 pub fn sys_claim_donut(
     mut commands: Commands,
     time: Res<Time>,
@@ -246,7 +250,7 @@ pub fn sys_claim_donut(
 ) {
     for (entity, mut donut) in &mut donuts {
         donut.life_time.tick(time.delta());
-        if donut.life_time.finished() {
+        if donut.life_time.just_finished() {
             game_state.cook_donut_count -= 1;
             commands.entity(entity).despawn();
         }
@@ -257,7 +261,7 @@ pub fn sys_check_waiting_customers(time: Res<Time>, mut customers: Query<(&mut C
     for (mut cust, _entity) in customers.iter_mut() {
         if !cust.can_return {
             cust.life_time.tick(time.delta());
-            if cust.life_time.finished() && !cust.is_get {
+            if cust.life_time.just_finished() && !cust.is_get {
                 info!("Customer can return");
                 cust.can_return = true;
             }
@@ -274,7 +278,7 @@ pub fn sys_claim_waiting_customers(
 ) {
     for (mut transform, customer, entity) in customers.iter_mut() {
         if customer.can_return {
-            transform.translation.x += 1.75; // * time.delta_seconds(); delta_seconds koyunca olduğu yerde sayıyor
+            transform.translation.x += 1.75; // * time.delta_secs(); delta_secs koyunca olduğu yerde sayıyor
             if transform.translation.x >= WINDOW_WIDTH * 0.5 - transform.translation.x {
                 info!("Customer despawned on x={}", transform.translation.x);
                 commands.entity(entity).despawn();
@@ -350,9 +354,25 @@ fn spawn_new_customer(
         life_time: Timer::from_seconds(CUSTOMER_WAIT_TIME, TimerMode::Once),
         can_return: false,
     };
-    commands.spawn((\n        Sprite::from_image(asset_server.load(common::get_file_name(new_donut_type))),\n        Transform::from_xyz(\n            200.,\n            match region {\n                Region::Upside => 50.,\n                Region::Center => 0.,\n                Region::Downside => -50.,\n            },\n            0.,\n        ),\n        customer,\n    ));\n}
+    commands.spawn((
+        Sprite::from_image(asset_server.load(common::get_file_name(new_donut_type))),
+        Transform::from_xyz(
+            200.,
+            match region {
+                Region::Upside => 50.,
+                Region::Center => 0.,
+                Region::Downside => -50.,
+            },
+            0.,
+        ),
+        customer,
+    ));
+}
 
-pub fn sys_start_game(keys: Res<ButtonInput<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
+pub fn sys_start_game(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut next_state: ResMut<NextState<GameState>>,
+) {
     if keys.just_pressed(KeyCode::KeyG) {
         info!("Oyun başlatılıyor");
         next_state.set(GameState::Playing);

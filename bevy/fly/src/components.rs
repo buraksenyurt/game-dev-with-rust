@@ -60,7 +60,7 @@ pub enum BarrelMoveState {
 
 impl Default for BarrelDriver {
     fn default() -> Self {
-        let mut timer = Timer::from_seconds(2.0, TimerMode::Once);
+        let timer = Timer::from_seconds(2.0, TimerMode::Once);
         Self {
             timer,
             state: BarrelMoveState::Stopped,

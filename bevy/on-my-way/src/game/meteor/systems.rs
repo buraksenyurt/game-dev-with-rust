@@ -3,7 +3,7 @@ use super::resources::*;
 use super::*;
 use crate::game::live_data::resources::LiveData;
 use bevy::window::PrimaryWindow;
-use rand::{random, Rng};
+use rand::{random, RngExt};
 
 pub struct MeteorValue {
     pub x: f32,
@@ -24,7 +24,7 @@ pub fn get_random_meteor(window_query: Query<&Window, With<PrimaryWindow>>) -> M
     info!("{idx} - {} kullanılacak", meteors[idx]);
     let asset_file = meteors[idx].to_string();
 
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
 
@@ -119,10 +119,7 @@ pub fn claim_hitted(
                 live_data.current_meteor_count -= 1;
             }
             live_data.exploded_meteors_count += 1;
-            commands.spawn(AudioBundle {
-                source: asset_server.load("audio/explosionCrunch_004.ogg"),
-                ..default()
-            });
+            commands.spawn(AudioPlayer::new(asset_server.load("audio/explosionCrunch_004.ogg")));
         }
     }
 }
@@ -138,7 +135,7 @@ pub fn spawn_after_time_finished(
     meteor_timer: Res<MeteorSpawnTimer>,
     live_data: ResMut<LiveData>,
 ) {
-    if meteor_timer.timer.finished() && live_data.current_meteor_count <= MAX_METEOR_COUNT {
+    if meteor_timer.timer.just_finished() && live_data.current_meteor_count <= MAX_METEOR_COUNT {
         spawn_one_meteor(&mut commands, window_query, asset_server, live_data);
     }
 }

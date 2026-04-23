@@ -12,7 +12,7 @@ pub fn spawn_spaceship(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
 
     commands.spawn((
         Sprite {
@@ -29,7 +29,7 @@ pub fn spawn_spaceship(
 }
 
 pub fn despawn_spaceship(mut commands: Commands, query: Query<Entity, With<Spaceship>>) {
-    if let Ok(entity) = query.get_single() {
+    if let Ok(entity) = query.single() {
         commands.entity(entity).despawn();
     }
 }
@@ -39,7 +39,7 @@ pub fn move_spaceship(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
 ) {
-    if let Ok(mut transform) = query.get_single_mut() {
+    if let Ok(mut transform) = query.single_mut() {
         let mut direction = Vec3::ZERO;
         if keyboard_input.pressed(KeyCode::ArrowUp) {
             direction += Vec3::new(0., 1., 0.);
@@ -62,8 +62,8 @@ pub fn fire_missile(
     launch_timer: Res<MissileLaunchCheckTimer>,
     mut live_data: ResMut<LiveData>,
 ) {
-    if keyboard_input.pressed(KeyCode::KeyS) && launch_timer.timer.finished() {
-        if let Ok(transform) = query.get_single_mut() {
+    if keyboard_input.pressed(KeyCode::KeyS) && launch_timer.timer.just_finished() {
+        if let Ok(transform) = query.single_mut() {
             let missile = Missile {
                 direction: Vec2::new(1., 0.),
                 speed: MISSILE_003_SPEED,
@@ -94,8 +94,8 @@ pub fn check_outside_of_the_bounds(
     mut query: Query<&mut Transform, With<Spaceship>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-    if let Ok(mut spaceship_transform) = query.get_single_mut() {
-        let window = window_query.get_single().unwrap();
+    if let Ok(mut spaceship_transform) = query.single_mut() {
+        let window = window_query.single().unwrap();
         let (y_min, y_max) = (
             SPACESHIP_001_HEIGHT / 2.,
             window.height() - SPACESHIP_001_HEIGHT / 2.,
@@ -114,25 +114,22 @@ pub fn check_outside_of_the_bounds(
 
 pub fn detect_collision_with_meteors(
     mut commands: Commands,
-    mut game_over_event_writer: EventWriter<GameOverEvent>,
+    mut game_over_event_writer: MessageWriter<GameOverEvent>,
     meteors_query: Query<(&Transform, &Meteor), With<Meteor>>,
     spaceship_query: Query<(Entity, &Transform), With<Spaceship>>,
     asset_server: Res<AssetServer>,
     live_data: Res<LiveData>,
 ) {
-    if let Ok((spaceship, spaceship_transform)) = spaceship_query.get_single() {
+    if let Ok((spaceship, spaceship_transform)) = spaceship_query.single() {
         for (meteor_transform, meteor) in meteors_query.iter() {
             let distance = spaceship_transform
                 .translation
                 .distance(meteor_transform.translation);
             if distance < SPACESHIP_001_WIDTH / 2. + meteor.width / 2. {
-                commands.spawn(AudioBundle {
-                    source: asset_server.load("audio/explosionCrunch_000.ogg"),
-                    ..default()
-                });
+                commands.spawn(AudioPlayer::new(asset_server.load("audio/explosionCrunch_000.ogg")));
 
                 commands.entity(spaceship).despawn();
-                game_over_event_writer.send(GameOverEvent {
+                game_over_event_writer.write(GameOverEvent {
                     current_score: live_data.exploded_meteors_count,
                 });
                 info!("Game Over!");
@@ -147,16 +144,16 @@ pub fn decrease_spaceship_fuel(
     mut commands: Commands,
     fuel_timer: Res<FuelCheckTimer>,
     mut live_data: ResMut<LiveData>,
-    mut game_over_event_writer: EventWriter<GameOverEvent>,
+    mut game_over_event_writer: MessageWriter<GameOverEvent>,
     spaceship_query: Query<Entity, With<Spaceship>>,
 ) {
-    if fuel_timer.timer.finished() {
+    if fuel_timer.timer.just_finished() {
         if live_data.spaceship_fuel_level < 10. {
             info!("Yakıt bitti. Oyun sona ermeli.");
-            game_over_event_writer.send(GameOverEvent {
+            game_over_event_writer.write(GameOverEvent {
                 current_score: live_data.exploded_meteors_count,
             });
-            if let Ok(spaceship) = spaceship_query.get_single() {
+            if let Ok(spaceship) = spaceship_query.single() {
                 commands.entity(spaceship).despawn();
             }
         } else {
@@ -170,13 +167,13 @@ pub fn detect_connected_with_fuel_station(
     spaceship_query: Query<&Transform, With<Spaceship>>,
     mut live_data: ResMut<LiveData>,
 ) {
-    if let Ok(spaceship_transform) = spaceship_query.get_single() {
+    if let Ok(spaceship_transform) = spaceship_query.single() {
         for (station_transform, station) in fuel_station_query.iter() {
             let distance = spaceship_transform
                 .translation
                 .distance(station_transform.translation);
             if distance <= SPACESHIP_001_WIDTH / 2. {
-                info!("İstasyondan {} galon yakıt ekleniyor.", station.fuel_amount);
+                info!("Istasyondan {} galon yakit ekleniyor.", station.fuel_amount);
                 live_data.spaceship_fuel_level += station.fuel_amount;
             }
         }

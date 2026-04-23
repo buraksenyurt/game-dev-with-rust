@@ -15,7 +15,7 @@ use bevy::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_sub_state::<GameState>()
+        .init_state::<GameState>()
         .insert_resource(Difficulty(Level::Normal))
         .add_systems(Startup, (setup_system, soldier_setup_system))
         .add_systems(Update, soldier_animation_system)

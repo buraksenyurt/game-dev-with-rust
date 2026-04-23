@@ -4,7 +4,7 @@ use crate::resources::{GameTextures, WinSize};
 use crate::{Enemy, EnemyCount, ExplosionToSpawn, Laser};
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
-use bevy::utils::HashSet;
+use std::collections::HashSet;
 
 pub struct PlayerPlugin;
 
@@ -93,7 +93,7 @@ fn keyboard_event_system(
     k: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Velocity, With<Player>>,
 ) {
-    if let Ok(mut v) = query.get_single_mut() {
+    if let Ok(mut v) = query.single_mut() {
         v.x = if k.pressed(KeyCode::KeyA) {
             -1.
         } else if k.pressed(KeyCode::KeyD) {
@@ -118,7 +118,7 @@ fn fire_system(
     textures: Res<GameTextures>,
     query: Query<&Transform, With<Player>>,
 ) {
-    if let Ok(player) = query.get_single() {
+    if let Ok(player) = query.single() {
         if k.just_pressed(KeyCode::Space) {
             let (x, y) = (player.translation.x, player.translation.y);
 

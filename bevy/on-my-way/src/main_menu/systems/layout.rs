@@ -7,8 +7,8 @@ pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn despawn_main_menu(mut commands: Commands, query: Query<Entity, With<MainMenu>>) {
-    if let Ok(entity) = query.get_single() {
-        commands.entity(entity).despawn_recursive();
+    if let Ok(entity) = query.single() {
+        commands.entity(entity).despawn();
     }
 }
 
@@ -23,7 +23,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
             parent
                 .spawn((
                     main_menu_container_node(),
-                    UiImage::new(asset_server.load("sprites/main_background.png")),
+                    ImageNode::new(asset_server.load("sprites/main_background.png")),
                 ))
                 .with_children(|parent| {
                     parent.spawn((

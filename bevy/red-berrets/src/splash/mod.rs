@@ -19,42 +19,43 @@ struct OnSplashScreen;
 struct SplashCountDownTimer(Timer);
 
 fn setup_splash_screen_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let logo = asset_server.load("splash_logo.png");
+    let logo: Handle<Image> = asset_server.load("splash_logo.png");
+
     commands
         .spawn((
-            NodeBundle {
-                style: Style {
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    width: Val::Percent(100.0),
-                    ..default()
-                },
+            Node {
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                flex_direction: FlexDirection::Column,
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
                 ..default()
             },
             OnSplashScreen,
         ))
         .with_children(|parent| {
-            parent.spawn(ImageBundle {
-                style: Style {
-                    width: Val::Px(200.0),
+            parent.spawn((
+                ImageNode::new(logo),
+                Node {
+                    width: Val::Px(256.0),
+                    height: Val::Px(256.0),
+                    margin: UiRect::bottom(Val::Px(16.0)),
                     ..default()
                 },
-                image: Image::new(logo),
-                ..default()
-            });
-        })
-        .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "Red Berrets - Mars Mission",
-                TextStyle {
-                    font_size: 40.,
+            ));
+
+            parent.spawn((
+                Text::new("Red Berrets - Mars Mission"),
+                TextFont {
+                    font_size: 32.0,
                     ..default()
                 },
+                TextColor(Color::WHITE),
             ));
         });
 
     commands.insert_resource(SplashCountDownTimer(Timer::from_seconds(
-        5.,
+        5.0,
         TimerMode::Once,
     )));
 }
@@ -64,7 +65,7 @@ fn countdown_system(
     time: Res<Time>,
     mut timer: ResMut<SplashCountDownTimer>,
 ) {
-    if timer.tick(time.delta()).finish() {
+    if timer.tick(time.delta()).just_finished() {
         game_state.set(GameState::Menu);
     }
 }

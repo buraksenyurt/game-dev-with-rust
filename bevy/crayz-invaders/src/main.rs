@@ -14,6 +14,7 @@ use crate::enemy::{enemy_hit_system, EnemyPlugin};
 use crate::player::{laser_hit_system, PlayerPlugin};
 use crate::resources::{EnemyCount, GameTextures, WinSize};
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 
 fn main() {
     App::new()
@@ -21,7 +22,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Crayz Invaders".to_string(),
-                resolution: (480., 640.).into(),
+                resolution: WindowResolution::new(480, 640),
                 ..Default::default()
             }),
             ..Default::default()
@@ -49,15 +50,14 @@ fn init_system(
 ) {
     commands.spawn(Camera2d);
 
-    let window = window_query.single();
+    let window = window_query.single().unwrap();
     let (w_width, w_height) = (window.width(), window.height());
     commands.insert_resource(WinSize {
         width: w_width,
         height: w_height,
     });
 
-    let explosion_layout =
-        TextureAtlasLayout::from_grid(UVec2::new(32, 32), 4, 3, None, None);
+    let explosion_layout = TextureAtlasLayout::from_grid(UVec2::new(32, 32), 4, 3, None, None);
     let explosion_layout_handle = texture_atlas_layouts.add(explosion_layout);
 
     commands.insert_resource(GameTextures {
@@ -127,7 +127,7 @@ fn explosion_animation_system(
 ) {
     for (entity, mut timer, mut sprite) in query.iter_mut() {
         timer.0.tick(time.delta());
-        if timer.0.finished() {
+        if timer.0.just_finished() {
             if let Some(ref mut atlas) = sprite.texture_atlas {
                 atlas.index += 1;
                 if atlas.index >= EXPLOSION_LENGTH {

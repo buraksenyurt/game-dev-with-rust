@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy::sprite::{Anchor, Sprite};
 use bevy_rapier2d::prelude::*;
 use rand::prelude::IndexedRandom;
-use rand::Rng;
+use rand::RngExt;
 use std::time::Duration;
 
 pub fn setup_system(
@@ -68,7 +68,6 @@ pub fn setup_system(
         BarrelDriver::default(),
         Sprite {
             image: barrel_idle_texture.clone(),
-            anchor: Anchor::Center,
             texture_atlas: Some(TextureAtlas {
                 layout: barrel_atlas_handle,
                 index: 0,

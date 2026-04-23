@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 fn main() {
-    App::new().add_plugins((DefaultPlugins, ActorPlugin)).run()
+    App::new().add_plugins((DefaultPlugins, ActorPlugin)).run();
 }
 
 pub struct ActorPlugin;

@@ -1,7 +1,7 @@
 use crate::point::Point;
 use crate::{WinSize, BASE_SPEED, MAX_FORMATION_MEMBERS};
 use bevy::prelude::{Component, Resource};
-use rand::Rng;
+use rand::RngExt;
 
 #[derive(Clone, Component)]
 pub struct Formation {

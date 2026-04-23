@@ -16,7 +16,7 @@ pub fn check_outside_of_the_bounds(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut query: Query<(Entity, &Transform), With<Missile>>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     for (entity, transform) in query.iter_mut() {
         if transform.translation.x > window.width() + 51. {
             commands.entity(entity).despawn();
@@ -57,28 +57,30 @@ pub fn claim_hitted(
     mut commands: Commands,
     mut query: Query<(Entity, &Missile)>,
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     for (entity, missile) in query.iter_mut() {
         if missile.disposable {
             commands.entity(entity).despawn();
 
             let texture_handle = asset_server.load("sprites/explosion.png");
-            let texture_atlas =
-                TextureAtlas::from_grid(texture_handle, Vec2::new(60., 52.), 8, 1, None, None);
-            let texture_atlas_handle = texture_atlases.add(texture_atlas);
+            let layout = TextureAtlasLayout::from_grid(UVec2::new(60, 52), 8, 1, None, None);
+            let layout_handle = texture_atlas_layouts.add(layout);
             let animation_indices = ExplosionAnimation {
                 first: 0,
                 last: 7,
                 disposable: false,
             };
             commands.spawn((
-                SpriteSheetBundle {
-                    texture_atlas: texture_atlas_handle,
-                    sprite: TextureAtlasSprite::new(animation_indices.first),
-                    transform: Transform::from_translation(missile.location),
+                Sprite {
+                    image: texture_handle,
+                    texture_atlas: Some(TextureAtlas {
+                        layout: layout_handle,
+                        index: animation_indices.first,
+                    }),
                     ..default()
                 },
+                Transform::from_translation(missile.location),
                 animation_indices,
                 ExplosionAnimationTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
             ));
@@ -97,16 +99,18 @@ pub fn animate_explosion_sprites(
     mut query: Query<(
         &mut ExplosionAnimation,
         &mut ExplosionAnimationTimer,
-        &mut TextureAtlasSprite,
+        &mut Sprite,
     )>,
 ) {
     for (mut indices, mut timer, mut sprite) in &mut query {
         timer.tick(time.delta());
         if timer.just_finished() {
-            if sprite.index < indices.last {
-                sprite.index += 1;
-            } else {
-                indices.disposable = true;
+            if let Some(atlas) = sprite.texture_atlas.as_mut() {
+                if atlas.index < indices.last {
+                    atlas.index += 1;
+                } else {
+                    indices.disposable = true;
+                }
             }
         }
     }

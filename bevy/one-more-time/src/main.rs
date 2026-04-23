@@ -23,22 +23,21 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "One More Time Blocky".into(),
-                        resolution: (WINDOW_WIDTH, WINDOW_HEIGHT).into(),
+                        resolution: (WINDOW_WIDTH as u32, WINDOW_HEIGHT as u32).into(),
                         resizable: false,
                         ..default()
                     }),
                     ..default()
-                })
-                .build(),
+                }),
         )
         .insert_resource(LiveParameters {
             balance: BALANCE_INIT_VALUE,
             cook_donut_count: 0,
             customers_inside: Vec::new(),
         })
-        .add_state::<GameState>()
+        .init_state::<GameState>()
         .add_plugins((GamePlugin, MenuPlugin))
-        .add_systems(Startup, (sys_setup).run_if(in_state(GameState::MainMenu)))
+        .add_systems(Startup, sys_setup)
         .add_systems(
             Update,
             (

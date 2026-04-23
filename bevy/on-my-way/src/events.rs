@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-#[derive(Event)]
+#[derive(Message)]
 pub struct GameOverEvent {
     pub current_score: u32,
 }

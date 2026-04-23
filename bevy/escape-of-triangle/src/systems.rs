@@ -14,7 +14,7 @@ pub fn spawn_towers(
     mut materials: ResMut<Assets<ColorMaterial>>,
     window: Query<&Window>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let w_height = window.resolution.height();
         let w_width = window.resolution.width();
         let positions = [
@@ -51,7 +51,7 @@ pub fn spawn_player(
     mut materials: ResMut<Assets<ColorMaterial>>,
     window: Query<&Window>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let w_height = window.resolution.height();
         let w_width = window.resolution.width();
 
@@ -139,11 +139,11 @@ pub fn board_check(
     mut player_query: Query<(&mut Transform, &mut Position, &mut Velocity), With<Player>>,
     window: Query<&Window>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let half_width = window.width() * 0.5;
         let half_height = window.height() * 0.5;
 
-        if let Ok((mut transform, mut position, mut velocity)) = player_query.get_single_mut() {
+        if let Ok((mut transform, mut position, mut velocity)) = player_query.single_mut() {
             let mut new_translation = transform.translation;
             if new_translation.x <= -half_width {
                 new_translation.x = -half_width;
@@ -171,11 +171,11 @@ pub fn wrap_around(
     mut player_query: Query<(&mut Transform, &mut Position), With<Player>>,
     window: Query<&Window>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let half_width = window.width() * 0.5;
         let half_height = window.height() * 0.5;
 
-        if let Ok((mut transform, mut position)) = player_query.get_single_mut() {
+        if let Ok((mut transform, mut position)) = player_query.single_mut() {
             let mut new_translation = transform.translation;
 
             if new_translation.x < -half_width {

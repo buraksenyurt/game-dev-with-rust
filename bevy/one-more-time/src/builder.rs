@@ -3,7 +3,7 @@ use crate::components::*;
 use crate::constants::CUSTOMER_WAIT_TIME;
 use crate::enums::*;
 use bevy::prelude::*;
-use rand::Rng;
+use rand::RngExt;
 
 pub fn create_schene(commands: &mut Commands, asset_server: &Res<AssetServer>) {
     let mut directions: Vec<Region> = Vec::new();

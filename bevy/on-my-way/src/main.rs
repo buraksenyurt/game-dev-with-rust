@@ -11,9 +11,9 @@ use bevy::prelude::*;
 
 fn main() {
     App::new()
-        .add_event::<GameOverEvent>()
-        .add_state::<AppState>()
+        .add_message::<GameOverEvent>()
         .add_plugins(DefaultPlugins)
+        .init_state::<AppState>()
         .add_plugins((GamePlugin, MainMenuPlugin))
         .add_systems(Startup, spawn_camera)
         .add_systems(

@@ -2,7 +2,7 @@ use crate::game::station::components::FuelStation;
 use crate::game::station::resources::FuelStationSpawnTimer;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use rand::{random, Rng};
+use rand::{random, RngExt};
 
 pub struct FuelStationValue {
     pub x: f32,
@@ -22,7 +22,7 @@ pub fn get_random_fuel_station(
     let idx = rand::rng().random_range(0..stations.len());
     let asset_file = stations[idx].to_string();
 
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     let y = random::<f32>() * window.height();
     let x = window.width() + random::<f32>() * window.width();
 
@@ -99,7 +99,7 @@ pub fn spawn_after_time_finished(
     asset_server: Res<AssetServer>,
     fuel_station_timer: Res<FuelStationSpawnTimer>,
 ) {
-    if fuel_station_timer.timer.finished() {
+    if fuel_station_timer.timer.just_finished() {
         spawn_fuel_station(commands, window_query, asset_server);
     }
 }
