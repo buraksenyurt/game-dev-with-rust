@@ -9,6 +9,7 @@ use crate::globals::{WIN_HEIGHT, WIN_WIDTH};
 use crate::player::PlayerPlugin;
 use crate::systems::setup_camera;
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 
 fn main() {
     App::new()
@@ -16,7 +17,7 @@ fn main() {
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
-                        resolution: (WIN_WIDTH, WIN_HEIGHT).into(),
+                        resolution: WindowResolution::new(WIN_WIDTH, WIN_HEIGHT),
                         title: "Box Game".into(),
                         resizable: false,
                         ..default()

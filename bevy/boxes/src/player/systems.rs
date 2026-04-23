@@ -18,20 +18,23 @@ pub fn spawn_player(mut commands: Commands) {
 }
 
 pub fn move_player(
-    keys: ResMut<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
     mut player_query: Query<(Entity, &mut Position), With<Player>>,
     board: Res<ActiveBoard>,
 ) {
-    let Ok((_entity,mut position)) = player_query.get_single_mut() else { return };
+    let Ok((_entity, mut position)) = player_query.single_mut() else {
+        return;
+    };
+
     for (key, dir) in KEY_DIRECTION_MAP {
         if !keys.just_pressed(key) {
             continue;
         }
+
         let new_position = position.value + dir;
 
-        if board.tiles.contains_key(&new_position) {
-            let next_tile_kind = board.tiles[&new_position].1;
-            if next_tile_kind == TileKind::Grass {
+        if let Some((_, next_tile_kind)) = board.tiles.get(&new_position) {
+            if *next_tile_kind == TileKind::Grass {
                 position.value = new_position;
             }
         }

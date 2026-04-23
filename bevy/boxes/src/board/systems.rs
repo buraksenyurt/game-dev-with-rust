@@ -3,7 +3,6 @@ use crate::board::resources::*;
 use crate::components::{get_world_position, Vector};
 use crate::globals::*;
 use bevy::prelude::*;
-use bevy::reflect::Array;
 use std::collections::HashMap;
 
 pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
@@ -27,6 +26,7 @@ pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
     ];
 
     board.tiles = HashMap::new();
+
     for (row, _column) in map.iter().enumerate() {
         for column in 0..16 {
             let tile_kind = match map[row][column] {
@@ -40,6 +40,7 @@ pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
             let tile = commands
                 .spawn((Position { value }, Part { kind: tile_kind }, Tile))
                 .id();
+
             board.tiles.insert(value, (tile, tile_kind));
         }
     }
@@ -48,14 +49,25 @@ pub fn load_board(mut commands: Commands, mut board: ResMut<ActiveBoard>) {
 pub fn load_assets(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut texture_atlas: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut assets: ResMut<AssetList>,
 ) {
-    let texture = asset_server.load("sokoban_tilesheet.png");
-    assets.0.push(texture.clone_untyped());
-    let atlas = TextureAtlas::from_grid(texture, Vec2::splat(64.), 12, 8, None, None);
-    let handle = texture_atlas.add(atlas);
-    commands.insert_resource(GraphicsAssets { texture: handle });
+    let texture: Handle<Image> = asset_server.load("sokoban_tilesheet.png");
+    assets.0.push(texture.clone().untyped());
+
+    let atlas_layout = TextureAtlasLayout::from_grid(
+        UVec2::splat(64),
+        12,
+        8,
+        None,
+        None,
+    );
+    let atlas_layout_handle = texture_atlas_layouts.add(atlas_layout);
+
+    commands.insert_resource(GraphicsAssets {
+        texture,
+        atlas_layout: atlas_layout_handle,
+    });
 }
 
 pub fn spawn_parts(
@@ -71,16 +83,19 @@ pub fn spawn_parts(
             TileKind::Box => 1,
             _ => 0,
         };
-        //info!("Sprite index {}", sprite_idx);
-        let mut sprite = TextureAtlasSprite::new(sprite_idx);
-        sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
-        let v = get_world_position(position, TILE_Z);
-        commands.entity(entity).insert(SpriteSheetBundle {
-            sprite,
-            texture_atlas: assets.texture.clone(),
-            transform: Transform::from_translation(v),
-            ..Default::default()
-        });
+
+        let world_pos = get_world_position(position, TILE_Z);
+
+        commands.entity(entity).insert((
+            Sprite::from_atlas_image(
+                assets.texture.clone(),
+                TextureAtlas {
+                    layout: assets.atlas_layout.clone(),
+                    index: sprite_idx,
+                },
+            ),
+            Transform::from_translation(world_pos).with_scale(Vec3::splat(TILE_SIZE / 64.0)),
+        ));
     }
 }
 
@@ -91,10 +106,11 @@ pub fn update_part_position(
     for (position, mut transform) in query.iter_mut() {
         let target = get_world_position(position, TILE_Z);
         let d = (target - transform.translation).length();
+
         if d > POSITION_TOLERANCE {
             transform.translation = transform
                 .translation
-                .lerp(target, PART_SPEED * time.delta_seconds());
+                .lerp(target, PART_SPEED * time.delta_secs());
         } else {
             transform.translation = target;
         }

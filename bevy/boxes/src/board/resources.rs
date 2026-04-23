@@ -10,8 +10,9 @@ pub struct ActiveBoard {
 
 #[derive(Resource)]
 pub struct GraphicsAssets {
-    pub texture: Handle<TextureAtlas>,
+    pub texture: Handle<Image>,
+    pub atlas_layout: Handle<TextureAtlasLayout>,
 }
 
 #[derive(Resource, Default)]
-pub struct AssetList(pub Vec<HandleUntyped>);
+pub struct AssetList(pub Vec<UntypedHandle>);
