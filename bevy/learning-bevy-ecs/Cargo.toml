@@ -1,0 +1,8 @@
+[package]
+name = "learning-bevy-ecs"
+version = "0.1.0"
+edition = "2021"
+description = "Bevy ECS sistemi tanımak için bir örnek"
+
+[dependencies]
+bevy = { workspace = true }

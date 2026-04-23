@@ -1,0 +1,12 @@
+# ggez workspace — run from this folder: cargo check --workspace
+# Note: ggez_101, ping_pong, rockstroid use ggez 0.7.0; radar uses ggez 0.9.3.
+# Cargo keeps both in the lockfile independently (no `links` conflict).
+[workspace]
+resolver = "2"
+
+members = [
+    "ggez_101",    # ggez 0.7.0
+    "ping_pong",   # ggez 0.7.0
+    "radar",       # ggez 0.9.3
+    "rockstroid",  # ggez 0.7.0
+]

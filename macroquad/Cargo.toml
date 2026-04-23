@@ -1,0 +1,17 @@
+# Macroquad workspace — run from this folder: cargo check --workspace
+# All members use macroquad 0.4.14 — use { workspace = true } to reference it.
+[workspace]
+resolver = "2"
+
+members = [
+    "fire-and-forget",
+    "life-game",
+    "math101",
+    "missile-commander",
+    "walls_coming",
+    "wing-pilot-2042",
+    "wolf-tank",
+]
+
+[workspace.dependencies]
+macroquad = { version = "0.4.14" }

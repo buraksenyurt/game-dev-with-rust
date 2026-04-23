@@ -1,0 +1,9 @@
+[package]
+name = "fly"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { workspace = true }
+bevy_rapier2d = { workspace = true }
+rand = { workspace = true }

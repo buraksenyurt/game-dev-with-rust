@@ -1,0 +1,10 @@
+[package]
+name = "on-my-way"
+version = "0.1.0"
+edition = "2021"
+description = "Saturn yolunda meteorlarla çarpışan bir uzay pilotunun hikayesi"
+authors = ["BSŞ"]
+
+[dependencies]
+bevy = { workspace = true }
+rand = { workspace = true }

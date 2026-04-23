@@ -1,0 +1,8 @@
+# Piston workspace — run from this folder: cargo check --workspace
+[workspace]
+resolver = "2"
+
+members = [
+    "pacman",         # piston 0.53.2
+    "spining-square", # piston 0.53.1
+]

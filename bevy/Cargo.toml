@@ -1,0 +1,23 @@
+# Bevy workspace — run from this folder: cargo check --workspace
+[workspace]
+resolver = "2"
+
+members = [
+    "another-space-invader",
+    "baller-game",
+    "bevy-getting-started",
+    "boxes",
+    "crayz-invaders",
+    "escape-of-triangle",
+    "fly",
+    "learning-bevy-ecs",
+    "on-my-way",
+    "one-more-time",
+    "red-berrets",
+    "shuttle_game",
+]
+
+[workspace.dependencies]
+bevy = "0.18.1"
+bevy_rapier2d = "0.33.0"
+rand = "0.10.1"

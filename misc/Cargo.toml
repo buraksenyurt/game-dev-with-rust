@@ -1,0 +1,13 @@
+# Misc workspace — terminal games, utilities, and experimental projects
+# Run from this folder: cargo check --workspace
+[workspace]
+resolver = "2"
+
+members = [
+    "falling_colors",
+    "mini-quiz",
+    "mystery",
+    "pct",
+    "qa",
+    "slam-dunk-manager",
+]

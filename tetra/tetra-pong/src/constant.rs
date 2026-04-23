@@ -1,0 +1,12 @@
+pub const OCEAN_BLUE: &str = "7BB5FF";
+pub const BRICK: &str = "AA4A44";
+pub const BRIGHT_REDDISH_LILAC: &str = "8E4285";
+pub const SCREEN_WIDTH: f32 = 640.;
+pub const SCREEN_HEIGHT: f32 = 480.;
+pub const PADDLE1_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/assets/paddle_1.png");
+pub const PADDLE2_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/assets/paddle_2.png");
+pub const BALL_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/assets/ball.png");
+pub const PADDLE_SPEED: f32 = 10.;
+pub const BALL_SPEED: f32 = 3.;
+pub const PADDLE_SPIN: f32 = 2.;
+pub const BALL_ACC: f32 = 0.025;
