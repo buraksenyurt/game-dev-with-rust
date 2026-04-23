@@ -14,24 +14,21 @@ pub fn spawn_player(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     // Mavi topu ekranın tam ortasına yerleştirmek için pencerenin ölçüleri gerekcektir
     // Bu nedenle PrimaryWindows componentini taşıyan window nesnesi sorgulanır
 
     // Bir Entity nesnesine birden fazla component eklemek veya çıkarmak için Bundle'lar kullanılır.
     // Mavi topu konum bilgisi ile yükleyen bileşenleri Player ile ilişkilendirdik.
     commands.spawn((
-        SpriteBundle {
-            transform: Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
-            texture: asset_server.load("sprites/ball_blue_large.png"),
-            ..default()
-        },
+        Sprite::from_image(asset_server.load("sprites/ball_blue_large.png")),
+        Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
         Player {},
     ));
 }
 
 pub fn despawn_player(mut commands: Commands, query: Query<Entity, With<Player>>) {
-    if let Ok(entity) = query.get_single() {
+    if let Ok(entity) = query.single() {
         commands.entity(entity).despawn();
     }
 }
@@ -41,24 +38,24 @@ pub fn despawn_player(mut commands: Commands, query: Query<Entity, With<Player>>
 // Hareket hesaplamasında delta time kullanılacağından Time verisi de Resource olarak alınır.
 // Tabi Transform bileşenlerinden oyuncu Entity'si ile yüklenenler sorgulanır
 pub fn control_player_movement(
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut player_query: Query<&mut Transform, With<Player>>,
     time: Res<Time>,
 ) {
     // Eğer ortamda hareket edebilecek bir player nesnesi varsa
-    if let Ok(mut transform) = player_query.get_single_mut() {
+    if let Ok(mut transform) = player_query.single_mut() {
         let mut direction = Vec3::ZERO;
         // Basılan tuşa göre yeni bir Vektör hareketi ayarlanır
-        if keyboard_input.pressed(KeyCode::Left) {
+        if keyboard_input.pressed(KeyCode::ArrowLeft) {
             direction += Vec3::new(-1., 0., 0.);
         }
-        if keyboard_input.pressed(KeyCode::Right) {
+        if keyboard_input.pressed(KeyCode::ArrowRight) {
             direction += Vec3::new(1., 0., 0.);
         }
-        if keyboard_input.pressed(KeyCode::Up) {
+        if keyboard_input.pressed(KeyCode::ArrowUp) {
             direction += Vec3::new(0., 1., 0.);
         }
-        if keyboard_input.pressed(KeyCode::Down) {
+        if keyboard_input.pressed(KeyCode::ArrowDown) {
             direction += Vec3::new(0., -1., 0.);
         }
 
@@ -68,7 +65,7 @@ pub fn control_player_movement(
         }
 
         // bileşenin konumu direction, player_speed ve delta time süresine göre tekrardan ayarlanır.
-        transform.translation += direction * PLAYER_SPEED * time.delta_seconds();
+        transform.translation += direction * PLAYER_SPEED * time.delta_secs();
     }
 }
 
@@ -76,8 +73,8 @@ pub fn check_player_movement(
     mut player_query: Query<&mut Transform, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-    if let Ok(mut player_transform) = player_query.get_single_mut() {
-        let window = window_query.get_single().unwrap();
+    if let Ok(mut player_transform) = player_query.single_mut() {
+        let window = window_query.single().unwrap();
         let (x_min, x_max) = (PLAYER_SIZE / 2., window.width() - PLAYER_SIZE / 2.);
         let (y_min, y_max) = (PLAYER_SIZE / 2., window.height() - PLAYER_SIZE / 2.);
         let mut translation = player_transform.translation;
@@ -104,11 +101,11 @@ pub fn check_enemy_hit_player(
     mut commands: Commands,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
-    mut game_over_event_writer: EventWriter<GameOver>,
+    mut game_over_event_writer: MessageWriter<GameOver>,
     score: Res<Score>,
 ) {
     // Sahadaki oyuncuyu transform bileşeni ile birlikte ele alıyoruz
-    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+    if let Ok((player_entity, player_transform)) = player_query.single_mut() {
         // tüm kırmızı toplar için bir iterasyon var ve transform bileşenlerini ele alıyoruz
         for enemy_transform in enemy_query.iter() {
             // çarpışma kontrolü yapılıyor.
@@ -128,7 +125,7 @@ pub fn check_enemy_hit_player(
                 // Bunu handle_game_over_system isimli sistem dinliyor olacak.
                 // Ayrıca event ile birlikte güncel skor değerini de taşımaktayız.
                 // Böylece bu değeri Reader event içinden okuyabiliriz
-                game_over_event_writer.send(GameOver {
+                game_over_event_writer.write(GameOver {
                     final_score: score.value,
                 });
             }
@@ -142,7 +139,7 @@ pub fn check_player_hits_star(
     star_query: Query<(Entity, &Transform), With<Star>>,
     mut score: ResMut<Score>,
 ) {
-    if let Ok(player_transform) = player_query.get_single() {
+    if let Ok(player_transform) = player_query.single() {
         for (star_entity, star_transformation) in star_query.iter() {
             let distance = player_transform
                 .translation

@@ -1,18 +1,17 @@
 use crate::game::*;
 
 pub fn toggle_playground(
-    mut commands: Commands,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     playground_state: Res<State<PlayGroundState>>,
+    mut next_state: ResMut<NextState<PlayGroundState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::P) {
+    if keyboard_input.just_pressed(KeyCode::KeyP) {
         info!("Just Pressed the Pause button");
-        if **playground_state == PlayGroundState::Running {
-            commands.insert_resource(NextState(Some(PlayGroundState::Paused)));
+        if *playground_state.get() == PlayGroundState::Running {
+            next_state.set(PlayGroundState::Paused);
             info!("Game in Paused state");
-        }
-        if **playground_state == PlayGroundState::Paused {
-            commands.insert_resource(NextState(Some(PlayGroundState::Running)));
+        } else if *playground_state.get() == PlayGroundState::Paused {
+            next_state.set(PlayGroundState::Running);
             info!("Game in Running state");
         }
     }

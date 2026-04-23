@@ -14,7 +14,7 @@ fn main() {
     App::new()
         // Bevy Plugins
         .add_plugins(DefaultPlugins)
-        .add_state::<AppState>()
+        .init_state::<AppState>()
         // My Plugins
         .add_plugins((MainMenuPlugin, GamePlugin))
         // Startup systems

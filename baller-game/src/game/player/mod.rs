@@ -17,7 +17,7 @@ impl Plugin for PlayerPlugin {
                 (
                     check_enemy_hit_player,
                     control_player_movement,
-                    check_player_movement.after(control_player_movement),
+                    check_player_movement,
                     check_player_hits_star,
                 )
                     .run_if(in_state(AppState::Game))

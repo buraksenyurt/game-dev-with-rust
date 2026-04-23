@@ -11,18 +11,18 @@ use bevy::window::PrimaryWindow;
 
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     // Kameranın konumunu ayarlamak için yine ekran bilgisine ihtiyacımız olacak
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
 
     // 2D kamerayı da mavi topun olduğu koordinata göre konumlandırıyoruz
-    commands.spawn(Camera2dBundle {
-        transform: Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
-        ..default()
-    });
+    commands.spawn((
+        Camera2d,
+        Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
+    ));
 }
 
 pub fn refresh_everything(
     mut commands: Commands,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut enemies_query: Query<Entity, With<Enemy>>,
     mut stars_query: Query<Entity, With<Star>>,
     player_query: Query<Entity, With<Player>>,
@@ -38,16 +38,13 @@ pub fn refresh_everything(
         for star in stars_query.iter_mut() {
             commands.entity(star).despawn();
         }
-        if let Ok(player) = player_query.get_single() {
+        if let Ok(player) = player_query.single() {
             commands.entity(player).despawn();
         }
-        let window = window_query.get_single().unwrap();
+        let window = window_query.single().unwrap();
         commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
-                texture: asset_server.load("sprites/ball_blue_large.png"),
-                ..default()
-            },
+            Sprite::from_image(asset_server.load("sprites/ball_blue_large.png")),
+            Transform::from_xyz(window.width() / 2., window.height() / 2., 0.),
             Player {},
         ));
         spawn_enemies_full(&mut commands, &window_query, &asset_server);
@@ -61,43 +58,39 @@ pub fn refresh_everything(
 // Bevy tarafında event'ler sistemler arasında veri taşımak için kullanılır.
 // Böylece bir sistemde meydana gelen bir aksiyon karşılığında bir event verisi oluşturup
 // bunu kullanacak başka bir sisteme yollayabiliriz. Cool!
-pub fn exit_game(keyboard_input: Res<Input<KeyCode>>, mut event_writer: EventWriter<AppExit>) {
+pub fn exit_game(keyboard_input: Res<ButtonInput<KeyCode>>, mut event_writer: MessageWriter<AppExit>) {
     if keyboard_input.just_pressed(KeyCode::Escape) {
-        event_writer.send(AppExit);
+        event_writer.write(AppExit::Success);
     }
 }
 
 // GameOver isimli bir event oluştuğunda ele alınan sistem
 pub fn handle_game_over(
-    mut game_over_event_reader: EventReader<GameOver>,
+    mut game_over_event_reader: MessageReader<GameOver>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
-    for event in game_over_event_reader.iter() {
+    for event in game_over_event_reader.read() {
         info!("Player's final score is {}", event.final_score.to_string());
         next_app_state.set(AppState::GameOver);
     }
 }
 
 pub fn change_to_game_state(
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::G) {
-        if next_app_state.0 != Option::from(AppState::Game) {
-            next_app_state.set(AppState::Game);
-            info!("Now in 'Game' state");
-        }
+    if keyboard_input.just_pressed(KeyCode::KeyG) {
+        next_app_state.set(AppState::Game);
+        info!("Now in 'Game' state");
     }
 }
 
 pub fn change_to_main_menu(
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::M) {
-        if next_app_state.0 != Option::from(AppState::MainMenu) {
-            next_app_state.set(AppState::MainMenu);
-            info!("Now in 'Main Menu' state");
-        }
+    if keyboard_input.just_pressed(KeyCode::KeyM) {
+        next_app_state.set(AppState::MainMenu);
+        info!("Now in 'Main Menu' state");
     }
 }

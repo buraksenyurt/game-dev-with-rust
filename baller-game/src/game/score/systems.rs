@@ -5,10 +5,10 @@ use bevy::prelude::*;
 // Bu sistem de GameOver event'lerini dinler.
 // Dolayısıyla bir event birden fazla sistem tarafından okunabilir.
 pub fn update_high_score(
-    mut game_over_event_reader: EventReader<GameOver>,
+    mut game_over_event_reader: MessageReader<GameOver>,
     mut high_scores: ResMut<HighScores>,
 ) {
-    for event in game_over_event_reader.iter() {
+    for event in game_over_event_reader.read() {
         high_scores
             .scores
             .push(("Player".to_string(), event.final_score));

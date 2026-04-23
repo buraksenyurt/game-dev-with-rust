@@ -30,8 +30,8 @@ pub fn spawn_star_after_time_finished(
     star_timer: Res<StarSpawnTimer>,
 ) {
     // star saati için belirlenen süre geçmişse
-    if star_timer.timer.finished() {
-        let window = window_query.get_single().unwrap();
+    if star_timer.timer.just_finished() {
+        let window = window_query.single().unwrap();
         spawn_star(&mut commands, &asset_server, window);
     }
 }

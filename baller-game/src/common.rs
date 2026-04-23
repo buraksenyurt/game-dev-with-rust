@@ -11,7 +11,7 @@ pub fn spawn_stars_full(
     window_query: &Query<&Window, With<PrimaryWindow>>,
     asset_server: &Res<AssetServer>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     for _ in 0..NUMBER_OF_STARS {
         spawn_star(commands, asset_server, window);
     }
@@ -21,11 +21,8 @@ pub fn spawn_star(commands: &mut Commands, asset_server: &Res<AssetServer>, wind
     let x = random::<f32>() * window.width();
     let y = random::<f32>() * window.height();
     commands.spawn((
-        SpriteBundle {
-            transform: Transform::from_xyz(x, y, 0.),
-            texture: asset_server.load("sprites/star.png"),
-            ..default()
-        },
+        Sprite::from_image(asset_server.load("sprites/star.png")),
+        Transform::from_xyz(x, y, 0.),
         Star {},
     ));
 }
@@ -35,7 +32,7 @@ pub fn spawn_enemies_full(
     window_query: &Query<&Window, With<PrimaryWindow>>,
     asset_server: &Res<AssetServer>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
 
     // Bu sefer rastgele x,y konumlarında 6 adet düşman nesnesi örneklenmekte
     for _ in 0..NUMBER_OF_ENEMIES {
@@ -53,11 +50,8 @@ pub fn spawn_enemy(commands: &mut Commands, asset_server: &Res<AssetServer>, win
     // rastgele x,y değerlerini baz olan bir yöne gidecek şekilde ayarlanır.
     // Direction değerini işaret eden vektörün birim vektöre dönüştürüldüğüne dikkat.
     commands.spawn((
-        SpriteBundle {
-            transform: Transform::from_xyz(x, y, 0.),
-            texture: asset_server.load("sprites/ball_red_large.png"),
-            ..default()
-        },
+        Sprite::from_image(asset_server.load("sprites/ball_red_large.png")),
+        Transform::from_xyz(x, y, 0.),
         Enemy { direction },
     ));
 }

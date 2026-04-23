@@ -22,7 +22,7 @@ impl Plugin for EnemyPlugin {
                 Update,
                 (
                     enemy_movement,
-                    enemy_out_of_bound_check.after(enemy_movement),
+                    enemy_out_of_bound_check,
                     check_enemy_movement,
                     enemy_spawn_timer,
                     spawn_enemy_after_time_finished,

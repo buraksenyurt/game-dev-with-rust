@@ -11,7 +11,7 @@ pub fn pressed_play_game_button(
     >,
     mut app_state: ResMut<NextState<AppState>>,
 ) {
-    if let Ok((interaction, mut background_color)) = query.get_single_mut() {
+    if let Ok((interaction, mut background_color)) = query.single_mut() {
         match interaction {
             Interaction::Pressed => {
                 *background_color = PRESSED_BUTTON_COLOR.into();
@@ -33,13 +33,13 @@ pub fn pressed_quit_game_button(
         (&Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<QuitButton>),
     >,
-    mut exit_event_writer: EventWriter<AppExit>,
+    mut exit_event_writer: MessageWriter<AppExit>,
 ) {
-    if let Ok((interaction, mut background_color)) = query.get_single_mut() {
+    if let Ok((interaction, mut background_color)) = query.single_mut() {
         match interaction {
             Interaction::Pressed => {
                 *background_color = PRESSED_BUTTON_COLOR.into();
-                exit_event_writer.send(AppExit);
+                exit_event_writer.write(AppExit::Success);
             }
             Interaction::Hovered => {
                 *background_color = HOVERED_BUTTON_COLOR.into();

@@ -17,9 +17,9 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<PlayGroundState>()
-            // Events
-            .add_event::<GameOver>()
+        app.add_sub_state::<PlayGroundState>()
+            // Messages
+            .add_message::<GameOver>()
             // Plugins
             .add_plugins((PlayerPlugin, EnemyPlugin, ScorePlugin, StarPlugin))
             .add_systems(OnEnter(AppState::Game), pause_game)
@@ -28,7 +28,8 @@ impl Plugin for GamePlugin {
     }
 }
 
-#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+#[derive(SubStates, Debug, Clone, Eq, PartialEq, Hash, Default)]
+#[source(AppState = AppState::Game)]
 pub enum PlayGroundState {
     #[default]
     Running,

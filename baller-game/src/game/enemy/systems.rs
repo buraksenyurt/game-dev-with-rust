@@ -28,7 +28,7 @@ pub fn enemy_movement(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Re
         // Enemy spawn'lanırken bir direction verilmişti. Buna göre 3 boyutlu vektör örneklenir
         let direction = Vec3::new(enemy.direction.x, enemy.direction.y, 0.);
         // translation bilgisi ENEMY_SPEED ve delta time değerleri kullanılarak değiştirilir.
-        transform.translation += direction * ENEMEY_SPEED * time.delta_seconds();
+        transform.translation += direction * ENEMEY_SPEED * time.delta_secs();
     }
 }
 
@@ -37,7 +37,7 @@ pub fn enemy_out_of_bound_check(
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
     // Kırmızı topun sınır x,y değerleri bulunur
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     let (x_min, x_max) = (ENEMY_SIZE / 2., window.width() - ENEMY_SIZE / 2.);
     let (y_min, y_max) = (ENEMY_SIZE / 2., window.height() - ENEMY_SIZE / 2.);
     for (transform, mut enemy) in enemy_query.iter_mut() {
@@ -57,7 +57,7 @@ pub fn check_enemy_movement(
     mut enemy_query: Query<&mut Transform, With<Enemy>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
-    let window = window_query.get_single().unwrap();
+    let window = window_query.single().unwrap();
     let x_min = ENEMY_SIZE / 2.;
     let x_max = window.width() - ENEMY_SIZE / 2.;
     let y_min = ENEMY_SIZE / 2.;
@@ -93,8 +93,8 @@ pub fn spawn_enemy_after_time_finished(
     enemy_timer: Res<EnemySpawnTimer>,
 ) {
     // enemy için belirlenen süre geçmişse
-    if enemy_timer.timer.finished() {
-        let window = window_query.get_single().unwrap();
+    if enemy_timer.timer.just_finished() {
+        let window = window_query.single().unwrap();
         spawn_enemy(&mut commands, &asset_server, window);
     }
 }
