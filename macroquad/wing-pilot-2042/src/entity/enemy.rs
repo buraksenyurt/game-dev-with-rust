@@ -31,24 +31,46 @@ impl Enemy {
     pub async fn new(position: Vec2, enemy_type: EnemyType, formation: Formation) -> Self {
         let (texture, velocity) = match enemy_type {
             EnemyType::Bomber => (
-                load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/bomber.png")).await.unwrap(),
+                load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/bomber.png"))
+                    .await
+                    .unwrap(),
                 Vec2::new(0., 1.),
             ),
             EnemyType::Fighter => (
-                load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/enemy_fighter.png")).await.unwrap(),
+                load_texture(concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/resources/enemy_fighter.png"
+                ))
+                .await
+                .unwrap(),
                 Vec2::new(0., 1.),
             ),
             EnemyType::Warship(wd) => match wd {
                 Some(WarshipDirection::Right) => (
-                    load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/warship_right.png")).await.unwrap(),
+                    load_texture(concat!(
+                        env!("CARGO_MANIFEST_DIR"),
+                        "/resources/warship_right.png"
+                    ))
+                    .await
+                    .unwrap(),
                     Vec2::new(-1., 0.),
                 ),
                 Some(WarshipDirection::Left) => (
-                    load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/warship_left.png")).await.unwrap(),
+                    load_texture(concat!(
+                        env!("CARGO_MANIFEST_DIR"),
+                        "/resources/warship_left.png"
+                    ))
+                    .await
+                    .unwrap(),
                     Vec2::new(1., 0.),
                 ),
                 _ => (
-                    load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/warship_left.png")).await.unwrap(),
+                    load_texture(concat!(
+                        env!("CARGO_MANIFEST_DIR"),
+                        "/resources/warship_left.png"
+                    ))
+                    .await
+                    .unwrap(),
                     Vec2::new(1., 0.),
                 ),
             },
@@ -67,7 +89,12 @@ impl Enemy {
             velocity,
             formation,
             texture,
-            texture_explosion: load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/explosion.png")).await.unwrap(),
+            texture_explosion: load_texture(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/resources/explosion.png"
+            ))
+            .await
+            .unwrap(),
             is_formation_on: false,
             fire_at_will: false,
             on_stage: true,

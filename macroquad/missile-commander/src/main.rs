@@ -25,9 +25,24 @@ async fn main() {
     show_mouse(false);
     rand::srand(miniquad::date::now() as _);
 
-    let hit_sound = audio::load_sound(concat!(env!("CARGO_MANIFEST_DIR"), "/resource/cannon_hit.ogg")).await.unwrap();
-    let turret_fire_sound = audio::load_sound(concat!(env!("CARGO_MANIFEST_DIR"), "/resource/rlauncher.ogg")).await.unwrap();
-    let explosion_sound = audio::load_sound(concat!(env!("CARGO_MANIFEST_DIR"), "/resource/explosion.ogg")).await.unwrap();
+    let hit_sound = audio::load_sound(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/resource/cannon_hit.ogg"
+    ))
+    .await
+    .unwrap();
+    let turret_fire_sound = audio::load_sound(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/resource/rlauncher.ogg"
+    ))
+    .await
+    .unwrap();
+    let explosion_sound = audio::load_sound(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/resource/explosion.ogg"
+    ))
+    .await
+    .unwrap();
 
     let mut game = Game::new(0);
     let buildings = create_buildings();

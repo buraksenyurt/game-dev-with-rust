@@ -28,12 +28,22 @@ pub struct Fighter {
 
 impl Fighter {
     pub async fn new() -> Self {
-        let texture = load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/fighter.png")).await.unwrap();
+        let texture = load_texture(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/resources/fighter.png"
+        ))
+        .await
+        .unwrap();
         let position = Vec2::new(
             screen_width() * 0.5 - texture.width() * 0.5,
             screen_height() - texture.height(),
         );
-        let texture_explosion = load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/explosion.png")).await.unwrap();
+        let texture_explosion = load_texture(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/resources/explosion.png"
+        ))
+        .await
+        .unwrap();
         Self {
             position,
             life: 3,

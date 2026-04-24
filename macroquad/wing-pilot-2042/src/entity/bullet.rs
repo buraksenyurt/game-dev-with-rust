@@ -34,7 +34,12 @@ impl Bullet {
                 draw_rectangle(self.location.x, self.location.y, 6., 6., RED);
             }
             Owner::Warship => {
-                let texture = load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/ws_missile.png")).await.unwrap();
+                let texture = load_texture(concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/resources/ws_missile.png"
+                ))
+                .await
+                .unwrap();
                 let params = DrawTextureParams {
                     rotation: self.rotation,
                     ..Default::default()

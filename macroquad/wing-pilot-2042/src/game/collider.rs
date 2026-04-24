@@ -18,7 +18,12 @@ async fn aabb_check(source: Rect, target: &Rect) -> bool {
 
 pub async fn check_fighter_with_ammo(game: &mut Game) -> bool {
     let ammo_box = match &game.extra_ammo_box {
-        Some(ea) => Rect::new(ea.location.x, ea.location.y, ea.texture.width(), ea.texture.height()),
+        Some(ea) => Rect::new(
+            ea.location.x,
+            ea.location.y,
+            ea.texture.width(),
+            ea.texture.height(),
+        ),
         None => return false,
     };
     let fighter_box: Rect = game.fighter.get_body().await;

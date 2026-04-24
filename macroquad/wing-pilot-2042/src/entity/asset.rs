@@ -33,7 +33,12 @@ impl Asset {
                 let index = rand::gen_range(0, grounds.len());
                 load_texture(&grounds[index]).await.unwrap()
             }
-            AssetType::ExtraAmmo => load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/extra_ammo.png")).await.unwrap(),
+            AssetType::ExtraAmmo => load_texture(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/resources/extra_ammo.png"
+            ))
+            .await
+            .unwrap(),
             AssetType::Cloud => {
                 let index = rand::gen_range(0, clouds.len());
                 load_texture(&clouds[index]).await.unwrap()

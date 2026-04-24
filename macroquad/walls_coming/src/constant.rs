@@ -16,7 +16,7 @@ pub const BALL_SPEED: f32 = 400.;
 // Yavaşlama bonusuna denk gelirsek kullanılacak varsayılan azaltma hızı
 pub const CAPTAIN_SLOW_SPEED: f32 = 150.;
 // Topu yavaşlatan powerup'ın ne kadar birim devrede kalacağını ifade eder
-pub const CAPTAIN_SLOW_LIFETIME:usize=500;
+pub const CAPTAIN_SLOW_LIFETIME: usize = 500;
 // Blokların dizildiği grid'e ait satır ve sütun sayıları
 pub const ROW_COUNT: usize = 5;
 pub const COLUMN_COUNT: usize = 8;
