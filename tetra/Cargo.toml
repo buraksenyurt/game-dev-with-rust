@@ -1,9 +1,10 @@
 # Tetra workspace — run from this folder: cargo check --workspace
-# Note: tetra 0.7 pins sdl2 v0.35; keep this workspace separate from the
-# sdl2/ workspace (which uses sdl2 v0.36) to avoid the `links = "SDL2"` conflict.
 [workspace]
 resolver = "2"
 
 members = [
     "tetra-pong",
 ]
+
+[workspace.dependencies]
+tetra = "0.9.1"

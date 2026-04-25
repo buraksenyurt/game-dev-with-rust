@@ -5,4 +5,4 @@ edition = "2021"
 description = "Tetra 2D framework öğretisi"
 
 [dependencies]
-tetra="0.7.0"
+tetra = { workspace = true }

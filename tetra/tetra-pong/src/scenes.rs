@@ -51,7 +51,11 @@ impl MainMenuScene {
         Ok(MainMenuScene {
             content: Text::new(
                 "Press Enter for Start Game\nESC for exit",
-                Font::vector(context, concat!(env!("CARGO_MANIFEST_DIR"), "/assets/Halo3.ttf"), 36.)?,
+                Font::vector(
+                    context,
+                    concat!(env!("CARGO_MANIFEST_DIR"), "/assets/Halo3.ttf"),
+                    36.,
+                )?,
             ),
         })
     }
@@ -83,7 +87,11 @@ impl EndScene {
         Ok(EndScene {
             content: Text::new(
                 format!("Winner is {}\nWould you play again?", winner),
-                Font::vector(context, concat!(env!("CARGO_MANIFEST_DIR"), "/assets/Halo3.ttf"), 36.)?,
+                Font::vector(
+                    context,
+                    concat!(env!("CARGO_MANIFEST_DIR"), "/assets/Halo3.ttf"),
+                    36.,
+                )?,
             ),
         })
     }
