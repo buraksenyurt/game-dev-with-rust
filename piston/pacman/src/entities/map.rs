@@ -126,7 +126,7 @@ fn get_pellet_coordinates() -> Vec<(usize, usize)> {
 
 impl Map {
     // Map matrisini satır satır dolaşmamızı sağlayan fonksiyon
-    pub fn read_lines(&self) -> Line {
+    pub fn read_lines(&self) -> Line<'_> {
         Line {
             map: self,
             index: 0,

@@ -5,7 +5,6 @@ use crate::entities::cell::{Tile, TileType};
 use crate::entities::ghosts::{Ghost, GhostController};
 use crate::entities::map::Map;
 use crate::entities::score::Score;
-use piston::Key::P;
 
 pub struct Pacman {
     map: Map,
@@ -84,7 +83,7 @@ impl Pacman {
 
     // Oyundaki hayaletleri almak için
     pub fn get_ghosts(&self) -> &[Ghost] {
-        &self.ghost_controller.get()
+        self.ghost_controller.get()
     }
 
     // Pacman karakterini hareket ettiren fonksiyon

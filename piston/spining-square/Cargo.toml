@@ -5,7 +5,7 @@ edition = "2021"
 description = "Piston oyun motoruna ait getting started örneği"
 
 [dependencies]
-piston = "0.53.1"
-piston2d-graphics = "0.42.0"
-pistoncore-glutin_window = "0.70.1"
-piston2d-opengl_graphics = "0.81.0"
+piston = { workspace = true }
+piston2d-graphics = { workspace = true }
+pistoncore-glutin_window = { workspace = true }
+piston2d-opengl_graphics = { workspace = true }

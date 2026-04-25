@@ -34,8 +34,8 @@ impl Application {
                 .trans(x, y) // konum yeni yerine ayarlanıyor
                 .rot_rad(rotation) // döndürme işlemi
                 .trans(-16., 32.); // Buradaki değerlerle oynayarak farklı sonuçlar elde edebiliriz.
-            // Mesela -32.,-32. deneyelim.
-            // dörtgen çiziliyor
+                                   // Mesela -32.,-32. deneyelim.
+                                   // dörtgen çiziliyor
             rectangle(GOLD, square, transform, gl);
         });
     }
