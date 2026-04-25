@@ -1,9 +1,9 @@
-use rand::prelude::*;
 use rusty_engine::prelude::*;
 
 const PLAYER_SPEED: f32 = 500.;
 const ROAD_SPEED: f32 = 400.;
 
+#[derive(Resource)]
 struct GameState {
     health: u8,
     lost: bool,
@@ -41,13 +41,13 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
     let mut direction = 0.;
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Up, KeyCode::W])
+        .pressed_any(&[KeyCode::ArrowUp, KeyCode::KeyW])
     {
         direction += 1.;
     }
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Down, KeyCode::S])
+        .pressed_any(&[KeyCode::ArrowDown, KeyCode::KeyS])
     {
         direction -= 1.;
     }
@@ -98,8 +98,8 @@ fn create_obstacles(game: &mut Game<GameState>) {
         let obstacle = game.add_sprite(format!("obstacle_{}", i), preset);
         obstacle.layer = 5.;
         obstacle.collision = true;
-        obstacle.translation.x = thread_rng().gen_range(800.0..1600.);
-        obstacle.translation.y = thread_rng().gen_range(-300.0..300.);
+        obstacle.translation.x = rand::random_range(800.0..1600.0f32);
+        obstacle.translation.y = rand::random_range(-300.0..300.0f32);
     }
 }
 
@@ -128,8 +128,8 @@ fn move_road_objects(engine: &mut Engine) {
         if sprite.label.starts_with("obstacle") {
             sprite.translation.x -= ROAD_SPEED * engine.delta_f32;
             if sprite.translation.x < -800. {
-                sprite.translation.x = thread_rng().gen_range(800.0..1600.);
-                sprite.translation.y = thread_rng().gen_range(-300.0..300.);
+                sprite.translation.x = rand::random_range(800.0..1600.0f32);
+                sprite.translation.y = rand::random_range(-300.0..300.0f32);
             }
         }
     }

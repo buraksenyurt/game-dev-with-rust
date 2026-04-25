@@ -1,5 +1,4 @@
 # Rusty Engine workspace — run from this folder: cargo check --workspace
-# Both members share rusty_engine 5.2.1 and rand 0.8.5.
 [workspace]
 resolver = "2"
 
@@ -9,5 +8,5 @@ members = [
 ]
 
 [workspace.dependencies]
-rusty_engine = "5.2.1"
-rand          = "0.8.5"
+rusty_engine = "7.0.0"
+rand          = "0.10.1"

@@ -1,4 +1,3 @@
-use rand::{thread_rng, Rng};
 use rusty_engine::prelude::bevy::log::info;
 use rusty_engine::prelude::*;
 
@@ -8,10 +7,9 @@ const MAX_WARP_COUNT: u8 = 3;
 fn main() {
     let mut game = Game::new();
 
-    game.window_settings(WindowDescriptor {
+    game.window_settings(Window {
         title: "Eat the Garbage!".to_string(),
-        width: 1366.,
-        height: 768.,
+        resolution: bevy::window::WindowResolution::new(1366_u32, 768_u32),
         ..Default::default()
     });
 
@@ -40,6 +38,7 @@ struct Score {
     current: u32,
 }
 
+#[derive(Resource)]
 struct GameState {
     score: Score,
     battery_index: i32,
@@ -61,7 +60,7 @@ impl SpeedPowerup {
             max: MAX_WARP_COUNT,
             value: 1.,
             is_active: false,
-            timer: Timer::from_seconds(3., true),
+            timer: Timer::from_seconds(3., TimerMode::Repeating),
         }
     }
 }
@@ -74,7 +73,7 @@ impl Default for GameState {
                 current: 0,
             },
             //enemy_labels: Vec::new(),
-            spawn_timer: Timer::from_seconds(2., true),
+            spawn_timer: Timer::from_seconds(2., TimerMode::Repeating),
             battery_index: 0,
             booster: SpeedPowerup::new(),
         }
@@ -85,7 +84,7 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
     // game_state.score.current += 1;
     // info!("Güncel skor {}", game_state.score.current);
 
-    if engine.keyboard_state.just_pressed(KeyCode::Q) {
+    if engine.keyboard_state.just_pressed(KeyCode::KeyQ) {
         engine.should_exit = true;
     }
 
@@ -121,30 +120,30 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
 
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Up, KeyCode::W])
+        .pressed_any(&[KeyCode::ArrowUp, KeyCode::KeyW])
     {
         player.translation.y += PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Down, KeyCode::S])
+        .pressed_any(&[KeyCode::ArrowDown, KeyCode::KeyS])
     {
         player.translation.y -= PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Left, KeyCode::A])
+        .pressed_any(&[KeyCode::ArrowLeft, KeyCode::KeyA])
     {
         player.translation.x -= PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
     if engine
         .keyboard_state
-        .pressed_any(&[KeyCode::Right, KeyCode::D])
+        .pressed_any(&[KeyCode::ArrowRight, KeyCode::KeyD])
     {
         player.translation.x += PLAYER_MOVEMENT_SPEED * game_state.booster.value * engine.delta_f32;
     }
 
-    if game_state.booster.max > 0 && engine.keyboard_state.just_pressed(KeyCode::W) {
+    if game_state.booster.max > 0 && engine.keyboard_state.just_pressed(KeyCode::KeyW) {
         game_state.booster.is_active = true;
         game_state.booster.value = 3.;
         game_state.booster.timer.reset();
@@ -160,13 +159,13 @@ fn game_logic(engine: &mut Engine, game_state: &mut GameState) {
         let battery_label = format!("BTRY_{}", game_state.battery_index);
         game_state.battery_index += 1;
         let battery = engine.add_sprite(battery_label.clone(), "battery.png");
-        battery.translation.x = thread_rng().gen_range(-420. ..420.);
-        battery.translation.y = thread_rng().gen_range(-320. ..320.);
+        battery.translation.x = rand::random_range(-420.0..420.0f32);
+        battery.translation.y = rand::random_range(-320.0..320.0f32);
         battery.scale = 0.8;
         battery.collision = true;
     }
 
-    if engine.keyboard_state.pressed(KeyCode::R) {
+    if engine.keyboard_state.pressed(KeyCode::KeyR) {
         game_state.score.current = 0;
         game_state.booster = SpeedPowerup::new();
         let text_current_score = engine.texts.get_mut("lblCurrentScore").unwrap();
