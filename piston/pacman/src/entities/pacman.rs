@@ -73,8 +73,8 @@ impl Pacman {
             return;
         }
         self.go();
-        //TODO Hayaletler hareket ettirilecek
-        //TODO Hayalet ile pacman arasındaki etkileşimler(çarpışma gibi) kontrol edilecek
+        self.ghost_controller.update(&self.map);
+        //TODO Hayaletler ile pacman arasındaki etkileşimler(çarpışma gibi) kontrol edilecek
     }
 
     pub fn get_location(&self) -> (Position, Direction) {
