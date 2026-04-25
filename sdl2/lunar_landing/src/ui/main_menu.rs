@@ -9,7 +9,10 @@ pub struct MainMenu;
 impl MainMenu {
     pub fn draw(canvas: &mut WindowCanvas) -> Result<(), String> {
         let texture_creator = canvas.texture_creator();
-        let bg_texture = texture_creator.load_texture(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/llbackground.png"))?;;
+        let bg_texture = texture_creator.load_texture(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/assets/llbackground.png"
+        ))?;
 
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();

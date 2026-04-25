@@ -3,7 +3,7 @@ use crate::entity::flappy::Flappy;
 use crate::entity::{Block, BlockDirection, Drawable, Entity};
 use crate::factory::{GameObject, MainState};
 use crate::ui::{GameOverMenu, Hud, MainMenu};
-use rand::Rng;
+use rand::RngExt;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -34,7 +34,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         Self {
             point: 0,
             state: GameState::MainMenu,
@@ -42,19 +42,19 @@ impl Game {
             player: Flappy::default(),
             blocks: Vec::new(),
             last_block_time: Instant::now(),
-            next_block_delay: Duration::from_secs(rng.gen_range(3..=5)),
+            next_block_delay: Duration::from_secs(rng.random_range(3..=5)),
             total_time: Duration::new(0, 0),
         }
     }
     fn spawn_block(&mut self) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let heights = [80, 180, 240, 300];
         let widths = [40, 45, 50];
 
-        let height = heights[rng.gen_range(0..heights.len())];
-        let width = widths[rng.gen_range(0..widths.len())];
+        let height = heights[rng.random_range(0..heights.len())];
+        let width = widths[rng.random_range(0..widths.len())];
         let direction: BlockDirection;
-        let y = match rng.gen_range(0..100) % 3 == 0 {
+        let y = match rng.random_range(0..100) % 3 == 0 {
             false => {
                 direction = BlockDirection::BottomToUp;
                 SCREEN_HEIGHT as i32 - height as i32
@@ -198,10 +198,10 @@ impl GameObject for Game {
                     self.last_block_time = now;
                     if self.total_time >= Duration::new(30, 0) {
                         self.next_block_delay =
-                            Duration::from_secs(rand::thread_rng().gen_range(2..=4));
+                            Duration::from_secs(rand::rng().random_range(2..=4));
                     } else {
                         self.next_block_delay =
-                            Duration::from_secs(rand::thread_rng().gen_range(3..=5));
+                            Duration::from_secs(rand::rng().random_range(3..=5));
                     }
                 }
 

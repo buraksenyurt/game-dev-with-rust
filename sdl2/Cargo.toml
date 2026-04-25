@@ -1,5 +1,4 @@
 # SDL2 workspace — run from this folder: cargo check --workspace
-# All members use sdl2 0.36.0 and rand 0.8.5 — reference via { workspace = true }.
 [workspace]
 resolver = "2"
 
@@ -10,6 +9,7 @@ members = [
 ]
 
 [workspace.dependencies]
-sdl2   = { version = "0.36.0", features = ["ttf", "image"] }
-rand   = "0.8.5"
+sdl2   = { version = "0.38.0", features = ["ttf", "image"] }
+rand   = "0.10.1"
 serde  = { version = "1.0.197", features = ["derive"] }
+toml   = "1.1.2+spec-1.1.0"

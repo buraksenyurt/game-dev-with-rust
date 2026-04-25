@@ -1,7 +1,7 @@
 use crate::constants::*;
 use crate::entity::*;
 use crate::utility::*;
-use rand::{thread_rng, Rng};
+use rand::RngExt;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
@@ -22,35 +22,35 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let ground_level = HEIGHT - 100;
 
         let mut mountain_points = Vec::new();
         let mut x = 0;
         while x < WIDTH {
-            let peak_height = rng.gen_range(ground_level - 150..ground_level);
+            let peak_height = rng.random_range(ground_level - 150..ground_level);
             mountain_points.push(Point::new(x, peak_height));
-            x += rng.gen_range(80..120);
+            x += rng.random_range(80..120);
         }
         mountain_points.push(Point::new(
             WIDTH,
-            rng.gen_range(ground_level - 150..ground_level),
+            rng.random_range(ground_level - 150..ground_level),
         ));
 
         let mut platforms = Vec::new();
         let mut used_x_positions = Vec::new();
         while platforms.len() < 2 {
-            let mut landing_start = rng.gen_range(0..WIDTH - 50);
+            let mut landing_start = rng.random_range(0..WIDTH - 50);
             while used_x_positions
                 .iter()
                 .any(|&pos| (landing_start..landing_start + 50).contains(&pos))
             {
-                landing_start = rng.gen_range(0..WIDTH - 50);
+                landing_start = rng.random_range(0..WIDTH - 50);
             }
             let landing_end = cmp::min(landing_start + 65, WIDTH);
             used_x_positions.extend(landing_start..landing_end);
 
-            let platform_height = rng.gen_range(ground_level - 150..ground_level - 100);
+            let platform_height = rng.random_range(ground_level - 150..ground_level - 100);
             let l_leg = find_ground_height(&mountain_points, landing_start);
             let r_leg = find_ground_height(&mountain_points, landing_end);
 
@@ -69,8 +69,8 @@ impl Game {
 
         let mut stars = Vec::new();
         for _ in 0..MAX_STARS_COUNT {
-            let x = rng.gen_range(0..WIDTH);
-            let y = rng.gen_range(0..HEIGHT / 2);
+            let x = rng.random_range(0..WIDTH);
+            let y = rng.random_range(0..HEIGHT / 2);
 
             let star = Star::new(
                 (Point::new(x - 5, y), Point::new(x + 5, y)),
@@ -116,8 +116,9 @@ impl Game {
         let shuttle_x = self.shuttle.position.x as f32
             + self.shuttle.velocity.x
             + (SHUTTLE_HEAD_WIDTH / 2) as f32;
-        let shuttle_y =
-            self.shuttle.position.y as f32 + self.shuttle.velocity.y + SHUTTLE_HEAD_WIDTH as f32 * 2.;
+        let shuttle_y = self.shuttle.position.y as f32
+            + self.shuttle.velocity.y
+            + SHUTTLE_HEAD_WIDTH as f32 * 2.;
 
         for lp in self.landing_platforms.iter() {
             let dist_x = shuttle_x - (lp.p1.x + (lp.p2.x - lp.p1.x) / 2) as f32;
@@ -145,16 +146,16 @@ impl Game {
     }
 
     fn move_meteors(&mut self, delta_time: f32) {
-        let mut rng = thread_rng();
+        let mut rng = rand::rng();
         for m in self.meteors.iter_mut() {
             m.rot_angle += 25. * delta_time as f64;
-            m.velocity.y += rng.gen_range(10.0..15.) * delta_time;
+            m.velocity.y += rng.random_range(10.0..15.) * delta_time;
             match m.kind {
                 MeteorType::LeftBottomCorner => {
-                    m.velocity.x -= rng.gen_range(10.0..15.) * delta_time;
+                    m.velocity.x -= rng.random_range(10.0..15.) * delta_time;
                 }
                 MeteorType::RightBottomCorner => {
-                    m.velocity.x += rng.gen_range(10.0..15.) * delta_time;
+                    m.velocity.x += rng.random_range(10.0..15.) * delta_time;
                 }
                 MeteorType::Vertical => {
                     m.velocity.y += 10. * delta_time;
@@ -169,12 +170,12 @@ impl Game {
     }
 
     fn spawn_random_meteor() -> Meteor {
-        let mut rng = thread_rng();
-        let x = rng.gen_range(0..WIDTH - WIDTH / 4);
-        let y = rng.gen_range(-100..-10);
-        let side_count = rng.gen_range(6..10);
-        let radius = rng.gen_range(10..20);
-        let angle = rng.gen_range(10..30) as f64;
+        let mut rng = rand::rng();
+        let x = rng.random_range(0..WIDTH - WIDTH / 4);
+        let y = rng.random_range(-100..-10);
+        let side_count = rng.random_range(6..10);
+        let radius = rng.random_range(10..20);
+        let angle = rng.random_range(10..30) as f64;
         Meteor::new(Point::new(x, y), side_count, radius, angle, true)
     }
 

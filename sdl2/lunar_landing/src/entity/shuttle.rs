@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::entity::meteor::Meteor;
 use crate::entity::vector::Vector;
 use crate::game::Game;
-use rand::{thread_rng, Rng};
+use rand::RngExt;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::render::Canvas;
@@ -18,9 +18,9 @@ pub struct Shuttle {
 
 impl Shuttle {
     pub fn new() -> Self {
-        let mut rng = rand::thread_rng();
-        let x = rng.gen_range(50..WIDTH - 50);
-        let y = rng.gen_range(10..WIDTH / 8);
+        let mut rng = rand::rng();
+        let x = rng.random_range(50..WIDTH - 50);
+        let y = rng.random_range(10..WIDTH / 8);
         let position = Point::new(x, y);
         Self {
             position,
@@ -135,12 +135,12 @@ impl Shuttle {
     }
 
     pub fn toss_randomly(&mut self, x_limits: Vector, delta_time: f32) {
-        let mut rng = thread_rng();
-        if rng.gen_range(0..100) < 2 {
-            if rng.gen_bool(0.5) {
-                self.velocity.x += rng.gen_range(x_limits.x..x_limits.y) * delta_time;
+        let mut rng = rand::rng();
+        if rng.random_range(0..100) < 2 {
+            if rng.random_range(0..2) == 0 {
+                self.velocity.x += rng.random_range(x_limits.x..x_limits.y) * delta_time;
             } else {
-                self.velocity.x -= rng.gen_range(x_limits.x..x_limits.y) * delta_time;
+                self.velocity.x -= rng.random_range(x_limits.x..x_limits.y) * delta_time;
             }
         }
     }

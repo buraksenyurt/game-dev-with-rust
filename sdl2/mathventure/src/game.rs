@@ -1,5 +1,5 @@
 use rand::rngs::ThreadRng;
-use rand::Rng;
+use rand::RngExt;
 use std::time::{Duration, Instant};
 
 use sdl2::event::Event;
@@ -52,7 +52,7 @@ impl Default for Game {
 
 impl Game {
     pub fn init(&mut self, level_index: u32) {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let level_manager = LevelManager::init();
         let level = level_manager.get_level(level_index).unwrap();
 
@@ -64,7 +64,7 @@ impl Game {
         self.current_level = level;
         self.state = GameState::Playing(level_index);
         self.last_ufo_time = Instant::now();
-        self.next_ufo_delay = Duration::from_secs(rng.gen_range(2..=4))
+        self.next_ufo_delay = Duration::from_secs(rng.random_range(2..=4))
     }
 
     pub fn move_player(&mut self, direction: Direction) {
@@ -95,7 +95,7 @@ impl Game {
         // let velocity = Velocity::new((direction.0 * 200.0) as i32, (direction.1 * 200.0) as i32);
 
         let names = ["owl", "hippo", "giraffe", "correct", "wrong"];
-        let name = names[rng.gen_range(0..names.len())];
+        let name = names[rng.random_range(0..names.len())];
         let directions = [
             (-125, -125),
             (0, -125),
@@ -104,7 +104,7 @@ impl Game {
             (-125, 0),
             (125, 125),
         ];
-        let direction = directions[rng.gen_range(0..directions.len())];
+        let direction = directions[rng.random_range(0..directions.len())];
         let velocity = Vector::new(direction.0 as f32, direction.1 as f32);
         let ufo = Ufo::new(
             Location::new(x as i32, y as i32),

@@ -18,7 +18,7 @@ impl Engine {
         let texture_creator = self.canvas.texture_creator();
         let texture_manager = AssetManager::new(&texture_creator);
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         loop {
             let now = Instant::now();

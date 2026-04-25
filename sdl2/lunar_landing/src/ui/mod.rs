@@ -20,11 +20,14 @@ fn draw_text(
     y: i32,
 ) -> Result<(), String> {
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
-    let font = ttf_context.load_font(concat!(env!("CARGO_MANIFEST_DIR"), "/fonts/OpenSans-Bold.ttf"), font_size)?;
+    let font = ttf_context.load_font(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/fonts/OpenSans-Bold.ttf"),
+        font_size,
+    )?;
     let surface = font
         .render(text)
         .blended(color)
-        .map_err(|e| e.to_string())?;;
+        .map_err(|e| e.to_string())?;
     let texture_creator = canvas.texture_creator();
     let texture = texture_creator
         .create_texture_from_surface(&surface)
@@ -42,11 +45,14 @@ fn draw_vertical_center_text(
     y: i32,
 ) -> Result<(), String> {
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
-    let font = ttf_context.load_font(concat!(env!("CARGO_MANIFEST_DIR"), "/fonts/OpenSans-Bold.ttf"), font_size)?;
+    let font = ttf_context.load_font(
+        concat!(env!("CARGO_MANIFEST_DIR"), "/fonts/OpenSans-Bold.ttf"),
+        font_size,
+    )?;
     let surface = font
         .render(&text)
         .blended(color)
-        .map_err(|e| e.to_string())?;;
+        .map_err(|e| e.to_string())?;
     let texture_creator = canvas.texture_creator();
     let texture = texture_creator
         .create_texture_from_surface(&surface)

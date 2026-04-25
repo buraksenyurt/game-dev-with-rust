@@ -1,8 +1,7 @@
 use crate::constants::{HEIGHT, WIDTH};
 use crate::entity::meteor_type::MeteorType;
 use crate::entity::vector::Vector;
-use rand::prelude::SliceRandom;
-use rand::thread_rng;
+use rand::prelude::IndexedRandom;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 use sdl2::render::WindowCanvas;
@@ -21,7 +20,7 @@ pub struct Meteor {
 
 impl Meteor {
     pub fn new(center: Point, sides: u8, radius: i16, rot_angle: f64, in_range: bool) -> Self {
-        let mut rng = thread_rng();
+        let mut rng = rand::rng();
         let kinds = [
             MeteorType::RightBottomCorner,
             MeteorType::LeftBottomCorner,
