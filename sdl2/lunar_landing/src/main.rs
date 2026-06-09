@@ -75,9 +75,6 @@ fn main() -> Result<(), String> {
                         ..
                     } = event
                     {
-                        if let Some(command) = play_commands.get(&keycode) {
-                            command.execute(&mut game);
-                        }
                         if let Some(m_command) = menu_commands.get(&keycode) {
                             if let Some(new_state) = m_command.execute() {
                                 game.state = new_state;
@@ -88,6 +85,14 @@ fn main() -> Result<(), String> {
                         }
                     }
                 }
+
+                let kb = event_pump.keyboard_state();
+                for (scancode, command) in play_commands.iter() {
+                    if kb.is_scancode_pressed(*scancode) {
+                        command.execute(&mut game);
+                    }
+                }
+                drop(kb);
 
                 if game.update().is_some() {
                     continue 'game_loop;

@@ -4,12 +4,12 @@ pub mod config;
 pub use command::*;
 pub use config::*;
 
-use sdl2::keyboard::Keycode;
+use sdl2::keyboard::{Keycode, Scancode};
 use std::collections::HashMap;
 use std::error::Error;
 use std::{fs, path::Path};
 
-pub type DirectionCommandsType = HashMap<Keycode, Box<dyn DirectionCommand>>;
+pub type DirectionCommandsType = HashMap<Scancode, Box<dyn DirectionCommand>>;
 pub type MenuCommandsType = HashMap<Keycode, Box<dyn MenuCommand>>;
 pub type CommandSetupResultType = Result<(DirectionCommandsType, MenuCommandsType), Box<dyn Error>>;
 
@@ -19,16 +19,22 @@ fn load_config<P: AsRef<Path>>(path: P) -> Result<Config, Box<dyn Error>> {
     Ok(config)
 }
 
+fn scancode_from_string(key: &str) -> Option<Scancode> {
+    match key {
+        "Left" => Some(Scancode::Left),
+        "A" => Some(Scancode::A),
+        "Right" => Some(Scancode::Right),
+        "D" => Some(Scancode::D),
+        "Down" => Some(Scancode::Down),
+        "S" => Some(Scancode::S),
+        "Space" => Some(Scancode::Space),
+        "W" => Some(Scancode::W),
+        _ => None,
+    }
+}
+
 fn keycode_from_string(key: &str) -> Option<Keycode> {
     match key {
-        "Left" => Some(Keycode::Left),
-        "A" => Some(Keycode::A),
-        "Right" => Some(Keycode::Right),
-        "D" => Some(Keycode::D),
-        "Down" => Some(Keycode::Down),
-        "S" => Some(Keycode::S),
-        "Space" => Some(Keycode::Space),
-        "W" => Some(Keycode::W),
         "Return" => Some(Keycode::Return),
         "Backspace" => Some(Keycode::Backspace),
         "Escape" => Some(Keycode::Escape),
@@ -58,15 +64,15 @@ fn create_menu_command(command_name: &str) -> Option<Box<dyn MenuCommand>> {
 pub fn setup_commands() -> CommandSetupResultType {
     let config = load_config("config.toml")?;
 
-    let mut play_commands: HashMap<Keycode, Box<dyn DirectionCommand>> = HashMap::new();
+    let mut play_commands: HashMap<Scancode, Box<dyn DirectionCommand>> = HashMap::new();
     let mut menu_commands: HashMap<Keycode, Box<dyn MenuCommand>> = HashMap::new();
 
     for cmd in config.play_commands {
-        if let (Some(keycode), Some(command)) = (
-            keycode_from_string(&cmd.key),
+        if let (Some(scancode), Some(command)) = (
+            scancode_from_string(&cmd.key),
             create_direction_command(&cmd.command),
         ) {
-            play_commands.insert(keycode, command);
+            play_commands.insert(scancode, command);
         }
     }
 
