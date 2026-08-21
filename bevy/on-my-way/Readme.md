@@ -4,15 +4,15 @@ Bevy oyun motoru kullanılarak yazılan bu terminal oyununda uzayda ilerleyen ya
 
 Oyuna ait ilk ekran görüntülerinden birisi,
 
-![../assets/on_my_way_ss_01.png](../assets/on_may_way_ss_01.png)
+![../assets/on_my_way_ss_01.png](../../assets/on_may_way_ss_01.png)
 
 Güncel ekran görüntüleri ise şöyle,
 
-![../assets/on_my_way_ss_02.png](../assets/on_may_way_ss_02.png)
+![../assets/on_my_way_ss_02.png](../../assets/on_may_way_ss_02.png)
 
-![../assets/on_my_way_ss_03.png](../assets/on_may_way_ss_03.png)
+![../assets/on_my_way_ss_03.png](../../assets/on_may_way_ss_03.png)
 
-![../assets/on_my_way_ss_04.png](../assets/on_may_way_ss_04.png)
+![../assets/on_my_way_ss_04.png](../../assets/on_may_way_ss_04.png)
 
 ## Öğrenme Noktaları
 
